@@ -36,12 +36,12 @@ describe('list', function () {
     it('should expose `define`', function () {
       assert(typeof list.define ==='function');
     });
-    it('should expose `addItem`', function () {
-      assert(typeof list.addItem ==='function');
+    it('should expose `addView`', function () {
+      assert(typeof list.addView ==='function');
     });
 
-    it('should expose `items`', function () {
-      assert(Array.isArray(list.items));
+    it('should expose `views`', function () {
+      assert(Array.isArray(list.views));
     });
     it('should expose `keys`', function () {
       assert(Array.isArray(list.keys));
@@ -64,63 +64,63 @@ describe('list', function () {
     });
   });
 
-  describe('addItem', function() {
+  describe('addView', function() {
     beforeEach(function() {
       list = new List();
     });
 
     it('should throw an error when value is invalid:', function () {
       (function () {
-        list.addItem('foo');
+        list.addView('foo');
       }).should.throw('expected value to be an object.');
     });
 
-    it('should add an item to `items`:', function () {
-      list.addItem('one', {contents: new Buffer('...')});
-      assert(list.items.length === 1);
-      assert(Buffer.isBuffer(list.items[0].contents));
+    it('should add an view to `views`:', function () {
+      list.addView('one', {contents: new Buffer('...')});
+      assert(list.views.length === 1);
+      assert(Buffer.isBuffer(list.views[0].contents));
     });
 
-    it('should create an instance of `Item`:', function () {
-      list.addItem('one', {contents: new Buffer('...')});
-      assert(list.items[0] instanceof list.Item);
+    it('should create an instance of `View`:', function () {
+      list.addView('one', {contents: new Buffer('...')});
+      assert(list.views[0] instanceof list.View);
     });
 
-    it('should allow an `Item` constructor to be passed:', function () {
+    it('should allow an `View` constructor to be passed:', function () {
       var Vinyl = require('vinyl');
       Vinyl.prototype.foo = function(key, value) {
         this[key] = value;
       };
-      list = new List({Item: Vinyl});
-      list.addItem('one', {contents: new Buffer('...')});
-      list.items[0].foo('bar', 'baz');
-      assert(list.items[0].bar === 'baz');
+      list = new List({View: Vinyl});
+      list.addView('one', {contents: new Buffer('...')});
+      list.views[0].foo('bar', 'baz');
+      assert(list.views[0].bar === 'baz');
     });
 
-    it('should allow an instance of `Item` to be passed:', function () {
+    it('should allow an instance of `View` to be passed:', function () {
       var View = require('../lib/view');
-      var list = new List({Item: View});
-      var item = new View({contents: new Buffer('...')});
-      list.addItem('one', item);
-      item.set('abc', 'xyz');
-      assert(list.items[0] instanceof list.Item);
-      assert(Buffer.isBuffer(list.items[0].contents));
-      assert(list.items[0].abc === 'xyz');
+      var list = new List({View: View});
+      var view = new View({contents: new Buffer('...')});
+      list.addView('one', view);
+      view.set('abc', 'xyz');
+      assert(list.views[0] instanceof list.View);
+      assert(Buffer.isBuffer(list.views[0].contents));
+      assert(list.views[0].abc === 'xyz');
     });
   });
 
-  describe('addItems', function() {
+  describe('addViews', function() {
     beforeEach(function() {
       list = new List();
     });
 
-    it('should add multiple items:', function () {
-      list.addItems({
+    it('should add multiple views:', function () {
+      list.addViews({
         one: {contents: new Buffer('foo')},
         two: {contents: new Buffer('bar')}
       });
-      assert(Buffer.isBuffer(list.items[0].contents));
-      assert(Buffer.isBuffer(list.items[1].contents));
+      assert(Buffer.isBuffer(list.views[0].contents));
+      assert(Buffer.isBuffer(list.views[1].contents));
     });
   });
 
@@ -129,8 +129,8 @@ describe('list', function () {
       list = new List();
     });
     it('should get the index of a key when key is not renamed:', function () {
-      list.addItem('a/b/c/ddd.hbs', {contents: new Buffer('ddd')});
-      list.addItem('a/b/c/eee.hbs', {contents: new Buffer('eee')});
+      list.addView('a/b/c/ddd.hbs', {contents: new Buffer('ddd')});
+      list.addView('a/b/c/eee.hbs', {contents: new Buffer('eee')});
       assert(list.getIndex('a/b/c/ddd.hbs') === 0);
       assert(list.getIndex('a/b/c/eee.hbs') === 1);
     });
@@ -141,8 +141,8 @@ describe('list', function () {
           return path.basename(key);
         }
       });
-      list.addItem('a/b/c/ddd.hbs', {contents: new Buffer('ddd')});
-      list.addItem('a/b/c/eee.hbs', {contents: new Buffer('eee')});
+      list.addView('a/b/c/ddd.hbs', {contents: new Buffer('ddd')});
+      list.addView('a/b/c/eee.hbs', {contents: new Buffer('eee')});
       assert(list.getIndex('a/b/c/ddd.hbs') === 0);
       assert(list.getIndex('ddd.hbs') === 0);
       assert(list.getIndex('a/b/c/eee.hbs') === 1);
@@ -150,19 +150,19 @@ describe('list', function () {
     });
   });
 
-  describe('getItem', function() {
+  describe('getView', function() {
     beforeEach(function() {
       list = new List();
     });
 
-    it('should get an item from `items`:', function () {
-      list.addItem('one', {contents: new Buffer('aaa')});
-      list.addItem('two', {contents: new Buffer('zzz')});
-      assert(list.items.length === 2);
-      assert(Buffer.isBuffer(list.items[0].contents));
-      assert(Buffer.isBuffer(list.getItem('one').contents));
-      assert(list.getItem('one').contents.toString() === 'aaa');
-      assert(list.getItem('two').contents.toString() === 'zzz');
+    it('should get an view from `views`:', function () {
+      list.addView('one', {contents: new Buffer('aaa')});
+      list.addView('two', {contents: new Buffer('zzz')});
+      assert(list.views.length === 2);
+      assert(Buffer.isBuffer(list.views[0].contents));
+      assert(Buffer.isBuffer(list.getView('one').contents));
+      assert(list.getView('one').contents.toString() === 'aaa');
+      assert(list.getView('two').contents.toString() === 'zzz');
     });
   });
 
@@ -171,9 +171,9 @@ describe('list', function () {
       list = new List();
     });
 
-    it('should get the number of items:', function () {
-      list.addItem('one', {contents: new Buffer('aaa')});
-      list.addItem('two', {contents: new Buffer('zzz')});
+    it('should get the number of views:', function () {
+      list.addView('one', {contents: new Buffer('aaa')});
+      list.addView('two', {contents: new Buffer('zzz')});
       assert(list.count === 2);
     });
 

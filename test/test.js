@@ -36,12 +36,8 @@ describe('templates', function () {
     it('should expose `define`', function () {
       assert(typeof templates.define ==='function');
     });
-
     it('should expose `views`', function () {
-      assert(Array.isArray(templates.views));
-    });
-    it('should expose `keys`', function () {
-      assert(Array.isArray(templates.keys));
+      assert(typeof templates.views === 'object');
     });
   });
 

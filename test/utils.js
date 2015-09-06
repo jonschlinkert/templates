@@ -5,7 +5,7 @@ var inherit = require('../lib/inherit');
 
 describe('utils', function () {
   describe('inherit', function() {
-    it('should get the number of items:', function () {
+    it('should get the number of views:', function () {
       var a = {};
       var b = {foo: 'bar'};
       inherit(a, b);
