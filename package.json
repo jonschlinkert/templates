@@ -1,0 +1,49 @@
+{
+  "name": "templates",
+  "description": "Template collections.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/templates",
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/templates",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/templates/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "base-methods": "^0.2.1",
+    "clone": "^1.0.2",
+    "clone-stats": "0.0.1",
+    "define-property": "^0.2.5",
+    "delegate-properties": "^0.3.0",
+    "en-route": "^0.7.3",
+    "engine-lodash": "^0.8.2",
+    "export-files": "^2.1.0",
+    "extend-shallow": "^2.0.1",
+    "layouts": "^0.10.3",
+    "lazy-cache": "^0.2.3",
+    "mixin-deep": "^1.1.3",
+    "vinyl": "^0.5.3"
+  },
+  "devDependencies": {
+    "event-stream": "^3.3.1",
+    "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.1.3",
+    "jshint-stylish": "^2.0.1",
+    "mocha": "*",
+    "should": "*",
+    "through2": "^2.0.0"
+  },
+  "keywords": []
+}
