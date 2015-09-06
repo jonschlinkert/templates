@@ -8,11 +8,14 @@
 'use strict';
 
 var Base = require('base-methods');
+var router = require('en-route');
 var extend = require('extend-shallow');
 var define = require('define-property');
 var delegate = require('delegate-properties');
-var Collection = require('./lib/collection');
+var layouts = require('layouts');
 var utils = require('./lib/utils')(require);
+var Views = require('./lib/views');
+var View = require('./lib/view');
 
 function Templates(options) {
   if (!(this instanceof Templates)) {
@@ -20,7 +23,11 @@ function Templates(options) {
   }
   Base.call(this);
   this.options = options || {};
-  this.items = {};
+  this.define('Views', this.options.Views || Views);
+  this.define('View', this.options.View || View);
+  delete this.options.Views;
+  delete this.options.View;
+  this.views = {};
 }
 
 Base.extend(Templates);
@@ -33,12 +40,15 @@ delegate(Templates.prototype, {
   constructor: Templates,
 
   create: function(name, options) {
-    var collection = new Collection(options);
-    this.items[name] = collection.items;
-    this[name] = collection.addItem;
+    var views = !(options instanceof this.Views)
+      ? new this.Views(options)
+      : options;
 
-    for (var key in collection) {
-      define(this[name], key, collection);
+    define(this, name, views.addView);
+    define(this.views, name, views.views);
+
+    for (var key in views) {
+      define(this[name], key, views);
     }
     return this;
   },
@@ -47,7 +57,7 @@ delegate(Templates.prototype, {
    * Add `Router` to the prototype
    */
 
-  Router: utils.router.Router,
+  Router: router.Router,
 
   /**
    * Lazily initalize `router`, to allow options to
@@ -215,7 +225,7 @@ delegate(Templates.prototype, {
     extend(opts, view.context());
 
     // actually apply the layout
-    var res = utils.layouts(str, name, stack, opts, handleLayout);
+    var res = layouts(str, name, stack, opts, handleLayout);
 
     view.option('layoutStack', res.history);
     view.option('layoutApplied', true);
@@ -225,6 +235,116 @@ delegate(Templates.prototype, {
     this.handle('postLayout', view);
     return view;
   },
+
+
+  /**
+   * Merge "partials" view types. This is necessary for template
+   * engines that only support one class of partials.
+   *
+   * @name .mergePartials
+   * @param {Object} `locals`
+   * @param {Array} `viewTypes` Optionally pass an array of viewTypes to include.
+   * @return {Object} Merged partials
+   */
+
+  mergePartials: function (locals, viewTypes) {
+    var names = viewTypes || this.viewTypes.partial;
+    var opts = utils.extend({}, this.options, locals);
+
+    return names.reduce(function (acc, name) {
+      var collection = this.views[name];
+
+      utils.forOwn(collection, function (view, key) {
+        // handle `onMerge` middleware
+        this.handleView('onMerge', view, locals);
+
+        if (view.options.nomerge) return;
+        if (opts.mergePartials !== false) {
+          name = 'partials';
+        }
+        acc[name] = acc[name] || {};
+        acc[name][key] = view.content;
+      }, this);
+      return acc;
+    }.bind(this), {});
+  },
+
+  /**
+   * Build the context for the given `view` and `locals`.
+   *
+   * @name .context
+   * @param  {Object} `view` Template object
+   * @param  {Object} `locals`
+   * @return {Object} The object to be passed to engines/views as context.
+   */
+
+  context: function (view, ctx, locals) {
+    var obj = {};
+    utils.mixin(obj, ctx);
+    utils.mixin(obj, this.cache.data);
+    utils.mixin(obj, view.data);
+    utils.mixin(obj, view.locals);
+    utils.mixin(obj, locals);
+    return obj;
+  },
+
+  /**
+   * Bind context to helpers.
+   */
+
+  bindHelpers: function (view, locals, context, isAsync) {
+    var helpers = {};
+    utils.extend(helpers, this.options.helpers);
+    utils.extend(helpers, this._.helpers.sync);
+
+    if (isAsync) utils.extend(helpers, this._.helpers.async);
+    utils.extend(helpers, locals.helpers);
+
+    // build the context to expose as `this` in helpers
+    var thisArg = {};
+    thisArg.options = utils.extend({}, this.options, locals);
+    thisArg.context = context || {};
+    thisArg.context.view = view;
+    thisArg.app = this;
+
+    // bind template helpers to the instance
+    locals.helpers = utils.bindAll(helpers, thisArg);
+  },
+
+  /**
+   * Add a router handler.
+   *
+   * @param  {String} `method` Method name.
+   */
+
+  handler: function (methods) {
+    this.handlers(methods);
+  },
+
+  /**
+   * Add default Router handlers to Template.
+   */
+
+  handlers: function (methods) {
+    this.lazyRouter();
+    this.router.method(methods);
+    utils.arrayify(methods).forEach(function (method) {
+      this.define(method, function(path) {
+        var route = this.router.route(path);
+        var args = [].slice.call(arguments, 1);
+        route[method].apply(route, args);
+        return this;
+      }.bind(this));
+    }.bind(this));
+  },
+
+  /**
+   * Format an error
+   */
+
+  error: function(method, id, msg) {
+    return new Error(this.errors[method][id] + 'Template#' + method + ' ' + msg);
+  }
 });
 
 /**
@@ -240,4 +360,4 @@ module.exports = Templates;
 // app.pages('a', {content: '...'});
 // app.pages('b', {content: '...'});
 
-// console.log(app.items)
+// console.log(app.views)
