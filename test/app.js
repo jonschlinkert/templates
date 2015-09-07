@@ -11,6 +11,11 @@ describe('templates', function () {
       var templates = new Templates();
       assert(templates instanceof Templates);
     });
+
+    it('should new up without new:', function () {
+      var templates = Templates();
+      assert(templates instanceof Templates);
+    });
   });
 
   describe('static methods', function () {

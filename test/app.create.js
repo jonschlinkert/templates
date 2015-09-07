@@ -7,7 +7,7 @@ var app;
 
 
 describe('create', function () {
-  describe('method', function () {
+  describe('inflections', function () {
     beforeEach(function () {
       app = new App();
     });
@@ -24,6 +24,45 @@ describe('create', function () {
     it('should add a pluralized collection to `views`', function () {
       app.create('page');
       assert(typeof app.views.pages === 'object');
+    });
+  });
+
+  describe('custom constructors', function () {
+    beforeEach(function () {
+      var Vinyl = require('vinyl');
+      Vinyl.prototype.custom = function (key) {
+        this[key] = 'nonsense';
+        return this;
+      };
+      app = new App({View: Vinyl});
+      app.create('pages');
+    });
+
+    it('should create views from key-value pairs:', function () {
+      app.page('a.hbs', {path: 'a.hbs', contents: new Buffer('a')});
+      app.page('b.hbs', {path: 'b.hbs', contents: new Buffer('b')});
+      app.page('c.hbs', {path: 'c.hbs', contents: new Buffer('c')});
+      var a = app.pages.getView('a.hbs');
+      a.custom('foo');
+      a.foo.should.equal('nonsense');
+    });
+  });
+
+  describe('custom instances', function () {
+    it('should create views from custom `View` and `Views` instance/ctor:', function () {
+      var Vinyl = require('vinyl');
+      var Views = App.Views;
+      var views = new Views({View: Vinyl});
+
+      views.addView('a.hbs', {path: 'a.hbs', contents: new Buffer('a')});
+      views.addView('b.hbs', {path: 'b.hbs', contents: new Buffer('b')});
+      views.addView('c.hbs', {path: 'c.hbs', contents: new Buffer('c')});
+
+      app = new App();
+      app.create('pages', views);
+      var a = app.pages.getView('a.hbs');
+      assert(a instanceof Vinyl);
+      assert(Vinyl.isVinyl(a));
     });
   });
 
