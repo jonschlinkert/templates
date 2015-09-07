@@ -7,7 +7,7 @@
 
 'use strict';
 
-var has = require('has-value');
+var path = require('path');
 var Base = require('base-methods');
 var router = require('en-route');
 var extend = require('extend-shallow');
@@ -25,7 +25,7 @@ function Templates(options) {
   }
   Base.call(this);
   this.options = options || {};
-  this.initialize();
+  this.defaults();
 }
 
 Base.extend(Templates);
@@ -37,17 +37,16 @@ Base.extend(Templates);
 utils.delegate(Templates.prototype, {
   constructor: Templates,
 
-  /**
-   * Initialize defaults
-   */
+  defaults: function () {
+    for (var key in this.options.mixins) {
+      this.mixin(key, this.options.mixins[key]);
+    }
 
-  initialize: function () {
     this.engines = {};
     this.define('_', {});
     this._.engines = new utils.Engines(this.engines);
 
     lib.helpers(this);
-    this.listen();
     // lib.lookup(this);
 
     this.define('errors', {
@@ -65,16 +64,9 @@ utils.delegate(Templates.prototype, {
     this.cache = {};
     this.cache.data = {};
     this.cache.context = {};
-
     this.items = {};
     this.views = {};
 
-    this.define('Base', require('base-methods'));
-    this.define('View', this.options.View || View);
-    this.define('List', this.options.List || List);
-    this.define('Views', this.options.Views || Views);
-
-    // this.option('view engine', 'hbs');
     this.viewTypes = {
       layout: [],
       renderable: [],
@@ -82,7 +74,21 @@ utils.delegate(Templates.prototype, {
     };
 
     this.inflections = {};
+    this.listen();
+  },
+
+  /**
+   * Initialize defaults
+   */
+
+  initialize: function () {
+    this.define('Base', require('base-methods'));
+    this.define('View', this.options.View || View);
+    this.define('List', this.options.List || List);
+    this.define('Views', this.options.Views || Views);
+
     this.handlers(utils.methods);
+    this.define('initialized', true);
   },
 
   /**
@@ -90,14 +96,8 @@ utils.delegate(Templates.prototype, {
    */
 
   listen: function () {
-    this.on('error', function (msg, err) {
-      console.error(msg.message, err);
-    });
-
     this.on('option', function (key, value) {
-      for (var key in this.options.mixins) {
-        this.define(key, this.options.mixins[key]);
-      }
+      if (key === 'mixins') this.visit('mixin', value);
     });
   },
 
@@ -111,6 +111,7 @@ utils.delegate(Templates.prototype, {
         return this.get('options.' + key);
       }
       this.set('options.' + key, value);
+      this.emit('option', key, value);
       return this;
     }
     if (typeof key === 'object') {
@@ -136,12 +137,21 @@ utils.delegate(Templates.prototype, {
    * @api public
    */
 
-  create: function(name, opts) {
-    var collection = !(opts instanceof this.Views)
-      ? new this.Views(opts)
-      : opts;
+  create: function(name, options) {
+    if (!this.initialized) this.initialize();
 
-    collection.set('View', this.decorateView(this.View));
+    var collection = null;
+    if (options instanceof this.Views) {
+      collection = options;
+      options = {};
+    } else {
+      options = options || {};
+      options.View = options.View || this.get('View');
+      collection = new this.Views(options);
+    }
+
+    // pass the `View` constructor from `App` to the collection
+    collection = this.decorateViews(collection);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
@@ -151,9 +161,6 @@ utils.delegate(Templates.prototype, {
 
     // map the inflections for lookups
     this.inflections[single] = plural;
-
-    // set defaults on the collection options
-    opts = utils.merge({ renameKey: this.options.renameKey }, opts);
 
     // add the collection to `app.views`
     this.views[plural] = collection.views;
@@ -168,31 +175,44 @@ utils.delegate(Templates.prototype, {
 
     // create aliases on the collection for
     // addView/addViews to support chaining
-    collection.set(plural, this[plural]);
-    collection.set(single, this[single]);
-    return this;
+    collection.define(plural, this[plural]);
+    collection.define(single, this[single]);
+    return collection;
   },
 
   /**
-   * Decorate methods onto `View`
+   * Decorate `view` intances in the collection.
    */
 
-  decorateView: function (View, options) {
+  decorateView: function (view) {
     var app = this;
-
-    View.prototype.compile = function () {
+    view.compile = function () {
       var args = [this].concat([].slice.call(arguments));
       app.compile.apply(app, args);
       return this;
     };
-
-    View.prototype.render = function () {
+    view.render = function () {
       var args = [this].concat([].slice.call(arguments));
       app.render.apply(app, args);
       return this;
     };
+    return view;
+  },
 
-    return View;
+  /**
+   * Decorate `view` intances in the collection.
+   */
+
+  decorateViews: function (collection) {
+    var app = this;
+
+    var decorateView = collection.decorateView;
+    collection.decorateView = function (view) {
+      view = decorateView.call(this, view);
+      return app.decorateView(view);
+    };
+
+    return collection;
   },
 
   /**
@@ -498,7 +518,6 @@ utils.delegate(Templates.prototype, {
     if (!Array.isArray(exts) && typeof exts !== 'string') {
       throw new TypeError('expected engine ext to be a string or array.');
     }
-
     utils.arrayify(exts).forEach(function (ext) {
       this.setEngine(ext, fn, settings);
     }.bind(this));
@@ -690,12 +709,7 @@ utils.delegate(Templates.prototype, {
 
     locals = locals || {};
 
-    var data = this.cache.data;
-    for (var key in locals) {
-      if (locals.hasOwnProperty(key) && !data.hasOwnProperty(key)) {
-        data[key] = locals[key];
-      }
-    }
+    var data = utils.merge({}, locals, this.cache.data);
 
     // handle `preRender` middleware
     this.handleView('preRender', view, locals);
@@ -715,10 +729,10 @@ utils.delegate(Templates.prototype, {
     }
 
     var isAsync = typeof cb === 'function';
-
     // if it's not already compiled, do that first
     if (typeof view.fn !== 'function') {
       try {
+        if (!view.content) view.content = view.contents.toString()
         view = this.compile(view, locals, isAsync);
         return this.render(view, locals, cb);
       } catch (err) {
@@ -736,8 +750,9 @@ utils.delegate(Templates.prototype, {
         this.emit('error', err);
         return cb.call(this, err);
       }
+
       // handle `postRender` middleware
-      view.content = res;
+      view.contents = new Buffer(res);
       this.handle('postRender', view, locals, cb);
     }.bind(this));
   },
@@ -845,10 +860,20 @@ utils.delegate(Templates.prototype, {
 
   /**
    * Format an error
+   *
+   * TODO:
+   *  - rethrow
+   *  - add engine info to error
    */
 
   error: function(method, id, msg) {
-    return new Error(this.errors[method][id] + 'Templates#' + method + ' ' + msg);
+    var reason = this.errors[method][id] + 'Templates#' + method + ' ' + msg;
+    var err = new Error(reason);
+    err.reason = reason;
+    err.id = id;
+    err.msg = msg;
+    this.emit('error', err);
+    return err;
   },
 
   /**

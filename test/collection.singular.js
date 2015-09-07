@@ -30,31 +30,9 @@ describe('collection singular method', function () {
       assert(typeof app.views.pages['test/fixtures/pages/a.hbs'] === 'object');
     });
 
-    it('should support chaining:', function () {
-      app
-        .page('test/fixtures/pages/a.hbs')
-        .page('test/fixtures/pages/b.hbs')
-        .page('test/fixtures/pages/c.hbs');
-
-      app.views.pages.should.have.properties([
-        'test/fixtures/pages/a.hbs',
-        'test/fixtures/pages/b.hbs',
-        'test/fixtures/pages/c.hbs'
-      ]);
-    });
-
     it('should expose the `option` method:', function () {
-      app.page.option('foo', 'bar')
-        .page('test/fixtures/pages/a.hbs')
-        .page('test/fixtures/pages/b.hbs')
-        .page('test/fixtures/pages/c.hbs');
-
-      app.page.options.should.eql({foo: 'bar'});
-      app.views.pages.should.have.properties([
-        'test/fixtures/pages/a.hbs',
-        'test/fixtures/pages/b.hbs',
-        'test/fixtures/pages/c.hbs'
-      ]);
+      app.pages.option('foo', 'bar')
+      app.pages.options.should.have.property('foo', 'bar');
     });
   });
 });

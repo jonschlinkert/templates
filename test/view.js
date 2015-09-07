@@ -13,7 +13,6 @@ var through = require('through2');
 var View = require('../lib/view');
 var view;
 
-
 describe('View', function () {
   describe('instance', function () {
     it('should create an instance of View:', function () {

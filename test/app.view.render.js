@@ -2,24 +2,26 @@
 var path = require('path');
 var assert = require('assert');
 var should = require('should');
-var View = require('../lib/view');
-var view;
+var App = require('../');
+var app;
 
-describe.skip('helpers', function () {
+describe('helpers', function () {
   describe('rendering', function () {
     beforeEach(function () {
-      view = new View();
+      app = new App();
+      app.engine('tmpl', require('engine-lodash'));
+      app.create('page');
     });
 
     it('should use helpers to render a view:', function (done) {
       var locals = {name: 'Halle'};
 
-      view.helper('upper', function (str) {
+      app.helper('upper', function (str) {
         return str.toUpperCase(str);
       });
 
       var buffer = new Buffer('a <%= upper(name) %> b')
-      view.page('a.tmpl', {contents: buffer, locals: locals})
+      app.page('a.tmpl', {contents: buffer, locals: locals})
         .render(function (err, res) {
           if (err) return done(err);
 

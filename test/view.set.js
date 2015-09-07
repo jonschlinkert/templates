@@ -10,6 +10,7 @@ describe('set', function () {
   beforeEach(function () {
     app = new App();
     app.create('page');
+    app.engine('tmpl', require('engine-lodash'));
   });
 
   it('should set a property on a view:', function (done) {

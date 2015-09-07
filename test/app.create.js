@@ -1,4 +1,5 @@
 /* deps: mocha */
+var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
 var should = require('should');
@@ -60,9 +61,15 @@ describe('create', function () {
 
       app = new App();
       app.create('pages', views);
+
       var a = app.pages.getView('a.hbs');
       assert(a instanceof Vinyl);
       assert(Vinyl.isVinyl(a));
+
+      views.addView('d.hbs', {path: 'd.hbs', contents: new Buffer('d')});
+      var d = app.pages.getView('d.hbs');
+      assert(d instanceof Vinyl);
+      assert(Vinyl.isVinyl(d));
     });
   });
 
@@ -91,6 +98,36 @@ describe('create', function () {
         'test/fixtures/pages/b.hbs',
         'test/fixtures/pages/c.hbs'
       ]);
+    });
+  });
+
+
+  describe('instance', function () {
+    beforeEach(function () {
+      app = new App();
+      app.engine('tmpl', require('engine-lodash'));
+    });
+
+    it('should return the collection instance', function () {
+      var collection = app.create('pages');
+      assert(collection instanceof App.Views);
+
+      collection.option('renameKey', function (key) {
+        return path.basename(key);
+      });
+      collection
+        .use(function (views) {
+          views.read = function (name) {
+            var view = this.getView(name);
+            if (!view.contents) {
+              view.contents = fs.readFileSync(view.path);
+            }
+          };
+        })
+
+      collection.addView('test/fixtures/templates/a.tmpl');
+      collection.read('a.tmpl')
+      assert(collection.getView('a.tmpl').contents.toString() === '<%= name %>');
     });
   });
 });

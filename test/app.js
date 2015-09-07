@@ -61,4 +61,35 @@ describe('templates', function () {
       assert(templates.get('a') ==='b');
     });
   });
+
+  describe('initialization', function () {
+    it('should listen for errors:', function (done) {
+      templates = new Templates();
+      templates.on('error', function (err) {
+        assert(err.message === 'foo');
+        done();
+      });
+      templates.emit('error', new Error('foo'));
+    });
+
+    it('should mixin methods after init:', function () {
+      templates = new Templates();
+      templates.option({
+        mixins: {
+          foo: function () {}
+        }
+      });
+      assert(typeof templates.foo ==='function');
+    });
+
+    it('should mixin prototype methods defined on options:', function () {
+      templates = new Templates({
+        mixins: {
+          foo: function () {}
+        }
+      });
+      assert(typeof templates.foo ==='function');
+      delete Templates.prototype.foo;
+    });
+  });
 });
