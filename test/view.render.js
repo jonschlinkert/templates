@@ -5,22 +5,31 @@ var should = require('should');
 var App = require('../');
 var app;
 
-describe('render', function () {
-  describe('engine', function () {
+describe('helpers', function () {
+  describe('rendering', function () {
     beforeEach(function () {
       app = new App();
       app.engine('tmpl', require('engine-lodash'));
       app.create('page');
     });
 
-    it('should render a view from an object:', function (done) {
+    it('should use helpers to render a view:', function (done) {
       var locals = {name: 'Halle'};
-      app.page('a.tmpl', {contents: new Buffer('a <%= name %> b'), locals: locals})
+
+      app.helper('upper', function (str) {
+        return str.toUpperCase(str);
+      });
+
+      var buffer = new Buffer('a <%= upper(name) %> b')
+      app.page('a.tmpl', {contents: buffer, locals: locals})
         .render(function (err, res) {
           if (err) return done(err);
-          assert(res.contents.toString() === 'a Halle b');
+
+          console.log(res)
+          // assert(res.contents.toString() === 'a HALLE b');
           done();
         });
     });
   });
 });
+
