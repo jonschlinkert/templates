@@ -94,8 +94,8 @@ utils.delegate(Templates.prototype, {
     });
 
     this.on('option', function (key, value) {
-      if (key === 'mixins') {
-        this.visit('mixin', value);
+      for (var key in this.options.mixins) {
+        this.define(key, this.options.mixins[key]);
       }
     });
   },
@@ -122,6 +122,8 @@ utils.delegate(Templates.prototype, {
       ? new this.Views(opts)
       : opts;
 
+    collection.set('View', this.View);
+
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
     var plural = utils.plural(name);
@@ -130,10 +132,10 @@ utils.delegate(Templates.prototype, {
     this.inflections[single] = plural;
 
     // set defaults on the collection options
-    opts = utils.merge({ renameKey: this.options.renameKey }, opts);
+    // opts = utils.merge({ renameKey: this.options.renameKey }, opts);
 
     // add the collection to `app.views`
-    define(this.views, plural, collection.views);
+    this.views[plural] = collection.views;
 
     // create loader functions for adding views to this collection
     define(this, plural, collection.addViews.bind(collection));
@@ -637,11 +639,16 @@ utils.delegate(Templates.prototype, {
 
 module.exports = Templates;
 
-// var app = new Templates();
+/**
+ * Expose constructors
+ */
 
-// app.create('pages');
+module.exports.View = View;
+module.exports.List = List;
+module.exports.Views = Views;
 
-// app.pages('a', {content: '...'});
-// app.pages('b', {content: '...'});
+/**
+ * Expose utils
+ */
 
-// console.log(app.views)
+module.exports.utils = utils;
