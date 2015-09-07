@@ -7,6 +7,7 @@
 
 'use strict';
 
+var has = require('has-value');
 var Base = require('base-methods');
 var router = require('en-route');
 var extend = require('extend-shallow');
@@ -45,11 +46,10 @@ utils.delegate(Templates.prototype, {
     this.define('_', {});
     this._.engines = new utils.Engines(this.engines);
 
+    lib.helpers(this);
     this.listen();
-    // lib.helpers.methods(this);
     // lib.lookup(this);
 
-    // temporary.
     this.define('errors', {
       compile: {
         engine: 'cannot find an engine for: ',
@@ -74,6 +74,7 @@ utils.delegate(Templates.prototype, {
     this.define('List', this.options.List || List);
     this.define('Views', this.options.Views || Views);
 
+    // this.option('view engine', 'hbs');
     this.viewTypes = {
       layout: [],
       renderable: [],
@@ -101,6 +102,24 @@ utils.delegate(Templates.prototype, {
   },
 
   /**
+   * Set or get an option value
+   */
+
+  option: function (key, value) {
+    if (typeof key === 'string') {
+      if (arguments.length === 1) {
+        return this.get('options.' + key);
+      }
+      this.set('options.' + key, value);
+      return this;
+    }
+    if (typeof key === 'object') {
+      this.visit('option', key);
+    }
+    return this;
+  },
+
+  /**
    * Create a new `Views` collection.
    *
    * ```js
@@ -122,17 +141,19 @@ utils.delegate(Templates.prototype, {
       ? new this.Views(opts)
       : opts;
 
-    collection.set('View', this.View);
+    collection.set('View', this.decorateView(this.View));
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
     var plural = utils.plural(name);
 
+    this.viewType(plural, collection.viewType());
+
     // map the inflections for lookups
     this.inflections[single] = plural;
 
     // set defaults on the collection options
-    // opts = utils.merge({ renameKey: this.options.renameKey }, opts);
+    opts = utils.merge({ renameKey: this.options.renameKey }, opts);
 
     // add the collection to `app.views`
     this.views[plural] = collection.views;
@@ -150,6 +171,47 @@ utils.delegate(Templates.prototype, {
     collection.set(plural, this[plural]);
     collection.set(single, this[single]);
     return this;
+  },
+
+  /**
+   * Decorate methods onto `View`
+   */
+
+  decorateView: function (View, options) {
+    var app = this;
+
+    View.prototype.compile = function () {
+      var args = [this].concat([].slice.call(arguments));
+      app.compile.apply(app, args);
+      return this;
+    };
+
+    View.prototype.render = function () {
+      var args = [this].concat([].slice.call(arguments));
+      app.render.apply(app, args);
+      return this;
+    };
+
+    return View;
+  },
+
+  /**
+   * Set view types for a collection.
+   *
+   * @param {String} `plural` e.g. `pages`
+   * @param {Object} `options`
+   */
+
+  viewType: function(plural, types) {
+    var len = types.length, i = 0;
+    while (len--) {
+      var type = types[i++];
+      this.viewTypes[type] = this.viewTypes[type] || [];
+      if (this.viewTypes[type].indexOf(plural) === -1) {
+        this.viewTypes[type].push(plural);
+      }
+    }
+    return types;
   },
 
   /**
@@ -275,11 +337,9 @@ utils.delegate(Templates.prototype, {
     if (typeof name !== 'string') {
       return null;
     }
-
     if (typeof collection === 'string') {
       return this[collection].get(name);
     }
-
     var collections = this.viewTypes.renderable;
     var len = collections.length, i = 0;
     while (len--) {
@@ -334,8 +394,9 @@ utils.delegate(Templates.prototype, {
     }
 
     this.lazyRouter();
-    view.options = view.options || {};
-    view.options.handled = view.options.handled || [];
+    if (!view.options.handled) {
+      view.options.handled = [];
+    }
 
     if (typeof cb !== 'function') {
       cb = this.handleError(method, view);
@@ -351,6 +412,8 @@ utils.delegate(Templates.prototype, {
       if (err) return cb(err);
       cb(null, view);
     });
+
+    return this;
   },
 
   /**
@@ -364,10 +427,14 @@ utils.delegate(Templates.prototype, {
    */
 
   handleView: function (method, view, locals/*, cb*/) {
-    if (view.options.handled.indexOf(method) === -1) {
+    if (!view.options.handled) {
+      view.options.handled = [];
+    }
+    if (view.options.handled.indexOf(method) < 0) {
       this.handle.apply(this, arguments);
     }
     this.emit(method, view, locals);
+    return this;
   },
 
   /**
@@ -428,10 +495,10 @@ utils.delegate(Templates.prototype, {
     if (arguments.length === 1 && typeof exts === 'string') {
       return this.getEngine(exts);
     }
-
     if (!Array.isArray(exts) && typeof exts !== 'string') {
       throw new TypeError('expected engine ext to be a string or array.');
     }
+
     utils.arrayify(exts).forEach(function (ext) {
       this.setEngine(ext, fn, settings);
     }.bind(this));
@@ -446,7 +513,9 @@ utils.delegate(Templates.prototype, {
    */
 
   setEngine: function(ext, fn, settings) {
-    this._.engines.setEngine(utils.formatExt(ext), fn, settings);
+    ext = utils.formatExt(ext);
+    if (!this.option('view engine')) this.option('view engine', ext);
+    this._.engines.setEngine(ext, fn, settings);
     return this;
   },
 
@@ -470,7 +539,7 @@ utils.delegate(Templates.prototype, {
    * @return {Object} Returns a `view` object.
    */
 
-  applyLayout: function(view) {
+  applyLayout: function(view, locals) {
     if (view.options.layoutApplied) {
       return view;
     }
@@ -494,9 +563,14 @@ utils.delegate(Templates.prototype, {
     }
 
     // get the name of the first layout
+    var self = this;
     var name = view.layout;
     var str = view.content;
-    var self = this;
+
+    // if no layout is defined, move on
+    if (typeof name === 'undefined') {
+      return view;
+    }
 
     // Handle each layout before it's applied to a view
     function handleLayout(layoutObj) {
@@ -522,6 +596,151 @@ utils.delegate(Templates.prototype, {
     return view;
   },
 
+
+  /**
+   * Compile `content` with the given `locals`.
+   *
+   * ```js
+   * var blogPost = app.post('2015-09-01-foo-bar');
+   * var view = app.compile(blogPost);
+   * // view.fn => [function]
+   * ```
+   *
+   * @name .compile
+   * @param  {Object|String} `view` View object.
+   * @param  {Object} `locals`
+   * @param  {Boolean} `isAsync` Load async helpers
+   * @return {Object} View object with `fn` property with the compiled function.
+   * @api public
+   */
+
+  compile: function(view, locals, isAsync) {
+    if (typeof locals === 'boolean') {
+      isAsync = locals;
+      locals = {};
+    }
+
+    // get the engine to use
+    locals = utils.merge({settings: {}}, locals);
+    var ext = locals.engines || view.engine;
+    var engine = this.getEngine(ext);
+
+    if (engine && engine.options) {
+      locals.settings = utils.merge({}, locals.settings, engine.options);
+    }
+
+    if (typeof engine === 'undefined') {
+      throw this.error('compile', 'engine', view);
+    }
+    if (!engine.hasOwnProperty('compile')) {
+      throw this.error('compile', 'method', engine);
+    }
+
+    var ctx = view.context(locals);
+
+    // apply layout
+    view = this.applyLayout(view, ctx);
+    // handle `preCompile` middleware
+    this.handleView('preCompile', view, locals);
+
+    // Bind context to helpers before passing to the engine.
+    this.bindHelpers(view, locals, ctx, (locals.async = isAsync));
+    var settings = utils.extend({}, ctx, locals);
+
+    // compile the string
+    view.fn = engine.compile(view.content, settings);
+    // handle `postCompile` middleware
+    this.handleView('postCompile', view, locals);
+    return view;
+  },
+
+  /**
+   * Render `content` with the given `locals` and `callback`.
+   *
+   * ```js
+   * var blogPost = app.post('2015-09-01-foo-bar');
+   * app.render(blogPost, function(err, view) {
+   *   // `view` is an object with a rendered `content` property
+   * });
+   * ```
+   *
+   * @name .render
+   * @param  {Object|String} `file` String or normalized template object.
+   * @param  {Object} `locals` Locals to pass to registered view engines.
+   * @param  {Function} `callback`
+   * @api public
+   */
+
+  render: function (view, locals, cb) {
+    if (typeof locals === 'function') {
+      cb = locals;
+      locals = {};
+    }
+
+    // if `view` is a function, it's probably from chaining
+    // a collection method
+    if (typeof view === 'function') {
+      return view.call(this);
+    }
+
+    // if `view` is a string, see if it's a cached view
+    if (typeof view === 'string') {
+      view = this.lookup(view);
+    }
+
+    locals = locals || {};
+
+    var data = this.cache.data;
+    for (var key in locals) {
+      if (locals.hasOwnProperty(key) && !data.hasOwnProperty(key)) {
+        data[key] = locals[key];
+      }
+    }
+
+    // handle `preRender` middleware
+    this.handleView('preRender', view, locals);
+
+    // get the engine
+    var ext = locals.engines || view.engine;
+    var engine = this.getEngine(ext);
+
+    if (typeof cb !== 'function') {
+      throw this.error('render', 'callback');
+    }
+    if (typeof engine === 'undefined') {
+      throw this.error('render', 'engine', path.extname(view.path));
+    }
+    if (!engine.hasOwnProperty('render')) {
+      throw this.error('render', 'method', JSON.stringify(view));
+    }
+
+    var isAsync = typeof cb === 'function';
+
+    // if it's not already compiled, do that first
+    if (typeof view.fn !== 'function') {
+      try {
+        view = this.compile(view, locals, isAsync);
+        return this.render(view, locals, cb);
+      } catch (err) {
+        this.emit('error', err);
+        return cb.call(this, err);
+      }
+    }
+
+    var ctx = view.context(locals);
+    var context = this.context(view, ctx, locals);
+
+    // render the view
+    return engine.render(view.fn, context, function (err, res) {
+      if (err) {
+        this.emit('error', err);
+        return cb.call(this, err);
+      }
+      // handle `postRender` middleware
+      view.content = res;
+      this.handle('postRender', view, locals, cb);
+    }.bind(this));
+  },
 
   /**
    * Merge "partials" view types. This is necessary for template
@@ -630,6 +849,14 @@ utils.delegate(Templates.prototype, {
 
   error: function(method, id, msg) {
     return new Error(this.errors[method][id] + 'Templates#' + method + ' ' + msg);
+  },
+
+  /**
+   * Mix in a prototype method
+   */
+
+  mixin: function(key, value) {
+    Templates.prototype[key] = value;
   }
 });
 
