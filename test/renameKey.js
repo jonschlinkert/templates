@@ -11,26 +11,6 @@ var app;
 
 var postsPath = 'test/fixtures/posts/*.txt';
 
-function decorateViews(views) {
-  var fn = views.decorateView;
-  views.decorateView = function () {
-    var view = fn.apply(fn, arguments);
-    view.read = function () {
-      if (!this.contents) {
-        this.contents = fs.readFileSync(this.path);
-      }
-    };
-    return view;
-  };
-  views.loader = function (pattern) {
-    if (!isValidGlob(pattern)) return pattern;
-    utils.resolveGlob(pattern).forEach(function (fp) {
-      views.addView(fp, {path: fp});
-    });
-    return views;
-  };
-  return views;
-}
 function renameKey(key) {
   return path.basename(key, path.extname(key));
 }
