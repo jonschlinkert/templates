@@ -108,9 +108,11 @@ Base.extend(Templates, {
       this.emit('option', key, value);
       return this;
     }
-    if (typeof key === 'object') {
-      this.visit('option', key);
+
+    if (typeof key !== 'object') {
+      throw new TypeError('expected a string or object.');
     }
+    this.visit('option', key);
     return this;
   },
 
@@ -181,6 +183,13 @@ Base.extend(Templates, {
 
   decorateView: function (view) {
     var app = this;
+    if (!view.contents && typeof view.content === 'string') {
+      view.contents = new Buffer(view.content);
+    }
+    view.option = function (key, value) {
+      this.set('options.' + key, value);
+      return this;
+    };
     view.compile = function () {
       var args = [this].concat([].slice.call(arguments));
       app.compile.apply(app, args);
@@ -190,6 +199,9 @@ Base.extend(Templates, {
       var args = [this].concat([].slice.call(arguments));
       app.render.apply(app, args);
       return this;
+    };
+    view.context = function(locals) {
+      return utils.merge({}, this.locals, this.data, locals);
     };
     return view;
   },
@@ -571,7 +583,7 @@ Base.extend(Templates, {
     this.handle('preLayout', view);
 
     // get the layout stack
-    var stack = {};
+    var stack = {}, registered = 0;
     var alias = this.viewTypes.layout;
     var len = alias.length, i = 0;
 
@@ -579,8 +591,9 @@ Base.extend(Templates, {
       var views = this.views[alias[i++]];
       for (var key in views) {
         var val = views[key];
-        if (views.hasOwnProperty(key) && typeof val !== 'function' && val.path) {
+        if (views.hasOwnProperty(key)) {
           stack[key] = val;
+          registered++;
         }
       }
     }
@@ -593,6 +606,18 @@ Base.extend(Templates, {
     // if no layout is defined, move on
     if (typeof name === 'undefined') {
       return view;
+    }
+
+    if (registered === 0) {
+      throw new Error('no layouts are registered.');
+    }
+
+    if (!stack.hasOwnProperty(name)) {
+      throw new Error('cannot find layout: ' + name);
+    }
+
+    if (!str && utils.isBuffer(view.contents)) {
+      str = view.contents.toString();
     }
 
     // Handle each layout before it's applied to a view
@@ -609,10 +634,13 @@ Base.extend(Templates, {
 
     // actually apply the layout
     var res = utils.layouts(str, name, stack, opts, handleLayout);
+    if (res.result === str) {
+      throw new Error('layout was not applied to: ' + view.path);
+    }
 
-    view.option('layoutStack', res.history);
     view.option('layoutApplied', true);
-    view.content = res.result;
+    view.option('layoutStack', res.history);
+    view.contents = new Buffer(res.result);
 
     // handle post-layout middleware
     this.handle('postLayout', view);
@@ -663,6 +691,7 @@ Base.extend(Templates, {
 
     // apply layout
     view = this.applyLayout(view, ctx);
+
     // handle `preCompile` middleware
     this.handleView('preCompile', view, locals);
 
