@@ -35,6 +35,9 @@ Base.extend(Templates, {
   constructor: Templates,
 
   defaults: function () {
+    // decorate `option` method onto instance
+    utils.option(this);
+
     for (var key in this.options.mixins) {
       this.mixin(key, this.options.mixins[key]);
     }
@@ -94,27 +97,6 @@ Base.extend(Templates, {
     this.on('option', function (key, value) {
       if (key === 'mixins') this.visit('mixin', value);
     });
-  },
-
-  /**
-   * Set or get an option value
-   */
-
-  option: function (key, value) {
-    if (typeof key === 'string') {
-      if (arguments.length === 1) {
-        return this.get('options.' + key);
-      }
-      this.set('options.' + key, value);
-      this.emit('option', key, value);
-      return this;
-    }
-
-    if (typeof key !== 'object') {
-      throw new TypeError('expected a string or object.');
-    }
-    this.visit('option', key);
-    return this;
   },
 
   /**
@@ -190,10 +172,10 @@ Base.extend(Templates, {
     if (!view.contents && typeof view.content === 'string') {
       view.contents = new Buffer(view.content);
     }
-    view.option = function (key, value) {
-      this.set('options.' + key, value);
-      return this;
-    };
+
+    // decorate `option` method onto `view`
+    utils.option(view);
+
     view.compile = function () {
       var args = [this].concat([].slice.call(arguments));
       app.compile.apply(app, args);
