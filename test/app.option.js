@@ -1,7 +1,7 @@
-/* deps: mocha */
+require('should');
+require('mocha');
 var path = require('path');
 var assert = require('assert');
-var should = require('should');
 var App = require('../');
 var app;
 
@@ -18,5 +18,11 @@ describe('app.option', function () {
   it('should set an object on options:', function () {
     app.option({c: 'd'});
     assert(app.options.c === 'd');
+  });
+
+  it('should throw on invalid args:', function () {
+    (function () {
+      app.option(function () {})
+    }).should.throw('expected a string or object.');
   });
 });

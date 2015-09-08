@@ -1,8 +1,8 @@
-/* deps: mocha */
+require('should');
+require('mocha');
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
-var should = require('should');
 var Templates = require('../');
 var utils = require('../lib/utils');
 var app;

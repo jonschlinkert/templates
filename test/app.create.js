@@ -1,8 +1,8 @@
-/* deps: mocha */
+require('should');
+require('mocha');
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
-var should = require('should');
 var App = require('../');
 var app;
 
@@ -128,6 +128,23 @@ describe('create', function () {
       collection.addView('test/fixtures/templates/a.tmpl');
       collection.read('a.tmpl')
       assert(collection.getView('a.tmpl').contents.toString() === '<%= name %>');
+    });
+  });
+
+  describe('viewType', function () {
+    beforeEach(function () {
+      app = new App();
+      app.engine('tmpl', require('engine-base'));
+    });
+
+    it('should add collection to the given viewType', function () {
+      app.create('layout', {viewType: 'layout'});
+      assert(app.layouts.options.viewType[0] === 'layout');
+    });
+
+    it('should add a collection to multiple viewTypes', function () {
+      app.create('foo', {viewType: ['layout', 'renderable']});
+      assert.deepEqual(app.foos.options.viewType, ['layout', 'renderable']);
     });
   });
 });

@@ -1,12 +1,10 @@
 'use strict';
 
-require('should');
 require('mocha');
-
+var should = require('should');
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
-var should = require('should');
 var Stream = require('stream');
 var es = require('event-stream');
 var through = require('through2');
@@ -246,6 +244,12 @@ describe('View', function () {
   });
 });
 
+/**
+ * The following unit tests are from Vinyl
+ * Since we inherit vinyl in View, we need
+ * to ensure that these still pass.
+ */
+
 describe('View', function() {
   describe('isVinyl()', function() {
     it('should return true on a vinyl object', function(done) {
@@ -262,6 +266,7 @@ describe('View', function() {
       done();
     });
   });
+
   describe('constructor()', function() {
     it('should default cwd to process.cwd', function(done) {
       var view = new View();
