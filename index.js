@@ -213,12 +213,6 @@ Base.extend(Templates, {
       return app.decorateView(view);
     });
 
-    this.on('option', function (key, val) {
-      if (key === 'renameKey' && !collection.options.hasOwnProperty(key)) {
-        collection.option(key, val);
-      }
-    });
-
     if (!collection.options.hasOwnProperty('renameKey')) {
       collection.option('renameKey', this.renameKey);
     }

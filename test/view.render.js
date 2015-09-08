@@ -11,6 +11,15 @@ describe.skip('helpers', function () {
       view = new View();
     });
 
+    it('should expose `.render` for rendering a view:', function (done) {
+      app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'})
+        .render({a: 'bbb'}, function (err, res) {
+          if (err) return done(err);
+          res.contents.toString().should.equal('bbb');
+          done();
+        });
+    });
+
     it('should use helpers to render a view:', function (done) {
       var locals = {name: 'Halle'};
 
