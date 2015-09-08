@@ -36,7 +36,7 @@
     "helper-cache": "^0.7.2",
     "inflection": "^1.7.1",
     "is-valid-glob": "^0.3.0",
-    "layouts": "^0.10.3",
+    "layouts": "^0.10.5",
     "lazy-cache": "^0.2.3",
     "micromatch": "^2.2.0",
     "mixin-deep": "^1.1.3",
