@@ -1,5 +1,5 @@
-require('should');
 require('mocha');
+require('should');
 var path = require('path');
 var assert = require('assert');
 var App = require('../');
@@ -48,6 +48,27 @@ describe('helpers', function () {
         done();
       });
     });
+
+    it('should render a template when contents is a buffer:', function (done) {
+      app.pages('a.tmpl', {contents: new Buffer('<%= a %>'), locals: {a: 'b'}});
+      var view = app.pages.getView('a.tmpl');
+
+      app.render(view, function (err, view) {
+        if (err) return done(err);
+        assert(view.contents.toString() === 'b');
+        done();
+      });
+    });
+
+    it('should render a template when content is a string:', function (done) {
+      app.pages('a.tmpl', {content: '<%= a %>', locals: {a: 'b'}});
+      var view = app.pages.getView('a.tmpl');
+
+      app.render(view, function (err, view) {
+        if (err) return done(err);
+        assert(view.contents.toString() === 'b');
+        done();
+      });
+    });
   });
 });
-

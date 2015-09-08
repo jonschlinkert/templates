@@ -1,5 +1,5 @@
-require('should');
 require('mocha');
+require('should');
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
@@ -22,7 +22,7 @@ describe('create', function () {
       assert(typeof app.views.pages === 'object');
     });
 
-    it('should add a pluralized collection to `views`', function () {
+    it('should create a pluralized collection from a singular-form name:', function () {
       app.create('page');
       assert(typeof app.views.pages === 'object');
     });
@@ -66,6 +66,15 @@ describe('create', function () {
         'test/fixtures/pages/c.hbs'
       ]);
     });
+
+    it('should expose the `option` method:', function () {
+      app.pages.option('foo', 'bar')
+        .pages('test/fixtures/pages/a.hbs')
+        .pages('test/fixtures/pages/b.hbs')
+        .pages('test/fixtures/pages/c.hbs');
+
+      assert(app.pages.count === 3);
+    });
   });
 
   describe('rendering views', function () {
@@ -87,6 +96,37 @@ describe('create', function () {
           if (err) return done(err);
           assert(res.contents.toString() === 'Brian');
         })
+    });
+  });
+});
+
+describe('collection singular method', function () {
+  describe('create', function () {
+    beforeEach(function () {
+      app = new App();
+    });
+
+    it('should add a pluralized collection from singular name', function () {
+      app.create('page');
+      assert(typeof app.views.pages === 'object');
+    });
+  });
+
+  describe('adding views', function () {
+    beforeEach(function () {
+      app = new App();
+      app.engine('tmpl', require('engine-base'));
+      app.create('page');
+    });
+
+    it('should add a view to the created collection:', function () {
+      app.page('test/fixtures/pages/a.hbs');
+      assert(typeof app.views.pages['test/fixtures/pages/a.hbs'] === 'object');
+    });
+
+    it('should expose the `option` method:', function () {
+      app.pages.option('foo', 'bar')
+      app.pages.options.should.have.property('foo', 'bar');
     });
   });
 });

@@ -133,22 +133,22 @@ Base.extend(Templates, {
    * @api public
    */
 
-  create: function(name, options) {
+  create: function(name, opts) {
     if (!this.initialized) this.initialize();
 
     var collection = null;
-    if (options instanceof this.Views) {
-      collection = options;
-      options = {};
+    if (opts instanceof this.Views) {
+      collection = opts;
+      opts = {};
     } else {
-      options = options || {};
-      options.View = options.View || this.get('View');
-      options.renameKey = options.renameKey || this.options.renameKey;
-      collection = new this.Views(options);
+      opts = opts || {};
+      opts.View = opts.View || this.get('View');
+      opts.renameKey = opts.renameKey || this.options.renameKey;
+      collection = new this.Views(opts);
     }
 
     // pass the `View` constructor from `App` to the collection
-    collection = this.decorateCollection(collection);
+    collection = this.decorateViews(collection, opts);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
@@ -163,12 +163,16 @@ Base.extend(Templates, {
     this.views[plural] = collection.views;
 
     // create loader functions for adding views to this collection
-    define(this, plural, collection.addViews.bind(collection));
-    define(this, single, collection.addView.bind(collection));
+    this.define(plural, collection.addViews.bind(collection));
+    this.define(single, collection.addViews.bind(collection));
 
     // decorate loader methods with collection methods
-    utils.forward(this[plural], collection);
-    utils.forward(this[single], collection);
+    // utils.forward(this[plural], collection);
+    // utils.forward(this[single], collection);
+    this[plural].__proto__ = collection;
+    this[single].__proto__ = collection;
+    // define(this[plural], '__proto__', collection);
+    // define(this[single], '__proto__', collection);
 
     // create aliases on the collection for
     // addView/addViews to support chaining
@@ -210,21 +214,32 @@ Base.extend(Templates, {
    * Decorate `collection` intances.
    */
 
-  decorateCollection: function (collection) {
+  decorateViews: function (collection, options) {
+    var opts = utils.merge({}, this.options, options);
     var app = this;
-
     var addView = collection.addView;
-    collection.addView = function () {
+    define(collection, 'addView', function () {
+      console.log(arguments)
       var view = addView.apply(this, arguments);
       app.handleView('onLoad', view);
       return view;
-    };
+    });
 
     var decorateView = collection.decorateView;
-    collection.decorateView = function () {
+    define(collection, 'decorateView', function () {
       var view = decorateView.apply(this, arguments);
       return app.decorateView(view);
-    };
+    });
+
+    this.on('option', function (key, val) {
+      if (key === 'renameKey') {
+        collection.option(key, val);
+      }
+    });
+
+    if (opts.decorateViews) {
+      collection = opts.decorateViews(collection);
+    }
     return collection;
   },
 
@@ -804,27 +819,33 @@ Base.extend(Templates, {
   mergePartials: function (locals, viewTypes) {
     var names = viewTypes || this.viewTypes.partial;
     var opts = extend({}, this.options, locals);
+    var partials = {};
+    var self = this;
 
-    return names.reduce(function (acc, name) {
-      var collection = this.views[name];
+
+    names.forEach(function (name) {
+      var collection = self.views[name];
       for (var key in collection) {
         if (collection.hasOwnProperty(key)) {
           var view = collection[key];
 
           // handle `onMerge` middleware
-          this.handleView('onMerge', view, locals);
+          self.handleView('onMerge', view, locals);
 
           if (view.options.nomerge) return;
           if (opts.mergePartials !== false) {
             name = 'partials';
           }
-          acc[name] = acc[name] || {};
-          acc[name][key] = view.content;
+
+          // convert the partial to:
+          //=> {'foo.hbs': 'some content...'};
+          partials[name] = partials[name] || {};
+          partials[name][key] = view.content;
         }
       }
+    });
 
-      return acc;
-    }.bind(this), {});
+    return partials;
   },
 
   /**

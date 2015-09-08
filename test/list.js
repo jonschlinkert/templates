@@ -1,7 +1,7 @@
 var path = require('path');
 var assert = require('assert');
-require('should');
 require('mocha');
+require('should');
 var List = require('../lib/list');
 var list;
 

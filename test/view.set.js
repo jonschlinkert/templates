@@ -1,8 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
-require('should');
 require('mocha');
+require('should');
 var App = require('../');
 var app;
 

@@ -1,5 +1,5 @@
-require('should');
 require('mocha');
+require('should');
 var path = require('path');
 var assert = require('assert');
 var Views = require('../lib/views');
