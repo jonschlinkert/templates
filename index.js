@@ -23,6 +23,7 @@ function Templates(options) {
   }
   Base.call(this);
   this.options = options || {};
+  utils.renameKey(this);
   this.defaults();
 }
 
@@ -143,7 +144,6 @@ Base.extend(Templates, {
     } else {
       opts = opts || {};
       opts.View = opts.View || this.get('View');
-      opts.renameKey = opts.renameKey || this.options.renameKey;
       collection = new this.Views(opts);
     }
 
@@ -164,7 +164,7 @@ Base.extend(Templates, {
 
     // create loader functions for adding views to this collection
     this.define(plural, collection.addViews.bind(collection));
-    this.define(single, collection.addViews.bind(collection));
+    this.define(single, collection.addView.bind(collection));
 
     // decorate loader methods with collection methods
     // utils.forward(this[plural], collection);
@@ -217,9 +217,9 @@ Base.extend(Templates, {
   decorateViews: function (collection, options) {
     var opts = utils.merge({}, this.options, options);
     var app = this;
+
     var addView = collection.addView;
     define(collection, 'addView', function () {
-      console.log(arguments)
       var view = addView.apply(this, arguments);
       app.handleView('onLoad', view);
       return view;
@@ -232,11 +232,14 @@ Base.extend(Templates, {
     });
 
     this.on('option', function (key, val) {
-      if (key === 'renameKey') {
+      if (key === 'renameKey' && !collection.options.hasOwnProperty(key)) {
         collection.option(key, val);
       }
     });
 
+    if (!collection.options.hasOwnProperty('renameKey')) {
+      collection.option('renameKey', this.renameKey);
+    }
     if (opts.decorateViews) {
       collection = opts.decorateViews(collection);
     }
