@@ -9,7 +9,7 @@ describe('helpers', function () {
   describe('rendering', function () {
     beforeEach(function () {
       app = new App();
-      app.engine('tmpl', require('engine-lodash'));
+      app.engine('tmpl', require('engine-base'));
       app.create('page');
     });
 
@@ -26,6 +26,45 @@ describe('helpers', function () {
           if (err) return done(err);
 
           assert(res.contents.toString() === 'a HALLE b');
+          done();
+        });
+    });
+
+    it('should support helpers as an array:', function (done) {
+      var locals = {name: 'Halle'};
+
+      app.helpers([
+        {
+          lower: function (str) {
+            return str.toLowerCase(str);
+          }
+        }
+      ]);
+
+      var buffer = new Buffer('a <%= lower(name) %> b')
+      app.page('a.tmpl', {contents: buffer, locals: locals})
+        .render(function (err, res) {
+          if (err) return done(err);
+
+          assert(res.contents.toString() === 'a halle b');
+          done();
+        });
+    });
+
+    it('should support helpers as an object:', function (done) {
+      var locals = {name: 'Halle'};
+
+      app.helpers({
+        prepend: function (prefix, str) {
+          return prefix + str;
+        }
+      });
+
+      var buffer = new Buffer('a <%= prepend("foo ", name) %> b')
+      app.page('a.tmpl', {contents: buffer, locals: locals})
+        .render(function (err, res) {
+          if (err) return done(err);
+          assert(res.contents.toString() === 'a foo Halle b');
           done();
         });
     });

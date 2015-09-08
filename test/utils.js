@@ -6,7 +6,7 @@ var path = require('path');
 var assert = require('assert');
 var isAbsolute = require('is-absolute');
 var inherit = require('../lib/inherit');
-var utils = require('../lib/utils')(require);
+var utils = require('../lib/utils');
 
 describe('utils', function () {
   describe('inherit', function() {
@@ -37,6 +37,42 @@ describe('utils', function () {
       files.forEach(function (fp) {
         assert(isAbsolute(fp));
       });
+    });
+  });
+
+  describe('matchKey', function() {
+    it('should return null if the first argument is invalid:', function () {
+      assert(utils.matchKey('foo') === null);
+    });
+
+    it('should return the first property that matches the given glob:', function () {
+      var obj = {aaa: 'bbb', ccc: 'ddd'};
+      assert(utils.matchKey(obj, '*a') === 'bbb');
+    });
+  });
+
+  describe('matchKey', function() {
+    it('should return null if the first argument is invalid:', function () {
+      assert(utils.matchKey('foo') === null);
+    });
+  });
+
+  describe('error', function() {
+    it('should format an error message:', function () {
+      var err = utils.error('foo: ', {a: 'b'});
+      assert(err.message === 'foo: {"a":"b"}');
+    });
+  });
+
+  describe('tryRequire', function() {
+    it('should require a file:', function () {
+      var file = utils.tryRequire('test/fixtures/helpers/a.js');
+      assert(typeof file === 'function');
+    });
+
+    it('should return `null` when unsuccessful:', function () {
+      var file = utils.tryRequire('test/fixtures/helpers/fofofo.js');
+      assert(file === null);
     });
   });
 

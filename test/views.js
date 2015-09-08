@@ -63,9 +63,37 @@ describe('views', function () {
     });
   });
 
+  describe('option', function() {
+    beforeEach(function() {
+      collection = new Views();
+    });
+
+    it('should set a key/value pair on options:', function () {
+      collection.option('a', 'b');
+      assert(collection.options.a === 'b');
+    });
+
+    it('should set an object on options:', function () {
+      collection.option({c: 'd'});
+      assert(collection.options.c === 'd');
+    });
+
+    it('should get an option:', function () {
+      collection.option({c: 'd'});
+      var c = collection.option('c');
+      assert(c === 'd');
+    });
+  });
+
   describe('addView', function() {
     beforeEach(function() {
       collection = new Views();
+    });
+
+    it('should throw an error when args are invalid:', function () {
+      (function () {
+        collection.addView('foo', 'bar');
+      }).should.throw('expected value to be an object.');
     });
 
     it('should add a view to `views`:', function () {

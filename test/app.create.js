@@ -76,7 +76,7 @@ describe('create', function () {
   describe('chaining', function () {
     beforeEach(function () {
       app = new App();
-      app.engine('tmpl', require('engine-lodash'));
+      app.engine('tmpl', require('engine-base'));
       app.create('page');
     });
 
@@ -105,7 +105,7 @@ describe('create', function () {
   describe('instance', function () {
     beforeEach(function () {
       app = new App();
-      app.engine('tmpl', require('engine-lodash'));
+      app.engine('tmpl', require('engine-base'));
     });
 
     it('should return the collection instance', function () {

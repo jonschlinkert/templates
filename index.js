@@ -9,15 +9,13 @@
 
 var path = require('path');
 var Base = require('base-methods');
-var router = require('en-route');
 var extend = require('extend-shallow');
 var define = require('define-property');
-var utils = require('./lib/utils')(require);
+var utils = require('./lib/utils');
 var Views = require('./lib/views');
 var List = require('./lib/list');
 var View = require('./lib/view');
 var lib = require('./lib/');
-
 
 function Templates(options) {
   if (!(this instanceof Templates)) {
@@ -28,13 +26,11 @@ function Templates(options) {
   this.defaults();
 }
 
-Base.extend(Templates);
-
 /**
  * `Templates` prototype methods
  */
 
-utils.delegate(Templates.prototype, {
+Base.extend(Templates, {
   constructor: Templates,
 
   defaults: function () {
@@ -44,10 +40,8 @@ utils.delegate(Templates.prototype, {
 
     this.engines = {};
     this.define('_', {});
-    this._.engines = new utils.Engines(this.engines);
-
     lib.helpers(this);
-    // lib.lookup(this);
+    this._.engines = new utils.Engines(this.engines);
 
     this.define('errors', {
       compile: {
@@ -147,11 +141,12 @@ utils.delegate(Templates.prototype, {
     } else {
       options = options || {};
       options.View = options.View || this.get('View');
+      options.renameKey = options.renameKey || this.options.renameKey;
       collection = new this.Views(options);
     }
 
     // pass the `View` constructor from `App` to the collection
-    collection = this.decorateViews(collection);
+    collection = this.decorateCollection(collection);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
@@ -181,7 +176,7 @@ utils.delegate(Templates.prototype, {
   },
 
   /**
-   * Decorate `view` intances in the collection.
+   * Decorate `view` instances in the collection.
    */
 
   decorateView: function (view) {
@@ -200,18 +195,24 @@ utils.delegate(Templates.prototype, {
   },
 
   /**
-   * Decorate `view` intances in the collection.
+   * Decorate `collection` intances.
    */
 
-  decorateViews: function (collection) {
+  decorateCollection: function (collection) {
     var app = this;
 
-    var decorateView = collection.decorateView;
-    collection.decorateView = function (view) {
-      view = decorateView.call(this, view);
-      return app.decorateView(view);
+    var addView = collection.addView;
+    collection.addView = function () {
+      var view = addView.apply(this, arguments);
+      app.handleView('onLoad', view);
+      return view;
     };
 
+    var decorateView = collection.decorateView;
+    collection.decorateView = function () {
+      var view = decorateView.apply(this, arguments);
+      return app.decorateView(view);
+    };
     return collection;
   },
 
@@ -339,12 +340,13 @@ utils.delegate(Templates.prototype, {
    */
 
   getViews: function(plural) {
+    var orig = plural;
     if (utils.isObject(plural)) return plural;
     if (!this.views.hasOwnProperty(plural)) {
       plural = this.inflections[plural];
     }
     if (!this.views.hasOwnProperty(plural)) {
-      throw new Error('getViews cannot find collection' + plural);
+      throw new Error('getViews cannot find collection: ' + orig);
     }
     return this.views[plural];
   },
@@ -355,10 +357,10 @@ utils.delegate(Templates.prototype, {
 
   lookup: function (name, collection) {
     if (typeof name !== 'string') {
-      return null;
+      throw new TypeError('expected name to be a string.');
     }
     if (typeof collection === 'string') {
-      return this[collection].get(name);
+      return this[collection].getView(name);
     }
     var collections = this.viewTypes.renderable;
     var len = collections.length, i = 0;
@@ -376,7 +378,7 @@ utils.delegate(Templates.prototype, {
    * Add `Router` to the prototype
    */
 
-  Router: router.Router,
+  Router: utils.router.Router,
 
   /**
    * Lazily initalize `router`, to allow options to
@@ -447,13 +449,15 @@ utils.delegate(Templates.prototype, {
    */
 
   handleView: function (method, view, locals/*, cb*/) {
+    view.options = view.options || {};
+
     if (!view.options.handled) {
       view.options.handled = [];
     }
     if (view.options.handled.indexOf(method) < 0) {
       this.handle.apply(this, arguments);
+      this.emit(method, view, locals);
     }
-    this.emit(method, view, locals);
     return this;
   },
 
@@ -599,9 +603,9 @@ utils.delegate(Templates.prototype, {
     }
 
     var opts = {};
-    extend(opts, this.options);
-    extend(opts, view.options);
-    extend(opts, view.context());
+    utils.extend(opts, this.options);
+    utils.extend(opts, view.options);
+    utils.extend(opts, view.context());
 
     // actually apply the layout
     var res = utils.layouts(str, name, stack, opts, handleLayout);
@@ -667,7 +671,9 @@ utils.delegate(Templates.prototype, {
     var settings = utils.extend({}, ctx, locals);
 
     // compile the string
-    view.fn = engine.compile(view.content, settings);
+    var str = view.contents.toString();
+    view.fn = engine.compile(str, settings);
+
     // handle `postCompile` middleware
     this.handleView('postCompile', view, locals);
     return view;
@@ -732,7 +738,6 @@ utils.delegate(Templates.prototype, {
     // if it's not already compiled, do that first
     if (typeof view.fn !== 'function') {
       try {
-        if (!view.content) view.content = view.contents.toString()
         view = this.compile(view, locals, isAsync);
         return this.render(view, locals, cb);
       } catch (err) {
@@ -773,18 +778,22 @@ utils.delegate(Templates.prototype, {
 
     return names.reduce(function (acc, name) {
       var collection = this.views[name];
+      for (var key in collection) {
+        if (collection.hasOwnProperty(key)) {
+          var view = collection[key];
 
-      utils.forOwn(collection, function (view, key) {
-        // handle `onMerge` middleware
-        this.handleView('onMerge', view, locals);
+          // handle `onMerge` middleware
+          this.handleView('onMerge', view, locals);
 
-        if (view.options.nomerge) return;
-        if (opts.mergePartials !== false) {
-          name = 'partials';
+          if (view.options.nomerge) return;
+          if (opts.mergePartials !== false) {
+            name = 'partials';
+          }
+          acc[name] = acc[name] || {};
+          acc[name][key] = view.content;
         }
-        acc[name] = acc[name] || {};
-        acc[name][key] = view.content;
-      }, this);
+      }
+
       return acc;
     }.bind(this), {});
   },
@@ -800,11 +809,11 @@ utils.delegate(Templates.prototype, {
 
   context: function (view, ctx, locals) {
     var obj = {};
-    extend(obj, ctx);
-    extend(obj, this.cache.data);
-    extend(obj, view.data);
-    extend(obj, view.locals);
-    extend(obj, locals);
+    utils.extend(obj, ctx);
+    utils.extend(obj, this.cache.data);
+    utils.extend(obj, view.data);
+    utils.extend(obj, view.locals);
+    utils.extend(obj, locals);
     return obj;
   },
 
@@ -814,11 +823,11 @@ utils.delegate(Templates.prototype, {
 
   bindHelpers: function (view, locals, context, isAsync) {
     var helpers = {};
-    extend(helpers, this.options.helpers);
-    extend(helpers, this._.helpers.sync);
+    utils.extend(helpers, this.options.helpers);
+    utils.extend(helpers, this._.helpers.sync);
 
     if (isAsync) extend(helpers, this._.helpers.async);
-    extend(helpers, locals.helpers);
+    utils.extend(helpers, locals.helpers);
 
     // build the context to expose as `this` in helpers
     var thisArg = {};

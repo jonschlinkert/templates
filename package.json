@@ -10,7 +10,8 @@
   },
   "license": "MIT",
   "files": [
-    "index.js"
+    "index.js",
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -20,17 +21,15 @@
     "test": "mocha"
   },
   "dependencies": {
-    "base-methods": "^0.2.1",
+    "base-methods": "^0.2.3",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "define-property": "^0.2.5",
-    "delegate-properties": "^0.3.0",
     "en-route": "^0.7.3",
+    "engine-base": "^0.1.2",
     "engine-cache": "^0.14.1",
-    "engine-lodash": "^0.8.2",
     "export-files": "^2.1.0",
     "extend-shallow": "^2.0.1",
-    "for-own": "^0.1.3",
     "forward-object": "^0.1.1",
     "globby": "^3.0.1",
     "has-glob": "^0.1.0",

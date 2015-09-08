@@ -31,7 +31,7 @@ describe('create', function () {
   describe('adding views', function () {
     beforeEach(function () {
       app = new App();
-      app.engine('tmpl', require('engine-lodash'));
+      app.engine('tmpl', require('engine-base'));
       app.create('pages');
     });
 
@@ -71,7 +71,7 @@ describe('create', function () {
   describe('rendering views', function () {
     beforeEach(function () {
       app = new App();
-      app.engine('tmpl', require('engine-lodash'));
+      app.engine('tmpl', require('engine-base'));
       app.create('pages');
     });
 

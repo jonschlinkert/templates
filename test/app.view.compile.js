@@ -9,7 +9,7 @@ describe('app view', function () {
   describe('compile method', function () {
     beforeEach(function () {
       app = new App();
-      app.engine('tmpl', require('engine-lodash'));
+      app.engine('tmpl', require('engine-base'));
       app.create('page');
     });
 
