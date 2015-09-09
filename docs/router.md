@@ -29,10 +29,14 @@ Router methods are similar to the router METHODS in [express][], but instead of 
 
 Immediately after a view is loaded, as a last step just before adding the view to a collection.
 
+**Example**
+
+Parse [YAML Front Matter][yaml] and add the parsed data object to `view.data`:
+
 ```js
+var matter = require('parser-front-matter');
 app.onLoad(/\.hbs$/, function(view, next) {
-  // do something with `view`
-  next();
+  matter.parse(view, next);
 });
 ```
 
@@ -125,7 +129,7 @@ app.postRender(/\.hbs$/, function(view, next) {
 ```
 
 
-
+[yaml]: https://en.wikipedia.org/wiki/YAML
 [verbs]: http://expressjs.com/api.html#router.METHOD
 
 {%= reflinks(['express']) %}
