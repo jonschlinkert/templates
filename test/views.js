@@ -92,7 +92,7 @@ describe('views', function () {
 
     it('should throw an error when args are invalid:', function () {
       (function () {
-        collection.addView('foo', 'bar');
+        collection.addView(function() {});
       }).should.throw('expected value to be an object.');
     });
 

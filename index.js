@@ -11,6 +11,7 @@ var path = require('path');
 var Base = require('base-methods');
 var extend = require('extend-shallow');
 var define = require('define-property');
+var helpers = require('./lib/helpers/');
 var utils = require('./lib/utils');
 var Views = require('./lib/views');
 var List = require('./lib/list');
@@ -97,6 +98,10 @@ Base.extend(Templates, {
     this.on('option', function (key, value) {
       if (key === 'mixins') this.visit('mixin', value);
     });
+
+    this.on('error', function (err) {
+      if (err.id === 'rethrow') console.error(err.reason);
+    });
   },
 
   /**
@@ -136,10 +141,15 @@ Base.extend(Templates, {
     var single = utils.single(name);
     var plural = utils.plural(name);
 
-    this.viewType(plural, collection.viewType());
-
     // map the inflections for lookups
     this.inflections[single] = plural;
+
+    // add inflections to collection options
+    collection.option('inflection', single);
+    collection.option('plural', plural);
+
+    // prime the viewType(s) for the collection
+    this.viewType(plural, collection.viewType());
 
     // add the collection to `app.views`
     this.views[plural] = collection.views;
@@ -156,6 +166,10 @@ Base.extend(Templates, {
     // addView/addViews to support chaining
     collection.define(plural, this[plural]);
     collection.define(single, this[single]);
+
+    // add collection and view helpers
+    helpers.plural(this, collection, opts);
+    // helpers.single(this, this[single], opts);
     return collection;
   },
 
@@ -579,11 +593,8 @@ Base.extend(Templates, {
     while (len--) {
       var views = this.views[alias[i++]];
       for (var key in views) {
-        var val = views[key];
-        if (views.hasOwnProperty(key)) {
-          stack[key] = val;
-          registered++;
-        }
+        stack[key] = views[key];
+        registered++;
       }
     }
 
@@ -609,17 +620,18 @@ Base.extend(Templates, {
       str = view.contents.toString();
     }
 
-    // Handle each layout before it's applied to a view
-    function handleLayout(layoutObj) {
-      view.currentLayout = layoutObj.layout;
-      self.handle('onLayout', view);
-      delete view.currentLayout;
-    }
-
     var opts = {};
     utils.extend(opts, this.options);
     utils.extend(opts, view.options);
     utils.extend(opts, view.context());
+
+    // Handle each layout before it's applied to a view
+    function handleLayout(obj, stats/*, depth*/) {
+      view.currentLayout = obj.layout;
+      view.define('layoutStack', stats.history);
+      self.handle('onLayout', view);
+      delete view.currentLayout;
+    }
 
     // actually apply the layout
     var res = utils.layouts(str, name, stack, opts, handleLayout);
@@ -731,15 +743,14 @@ Base.extend(Templates, {
       view = this.lookup(view);
     }
 
-    locals = locals || {};
-
-    var data = utils.merge({}, locals, this.cache.data);
+    view.locals = utils.merge({}, view.locals, locals);
+    locals = utils.merge({}, this.cache.data, view.locals);
 
     // handle `preRender` middleware
     this.handleView('preRender', view, locals);
 
     // get the engine
-    var ext = locals.engines || view.engine;
+    var ext = locals.engines || view.engine || path.extname(view.path);
     var engine = this.getEngine(ext);
 
     if (typeof cb !== 'function') {
@@ -753,23 +764,28 @@ Base.extend(Templates, {
     }
 
     var isAsync = typeof cb === 'function';
+
     // if it's not already compiled, do that first
     if (typeof view.fn !== 'function') {
       try {
         view = this.compile(view, locals, isAsync);
         return this.render(view, locals, cb);
-      } catch (err) {
+      } catch(err) {
         this.emit('error', err);
         return cb.call(this, err);
       }
     }
 
+    var opts = this.options;
     var ctx = view.context(locals);
     var context = this.context(view, ctx, locals);
 
     // render the view
     return engine.render(view.fn, context, function (err, res) {
       if (err) {
+        if (opts.rethrow !== false) {
+          err = this.rethrow('render', err, view, context);
+        }
         this.emit('error', err);
         return cb.call(this, err);
       }
@@ -835,8 +851,8 @@ Base.extend(Templates, {
     var obj = {};
     utils.extend(obj, ctx);
     utils.extend(obj, this.cache.data);
-    utils.extend(obj, view.data);
     utils.extend(obj, view.locals);
+    utils.extend(obj, view.data);
     utils.extend(obj, locals);
     return obj;
   },
@@ -895,7 +911,6 @@ Base.extend(Templates, {
    * Format an error
    *
    * TODO:
-   *  - rethrow
    *  - add engine info to error
    */
 
@@ -907,6 +922,25 @@ Base.extend(Templates, {
     err.msg = msg;
     this.emit('error', err);
     return err;
+  },
+
+  /**
+   * Rethrow an error in the given context to
+   * get better error messages.
+   */
+
+  rethrow: function(method, err, view, context) {
+    try {
+      utils.rethrow(view.contents.toString(), {
+        data: context,
+        fp: view.path
+      });
+    } catch (msg) {
+      err.method = method;
+      err.reason = msg;
+      err.id = 'rethrow';
+      return err;
+    }
   },
 
   /**
