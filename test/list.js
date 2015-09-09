@@ -190,7 +190,7 @@ describe('list', function () {
         };
       };
 
-      list.sort('locals.date', 'doesnt.exist', [
+      list.sortBy('locals.date', 'doesnt.exist', [
         compare('locals.foo'),
         compare('locals.bar')
       ]);
@@ -209,6 +209,59 @@ describe('list', function () {
         { key: 'f.md', locals: { date: '2014-06-01', foo: 'rrr', bar: 10 } },
         { key: 'e.md', locals: { date: '2015-01-02', foo: 'aaa', bar: 8 } },
         { key: 'c.md', locals: { date: '2015-04-12', foo: 'ttt', bar: 11 } }
+      ]);
+    });
+
+    it('should pass options to array-sort:', function () {
+      list = new List({sort: {reverse: true}});
+
+      function addContents(item) {
+        item.contents = new Buffer(item.path.charAt(0));
+      }
+
+      list.addList([
+        { path: 'a.md', locals: { date: '2014-01-01', foo: 'zzz', bar: 1 } },
+        { path: 'f.md', locals: { date: '2014-01-01', foo: 'mmm', bar: 2 } },
+        { path: 'd.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 3 } },
+        { path: 'i.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 5 } },
+        { path: 'k.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 1 } },
+        { path: 'j.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 4 } },
+        { path: 'h.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 6 } },
+        { path: 'l.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 7 } },
+        { path: 'e.md', locals: { date: '2015-01-02', foo: 'aaa', bar: 8 } },
+        { path: 'b.md', locals: { date: '2012-01-02', foo: 'ccc', bar: 9 } },
+        { path: 'f.md', locals: { date: '2014-06-01', foo: 'rrr', bar: 10 } },
+        { path: 'c.md', locals: { date: '2015-04-12', foo: 'ttt', bar: 11 } },
+        { path: 'g.md', locals: { date: '2014-02-02', foo: 'yyy', bar: 12 } },
+      ]);
+
+      var compare = function(prop) {
+        return function (a, b, fn) {
+          var valA = get(a, prop);
+          var valB = get(b, prop);
+          return fn(valA, valB);
+        };
+      };
+
+      list.sortBy('locals.date', 'doesnt.exist', [
+        compare('locals.foo'),
+        compare('locals.bar')
+      ]);
+
+      assert.containEql(list.items, [
+        { key: 'c.md', locals: { date: '2015-04-12', foo: 'ttt', bar: 11 } },
+        { key: 'e.md', locals: { date: '2015-01-02', foo: 'aaa', bar: 8 } },
+        { key: 'f.md', locals: { date: '2014-06-01', foo: 'rrr', bar: 10 } },
+        { key: 'g.md', locals: { date: '2014-02-02', foo: 'yyy', bar: 12 } },
+        { key: 'a.md', locals: { date: '2014-01-01', foo: 'zzz', bar: 1 } },
+        { key: 'l.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 7 } },
+        { key: 'h.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 6 } },
+        { key: 'i.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 5 } },
+        { key: 'j.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 4 } },
+        { key: 'd.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 3 } },
+        { key: 'k.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 1 } },
+        { key: 'f.md', locals: { date: '2014-01-01', foo: 'mmm', bar: 2 } },
+        { key: 'b.md', locals: { date: '2012-01-02', foo: 'ccc', bar: 9 } }
       ]);
     });
   });
