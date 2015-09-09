@@ -54,7 +54,7 @@ Base.extend(Templates, {
         method: 'expects engines to have a compile method',
       },
       render: {
-        callback: 'is async and expects a callback function: ',
+        callback: 'is async and expects a callback function',
         engine: 'cannot find an engine for: ',
         method: 'expects engines to have a render method',
       }
@@ -100,7 +100,7 @@ Base.extend(Templates, {
     });
 
     this.on('error', function (err) {
-      if (err.id === 'rethrow') console.error(err.reason);
+      if (err && err.id === 'rethrow') console.error(err.reason);
     });
   },
 
@@ -674,7 +674,8 @@ Base.extend(Templates, {
 
     // get the engine to use
     locals = utils.merge({settings: {}}, locals);
-    var ext = locals.engines || view.engine;
+    var extname = view.ext || (view.ext = path.extname(view.path));
+    var ext = locals.engines || view.engine || extname;
     var engine = this.getEngine(ext);
 
     if (engine && engine.options) {
@@ -682,10 +683,7 @@ Base.extend(Templates, {
     }
 
     if (typeof engine === 'undefined') {
-      throw this.error('compile', 'engine', view);
-    }
-    if (!engine.hasOwnProperty('compile')) {
-      throw this.error('compile', 'method', engine);
+      throw this.error('compile', 'engine', view.ext);
     }
 
     var ctx = view.context(locals);
@@ -698,6 +696,8 @@ Base.extend(Templates, {
 
     // Bind context to helpers before passing to the engine.
     this.bindHelpers(view, locals, ctx, (locals.async = isAsync));
+
+    // shallow clone the context and locals
     var settings = utils.extend({}, ctx, locals);
 
     // compile the string
@@ -750,17 +750,15 @@ Base.extend(Templates, {
     this.handleView('preRender', view, locals);
 
     // get the engine
-    var ext = locals.engines || view.engine || path.extname(view.path);
+    var extname = view.ext || (view.ext = path.extname(view.path));
+    var ext = locals.engines || view.engine || extname;
     var engine = this.getEngine(ext);
 
     if (typeof cb !== 'function') {
       throw this.error('render', 'callback');
     }
     if (typeof engine === 'undefined') {
-      throw this.error('render', 'engine', path.extname(view.path));
-    }
-    if (!engine.hasOwnProperty('render')) {
-      throw this.error('render', 'method', JSON.stringify(view));
+      return cb(this.error('render', 'engine', extname));
     }
 
     var isAsync = typeof cb === 'function';
@@ -816,22 +814,20 @@ Base.extend(Templates, {
     names.forEach(function (name) {
       var collection = self.views[name];
       for (var key in collection) {
-        if (collection.hasOwnProperty(key)) {
-          var view = collection[key];
+        var view = collection[key];
 
-          // handle `onMerge` middleware
-          self.handleView('onMerge', view, locals);
+        // handle `onMerge` middleware
+        self.handleView('onMerge', view, locals);
 
-          if (view.options.nomerge) return;
-          if (opts.mergePartials !== false) {
-            name = 'partials';
-          }
-
-          // convert the partial to:
-          //=> {'foo.hbs': 'some content...'};
-          partials[name] = partials[name] || {};
-          partials[name][key] = view.content;
+        if (view.options.nomerge) return;
+        if (opts.mergePartials !== false) {
+          name = 'partials';
         }
+
+        // convert the partial to:
+        //=> {'foo.hbs': 'some content...'};
+        partials[name] = partials[name] || {};
+        partials[name][key] = view.content;
       }
     });
 
@@ -915,7 +911,8 @@ Base.extend(Templates, {
    */
 
   error: function(method, id, msg) {
-    var reason = this.errors[method][id] + 'Templates#' + method + ' ' + msg;
+    var ctx = this.errors[method][id];
+    var reason = 'Templates#' + method + ' ' + ctx + (msg || '');
     var err = new Error(reason);
     err.reason = reason;
     err.id = id;

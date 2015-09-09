@@ -13,6 +13,22 @@ describe('helpers', function () {
       app.create('page');
     });
 
+    it('should throw an error when no callback is given:', function () {
+      (function() {
+        app.render({});
+      }).should.throw('Templates#render is async and expects a callback function');
+    });
+
+    it('should throw an error when an engine is not defined:', function (done) {
+      app.page('foo.bar', {content: '<%= name %>'});
+      var page = app.pages.getView('foo.bar');
+
+      app.render(page, function(err) {
+        assert(err.message === 'Templates#render cannot find an engine for: .bar');
+        done();
+      });
+    });
+
     it('should use helpers to render a view:', function (done) {
       var locals = {name: 'Halle'};
 
