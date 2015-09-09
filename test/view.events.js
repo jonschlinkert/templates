@@ -1,24 +1,19 @@
-'use strict';
-
-/* deps: mocha */
-var assert = require('assert');
-var should = require('should');
+require('should');
 var App = require('..');
 var app;
 
 describe('view.option()', function () {
   beforeEach(function () {
     app = new App();
-    app.engine('tmpl', require('engine-base'));
     app.create('page');
-  })
+  });
 
   it('should emit events:', function () {
     app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});
     var page = app.pages.getView('a.tmpl');
     var events = [];
 
-    page.on('option', function (key, value) {
+    page.on('option', function (key) {
       events.push(key);
     });
 

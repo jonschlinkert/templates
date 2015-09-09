@@ -1,8 +1,5 @@
-'use strict';
-
-/* deps: mocha */
+require('should');
 var assert = require('assert');
-var should = require('should');
 var App = require('..');
 var app;
 
@@ -10,7 +7,7 @@ describe('compile', function () {
   beforeEach(function () {
     app = new App();
     app.create('page');
-  })
+  });
 
   it('should throw an error when no callback is given:', function () {
     app.page('foo.bar', {content: '<%= name %>'});

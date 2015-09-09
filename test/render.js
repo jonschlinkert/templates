@@ -1,7 +1,6 @@
-var path = require('path');
-var assert = require('assert');
 require('mocha');
 require('should');
+var assert = require('assert');
 var App = require('../');
 var app;
 
@@ -29,7 +28,7 @@ describe('render', function () {
       delete view.locals.name;
 
       app.page('a.tmpl', view)
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err.message === 'name is not defined');
           done();
         });
@@ -43,7 +42,7 @@ describe('render', function () {
       app.create('page');
 
       app.page('a.tmpl', view)
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err.message === 'name is not defined');
           done();
         });
@@ -62,7 +61,7 @@ describe('render', function () {
       });
 
       app.page('a.tmpl', view)
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err.message === 'name is not defined');
         });
     });

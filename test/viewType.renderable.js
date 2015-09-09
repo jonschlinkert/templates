@@ -1,6 +1,3 @@
-
-var fs = require('fs');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;

@@ -3,7 +3,6 @@ require('should');
 var path = require('path');
 var get = require('get-value');
 var List = require('../lib/list');
-var View = require('../lib/view');
 var Views = require('../lib/views');
 var assert = require('./support');
 var list, views;
@@ -352,7 +351,7 @@ describe('list', function () {
         })
         .use(function (list, options) {
           this.set('one', 'two');
-        })
+        });
 
       assert(list.one === 'two');
       assert(list.options.foo === 'bar');

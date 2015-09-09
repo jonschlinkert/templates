@@ -10,7 +10,7 @@ describe('layouts', function () {
     app.engine('tmpl', require('engine-base'));
     app.create('layout', { viewType: 'layout' });
     app.create('page');
-  })
+  });
 
   it('should apply a layout to a view:', function (done) {
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});

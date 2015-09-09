@@ -1,8 +1,5 @@
-'use strict';
-
+require('should');
 var assert = require('assert');
-var should = require('should');
-var Router = require('en-route').Router;
 var App = require('..');
 var app;
 

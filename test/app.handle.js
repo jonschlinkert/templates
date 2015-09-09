@@ -1,13 +1,12 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
-var Templates = require('../');
+var App = require('../');
 var app;
 
 describe('handler', function () {
   beforeEach(function () {
-    app = new Templates();
+    app = new App();
     app.create('pages');
     app.handlers(['foo']);
   })

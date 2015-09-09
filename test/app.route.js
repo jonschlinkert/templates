@@ -1,6 +1,5 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;

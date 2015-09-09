@@ -1,6 +1,5 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;
@@ -24,7 +23,7 @@ describe('helpers', function () {
     it('should throw an error when a layout cannot be found:', function (done) {
       app.layout('fofof.tmpl', {content: '..'});
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err.message === 'cannot find layout: default.tmpl');
           done();
         });
@@ -37,13 +36,13 @@ describe('helpers', function () {
         done();
       });
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function () {
         });
     });
 
     it('should throw an error - layout defined but no layouts registered:', function (done) {
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err.message === 'no layouts are registered.');
           done();
         });
@@ -55,14 +54,14 @@ describe('helpers', function () {
         done();
       });
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function () {
         });
     });
 
     it('should wrap a view with a layout (view.render):', function (done) {
       app.layout('default.tmpl', {content: 'before {% body %} after'});
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function (err) {
           if (err) return done(err);
           done();
         });
@@ -84,7 +83,7 @@ describe('helpers', function () {
       app.layout('no_body_tag.tmpl', {content: 'who? me?'});
       page.layout = 'no_body_tag.tmpl';
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err.message === 'cannot find layout tag "body" in "no_body_tag.tmpl"');
           done();
         });
@@ -98,7 +97,7 @@ describe('helpers', function () {
       page.layout = 'no_body_tag.tmpl';
       app.layout('no_body_tag.tmpl', {content: 'who? me?'});
       app.page('a.tmpl', page)
-        .render(function (err, res) {
+        .render(function () {
         });
     });
   });

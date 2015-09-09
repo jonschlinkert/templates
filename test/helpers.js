@@ -1,8 +1,6 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
-var async = require('async');
 var matter = require('parser-front-matter');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
@@ -67,7 +65,7 @@ describe('helpers', function () {
 
     it('should throw an error if an invalid arg is passed:', function () {
       (function () {
-        app.helpers(function() {})
+        app.helpers(function() {});
       }).should.throw('expected helpers to be an object.');
     });
 
@@ -143,7 +141,7 @@ describe('helpers', function () {
 
     it('should throw an error if an invalid arg is passed:', function () {
       (function () {
-        app.asyncHelpers(function() {})
+        app.asyncHelpers(function() {});
       }).should.throw('expected helpers to be an object.');
     });
 
@@ -176,7 +174,7 @@ describe('sync helpers', function () {
     app = new App();
     app.engine('tmpl', require('engine-base'));
     app.create('page');
-  })
+  });
 
   it('should register a helper:', function () {
     app.helper('a', function () {});
@@ -207,7 +205,7 @@ describe('async helpers', function () {
     app = new App();
     app.engine('tmpl', require('engine-base'));
     app.create('page');
-  })
+  });
 
   it('should register an async helper:', function () {
     app.asyncHelper('a', function () {});
@@ -246,9 +244,8 @@ describe('built-in helpers:', function () {
       app.onLoad(/./, function (view, next) {
         matter.parse(view, function(err, res) {
           view.contents = new Buffer(res.content);
-          view.define('orig', res.orig);
           view.data = res.data;
-          next()
+          next();
         });
       });
     });
@@ -358,9 +355,8 @@ describe('built-in helpers:', function () {
       app.onLoad(/./, function (view, next) {
         matter.parse(view, function(err, res) {
           view.contents = new Buffer(res.content);
-          view.define('orig', res.orig);
           view.data = res.data;
-          next()
+          next();
         });
       });
     });
@@ -368,7 +364,7 @@ describe('built-in helpers:', function () {
     it.skip('should prefer front-matter over view locals and helper locals.', function (done) {
       // app.disable('prefer locals');
       app.partial('a.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
-      app.page('b.md', {path: 'b.md', content: 'foo <%= partial("a.md") %> bar'})
+      app.page('b.md', {path: 'b.md', content: 'foo <%= partial("a.md") %> bar'});
 
       app.render('b.md', function (err, res) {
         if (err) return done(err);
@@ -423,9 +419,8 @@ describe('built-in helpers:', function () {
       app.onLoad(/./, function (view, next) {
         matter.parse(view, function(err, res) {
           view.contents = new Buffer(res.content);
-          view.define('orig', res.orig);
           view.data = res.data;
-          next()
+          next();
         });
       });
     });

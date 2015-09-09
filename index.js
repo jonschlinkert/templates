@@ -450,14 +450,12 @@ Base.extend(Templates, {
    * Handle a middleware `method` for `view`.
    *
    * ```js
-   * app.handle('customHandle', view);
+   * app.handle('customMethod', view, callback);
    * ```
-   *
    * @name .handle
-   * @param {String} `method` Router method to use. See [router methods][methods]
+   * @param {String} `method` Name of the router method to handle. See [router methods](./router.md)
    * @param {Object} `view` View object
-   * @param {Object} `locals`
-   * @param {Function} `cb`
+   * @param {Function} `callback` Callback function
    * @return {Object}
    * @api public
    */
@@ -532,7 +530,7 @@ Base.extend(Templates, {
    * Create a new Route for the given path. Each route contains
    * a separate middleware stack.
    *
-   * See the [Route api documentation][route-api] for details on
+   * See the [route API documentation][route-api] for details on
    * adding handlers and middleware to routes.
    *
    * @param {String} `path`
@@ -546,8 +544,8 @@ Base.extend(Templates, {
   },
 
   /**
-   * Special-cased "all" method, applying the given route `path`,
-   * middleware, and callback.
+   * Special route method that works just like the `router.METHOD()`
+   * methods, except that it matches all verbs.
    *
    * ```js
    * app.all(/\.hbs$/, function(view, next) {
@@ -599,9 +597,20 @@ Base.extend(Templates, {
   /**
    * Register a view engine callback `fn` as `ext`.
    *
-   * @param {String|Array} `exts` One or more file extensions.
+   * ```js
+   * app.engine('hbs', require('engine-handlebars'));
+   *
+   * // using consolidate.js
+   * var engine = require('consolidate');
+   * app.engine('jade', engine.jade);
+   * app.engine('swig', engine.swig);
+   *
+   * // get a registered engine
+   * var swig = app.engine('swig');
+   * ```
+   * @param {String|Array} `exts` String or array of file extensions.
    * @param {Function|Object} `fn` or `settings`
-   * @param {Object} `settings`
+   * @param {Object} `settings` Optionally pass engine options as the last argument.
    * @api public
    */
 
@@ -622,7 +631,6 @@ Base.extend(Templates, {
    * Register an engine for `ext` with the given `settings`
    *
    * @param {String} `ext` The engine to get.
-   * @api public
    */
 
   setEngine: function(ext, fn, settings) {
@@ -636,7 +644,6 @@ Base.extend(Templates, {
    * Get the engine settings registered for the given `ext`.
    *
    * @param {String} `ext` The engine to get.
-   * @api public
    */
 
   getEngine: function(ext) {
@@ -728,9 +735,15 @@ Base.extend(Templates, {
    * Compile `content` with the given `locals`.
    *
    * ```js
-   * var blogPost = app.post('2015-09-01-foo-bar');
-   * var view = app.compile(blogPost);
+   * var indexPage = app.page('some-index-page.hbs');
+   * var view = app.compile(indexPage);
    * // view.fn => [function]
+   *
+   * // you can call the compiled function more than once
+   * // to render the view with different data
+   * view.fn({title: 'Foo'});
+   * view.fn({title: 'Bar'});
+   * view.fn({title: 'Baz'});
    * ```
    *
    * @name .compile
@@ -785,7 +798,7 @@ Base.extend(Templates, {
   },
 
   /**
-   * Render `content` with the given `locals` and `callback`.
+   * Render a view with the given `locals` and `callback`.
    *
    * ```js
    * var blogPost = app.post('2015-09-01-foo-bar');
@@ -793,7 +806,6 @@ Base.extend(Templates, {
    *   // `view` is an object with a rendered `content` property
    * });
    * ```
-   *
    * @name .render
    * @param  {Object|String} `file` String or normalized template object.
    * @param  {Object} `locals` Locals to pass to registered view engines.
@@ -885,7 +897,6 @@ Base.extend(Templates, {
     var partials = {};
     var self = this;
 
-
     names.forEach(function (name) {
       var collection = self.views[name];
       for (var key in collection) {
@@ -905,7 +916,6 @@ Base.extend(Templates, {
         partials[name][key] = view.content;
       }
     });
-
     return partials;
   },
 

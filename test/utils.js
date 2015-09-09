@@ -1,8 +1,5 @@
-'use strict';
-
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var isAbsolute = require('is-absolute');
 var inherit = require('../lib/inherit');
@@ -34,11 +31,11 @@ describe('utils', function () {
     it('should bind a context to fns passed on an object:', function () {
       var ctx = {app: {views: {}}, context: {a: 'b'}};
       var helpers = utils.bindAll({
-        foo: function(val) {
+        foo: function() {
           return this.context;
         },
-        bar: function(val) {},
-        baz: function(val) {}
+        bar: function() {},
+        baz: function() {}
       }, ctx);
 
       assert.deepEqual(helpers.foo(), {a: 'b'});
@@ -69,7 +66,7 @@ describe('utils', function () {
           bar: function() {},
           baz: function() {}
         }
-      }
+      };
       obj.whatever.foo.async = true;
       var helpers = utils.bindAll(obj, ctx);
       assert(helpers.whatever.foo.async === true);
