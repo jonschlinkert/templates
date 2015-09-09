@@ -42,10 +42,10 @@ describe('mergePartials', function () {
     app.create('foo', opts);
     app.create('bar', opts);
     app.create('baz', opts);
+    var arr = [];
 
-    // temporary until we decide on a middleware stage for this
-    app.on('mergePartials', function (key, view, locals) {
-      // console.log('foo', arguments)
+    app.on('onMerge', function (view, locals) {
+      arr.push(view.content);
     });
 
     app.foo('a', {path: 'a', content: 'aaa'});
@@ -55,6 +55,7 @@ describe('mergePartials', function () {
     var actual = app.mergePartials({mergePartials: false});
     actual.should.not.have.property('partials');
     actual.should.eql({ foos: { a: 'aaa' }, bars: { b: 'bbb' }, bazs: { c: 'ccc' } });
+    arr.should.eql(['aaa', 'bbb', 'ccc']);
   });
 
   it('should handle `onMerge` middleware:', function () {

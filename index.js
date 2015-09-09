@@ -902,11 +902,7 @@ Base.extend(Templates, {
         return cb.call(this, err);
       }
 
-      // reset the contents property
-      view.contents = new Buffer(res);
-      // and content for backward compatibility
-      view.content = res;
-
+      view.contents = res;
       // handle `postRender` middleware
       this.handle('postRender', view, locals, cb);
     }.bind(this));
