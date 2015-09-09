@@ -130,7 +130,7 @@ Base.extend(Templates, {
     }
 
     // pass the `View` constructor from `App` to the collection
-    collection = this.decorateViews(collection, opts);
+    collection = this.extendViews(collection, opts);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
@@ -149,12 +149,8 @@ Base.extend(Templates, {
     this.define(single, collection.addView.bind(collection));
 
     // decorate loader methods with collection methods
-    // utils.forward(this[plural], collection);
-    // utils.forward(this[single], collection);
     this[plural].__proto__ = collection;
     this[single].__proto__ = collection;
-    // define(this[plural], '__proto__', collection);
-    // define(this[single], '__proto__', collection);
 
     // create aliases on the collection for
     // addView/addViews to support chaining
@@ -167,7 +163,7 @@ Base.extend(Templates, {
    * Decorate `view` instances in the collection.
    */
 
-  decorateView: function (view) {
+  extendView: function (view) {
     var app = this;
     if (!view.contents && typeof view.content === 'string') {
       view.contents = new Buffer(view.content);
@@ -175,7 +171,6 @@ Base.extend(Templates, {
 
     // decorate `option` method onto `view`
     utils.option(view);
-
     view.compile = function () {
       var args = [this].concat([].slice.call(arguments));
       app.compile.apply(app, args);
@@ -196,7 +191,7 @@ Base.extend(Templates, {
    * Decorate `collection` intances.
    */
 
-  decorateViews: function (collection, options) {
+  extendViews: function (collection, options) {
     var opts = utils.merge({}, this.options, options);
     var app = this;
 
@@ -207,17 +202,17 @@ Base.extend(Templates, {
       return view;
     });
 
-    var decorateView = collection.decorateView;
-    define(collection, 'decorateView', function () {
-      var view = decorateView.apply(this, arguments);
-      return app.decorateView(view);
+    var extendView = collection.extendView;
+    define(collection, 'extendView', function () {
+      var view = extendView.apply(this, arguments);
+      return app.extendView(view);
     });
 
     if (!collection.options.hasOwnProperty('renameKey')) {
       collection.option('renameKey', this.renameKey);
     }
-    if (opts.decorateViews) {
-      collection = opts.decorateViews(collection);
+    if (opts.extendViews) {
+      collection = opts.extendViews(collection);
     }
     return collection;
   },
