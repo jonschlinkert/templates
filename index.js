@@ -274,7 +274,10 @@ Base.extend(Templates, {
    * will be searched.
    *
    * ```js
-   * var foo = app.find('foo.hbs');
+   * var page = app.find('my-page.hbs');
+   *
+   * // optionally pass a collection name as the second argument
+   * var page = app.find('my-page.hbs', 'pages');
    * ```
    * @name .find
    * @param {String} `name` The name/key of the view to find
@@ -308,12 +311,11 @@ Base.extend(Templates, {
    * ```js
    * var view = app.getView('pages', 'a/b/c.hbs');
    *
-   * // optionally pass a `renameKey` function to modify the find
+   * // optionally pass a `renameKey` function to modify the lookup
    * var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
    *   return path.basename(fp);
    * });
    * ```
-   *
    * @name .getView
    * @param {String} `collection` Collection name, e.g. `pages`
    * @param {String} `key` Template name
@@ -533,6 +535,16 @@ Base.extend(Templates, {
    * See the [route API documentation][route-api] for details on
    * adding handlers and middleware to routes.
    *
+   * ```js
+   * app.create('posts');
+   * app.route(/blog/)
+   *   .all(function(view, next) {
+   *     // do something with view
+   *     next();
+   *   });
+   *
+   * app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
+   * ```
    * @param {String} `path`
    * @return {Object} `Route` for chaining
    * @api public
@@ -586,6 +598,7 @@ Base.extend(Templates, {
    * @param {String} `name`
    * @param {Function} `fn`
    * @return {Object} Returns the instance of `Templates` for chaining.
+   * @api public
    */
 
   param: function(name/*, fn*/) {

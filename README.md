@@ -58,7 +58,7 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.find](index.js#L286)
+### [.find](index.js#L289)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
@@ -71,10 +71,13 @@ Find a view by `name`, optionally passing a `collection` to limit the search. If
 **Example**
 
 ```js
-var foo = app.find('foo.hbs');
+var page = app.find('my-page.hbs');
+
+// optionally pass a collection name as the second argument
+var page = app.find('my-page.hbs', 'pages');
 ```
 
-### [.getView](index.js#L325)
+### [.getView](index.js#L327)
 
 Get view `key` from the specified `collection`.
 
@@ -90,13 +93,13 @@ Get view `key` from the specified `collection`.
 ```js
 var view = app.getView('pages', 'a/b/c.hbs');
 
-// optionally pass a `renameKey` function to modify the find
+// optionally pass a `renameKey` function to modify the lookup
 var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
   return path.basename(fp);
 });
 ```
 
-### [.getViews](index.js#L364)
+### [.getViews](index.js#L366)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -115,7 +118,7 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.matchView](index.js#L396)
+### [.matchView](index.js#L398)
 
 Returns the first view from `collection` with a key that matches the given glob pattern.
 
@@ -136,7 +139,7 @@ var posts = app.matchView('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.matchViews](index.js#L424)
+### [.matchViews](index.js#L426)
 
 Returns any views from the specified collection with keys that match the given glob pattern.
 
@@ -157,7 +160,7 @@ var posts = app.matchViews('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.handle](index.js#L463)
+### [.handle](index.js#L465)
 
 Handle a middleware `method` for `view`.
 
@@ -182,7 +185,20 @@ adding handlers and middleware to routes.
 * `path` **{String}**
 * `returns` **{Object}** `Route`: for chaining
 
-### [.all](index.js#L563)
+**Example**
+
+```js
+app.create('posts');
+app.route(/blog/)
+  .all(function(view, next) {
+    // do something with view
+    next();
+  });
+
+app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
+```
+
+### [.all](index.js#L575)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -197,6 +213,30 @@ Special route method that works just like the `router.METHOD()` methods, except 
 ```js
 app.all(/\.hbs$/, function(view, next) {
   // do stuff to view
+  next();
+});
+```
+
+### [.param](index.js#L604)
+
+Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
+
+**Params**
+
+* `name` **{String}**
+* `fn` **{Function}**
+* `returns` **{Object}**: Returns the instance of `Templates` for chaining.
+
+**Example**
+
+```js
+app.param('title', function (view, next, title) {
+  //=> title === 'foo.js'
+  next();
+});
+
+app.onLoad('/blog/:title', function (view, next) {
+  //=> view.path === '/blog/foo.js'
   next();
 });
 ```
@@ -221,7 +261,7 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
-### [.compile](index.js#L757)
+### [.compile](index.js#L770)
 
 Compile `content` with the given `locals`.
 
@@ -246,7 +286,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](index.js#L816)
+### [.render](index.js#L829)
 
 Render a view with the given `locals` and `callback`.
 
