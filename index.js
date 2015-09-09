@@ -269,56 +269,37 @@ Base.extend(Templates, {
   },
 
   /**
-   * Returns the first view from `collection` with a key
-   * that matches the given glob pattern.
+   * Find a view by `name`, optionally passing a `collection` to limit
+   * the search. If no collection is passed all `renderable` collections
+   * will be searched.
    *
    * ```js
-   * var pages = app.matchView('pages', 'home.*');
-   * //=> {'home.hbs': { ... }, ...}
-   *
-   * var posts = app.matchView('posts', '2010-*');
-   * //=> {'2015-10-10.md': { ... }, ...}
+   * var foo = app.find('foo.hbs');
    * ```
-   *
-   * @name .matchView
-   * @param {String} `collection` Collection name.
-   * @param {String} `pattern` glob pattern
-   * @param {Object} `options` options to pass to [micromatch][]
-   * @return {Object}
+   * @name .find
+   * @param {String} `name` The name/key of the view to find
+   * @param {String} `colleciton` Optionally pass a collection name (e.g. pages)
+   * @return {Object|undefined} Returns the view if found, or `undefined` if not.
    * @api public
    */
 
-  matchView: function(collection, pattern, options) {
-    var views = this.getViews(collection);
-    if (views.hasOwnProperty(pattern)) {
-      return views[pattern];
+  find: function (name, collection) {
+    if (typeof name !== 'string') {
+      throw new TypeError('expected name to be a string.');
     }
-    return utils.matchKey(views, pattern, options);
-  },
-
-  /**
-   * Returns any views from the specified collection with keys
-   * that match the given glob pattern.
-   *
-   * ```js
-   * var pages = app.matchViews('pages', 'home.*');
-   * //=> {'home.hbs': { ... }, ...}
-   *
-   * var posts = app.matchViews('posts', '2010-*');
-   * //=> {'2015-10-10.md': { ... }, ...}
-   * ```
-   *
-   * @name .matchViews
-   * @param {String} `collection` Collection name.
-   * @param {String} `pattern` glob pattern
-   * @param {Object} `options` options to pass to [micromatch]
-   * @return {Object}
-   * @api public
-   */
-
-  matchViews: function(collection, pattern, options) {
-    var views = this.getViews(collection);
-    return utils.matchKeys(views, pattern, options);
+    if (typeof collection === 'string') {
+      return this[collection].getView(name);
+    }
+    var collections = this.viewTypes.renderable;
+    var len = collections.length, i = 0;
+    while (len--) {
+      var plural = collections[i++];
+      var views = this.views[plural];
+      var res;
+      if (res = views[name]) {
+        return res;
+      }
+    }
   },
 
   /**
@@ -393,37 +374,56 @@ Base.extend(Templates, {
   },
 
   /**
-   * Find a view by `name`, optionally passing a `collection` to limit
-   * the search. If no collection is passed all `renderable` collections
-   * will be searched.
+   * Returns the first view from `collection` with a key
+   * that matches the given glob pattern.
    *
    * ```js
-   * var foo = app.find('foo.hbs');
+   * var pages = app.matchView('pages', 'home.*');
+   * //=> {'home.hbs': { ... }, ...}
+   *
+   * var posts = app.matchView('posts', '2010-*');
+   * //=> {'2015-10-10.md': { ... }, ...}
    * ```
-   * @name .find
-   * @param {String} `name` The name/key of the view to find
-   * @param {String} `colleciton` Optionally pass a collection name (e.g. pages)
-   * @return {Object|undefined} Returns the view if found, or `undefined` if not.
+   *
+   * @name .matchView
+   * @param {String} `collection` Collection name.
+   * @param {String} `pattern` glob pattern
+   * @param {Object} `options` options to pass to [micromatch][]
+   * @return {Object}
    * @api public
    */
 
-  find: function (name, collection) {
-    if (typeof name !== 'string') {
-      throw new TypeError('expected name to be a string.');
+  matchView: function(collection, pattern, options) {
+    var views = this.getViews(collection);
+    if (views.hasOwnProperty(pattern)) {
+      return views[pattern];
     }
-    if (typeof collection === 'string') {
-      return this[collection].getView(name);
-    }
-    var collections = this.viewTypes.renderable;
-    var len = collections.length, i = 0;
-    while (len--) {
-      var plural = collections[i++];
-      var views = this.views[plural];
-      var res;
-      if (res = views[name]) {
-        return res;
-      }
-    }
+    return utils.matchKey(views, pattern, options);
+  },
+
+  /**
+   * Returns any views from the specified collection with keys
+   * that match the given glob pattern.
+   *
+   * ```js
+   * var pages = app.matchViews('pages', 'home.*');
+   * //=> {'home.hbs': { ... }, ...}
+   *
+   * var posts = app.matchViews('posts', '2010-*');
+   * //=> {'2015-10-10.md': { ... }, ...}
+   * ```
+   *
+   * @name .matchViews
+   * @param {String} `collection` Collection name.
+   * @param {String} `pattern` glob pattern
+   * @param {Object} `options` options to pass to [micromatch]
+   * @return {Object}
+   * @api public
+   */
+
+  matchViews: function(collection, pattern, options) {
+    var views = this.getViews(collection);
+    return utils.matchKeys(views, pattern, options);
   },
 
   /**
@@ -453,7 +453,7 @@ Base.extend(Templates, {
    * app.handle('customMethod', view, callback);
    * ```
    * @name .handle
-   * @param {String} `method` Name of the router method to handle. See [router methods](./router.md)
+   * @param {String} `method` Name of the router method to handle. See [router methods](./docs/router.md)
    * @param {Object} `view` View object
    * @param {Function} `callback` Callback function
    * @return {Object}

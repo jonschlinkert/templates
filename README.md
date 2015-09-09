@@ -58,49 +58,23 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.matchView](index.js#L291)
+### [.find](index.js#L286)
 
-Returns the first view from `collection` with a key that matches the given glob pattern.
+Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
 **Params**
 
-* `collection` **{String}**: Collection name.
-* `pattern` **{String}**: glob pattern
-* `options` **{Object}**: options to pass to [micromatch](https://github.com/jonschlinkert/micromatch)
-* `returns` **{Object}**
+* `name` **{String}**: The name/key of the view to find
+* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
+* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
 
 **Example**
 
 ```js
-var pages = app.matchView('pages', 'home.*');
-//=> {'home.hbs': { ... }, ...}
-
-var posts = app.matchView('posts', '2010-*');
-//=> {'2015-10-10.md': { ... }, ...}
+var foo = app.find('foo.hbs');
 ```
 
-### [.matchViews](index.js#L319)
-
-Returns any views from the specified collection with keys that match the given glob pattern.
-
-**Params**
-
-* `collection` **{String}**: Collection name.
-* `pattern` **{String}**: glob pattern
-* `options` **{Object}**: options to pass to [micromatch](https://github.com/jonschlinkert/micromatch)
-* `returns` **{Object}**
-
-**Example**
-
-```js
-var pages = app.matchViews('pages', 'home.*');
-//=> {'home.hbs': { ... }, ...}
-
-var posts = app.matchViews('posts', '2010-*');
-//=> {'2015-10-10.md': { ... }, ...}
-```
-
-### [.getView](index.js#L344)
+### [.getView](index.js#L325)
 
 Get view `key` from the specified `collection`.
 
@@ -122,7 +96,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](index.js#L383)
+### [.getViews](index.js#L364)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -141,20 +115,46 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.find](index.js#L410)
+### [.matchView](index.js#L396)
 
-Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
+Returns the first view from `collection` with a key that matches the given glob pattern.
 
 **Params**
 
-* `name` **{String}**: The name/key of the view to find
-* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
-* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
+* `collection` **{String}**: Collection name.
+* `pattern` **{String}**: glob pattern
+* `options` **{Object}**: options to pass to [micromatch](https://github.com/jonschlinkert/micromatch)
+* `returns` **{Object}**
 
 **Example**
 
 ```js
-var foo = app.find('foo.hbs');
+var pages = app.matchView('pages', 'home.*');
+//=> {'home.hbs': { ... }, ...}
+
+var posts = app.matchView('posts', '2010-*');
+//=> {'2015-10-10.md': { ... }, ...}
+```
+
+### [.matchViews](index.js#L424)
+
+Returns any views from the specified collection with keys that match the given glob pattern.
+
+**Params**
+
+* `collection` **{String}**: Collection name.
+* `pattern` **{String}**: glob pattern
+* `options` **{Object}**: options to pass to [micromatch](https://github.com/jonschlinkert/micromatch)
+* `returns` **{Object}**
+
+**Example**
+
+```js
+var pages = app.matchViews('pages', 'home.*');
+//=> {'home.hbs': { ... }, ...}
+
+var posts = app.matchViews('posts', '2010-*');
+//=> {'2015-10-10.md': { ... }, ...}
 ```
 
 ### [.handle](index.js#L463)
@@ -163,7 +163,7 @@ Handle a middleware `method` for `view`.
 
 **Params**
 
-* `method` **{String}**: Name of the router method to handle. See [router methods](./router.md)
+* `method` **{String}**: Name of the router method to handle. See [router methods](./docs/router.md)
 * `view` **{Object}**: View object
 * `callback` **{Function}**: Callback function
 * `returns` **{Object}**
