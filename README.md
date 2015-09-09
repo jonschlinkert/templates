@@ -33,7 +33,7 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.create](index.js#L142)
+### [.create](index.js#L153)
 
 Create a view collection. View collections are stored on the `app.views` object. For example, if you create a collection named `posts`, the all `posts` will be stored on `app.views.posts`.
 
@@ -58,7 +58,7 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.find](index.js#L289)
+### [.find](index.js#L300)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
@@ -77,7 +77,7 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
-### [.getView](index.js#L327)
+### [.getView](index.js#L338)
 
 Get view `key` from the specified `collection`.
 
@@ -99,7 +99,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](index.js#L366)
+### [.getViews](index.js#L377)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -118,7 +118,7 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.matchView](index.js#L398)
+### [.matchView](index.js#L409)
 
 Returns the first view from `collection` with a key that matches the given glob pattern.
 
@@ -139,7 +139,7 @@ var posts = app.matchView('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.matchViews](index.js#L426)
+### [.matchViews](index.js#L437)
 
 Returns any views from the specified collection with keys that match the given glob pattern.
 
@@ -160,7 +160,7 @@ var posts = app.matchViews('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.handle](index.js#L465)
+### [.handle](index.js#L479)
 
 Handle a middleware `method` for `view`.
 
@@ -198,7 +198,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](index.js#L575)
+### [.all](index.js#L589)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -217,7 +217,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](index.js#L604)
+### [.param](index.js#L618)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -261,7 +261,7 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
-### [.compile](index.js#L770)
+### [.compile](index.js#L784)
 
 Compile `content` with the given `locals`.
 
@@ -286,7 +286,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](index.js#L829)
+### [.render](index.js#L843)
 
 Render a view with the given `locals` and `callback`.
 
