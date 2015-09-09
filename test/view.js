@@ -880,14 +880,12 @@ describe('View', function() {
       done();
     });
 
-    it('should not work with string', function(done) {
+    it('should work with string', function(done) {
+      var val = 'test';
       var view = new View();
-      try {
-        view.contents = 'test';
-      } catch (err) {
-        should.exist(err);
-        done();
-      }
+      view.contents = val;
+      view.contents.should.deepEqual(new Buffer(val));
+      done();
     });
   });
 
