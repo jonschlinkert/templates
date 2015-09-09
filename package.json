@@ -21,6 +21,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "array-sort": "^0.1.1",
     "base-methods": "^0.2.3",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
@@ -30,7 +31,6 @@
     "engine-cache": "^0.14.1",
     "export-files": "^2.1.0",
     "extend-shallow": "^2.0.1",
-    "forward-object": "^0.1.1",
     "globby": "^3.0.1",
     "has-glob": "^0.1.0",
     "helper-cache": "^0.7.2",
@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "event-stream": "^3.3.1",
+    "get-value": "^1.2.1",
     "gulp": "^3.9.0",
     "gulp-istanbul": "^0.10.0",
     "gulp-jshint": "^1.11.2",
@@ -53,6 +54,7 @@
     "jshint-stylish": "^2.0.1",
     "mocha": "*",
     "should": "*",
+    "template-helpers": "^0.3.4",
     "through2": "^2.0.0"
   },
   "keywords": []
