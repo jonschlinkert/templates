@@ -102,20 +102,20 @@ describe('lookups', function () {
     });
   });
 
-  describe('lookup', function () {
+  describe('find', function () {
     it('should return null when a view is not found:', function () {
       (function () {
-        app.lookup({});
+        app.find({});
       }).should.throw('expected name to be a string.');
     });
 
     it('should find a view by collection name:', function () {
-      var view = app.lookup('a.tmpl', 'pages');
+      var view = app.find('a.tmpl', 'pages');
       assert(typeof view.path === 'string');
     });
 
     it('should find a view without a collection name:', function () {
-      var view = app.lookup('a.tmpl');
+      var view = app.find('a.tmpl');
       assert(typeof view.path === 'string');
     });
   });
