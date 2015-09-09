@@ -97,7 +97,6 @@ Base.extend(Templates, {
     this.define('List', this.options.List || List);
     this.define('Views', this.options.Views || Views);
 
-    this.handlers(utils.methods);
     this.define('initialized', true);
   },
 
@@ -113,6 +112,18 @@ Base.extend(Templates, {
     this.on('error', function (err) {
       if (err && err.id === 'rethrow') console.error(err.reason);
     });
+  },
+
+  /**
+   * Run a plugin on the instance.
+   *
+   * @param {Function} fn
+   * @return {Object}
+   */
+
+  use: function (fn) {
+    fn.call(this, this);
+    return this;
   },
 
   /**
@@ -440,11 +451,14 @@ Base.extend(Templates, {
    * be passed in after init.
    */
 
-  lazyRouter: function() {
+  lazyRouter: function(methods) {
     if (typeof this.router === 'undefined') {
       this.define('router', new this.Router({
         methods: utils.methods
       }));
+    }
+    if (typeof methods !== 'undefined') {
+      this.router.method(methods);
     }
   },
 
@@ -888,8 +902,12 @@ Base.extend(Templates, {
         return cb.call(this, err);
       }
 
-      // handle `postRender` middleware
+      // reset the contents property
       view.contents = new Buffer(res);
+      // and content for backward compatibility
+      view.content = res;
+
+      // handle `postRender` middleware
       this.handle('postRender', view, locals, cb);
     }.bind(this));
   },
@@ -989,8 +1007,7 @@ Base.extend(Templates, {
    */
 
   handlers: function (methods) {
-    this.lazyRouter();
-    this.router.method(methods);
+    this.lazyRouter(methods);
     methods.forEach(function (method) {
       this.define(method, function(path) {
         var route = this.route(path);
@@ -1046,6 +1063,17 @@ Base.extend(Templates, {
     Templates.prototype[key] = value;
   }
 });
+
+// Add router methods to Templates
+utils.methods.forEach(function (method) {
+  Templates.prototype[method] = function(path) {
+    var route = this.route(path);
+    var args = [].slice.call(arguments, 1);
+    route[method].apply(route, args);
+    return this;
+  };
+});
+
 
 /**
  * Expose `Templates`
