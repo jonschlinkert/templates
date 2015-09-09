@@ -292,15 +292,15 @@ Render a view with the given `locals` and `callback`.
 
 **Params**
 
-* `file` **{Object|String}**: String or normalized template object.
-* `locals` **{Object}**: Locals to pass to registered view engines.
+* `view` **{Object|String}**: Instance of `View`
+* `locals` **{Object}**: Locals to pass to template engine.
 * `callback` **{Function}**
 
 **Example**
 
 ```js
-var blogPost = app.post('2015-09-01-foo-bar');
-app.render(blogPost, function(err, view) {
+var blogPost = app.post.getView('2015-09-01-foo-bar');
+app.render(blogPost, {title: 'Foo'}, function(err, view) {
   // `view` is an object with a rendered `content` property
 });
 ```

@@ -814,14 +814,14 @@ Base.extend(Templates, {
    * Render a view with the given `locals` and `callback`.
    *
    * ```js
-   * var blogPost = app.post('2015-09-01-foo-bar');
-   * app.render(blogPost, function(err, view) {
+   * var blogPost = app.post.getView('2015-09-01-foo-bar');
+   * app.render(blogPost, {title: 'Foo'}, function(err, view) {
    *   // `view` is an object with a rendered `content` property
    * });
    * ```
    * @name .render
-   * @param  {Object|String} `file` String or normalized template object.
-   * @param  {Object} `locals` Locals to pass to registered view engines.
+   * @param  {Object|String} `view` Instance of `View`
+   * @param  {Object} `locals` Locals to pass to template engine.
    * @param  {Function} `callback`
    * @api public
    */
