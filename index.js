@@ -1080,9 +1080,9 @@ module.exports = Templates;
  * Expose constructors
  */
 
+module.exports.Group = require('./lib/group');
 module.exports.View = View;
 module.exports.List = List;
-module.exports.Group = Group;
 module.exports.Views = Views;
 
 /**
