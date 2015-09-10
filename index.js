@@ -962,6 +962,7 @@ Base.extend(Templates, {
     utils.extend(obj, view.locals);
     utils.extend(obj, view.data);
     utils.extend(obj, locals);
+    obj.view = view;
     return obj;
   },
 
