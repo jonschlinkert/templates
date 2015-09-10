@@ -2,7 +2,6 @@ require('mocha');
 require('should');
 var assert = require('assert');
 var isAbsolute = require('is-absolute');
-var inherit = require('../lib/inherit');
 var utils = require('../lib/utils');
 
 describe('utils', function () {
@@ -10,19 +9,19 @@ describe('utils', function () {
     it('should get the number of views:', function () {
       var a = {};
       var b = {foo: 'bar'};
-      inherit(a, b);
+      utils.inherit(a, b);
       assert(a.foo === 'bar');
     });
 
     it('should throw when receiver is not an object:', function () {
       (function() {
-        inherit('foo', {});
+        utils.inherit('foo', {});
       }).should.throw('expected receiver to be an object.');
     });
 
     it('should throw when provider is not an object:', function () {
       (function() {
-        inherit({}, 'foo');
+        utils.inherit({}, 'foo');
       }).should.throw('expected provider to be an object.');
     });
   });
