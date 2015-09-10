@@ -5,27 +5,6 @@ var isAbsolute = require('is-absolute');
 var utils = require('../lib/utils');
 
 describe('utils', function () {
-  describe('inherit', function() {
-    it('should get the number of views:', function () {
-      var a = {};
-      var b = {foo: 'bar'};
-      utils.inherit(a, b);
-      assert(a.foo === 'bar');
-    });
-
-    it('should throw when receiver is not an object:', function () {
-      (function() {
-        utils.inherit('foo', {});
-      }).should.throw('expected receiver to be an object.');
-    });
-
-    it('should throw when provider is not an object:', function () {
-      (function() {
-        utils.inherit({}, 'foo');
-      }).should.throw('expected provider to be an object.');
-    });
-  });
-
   describe('bindAll', function() {
     it('should bind a context to fns passed on an object:', function () {
       var ctx = {app: {views: {}}, context: {a: 'b'}};

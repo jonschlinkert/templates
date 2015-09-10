@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "array-sort": "^0.1.1",
-    "base-methods": "^0.2.3",
+    "base-methods": "^0.2.4",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "define-property": "^0.2.5",
