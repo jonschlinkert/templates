@@ -96,7 +96,6 @@ Base.extend(Templates, {
     this.define('View', this.options.View || View);
     this.define('List', this.options.List || List);
     this.define('Views', this.options.Views || Views);
-
     this.define('initialized', true);
   },
 
@@ -1083,6 +1082,7 @@ module.exports = Templates;
 
 module.exports.View = View;
 module.exports.List = List;
+module.exports.Group = Group;
 module.exports.Views = Views;
 
 /**
