@@ -1,11 +1,9 @@
 require('mocha');
 require('should');
 var fs = require('fs');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;
-
 
 describe('create', function () {
   describe('method', function () {
@@ -84,7 +82,7 @@ describe('create', function () {
       app.create('pages');
     });
 
-    it('should render a view with inherited app.render', function () {
+    it('should render a view with inherited app.render', function (done) {
       app.page('test/fixtures/templates/a.tmpl')
         .use(function (view) {
           if (!view.contents) {
@@ -95,7 +93,8 @@ describe('create', function () {
         .render(function (err, res) {
           if (err) return done(err);
           assert(res.contents.toString() === 'Brian');
-        })
+          done();
+        });
     });
   });
 });

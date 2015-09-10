@@ -1,6 +1,5 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;
@@ -22,7 +21,7 @@ describe('app.option', function () {
 
   it('should throw on invalid args:', function () {
     (function () {
-      app.option(function () {})
+      app.option(function () {});
     }).should.throw('expected a string or object.');
   });
 
@@ -59,7 +58,7 @@ describe('app.option', function () {
   });
 
   it('should extend the `options` object when the first param is a string.', function() {
-    app.option('foo', {x: 'xxx', y: 'yyy', z: 'zzz'})
+    app.option('foo', {x: 'xxx', y: 'yyy', z: 'zzz'});
     app.option('bar', {a: 'aaa', b: 'bbb', c: 'ccc'});
 
     app.option('foo').should.have.property('x');

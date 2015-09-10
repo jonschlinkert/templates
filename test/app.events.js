@@ -1,24 +1,23 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
-var Templates = require('../');
+var App = require('../');
 var app;
 
 describe('events', function () {
   beforeEach(function () {
-    app = new Templates();
+    app = new App();
   })
 
   it('should listen for an event:', function () {
-    var app = new Templates();
+    var app = new App();
     app.on('foo', function (val) {
     });
     assert(Array.isArray(app._callbacks['$foo']));
   });
 
   it('should emit an event:', function (done) {
-    var app = new Templates();
+    var app = new App();
     app.on('foo', function (val) {
       assert(val === 'bar');
       done();
@@ -28,7 +27,7 @@ describe('events', function () {
   });
 
   it('should listen for error events:', function (done) {
-    var app = new Templates();
+    var app = new App();
     app.on('foo', function (val) {
       assert(val === 'bar');
       done();

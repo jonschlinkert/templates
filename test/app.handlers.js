@@ -1,9 +1,7 @@
 require('should');
 var fs = require('fs');
 var path = require('path');
-var extend = require('extend-shallow');
 var assert = require('assert');
-var glob = require('globby');
 var utils = require('../lib/utils');
 var App = require('..');
 var app;
@@ -37,7 +35,7 @@ describe.skip('handlers', function () {
         .use(decorateViews)
         .option('renameKey', function (key) {
           return path.basename(key);
-        })
+        });
     });
 
     it('should add custom middleware handlers:', function () {
@@ -77,7 +75,7 @@ describe.skip('handlers', function () {
             return view;
           };
           return pages;
-        })
+        });
         // .pages('test/fixtures/pages/*.hbs')
         // .use(function (pages) {
         //   var fn = pages.decorateView;
@@ -89,7 +87,7 @@ describe.skip('handlers', function () {
         //   return pages;
         // })
 
-      console.log(pages.getView('a.tmpl').one)
+      console.log(pages.getView('a.tmpl').one);
       // console.log(app.pages.getView('a.tmpl').one)
       // console.log(app.pages.getView('a.hbs').two)
 

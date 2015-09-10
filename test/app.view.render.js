@@ -1,6 +1,5 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;
@@ -20,7 +19,7 @@ describe('helpers', function () {
         return str.toUpperCase(str);
       });
 
-      var buffer = new Buffer('a <%= upper(name) %> b')
+      var buffer = new Buffer('a <%= upper(name) %> b');
       app.page('a.tmpl', {contents: buffer, locals: locals})
         .render(function (err, res) {
           if (err) return done(err);
@@ -41,7 +40,7 @@ describe('helpers', function () {
         }
       ]);
 
-      var buffer = new Buffer('a <%= lower(name) %> b')
+      var buffer = new Buffer('a <%= lower(name) %> b');
       app.page('a.tmpl', {contents: buffer, locals: locals})
         .render(function (err, res) {
           if (err) return done(err);
@@ -60,7 +59,7 @@ describe('helpers', function () {
         }
       });
 
-      var buffer = new Buffer('a <%= prepend("foo ", name) %> b')
+      var buffer = new Buffer('a <%= prepend("foo ", name) %> b');
       app.page('a.tmpl', {contents: buffer, locals: locals})
         .render(function (err, res) {
           if (err) return done(err);

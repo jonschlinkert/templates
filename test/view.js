@@ -1,5 +1,3 @@
-'use strict';
-
 require('mocha');
 var should = require('should');
 var fs = require('fs');
@@ -7,7 +5,6 @@ var path = require('path');
 var assert = require('assert');
 var Stream = require('stream');
 var es = require('event-stream');
-var through = require('through2');
 var View = require('../lib/view');
 var view;
 
@@ -883,14 +880,12 @@ describe('View', function() {
       done();
     });
 
-    it('should not work with string', function(done) {
+    it('should work with string', function(done) {
+      var val = 'test';
       var view = new View();
-      try {
-        view.contents = 'test';
-      } catch (err) {
-        should.exist(err);
-        done();
-      }
+      view.contents = val;
+      view.contents.should.deepEqual(new Buffer(val));
+      done();
     });
   });
 
@@ -1126,7 +1121,7 @@ describe('View', function() {
 
     it('should throw when set path null in constructor', function() {
       (function() {
-        var view = new View({
+        new View({
           cwd: '/',
           path: null
         });

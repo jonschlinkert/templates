@@ -1,15 +1,6 @@
-var fs = require('fs');
 var path = require('path');
-var extend = require('extend-shallow');
-var assert = require('assert');
-var should = require('should');
-var glob = require('globby');
-var isValidGlob = require('is-valid-glob');
-var utils = require('../lib/utils');
 var App = require('..');
 var app;
-
-var postsPath = 'test/fixtures/posts/*.txt';
 
 function renameKey(key) {
   return path.basename(key, path.extname(key));
@@ -56,7 +47,7 @@ describe('renameKey', function () {
       app.create('post')
         .option('renameKey', function (key) {
           return 'posts/' + path.basename(key);
-        })
+        });
 
       app.posts('a/b/c/a.txt', {content: '...'});
       app.posts('a/b/c/b.txt', {content: '...'});

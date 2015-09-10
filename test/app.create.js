@@ -123,10 +123,10 @@ describe('create', function () {
               view.contents = fs.readFileSync(view.path);
             }
           };
-        })
+        });
 
       collection.addView('test/fixtures/templates/a.tmpl');
-      collection.read('a.tmpl')
+      collection.read('a.tmpl');
       assert(collection.getView('a.tmpl').contents.toString() === '<%= name %>');
     });
   });

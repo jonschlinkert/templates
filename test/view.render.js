@@ -1,13 +1,14 @@
-var path = require('path');
-var assert = require('assert');
 require('mocha');
 require('should');
+var assert = require('assert');
 var View = require('../lib/view');
-var view;
+var App = require('..');
+var view, app;
 
 describe.skip('helpers', function () {
   describe('rendering', function () {
     beforeEach(function () {
+      app = new App();
       view = new View();
     });
 
@@ -27,11 +28,10 @@ describe.skip('helpers', function () {
         return str.toUpperCase(str);
       });
 
-      var buffer = new Buffer('a <%= upper(name) %> b')
+      var buffer = new Buffer('a <%= upper(name) %> b');
       view.page('a.tmpl', {contents: buffer, locals: locals})
         .render(function (err, res) {
           if (err) return done(err);
-
           assert(res.contents.toString() === 'a HALLE b');
           done();
         });

@@ -1,8 +1,4 @@
-'use strict';
-
-/* deps: mocha */
-var assert = require('assert');
-var should = require('should');
+require('should');
 var App = require('..');
 var app;
 
@@ -22,7 +18,7 @@ describe('view.option()', function () {
         })
         .use(function () {
           this.options.bar = 'baz';
-        })
+        });
 
       var page = app.pages.getView('a.tmpl');
       page.options.should.have.property('foo');
@@ -30,7 +26,7 @@ describe('view.option()', function () {
     });
   });
 
-  describe('.render:', function (done) {
+  describe('.render:', function () {
     it('should expose `.render` for rendering a view:', function (done) {
       app.page('a.tmpl', {path: 'a.tmpl', content: '<%= a %>', locals: {a: 'bbb'}})
         .render({}, function (err, res) {

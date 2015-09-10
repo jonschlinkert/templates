@@ -1,8 +1,4 @@
-'use strict';
-
-/* deps: mocha */
-var assert = require('assert');
-var should = require('should');
+require('should');
 var App = require('..');
 var app;
 
@@ -10,7 +6,7 @@ describe('collection.option()', function () {
   beforeEach(function () {
     app = new App();
     app.create('page');
-  })
+  });
 
   it('should emit events:', function () {
     app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});

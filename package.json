@@ -1,7 +1,7 @@
 {
   "name": "templates",
-  "description": "Manage template collections. WIP",
-  "version": "0.1.6",
+  "description": "System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.",
+  "version": "0.1.11",
   "homepage": "https://github.com/jonschlinkert/templates",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/templates",
@@ -21,7 +21,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "base-methods": "^0.2.3",
+    "array-sort": "^0.1.1",
+    "base-methods": "^0.2.4",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "define-property": "^0.2.5",
@@ -30,30 +31,64 @@
     "engine-cache": "^0.14.1",
     "export-files": "^2.1.0",
     "extend-shallow": "^2.0.1",
-    "forward-object": "^0.1.1",
     "globby": "^3.0.1",
+    "group-array": "^0.3.0",
     "has-glob": "^0.1.0",
     "helper-cache": "^0.7.2",
     "inflection": "^1.7.1",
-    "is-valid-glob": "^0.3.0",
+    "is-buffer": "^1.0.2",
     "layouts": "^0.10.5",
     "lazy-cache": "^0.2.3",
     "micromatch": "^2.2.0",
     "mixin-deep": "^1.1.3",
     "object.reduce": "^0.1.7",
+    "paginationator": "^0.1.1",
+    "template-error": "^0.1.2",
     "vinyl": "^0.5.3"
   },
   "devDependencies": {
+    "consolidate": "^0.13.1",
+    "engine-handlebars": "^0.6.1",
     "event-stream": "^3.3.1",
+    "get-value": "^1.2.1",
     "gulp": "^3.9.0",
     "gulp-istanbul": "^0.10.0",
     "gulp-jshint": "^1.11.2",
     "gulp-mocha": "^2.1.3",
     "is-absolute": "^0.2.2",
+    "is-valid-glob": "^0.3.0",
     "jshint-stylish": "^2.0.1",
     "mocha": "*",
+    "parser-front-matter": "^1.2.5",
     "should": "*",
-    "through2": "^2.0.0"
+    "swig": "^1.4.2",
+    "template-helpers": "^0.3.4"
   },
-  "keywords": []
+  "keywords": [
+    "compile",
+    "consolidate",
+    "engine",
+    "engines",
+    "haml-coffee",
+    "handlebars",
+    "helpers",
+    "lo-dash",
+    "lodash",
+    "process",
+    "render",
+    "template",
+    "templates"
+  ],
+  "verb": {
+    "related": {
+      "list": [
+        "layouts",
+        "en-route",
+        "engine",
+        "template",
+        "assemble",
+        "verb"
+      ]
+    }
+  }
 }

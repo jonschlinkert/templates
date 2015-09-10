@@ -1,6 +1,5 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var Templates = require('../');
 var app;
@@ -41,13 +40,13 @@ describe('middleware', function () {
   it('should emit an event when a handler is called:', function (done) {
     var i = 0;
     app.on('onLoad', function () {
-      i++
+      i++;
     });
     app.on('preRender', function () {
-      i++
+      i++;
     });
     app.on('preCompile', function () {
-      i++
+      i++;
     });
 
     app.page('foo.tmpl', {contents: new Buffer('foo')})

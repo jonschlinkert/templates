@@ -9,13 +9,25 @@
 
 var path = require('path');
 var Base = require('base-methods');
-var extend = require('extend-shallow');
-var define = require('define-property');
+var helpers = require('./lib/helpers/');
 var utils = require('./lib/utils');
 var Views = require('./lib/views');
 var List = require('./lib/list');
 var View = require('./lib/view');
 var lib = require('./lib/');
+
+/**
+ * This function is the main export of the templates module.
+ * Initialize an instance of `templates` to create your
+ * application.
+ *
+ * ```js
+ * var templates = require('templates');
+ * var app = templates();
+ * ```
+ * @param {Object} `options`
+ * @api public
+ */
 
 function Templates(options) {
   if (!(this instanceof Templates)) {
@@ -24,7 +36,7 @@ function Templates(options) {
   Base.call(this);
   this.options = options || {};
   utils.renameKey(this);
-  this.defaults();
+  this.defaultConfig();
 }
 
 /**
@@ -34,7 +46,7 @@ function Templates(options) {
 Base.extend(Templates, {
   constructor: Templates,
 
-  defaults: function () {
+  defaultConfig: function () {
     // decorate `option` method onto instance
     utils.option(this);
 
@@ -53,7 +65,7 @@ Base.extend(Templates, {
         method: 'expects engines to have a compile method',
       },
       render: {
-        callback: 'is async and expects a callback function: ',
+        callback: 'is async and expects a callback function',
         engine: 'cannot find an engine for: ',
         method: 'expects engines to have a render method',
       }
@@ -85,7 +97,6 @@ Base.extend(Templates, {
     this.define('List', this.options.List || List);
     this.define('Views', this.options.Views || Views);
 
-    this.handlers(utils.methods);
     this.define('initialized', true);
   },
 
@@ -97,17 +108,40 @@ Base.extend(Templates, {
     this.on('option', function (key, value) {
       if (key === 'mixins') this.visit('mixin', value);
     });
+
+    this.on('error', function (err) {
+      if (err && err.id === 'rethrow') console.error(err.reason);
+    });
   },
 
   /**
-   * Create a new `Views` collection.
+   * Run a plugin on the instance.
+   *
+   * @param {Function} fn
+   * @return {Object}
+   */
+
+  use: function (fn) {
+    fn.call(this, this);
+    return this;
+  },
+
+  /**
+   * Create a view collection. View collections are stored
+   * on the `app.views` object. For example, if you create a collection
+   * named `posts`, the all `posts` will be stored on `app.views.posts`.
    *
    * ```js
-   * app.create('foo');
-   * app.foo('*.hbs');
-   * var view = app.foo.get('baz.hbs');
-   * ```
+   * app.create('posts');
+   * app.posts({...}); // add an object of views
+   * app.post('foo', {content: '...'}); // add a single view
    *
+   * // collection methods are chainable too
+   * app.post('home.hbs', {content: 'foo <%= title %> bar'})
+   *   .render({title: 'Home'}, function(err, res) {
+   *     //=> 'foo Home bar'
+   *   });
+   * ```
    * @name .create
    * @param  {String} `name` The name of the collection. Plural or singular form.
    * @param  {Object} `opts` Collection options
@@ -130,16 +164,21 @@ Base.extend(Templates, {
     }
 
     // pass the `View` constructor from `App` to the collection
-    collection = this.decorateViews(collection, opts);
+    collection = this.extendViews(collection, opts);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
     var plural = utils.plural(name);
 
-    this.viewType(plural, collection.viewType());
-
     // map the inflections for lookups
     this.inflections[single] = plural;
+
+    // add inflections to collection options
+    collection.option('inflection', single);
+    collection.option('plural', plural);
+
+    // prime the viewType(s) for the collection
+    this.viewType(plural, collection.viewType());
 
     // add the collection to `app.views`
     this.views[plural] = collection.views;
@@ -149,17 +188,17 @@ Base.extend(Templates, {
     this.define(single, collection.addView.bind(collection));
 
     // decorate loader methods with collection methods
-    // utils.forward(this[plural], collection);
-    // utils.forward(this[single], collection);
     this[plural].__proto__ = collection;
     this[single].__proto__ = collection;
-    // define(this[plural], '__proto__', collection);
-    // define(this[single], '__proto__', collection);
 
     // create aliases on the collection for
     // addView/addViews to support chaining
     collection.define(plural, this[plural]);
     collection.define(single, this[single]);
+
+    // add collection and view helpers
+    helpers.plural(this, collection, opts);
+    // helpers.single(this, this[single], opts);
     return collection;
   },
 
@@ -167,7 +206,7 @@ Base.extend(Templates, {
    * Decorate `view` instances in the collection.
    */
 
-  decorateView: function (view) {
+  extendView: function (view) {
     var app = this;
     if (!view.contents && typeof view.content === 'string') {
       view.contents = new Buffer(view.content);
@@ -175,7 +214,6 @@ Base.extend(Templates, {
 
     // decorate `option` method onto `view`
     utils.option(view);
-
     view.compile = function () {
       var args = [this].concat([].slice.call(arguments));
       app.compile.apply(app, args);
@@ -196,28 +234,28 @@ Base.extend(Templates, {
    * Decorate `collection` intances.
    */
 
-  decorateViews: function (collection, options) {
+  extendViews: function (collection, options) {
     var opts = utils.merge({}, this.options, options);
     var app = this;
 
     var addView = collection.addView;
-    define(collection, 'addView', function () {
+    utils.define(collection, 'addView', function () {
       var view = addView.apply(this, arguments);
       app.handleView('onLoad', view);
       return view;
     });
 
-    var decorateView = collection.decorateView;
-    define(collection, 'decorateView', function () {
-      var view = decorateView.apply(this, arguments);
-      return app.decorateView(view);
+    var extendView = collection.extendView;
+    utils.define(collection, 'extendView', function () {
+      var view = extendView.apply(this, arguments);
+      return app.extendView(view);
     });
 
     if (!collection.options.hasOwnProperty('renameKey')) {
       collection.option('renameKey', this.renameKey);
     }
-    if (opts.decorateViews) {
-      collection = opts.decorateViews(collection);
+    if (opts.extendViews) {
+      collection = opts.extendViews(collection);
     }
     return collection;
   },
@@ -242,126 +280,24 @@ Base.extend(Templates, {
   },
 
   /**
-   * Returns the first template from the given collection with a key
-   * that matches the given glob pattern.
+   * Find a view by `name`, optionally passing a `collection` to limit
+   * the search. If no collection is passed all `renderable` collections
+   * will be searched.
    *
    * ```js
-   * var pages = app.matchView('pages', 'home.*');
-   * //=> {'home.hbs': { ... }, ...}
+   * var page = app.find('my-page.hbs');
    *
-   * var posts = app.matchView('posts', '2010-*');
-   * //=> {'2015-10-10.md': { ... }, ...}
+   * // optionally pass a collection name as the second argument
+   * var page = app.find('my-page.hbs', 'pages');
    * ```
-   *
-   * @param {String} `collection` Collection name.
-   * @param {String} `pattern` glob pattern
-   * @param {Object} `options` options to pass to [micromatch]
-   * @return {Object}
+   * @name .find
+   * @param {String} `name` The name/key of the view to find
+   * @param {String} `colleciton` Optionally pass a collection name (e.g. pages)
+   * @return {Object|undefined} Returns the view if found, or `undefined` if not.
    * @api public
    */
 
-  matchView: function(collection, pattern, options) {
-    var views = this.getViews(collection);
-    if (views.hasOwnProperty(pattern)) {
-      return views[pattern];
-    }
-    return utils.matchKey(views, pattern, options);
-  },
-
-  /**
-   * Returns any templates from the specified collection with keys
-   * that match the given glob pattern.
-   *
-   * ```js
-   * var pages = app.matchViews('pages', 'home.*');
-   * //=> {'home.hbs': { ... }, ...}
-   *
-   * var posts = app.matchViews('posts', '2010-*');
-   * //=> {'2015-10-10.md': { ... }, ...}
-   * ```
-   *
-   * @param {String} `collection` Collection name.
-   * @param {String} `pattern` glob pattern
-   * @param {Object} `options` options to pass to [micromatch]
-   * @return {Object}
-   * @api public
-   */
-
-  matchViews: function(collection, pattern, options) {
-    var views = this.getViews(collection);
-    return utils.matchKeys(views, pattern, options);
-  },
-
-  /**
-   * Get a specific template from the specified collection.
-   *
-   * ```js
-   * app.getView('pages', 'a.hbs', function(fp) {
-   *   return path.basename(fp);
-   * });
-   * ```
-   *
-   * @param {String} `collectionName` Collection name, like `pages`
-   * @param {String} `key` Template name
-   * @param {Function} `fn` Optionally pass a `renameKey` function
-   * @return {Object}
-   * @api public
-   */
-
-  getView: function(collection, key, fn) {
-    var views = this.getViews(collection);
-    // if a custom renameKey function is passed, try using it
-    if (typeof fn === 'function') {
-      key = fn(key);
-    }
-    if (views.hasOwnProperty(key)) {
-      return views[key];
-    }
-    // try again with the default renameKey function
-    fn = this.option('renameKey');
-    var name;
-    if (typeof fn === 'function') {
-      name = fn(key);
-    }
-    if (name && name !== key && views.hasOwnProperty(name)) {
-      return views[name];
-    }
-    return null;
-  },
-
-  /**
-   * Get a view `collection` by its singular or plural name.
-   *
-   * ```js
-   * var pages = app.getViews('pages');
-   * //=> { pages: {'home.hbs': { ... }}
-   *
-   * var posts = app.getViews('posts');
-   * //=> { posts: {'2015-10-10.md': { ... }}
-   * ```
-   *
-   * @param {String} `plural` The plural collection name, e.g. `pages`
-   * @return {Object}
-   * @api public
-   */
-
-  getViews: function(plural) {
-    var orig = plural;
-    if (utils.isObject(plural)) return plural;
-    if (!this.views.hasOwnProperty(plural)) {
-      plural = this.inflections[plural];
-    }
-    if (!this.views.hasOwnProperty(plural)) {
-      throw new Error('getViews cannot find collection: ' + orig);
-    }
-    return this.views[plural];
-  },
-
-  /**
-   * Get a view by `name` from the given `collection`.
-   */
-
-  lookup: function (name, collection) {
+  find: function (name, collection) {
     if (typeof name !== 'string') {
       throw new TypeError('expected name to be a string.');
     }
@@ -381,36 +317,161 @@ Base.extend(Templates, {
   },
 
   /**
-   * Add `Router` to the prototype
+   * Get view `key` from the specified `collection`.
+   *
+   * ```js
+   * var view = app.getView('pages', 'a/b/c.hbs');
+   *
+   * // optionally pass a `renameKey` function to modify the lookup
+   * var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
+   *   return path.basename(fp);
+   * });
+   * ```
+   * @name .getView
+   * @param {String} `collection` Collection name, e.g. `pages`
+   * @param {String} `key` Template name
+   * @param {Function} `fn` Optionally pass a `renameKey` function
+   * @return {Object}
+   * @api public
+   */
+
+  getView: function(collection, key, fn) {
+    var views = this.getViews(collection);
+    // use custom renameKey function
+    if (typeof fn === 'function') {
+      key = fn(key);
+    }
+    if (views.hasOwnProperty(key)) {
+      return views[key];
+    }
+    // try again with the default renameKey function
+    fn = this.option('renameKey');
+    var name;
+    if (typeof fn === 'function') {
+      name = fn(key);
+    }
+    if (name && name !== key && views.hasOwnProperty(name)) {
+      return views[name];
+    }
+    return null;
+  },
+
+  /**
+   * Get all views from a `collection` using the collection's
+   * singular or plural name.
+   *
+   * ```js
+   * var pages = app.getViews('pages');
+   * //=> { pages: {'home.hbs': { ... }}
+   *
+   * var posts = app.getViews('posts');
+   * //=> { posts: {'2015-10-10.md': { ... }}
+   * ```
+   *
+   * @name .getViews
+   * @param {String} `name` The collection name, e.g. `pages` or `page`
+   * @return {Object}
+   * @api public
+   */
+
+  getViews: function(name) {
+    var orig = name;
+    if (utils.isObject(name)) return name;
+    if (!this.views.hasOwnProperty(name)) {
+      name = this.inflections[name];
+    }
+    if (!this.views.hasOwnProperty(name)) {
+      throw new Error('getViews cannot find collection: ' + orig);
+    }
+    return this.views[name];
+  },
+
+  /**
+   * Returns the first view from `collection` with a key
+   * that matches the given glob pattern.
+   *
+   * ```js
+   * var pages = app.matchView('pages', 'home.*');
+   * //=> {'home.hbs': { ... }, ...}
+   *
+   * var posts = app.matchView('posts', '2010-*');
+   * //=> {'2015-10-10.md': { ... }, ...}
+   * ```
+   *
+   * @name .matchView
+   * @param {String} `collection` Collection name.
+   * @param {String} `pattern` glob pattern
+   * @param {Object} `options` options to pass to [micromatch][]
+   * @return {Object}
+   * @api public
+   */
+
+  matchView: function(collection, pattern, options) {
+    var views = this.getViews(collection);
+    if (views.hasOwnProperty(pattern)) {
+      return views[pattern];
+    }
+    return utils.matchKey(views, pattern, options);
+  },
+
+  /**
+   * Returns any views from the specified collection with keys
+   * that match the given glob pattern.
+   *
+   * ```js
+   * var pages = app.matchViews('pages', 'home.*');
+   * //=> {'home.hbs': { ... }, ...}
+   *
+   * var posts = app.matchViews('posts', '2010-*');
+   * //=> {'2015-10-10.md': { ... }, ...}
+   * ```
+   *
+   * @name .matchViews
+   * @param {String} `collection` Collection name.
+   * @param {String} `pattern` glob pattern
+   * @param {Object} `options` options to pass to [micromatch]
+   * @return {Object}
+   * @api public
+   */
+
+  matchViews: function(collection, pattern, options) {
+    var views = this.getViews(collection);
+    return utils.matchKeys(views, pattern, options);
+  },
+
+  /**
+   * Add `Router` and `Route` to the prototype
    */
 
   Router: utils.router.Router,
+  Route: utils.router.Route,
 
   /**
    * Lazily initalize `router`, to allow options to
    * be passed in after init.
    */
 
-  lazyRouter: function() {
+  lazyRouter: function(methods) {
     if (typeof this.router === 'undefined') {
       this.define('router', new this.Router({
         methods: utils.methods
       }));
     }
+    if (typeof methods !== 'undefined') {
+      this.router.method(methods);
+    }
   },
 
   /**
-   * Handle middleware for the given `view` and locals.
+   * Handle a middleware `method` for `view`.
    *
    * ```js
-   * app.handle('customHandle', view);
+   * app.handle('customMethod', view, callback);
    * ```
-   *
    * @name .handle
-   * @param {String} `method` Router VERB
+   * @param {String} `method` Name of the router method to handle. See [router methods](./docs/router.md)
    * @param {Object} `view` View object
-   * @param {Object} `locals`
-   * @param {Function} `cb`
+   * @param {Function} `callback` Callback function
    * @return {Object}
    * @api public
    */
@@ -436,11 +497,7 @@ Base.extend(Templates, {
       view.emit('handle', method);
     }
 
-    this.router.handle(view, function (err) {
-      if (err) return cb(err);
-      cb(null, view);
-    });
-
+    this.router.handle(view, this.handleError(method, view, cb));
     return this;
   },
 
@@ -456,7 +513,6 @@ Base.extend(Templates, {
 
   handleView: function (method, view, locals/*, cb*/) {
     view.options = view.options || {};
-
     if (!view.options.handled) {
       view.options.handled = [];
     }
@@ -471,42 +527,95 @@ Base.extend(Templates, {
    * Handle middleware errors.
    */
 
-  handleError: function(method, view) {
+  handleError: function(method, view, cb) {
+    if (typeof cb !== 'function') cb = utils.noop;
+    var app = this;
     return function (err) {
       if (err) {
+        if (err._handled) return cb();
         err.reason = 'Templates#handle' + method + ': ' + view.path;
-        return err;
+        err._handled = true;
+        app.emit('error', err);
+        return cb(err);
       }
+      cb(null, view);
     };
   },
 
   /**
-   * Special-cased "all" method, applying the given route `path`,
-   * middleware, and callback.
+   * Create a new Route for the given path. Each route contains
+   * a separate middleware stack.
    *
+   * See the [route API documentation][route-api] for details on
+   * adding handlers and middleware to routes.
+   *
+   * ```js
+   * app.create('posts');
+   * app.route(/blog/)
+   *   .all(function(view, next) {
+   *     // do something with view
+   *     next();
+   *   });
+   *
+   * app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
+   * ```
+   * @param {String} `path`
+   * @return {Object} `Route` for chaining
+   * @api public
+   */
+
+  route: function(path) {
+    this.lazyRouter();
+    return this.router.route.apply(this.router, arguments);
+  },
+
+  /**
+   * Special route method that works just like the `router.METHOD()`
+   * methods, except that it matches all verbs.
+   *
+   * ```js
+   * app.all(/\.hbs$/, function(view, next) {
+   *   // do stuff to view
+   *   next();
+   * });
+   * ```
    * @name .all
    * @param {String} `path`
    * @param {Function} `callback`
    * @return {Object} `this` for chaining
+   * @api public
    */
 
   all: function(path/*, callback*/) {
-    this.lazyRouter();
-    var route = this.router.route(path);
+    var route = this.route(path);
     route.all.apply(route, [].slice.call(arguments, 1));
     return this;
   },
 
   /**
-   * Proxy to `Router#param`
+   * Add callback triggers to route parameters, where
+   * `name` is the name of the parameter and `fn` is the
+   * callback function.
    *
+   * ```js
+   * app.param('title', function (view, next, title) {
+   *   //=> title === 'foo.js'
+   *   next();
+   * });
+   *
+   * app.onLoad('/blog/:title', function (view, next) {
+   *   //=> view.path === '/blog/foo.js'
+   *   next();
+   * });
+   * ```
    * @name .param
    * @param {String} `name`
    * @param {Function} `fn`
    * @return {Object} Returns the instance of `Templates` for chaining.
+   * @api public
    */
 
-  param: function(/*name, fn*/) {
+  param: function(name/*, fn*/) {
     this.lazyRouter();
     this.router.param.apply(this.router, arguments);
     return this;
@@ -515,9 +624,20 @@ Base.extend(Templates, {
   /**
    * Register a view engine callback `fn` as `ext`.
    *
-   * @param {String|Array} `exts` One or more file extensions.
+   * ```js
+   * app.engine('hbs', require('engine-handlebars'));
+   *
+   * // using consolidate.js
+   * var engine = require('consolidate');
+   * app.engine('jade', engine.jade);
+   * app.engine('swig', engine.swig);
+   *
+   * // get a registered engine
+   * var swig = app.engine('swig');
+   * ```
+   * @param {String|Array} `exts` String or array of file extensions.
    * @param {Function|Object} `fn` or `settings`
-   * @param {Object} `settings`
+   * @param {Object} `settings` Optionally pass engine options as the last argument.
    * @api public
    */
 
@@ -538,7 +658,6 @@ Base.extend(Templates, {
    * Register an engine for `ext` with the given `settings`
    *
    * @param {String} `ext` The engine to get.
-   * @api public
    */
 
   setEngine: function(ext, fn, settings) {
@@ -552,7 +671,6 @@ Base.extend(Templates, {
    * Get the engine settings registered for the given `ext`.
    *
    * @param {String} `ext` The engine to get.
-   * @api public
    */
 
   getEngine: function(ext) {
@@ -584,11 +702,8 @@ Base.extend(Templates, {
     while (len--) {
       var views = this.views[alias[i++]];
       for (var key in views) {
-        var val = views[key];
-        if (views.hasOwnProperty(key)) {
-          stack[key] = val;
-          registered++;
-        }
+        stack[key] = views[key];
+        registered++;
       }
     }
 
@@ -614,17 +729,18 @@ Base.extend(Templates, {
       str = view.contents.toString();
     }
 
-    // Handle each layout before it's applied to a view
-    function handleLayout(layoutObj) {
-      view.currentLayout = layoutObj.layout;
-      self.handle('onLayout', view);
-      delete view.currentLayout;
-    }
-
     var opts = {};
     utils.extend(opts, this.options);
     utils.extend(opts, view.options);
     utils.extend(opts, view.context());
+
+    // Handle each layout before it's applied to a view
+    function handleLayout(obj, stats/*, depth*/) {
+      view.currentLayout = obj.layout;
+      view.define('layoutStack', stats.history);
+      self.handle('onLayout', view);
+      delete view.currentLayout;
+    }
 
     // actually apply the layout
     var res = utils.layouts(str, name, stack, opts, handleLayout);
@@ -646,9 +762,15 @@ Base.extend(Templates, {
    * Compile `content` with the given `locals`.
    *
    * ```js
-   * var blogPost = app.post('2015-09-01-foo-bar');
-   * var view = app.compile(blogPost);
+   * var indexPage = app.page('some-index-page.hbs');
+   * var view = app.compile(indexPage);
    * // view.fn => [function]
+   *
+   * // you can call the compiled function more than once
+   * // to render the view with different data
+   * view.fn({title: 'Foo'});
+   * view.fn({title: 'Bar'});
+   * view.fn({title: 'Baz'});
    * ```
    *
    * @name .compile
@@ -667,7 +789,8 @@ Base.extend(Templates, {
 
     // get the engine to use
     locals = utils.merge({settings: {}}, locals);
-    var ext = locals.engines || view.engine;
+    var extname = view.ext || (view.ext = path.extname(view.path));
+    var ext = locals.engines || view.engine || extname;
     var engine = this.getEngine(ext);
 
     if (engine && engine.options) {
@@ -675,10 +798,7 @@ Base.extend(Templates, {
     }
 
     if (typeof engine === 'undefined') {
-      throw this.error('compile', 'engine', view);
-    }
-    if (!engine.hasOwnProperty('compile')) {
-      throw this.error('compile', 'method', engine);
+      throw this.error('compile', 'engine', view.ext);
     }
 
     var ctx = view.context(locals);
@@ -691,6 +811,8 @@ Base.extend(Templates, {
 
     // Bind context to helpers before passing to the engine.
     this.bindHelpers(view, locals, ctx, (locals.async = isAsync));
+
+    // shallow clone the context and locals
     var settings = utils.extend({}, ctx, locals);
 
     // compile the string
@@ -703,18 +825,17 @@ Base.extend(Templates, {
   },
 
   /**
-   * Render `content` with the given `locals` and `callback`.
+   * Render a view with the given `locals` and `callback`.
    *
    * ```js
-   * var blogPost = app.post('2015-09-01-foo-bar');
-   * app.render(blogPost, function(err, view) {
+   * var blogPost = app.post.getView('2015-09-01-foo-bar');
+   * app.render(blogPost, {title: 'Foo'}, function(err, view) {
    *   // `view` is an object with a rendered `content` property
    * });
    * ```
-   *
    * @name .render
-   * @param  {Object|String} `file` String or normalized template object.
-   * @param  {Object} `locals` Locals to pass to registered view engines.
+   * @param  {Object|String} `view` Instance of `View`
+   * @param  {Object} `locals` Locals to pass to template engine.
    * @param  {Function} `callback`
    * @api public
    */
@@ -733,54 +854,56 @@ Base.extend(Templates, {
 
     // if `view` is a string, see if it's a cached view
     if (typeof view === 'string') {
-      view = this.lookup(view);
+      view = this.find(view);
     }
 
-    locals = locals || {};
-
-    var data = utils.merge({}, locals, this.cache.data);
+    view.locals = utils.merge({}, view.locals, locals);
+    locals = utils.merge({}, this.cache.data, view.locals);
 
     // handle `preRender` middleware
     this.handleView('preRender', view, locals);
 
     // get the engine
-    var ext = locals.engines || view.engine;
+    var extname = view.ext || (view.ext = path.extname(view.path));
+    var ext = locals.engines || view.engine || extname;
     var engine = this.getEngine(ext);
 
     if (typeof cb !== 'function') {
       throw this.error('render', 'callback');
     }
     if (typeof engine === 'undefined') {
-      throw this.error('render', 'engine', path.extname(view.path));
-    }
-    if (!engine.hasOwnProperty('render')) {
-      throw this.error('render', 'method', JSON.stringify(view));
+      return cb(this.error('render', 'engine', extname));
     }
 
     var isAsync = typeof cb === 'function';
+
     // if it's not already compiled, do that first
     if (typeof view.fn !== 'function') {
       try {
         view = this.compile(view, locals, isAsync);
         return this.render(view, locals, cb);
-      } catch (err) {
+      } catch(err) {
         this.emit('error', err);
         return cb.call(this, err);
       }
     }
 
+    var opts = this.options;
     var ctx = view.context(locals);
     var context = this.context(view, ctx, locals);
 
     // render the view
     return engine.render(view.fn, context, function (err, res) {
       if (err) {
+        if (opts.rethrow !== false) {
+          err = this.rethrow('render', err, view, context);
+        }
         this.emit('error', err);
         return cb.call(this, err);
       }
 
+      view.contents = res;
       // handle `postRender` middleware
-      view.contents = new Buffer(res);
       this.handle('postRender', view, locals, cb);
     }.bind(this));
   },
@@ -797,33 +920,29 @@ Base.extend(Templates, {
 
   mergePartials: function (locals, viewTypes) {
     var names = viewTypes || this.viewTypes.partial;
-    var opts = extend({}, this.options, locals);
+    var opts = utils.extend({}, this.options, locals);
     var partials = {};
     var self = this;
-
 
     names.forEach(function (name) {
       var collection = self.views[name];
       for (var key in collection) {
-        if (collection.hasOwnProperty(key)) {
-          var view = collection[key];
+        var view = collection[key];
 
-          // handle `onMerge` middleware
-          self.handleView('onMerge', view, locals);
+        // handle `onMerge` middleware
+        self.handleView('onMerge', view, locals);
 
-          if (view.options.nomerge) return;
-          if (opts.mergePartials !== false) {
-            name = 'partials';
-          }
-
-          // convert the partial to:
-          //=> {'foo.hbs': 'some content...'};
-          partials[name] = partials[name] || {};
-          partials[name][key] = view.content;
+        if (view.options.nomerge) return;
+        if (opts.mergePartials !== false) {
+          name = 'partials';
         }
+
+        // convert the partial to:
+        //=> {'foo.hbs': 'some content...'};
+        partials[name] = partials[name] || {};
+        partials[name][key] = view.content;
       }
     });
-
     return partials;
   },
 
@@ -840,9 +959,10 @@ Base.extend(Templates, {
     var obj = {};
     utils.extend(obj, ctx);
     utils.extend(obj, this.cache.data);
-    utils.extend(obj, view.data);
     utils.extend(obj, view.locals);
+    utils.extend(obj, view.data);
     utils.extend(obj, locals);
+    obj.view = view;
     return obj;
   },
 
@@ -855,12 +975,12 @@ Base.extend(Templates, {
     utils.extend(helpers, this.options.helpers);
     utils.extend(helpers, this._.helpers.sync);
 
-    if (isAsync) extend(helpers, this._.helpers.async);
+    if (isAsync) utils.extend(helpers, this._.helpers.async);
     utils.extend(helpers, locals.helpers);
 
     // build the context to expose as `this` in helpers
     var thisArg = {};
-    thisArg.options = extend({}, this.options, locals);
+    thisArg.options = utils.extend({}, this.options, locals);
     thisArg.context = context || {};
     thisArg.context.view = view;
     thisArg.app = this;
@@ -884,11 +1004,10 @@ Base.extend(Templates, {
    */
 
   handlers: function (methods) {
-    this.lazyRouter();
-    this.router.method(methods);
-    utils.arrayify(methods).forEach(function (method) {
+    this.lazyRouter(methods);
+    methods.forEach(function (method) {
       this.define(method, function(path) {
-        var route = this.router.route(path);
+        var route = this.route(path);
         var args = [].slice.call(arguments, 1);
         route[method].apply(route, args);
         return this;
@@ -900,12 +1019,12 @@ Base.extend(Templates, {
    * Format an error
    *
    * TODO:
-   *  - rethrow
    *  - add engine info to error
    */
 
   error: function(method, id, msg) {
-    var reason = this.errors[method][id] + 'Templates#' + method + ' ' + msg;
+    var ctx = this.errors[method][id];
+    var reason = 'Templates#' + method + ' ' + ctx + (msg || '');
     var err = new Error(reason);
     err.reason = reason;
     err.id = id;
@@ -915,12 +1034,41 @@ Base.extend(Templates, {
   },
 
   /**
+   * Rethrow an error in the given context to
+   * get better error messages.
+   */
+
+  rethrow: function(method, err, view, context) {
+    try {
+      utils.rethrow(view.contents.toString(), {
+        data: context,
+        fp: view.path
+      });
+    } catch (msg) {
+      err.method = method;
+      err.reason = msg;
+      err.id = 'rethrow';
+      return err;
+    }
+  },
+
+  /**
    * Mix in a prototype method
    */
 
   mixin: function(key, value) {
     Templates.prototype[key] = value;
   }
+});
+
+// Add router methods to Templates
+utils.methods.forEach(function (method) {
+  Templates.prototype[method] = function(path) {
+    var route = this.route(path);
+    var args = [].slice.call(arguments, 1);
+    route[method].apply(route, args);
+    return this;
+  };
 });
 
 /**

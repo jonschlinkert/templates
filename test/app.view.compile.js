@@ -1,6 +1,5 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
 var App = require('../');
 var app;
@@ -14,7 +13,7 @@ describe('app view', function () {
     });
 
     it('should use helpers to render a view:', function () {
-      var buffer = new Buffer('a b c')
+      var buffer = new Buffer('a b c');
       var view = app.page('a.tmpl', {contents: buffer})
         .compile();
       assert(typeof view.fn === 'function');
