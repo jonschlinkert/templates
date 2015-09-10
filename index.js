@@ -1070,7 +1070,6 @@ utils.methods.forEach(function (method) {
   };
 });
 
-
 /**
  * Expose `Templates`
  */

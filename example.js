@@ -1,10 +1,8 @@
-
 var path = require('path');
 var View = require('./lib/view');
 var Views = require('./lib/views');
 var List = require('./lib/list');
 var App = require('./');
-
 
 var helpers = require('template-helpers');
 helpers._.log = console.log.bind(console);
@@ -21,7 +19,8 @@ var index = new View({
       '<%= dest %>',
       '<% map(items, function(item) { %>',
       ' <a href="<%= relative(dest, item.locals.base + "/" + item.path) %>"><%= item.content %></a>',
-      '<% }) %>'
+      '<% }) %>',
+      '<% if (typeof next !== "undefined") { %><a href="<%= relative(dest, next.data.dest) %>">Next</a><% } %>'
     ].join('\n')
   )
 });
@@ -41,24 +40,23 @@ collection.addViews({
 
 var pagination = require('./pagination');
 var list = new List(collection)
-  .use(pagination({limit: 3}))
+  .use(pagination({limit: 4, first: 0}))
 
-// var pagination = new Pagination(list.views, {limit: 3});
+// console.log(list)
 
-// var pages = pagination.paginate(index);
 var pages = new Views();
-// list.paginate(index, {limit: 5}).forEach(function(page) {
-//   pages.addView(page.path, page);
-// });
 pages.addList(list.paginate(index));
 
-console.log(pages);
-console.log();
+Object.keys(pages.views).forEach(function (key) {
+  var page = pages.views[key];
+  page.data.dest = path.join(page.data.base, page.path);
+});
 
-// pages.forEach(function (page) {
-//   page.data.dest = path.join(page.data.base, page.path);
-//   page.render(function (err, view) {
-//     if (err) return console.error(err);
-//     console.log(view.contents.toString());
-//   });
-// });
+Object.keys(pages.views).forEach(function (key) {
+  var page = pages.views[key];
+
+  page.render(function (err, view) {
+    if (err) return console.error(err);
+    console.log(view.contents.toString());
+  });
+});
