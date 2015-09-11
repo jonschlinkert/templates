@@ -92,7 +92,7 @@ Base.extend(Templates, {
    */
 
   initialize: function () {
-    this.define('Base', require('base-methods'));
+    this.define('Base', Base);
     this.define('View', this.options.View || View);
     this.define('List', this.options.List || List);
     this.define('Views', this.options.Views || Views);
@@ -126,9 +126,12 @@ Base.extend(Templates, {
   },
 
   /**
-   * Create a view collection. View collections are stored
-   * on the `app.views` object. For example, if you create a collection
-   * named `posts`, the all `posts` will be stored on `app.views.posts`.
+   * Create a new view collection. View collections are stored
+   * on the `app.views` object and are decorated with special methods for
+   * getting, setting and rendering views from that collection. For example,
+   * if you create a collection named `posts`, then all `posts` will be
+   * stored on `app.views.posts`, and a `posts` method will be added to
+   * `app`, allowing you to add posts to the collection using `app.posts()`.
    *
    * ```js
    * app.create('posts');
@@ -151,15 +154,16 @@ Base.extend(Templates, {
 
   create: function(name, opts) {
     if (!this.initialized) this.initialize();
-
     var collection = null;
-    if (opts instanceof this.Views) {
+    var Views = this.get('Views');
+
+    if (opts instanceof Views) {
       collection = opts;
       opts = {};
     } else {
       opts = opts || {};
       opts.View = opts.View || this.get('View');
-      collection = new this.Views(opts);
+      collection = new Views(opts);
     }
 
     // pass the `View` constructor from `App` to the collection
