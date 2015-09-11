@@ -126,6 +126,44 @@ Base.extend(Templates, {
   },
 
   /**
+   * Create a view collection.
+   *
+   * ```js
+   * var collection = app.collection();
+   * collection.addViews({...}); // add an object of views
+   * collection.addView('foo', {content: '...'}); // add a single view
+   *
+   * // collection methods are chainable too
+   * collection.addView('home.hbs', {content: 'foo <%= title %> bar'})
+   *   .render({title: 'Home'}, function(err, res) {
+   *     //=> 'foo Home bar'
+   *   });
+   * ```
+   * @name .collection
+   * @param  {Object} `opts` Collection options
+   * @return {Object} Returns the `collection` instance for chaining.
+   * @api public
+   */
+
+  collection: function (opts) {
+    if (!this.initialized) this.initialize();
+    var collection = null;
+    var Views = this.get('Views');
+
+    if (opts instanceof Views) {
+      collection = opts;
+      opts = {};
+    } else {
+      opts = opts || {};
+      opts.View = opts.View || this.get('View');
+      collection = new Views(opts);
+    }
+
+    // pass the `View` constructor from `App` to the collection
+    return this.extendViews(collection, opts);
+  },
+
+  /**
    * Create a new view collection. View collections are stored
    * on the `app.views` object and are decorated with special methods for
    * getting, setting and rendering views from that collection. For example,
@@ -148,26 +186,13 @@ Base.extend(Templates, {
    * @param  {String} `name` The name of the collection. Plural or singular form.
    * @param  {Object} `opts` Collection options
    * @param  {String|Array|Function} `loaders` Loaders to use for adding views to the created collection.
-   * @return {Object} Returns the `Template` instance for chaining.
+   * @return {Object} Returns the `collection` instance for chaining.
    * @api public
    */
 
   create: function(name, opts) {
-    if (!this.initialized) this.initialize();
-    var collection = null;
-    var Views = this.get('Views');
-
-    if (opts instanceof Views) {
-      collection = opts;
-      opts = {};
-    } else {
-      opts = opts || {};
-      opts.View = opts.View || this.get('View');
-      collection = new Views(opts);
-    }
-
-    // pass the `View` constructor from `App` to the collection
-    collection = this.extendViews(collection, opts);
+    opts = opts || {};
+    var collection = this.collection(opts);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
