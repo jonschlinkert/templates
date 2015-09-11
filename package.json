@@ -40,6 +40,7 @@
     "is-valid-glob": "^0.3.0",
     "layouts": "^0.10.5",
     "lazy-cache": "^0.2.3",
+    "load-helpers": "^0.2.3",
     "micromatch": "^2.2.0",
     "mixin-deep": "^1.1.3",
     "object.reduce": "^0.1.7",
