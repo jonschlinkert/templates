@@ -33,9 +33,9 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.collection](index.js#L148)
+### [.collection](index.js#L151)
 
-Create a view collection.
+Create a new view collection. View collections are decorated with special methods for getting, setting and rendering views from that collection. Collections created with this method are not stored on `app.views` as with the [create](#create) method.
 
 **Params**
 
@@ -56,9 +56,9 @@ collection.addView('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.create](index.js#L193)
+### [.create](index.js#L194)
 
-Create a new view collection. View collections are stored on the `app.views` object and are decorated with special methods for getting, setting and rendering views from that collection. For example, if you create a collection named `posts`, then all `posts` will be stored on `app.views.posts`, and a `posts` method will be added to `app`, allowing you to add posts to the collection using `app.posts()`.
+Create a new view collection that is stored on the `app.views` object. For example, if you create a collection named `posts`, then all `posts` will be stored on `app.views.posts`, and a `posts` method will be added to `app`, allowing you to add posts to the collection using `app.posts()`.
 
 **Params**
 
@@ -81,7 +81,7 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.find](index.js#L328)
+### [.find](index.js#L329)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
@@ -100,7 +100,7 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
-### [.getView](index.js#L366)
+### [.getView](index.js#L367)
 
 Get view `key` from the specified `collection`.
 
@@ -122,7 +122,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](index.js#L405)
+### [.getViews](index.js#L406)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -141,7 +141,7 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.matchView](index.js#L437)
+### [.matchView](index.js#L438)
 
 Returns the first view from `collection` with a key that matches the given glob pattern.
 
@@ -162,7 +162,7 @@ var posts = app.matchView('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.matchViews](index.js#L465)
+### [.matchViews](index.js#L466)
 
 Returns any views from the specified collection with keys that match the given glob pattern.
 
@@ -183,7 +183,7 @@ var posts = app.matchViews('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.handle](index.js#L507)
+### [.handle](index.js#L508)
 
 Handle a middleware `method` for `view`.
 
@@ -221,7 +221,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](index.js#L617)
+### [.all](index.js#L618)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -240,7 +240,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](index.js#L646)
+### [.param](index.js#L647)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -284,7 +284,7 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
-### [.compile](index.js#L812)
+### [.compile](index.js#L813)
 
 Compile `content` with the given `locals`.
 
@@ -309,7 +309,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](index.js#L871)
+### [.render](index.js#L872)
 
 Render a view with the given `locals` and `callback`.
 

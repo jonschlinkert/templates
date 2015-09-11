@@ -126,7 +126,10 @@ Base.extend(Templates, {
   },
 
   /**
-   * Create a view collection.
+   * Create a new view collection. View collections are decorated
+   * with special methods for getting, setting and rendering
+   * views from that collection. Collections created with this method
+   * are not stored on `app.views` as with the [create](#create) method.
    *
    * ```js
    * var collection = app.collection();
@@ -164,10 +167,8 @@ Base.extend(Templates, {
   },
 
   /**
-   * Create a new view collection. View collections are stored
-   * on the `app.views` object and are decorated with special methods for
-   * getting, setting and rendering views from that collection. For example,
-   * if you create a collection named `posts`, then all `posts` will be
+   * Create a new view collection that is stored on the `app.views` object.
+   * For example, if you create a collection named `posts`, then all `posts` will be
    * stored on `app.views.posts`, and a `posts` method will be added to
    * `app`, allowing you to add posts to the collection using `app.posts()`.
    *
