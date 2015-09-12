@@ -63,7 +63,7 @@ Base.extend(Templates, {
       compile: {
         engine: 'cannot find an engine for: ',
         method: 'expects engines to have a compile method',
-        callback: 'compile is synchronous and does not take a callback function'
+        callback: 'is sync and does not take a callback function'
       },
       render: {
         callback: 'is async and expects a callback function',

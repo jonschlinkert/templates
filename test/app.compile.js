@@ -33,11 +33,11 @@ describe('compile', function () {
     (function() {
       app.compile(page, function () {
       });
-    }).should.throw('Templates#compile compile is synchronous and does not take a callback function');
+    }).should.throw('Templates#compile is sync and does not take a callback function');
 
     (function() {
       app.compile(page, {}, function () {
       });
-    }).should.throw('Templates#compile compile is synchronous and does not take a callback function');
+    }).should.throw('Templates#compile is sync and does not take a callback function');
   });
 });
