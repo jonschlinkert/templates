@@ -282,10 +282,6 @@ Base.extend(Templates, {
 
   extendView: function (view) {
     var app = this;
-    if (!view.contents && typeof view.content === 'string') {
-      view.contents = new Buffer(view.content);
-    }
-
     // decorate `option` method onto `view`
     utils.option(view);
     view.compile = function () {
