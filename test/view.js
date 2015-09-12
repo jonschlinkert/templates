@@ -95,6 +95,13 @@ describe('View', function () {
     });
   });
 
+  describe.only('cwd', function () {
+    it('should get properties from the object', function () {
+      view = new View({cwd: 'test/fixtures'});
+      assert(view.cwd === 'test/fixtures');
+    });
+  });
+
   describe('clone', function () {
     it('should clone the view:', function () {
       view = new View({contents: new Buffer('foo')});
