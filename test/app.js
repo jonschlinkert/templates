@@ -7,12 +7,12 @@ var app;
 describe('app', function () {
   describe('constructor', function () {
     it('should create an instance of App:', function () {
-      var app = new App();
+      app = new App();
       assert(app instanceof App);
     });
 
     it('should new up without new:', function () {
-      var app = App();
+      app = App();
       assert(app instanceof App);
     });
   });

@@ -107,8 +107,9 @@ describe('helpers', function () {
     });
 
     it('should fail gracefully on bad globs:', function () {
+      (function() {
       app.asyncHelpers('test/fixtures/helpers/*.foo');
-      app._.helpers.async.should.eql({});
+      }).should.not.throw;
     });
 
     it('should add a glob with mixed helper objects and functions:', function () {
