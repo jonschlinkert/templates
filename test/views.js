@@ -150,6 +150,16 @@ describe('views', function () {
       assert(isBuffer(collection.views.two.contents));
     });
 
+    it('should create views from an instance of Views', function () {
+      collection.addViews({
+        one: {contents: new Buffer('foo')},
+        two: {contents: new Buffer('bar')}
+      });
+      var pages = new Views(collection);
+      assert(isBuffer(pages.views.one.contents));
+      assert(isBuffer(pages.views.two.contents));
+    });
+
     it('should add an array of views:', function () {
       collection.addViews([
         {path: 'one', contents: new Buffer('foo')},
