@@ -54,16 +54,16 @@ Base.extend(Templates, {
       this.mixin(key, this.options.mixins[key]);
     }
 
-    this.engines = {};
     this.define('_', {});
+    this.engines = {};
     lib.helpers(this);
     this._.engines = new utils.Engines(this.engines);
 
     this.define('errors', {
       compile: {
+        callback: 'is sync and does not take a callback function',
         engine: 'cannot find an engine for: ',
         method: 'expects engines to have a compile method',
-        callback: 'is sync and does not take a callback function'
       },
       render: {
         callback: 'is async and expects a callback function',
