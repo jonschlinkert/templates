@@ -95,7 +95,7 @@ describe('View', function () {
     });
   });
 
-  describe.only('cwd', function () {
+  describe('cwd', function () {
     it('should get properties from the object', function () {
       view = new View({cwd: 'test/fixtures'});
       assert(view.cwd === 'test/fixtures');
