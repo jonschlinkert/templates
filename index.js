@@ -128,6 +128,18 @@ Base.extend(Templates, {
   /**
    * Set, get and load data to be passed to templates as
    * context at render-time.
+   *
+   * ```js
+   * app.data('a', 'b');
+   * app.data({c: 'd'});
+   * console.log(app.cache.data);
+   * //=> {a: 'b', c: 'd'}
+   * ---
+   * @name .data
+   * @param {String|Object} `key` Pass a key-value pair or an object to set.
+   * @param {any} `val` Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+   * @return {Object} Returns an instance of `Templates` for chaining.
+   * @api public
    */
 
   data: function (key, val) {
