@@ -116,12 +116,57 @@ Base.extend(Templates, {
   /**
    * Run a plugin on the instance.
    *
+   * ```
+   * var app = assemble()
+   *   .use(require('assemble-foo'))
+   *   .use(require('assemble-bar'))
+   *   .use(require('assemble-baz'))
+   * ```
+   *
+   * @name .use
    * @param {Function} fn
    * @return {Object}
+   * @api public
    */
 
   use: function (fn) {
     fn.call(this, this);
+    return this;
+  },
+
+  /**
+   * Set, get and load data to be passed to templates as
+   * context at render-time.
+   *
+   * ```js
+   * app.data('a', 'b');
+   * app.data({c: 'd'});
+   * console.log(app.cache.data);
+   * //=> {a: 'b', c: 'd'}
+   * ---
+   * @name .data
+   * @param {String|Object} `key` Pass a key-value pair or an object to set.
+   * @param {any} `val` Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+   * @return {Object} Returns an instance of `Templates` for chaining.
+   * @api public
+   */
+
+  data: function (key, val) {
+    if (utils.isObject(key)) {
+      this.visit('data', key);
+      return this;
+    }
+
+    var isGlob = typeof val === 'undefined' || utils.hasGlob(key);
+    if (utils.isValidGlob(key) && isGlob) {
+      var opts = utils.extend({}, this.options, val);
+      var data = utils.requireData(key, opts);
+      if (data) this.visit('data', data);
+      return this;
+    }
+
+    key = 'cache.data.' + key;
+    this.set(key, val);
     return this;
   },
 
