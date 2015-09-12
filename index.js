@@ -126,6 +126,30 @@ Base.extend(Templates, {
   },
 
   /**
+   * Set, get and load data to be passed to templates as
+   * context at render-time.
+   */
+
+  data: function (key, val) {
+    if (utils.isObject(key)) {
+      this.visit('data', key);
+      return this;
+    }
+
+    var isGlob = typeof val === 'undefined' || utils.hasGlob(key);
+    if (utils.isValidGlob(key) && isGlob) {
+      var opts = utils.extend({}, this.options, val);
+      var data = utils.requireData(key, opts);
+      if (data) this.visit('data', data);
+      return this;
+    }
+
+    key = 'cache.data.' + key;
+    this.set(key, val);
+    return this;
+  },
+
+  /**
    * Create a view collection.
    *
    * ```js
@@ -592,7 +616,7 @@ Base.extend(Templates, {
    * @api public
    */
 
-  route: function(path) {
+  route: function(/*path*/) {
     this.lazyRouter();
     return this.router.route.apply(this.router, arguments);
   },

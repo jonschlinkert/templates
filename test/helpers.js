@@ -292,22 +292,6 @@ describe('built-in helpers:', function () {
         done();
       });
     });
-
-    it.skip('should throw an error when something is wrong in a partial', function (done) {
-      var called = false;
-      var cb = function (err) {
-        if (called) return;
-        called = true;
-        done(err);
-      };
-
-      app.partial('abc.md', {content: '---\nname: "AAA"\n---\n<%= name %> - <%= foo(name) %>', locals: {name: 'BBB'}});
-      app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md", { name: "CCC" }) %> bar'});
-      app.render('xyz.md', {name: 'DDD'}, function (err, res) {
-        if (!err) return cb('Expected an error.');
-        cb();
-      });
-    });
   });
 
   describe('helper context:', function () {
@@ -324,18 +308,6 @@ describe('built-in helpers:', function () {
           view.data = res.data;
           next();
         });
-      });
-    });
-
-    it.skip('should prefer front-matter over view locals and helper locals.', function (done) {
-      // app.disable('prefer locals');
-      app.partial('a.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
-      app.page('b.md', {path: 'b.md', content: 'foo <%= partial("a.md") %> bar'});
-
-      app.render('b.md', function (err, res) {
-        if (err) return done(err);
-        res.contents.toString().should.equal('foo AAA bar');
-        done();
       });
     });
 

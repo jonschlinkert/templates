@@ -1,5 +1,6 @@
 require('mocha');
 require('should');
+var path = require('path');
 var assert = require('assert');
 var isAbsolute = require('is-absolute');
 var utils = require('../lib/utils');
@@ -127,6 +128,24 @@ describe('utils', function () {
     it('should return an object for a glob of files:', function () {
       var files = utils.requireGlob('test/fixtures/**/*.js');
       assert(files && typeof files === 'object');
+      var keys = Object.keys(files);
+      assert(keys.length > 0);
+      keys.forEach(function (key) {
+        var val = files[key];
+        assert(typeof val === 'function' || typeof val === 'object');
+      });
+    });
+
+    it('should use a custom rename key function:', function () {
+      var files = utils.requireGlob('test/fixtures/**/*.js', {
+        rename: function (key) {
+          return 'foo_' + path.basename(key, path.extname(key));
+        }
+      });
+      assert(files && typeof files === 'object');
+      assert(files.hasOwnProperty('foo_a'));
+      assert(files.hasOwnProperty('foo_b'));
+      assert(files.hasOwnProperty('foo_c'));
       var keys = Object.keys(files);
       assert(keys.length > 0);
       keys.forEach(function (key) {
