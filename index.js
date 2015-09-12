@@ -50,6 +50,9 @@ Base.extend(Templates, {
     // decorate `option` method onto instance
     utils.option(this);
 
+    // decorate `view` method onto instance
+    utils.createView(this);
+
     for (var key in this.options.mixins) {
       this.mixin(key, this.options.mixins[key]);
     }
@@ -136,6 +139,22 @@ Base.extend(Templates, {
   },
 
   /**
+   * Returns a new view, using the `View` class
+   * currently defined on the instance.
+   *
+   * ```js
+   * var view = app.view('foo', {conetent: '...'});
+   * // or
+   * var view = app.view({path: 'foo', conetent: '...'});
+   * ```
+   * @name .view
+   * @param {String|Object} `key` View key or object
+   * @param {Object} `value` If key is a string, value is the view object.
+   * @return {Object} returns the `view` object
+   * @api public
+   */
+
+  /**
    * Set, get and load data to be passed to templates as
    * context at render-time.
    *
@@ -207,7 +226,6 @@ Base.extend(Templates, {
       opts.View = opts.View || this.get('View');
       collection = new Views(opts);
     }
-
     // pass the `View` constructor from `App` to the collection
     return this.extendViews(collection, opts);
   },
@@ -281,23 +299,36 @@ Base.extend(Templates, {
    * Decorate `view` instances in the collection.
    */
 
-  extendView: function (view) {
+  extendView: function (view, options) {
+    var opts = utils.merge({}, this.options, options);
     var app = this;
+
     // decorate `option` method onto `view`
     utils.option(view);
+
+    // decorate `compile` method onto `view`
     view.compile = function () {
       var args = [this].concat([].slice.call(arguments));
       app.compile.apply(app, args);
       return this;
     };
+
+    // decorate `render` method onto `view`
     view.render = function () {
       var args = [this].concat([].slice.call(arguments));
       app.render.apply(app, args);
       return this;
     };
+
+    // decorate `context` method onto `view`
     view.context = function(locals) {
       return utils.merge({}, this.locals, this.data, locals);
     };
+
+    // support custom `extendView` function on options
+    if (typeof opts.extendView === 'function') {
+      opts.extendView(view);
+    }
     return view;
   },
 
@@ -319,7 +350,7 @@ Base.extend(Templates, {
     var extendView = collection.extendView;
     utils.define(collection, 'extendView', function () {
       var view = extendView.apply(this, arguments);
-      return app.extendView(view);
+      return app.extendView(view, options);
     });
 
     if (!collection.options.hasOwnProperty('renameKey')) {
