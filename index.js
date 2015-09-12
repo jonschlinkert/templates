@@ -63,6 +63,7 @@ Base.extend(Templates, {
       compile: {
         engine: 'cannot find an engine for: ',
         method: 'expects engines to have a compile method',
+        callback: 'compile is synchronous and does not take a callback function'
       },
       render: {
         callback: 'is async and expects a callback function',
@@ -795,10 +796,6 @@ Base.extend(Templates, {
       throw new Error('cannot find layout: ' + name);
     }
 
-    if (!str && utils.isBuffer(view.contents)) {
-      str = view.contents.toString();
-    }
-
     var opts = {};
     utils.extend(opts, this.options);
     utils.extend(opts, view.options);
@@ -855,6 +852,10 @@ Base.extend(Templates, {
     if (typeof locals === 'boolean') {
       isAsync = locals;
       locals = {};
+    }
+
+    if (typeof locals === 'function' || typeof isAsync === 'function') {
+      throw this.error('compile', 'callback');
     }
 
     // get the engine to use
