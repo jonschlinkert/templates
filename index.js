@@ -119,9 +119,9 @@ Base.extend(Templates, {
    *
    * ```
    * var app = assemble()
-   *   .use(require('assemble-foo'))
-   *   .use(require('assemble-bar'))
-   *   .use(require('assemble-baz'))
+   *   .use(require('foo'))
+   *   .use(require('bar'))
+   *   .use(require('baz'))
    * ```
    *
    * @name .use
