@@ -363,16 +363,16 @@ describe('built-in helpers:', function () {
       });
     });
 
-    it.skip('should use the `partial` helper with handlebars.', function (done) {
+    it('should use the `partial` helper with handlebars.', function (done) {
       app.engine(['tmpl', 'md'], require('engine-base'));
       app.engine('hbs', handlebars);
 
-      app.partial('title', {content: '<title>{{name}}</title>', locals: {name: 'BBB'}});
+      app.partial('title.hbs', {content: '<title>{{name}}</title>', locals: {name: 'BBB'}});
       app.page('a.hbs', {path: 'a.hbs', content: 'foo {{{partial "title.hbs" this}}} bar'});
 
       app.render('a.hbs', {name: 'Halle Nicole'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo <title>Halle Nicole</title> bar');
+        res.content.should.equal('foo <title>Halle Nicole</title> bar');
         done();
       });
     });
