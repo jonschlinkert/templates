@@ -126,43 +126,10 @@ Base.extend(Templates, {
   },
 
   /**
-   * Set, get and load data to be passed to templates as
-   * context at render-time.
-   *
-   * ```js
-   * app.data('a', 'b');
-   * app.data({c: 'd'});
-   * console.log(app.cache.data);
-   * //=> {a: 'b', c: 'd'}
-   * ---
-   * @name .data
-   * @param {String|Object} `key` Pass a key-value pair or an object to set.
-   * @param {any} `val` Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-   * @return {Object} Returns an instance of `Templates` for chaining.
-   * @api public
-   */
-
-  data: function (key, val) {
-    if (utils.isObject(key)) {
-      this.visit('data', key);
-      return this;
-    }
-
-    var isGlob = typeof val === 'undefined' || utils.hasGlob(key);
-    if (utils.isValidGlob(key) && isGlob) {
-      var opts = utils.extend({}, this.options, val);
-      var data = utils.requireData(key, opts);
-      if (data) this.visit('data', data);
-      return this;
-    }
-
-    key = 'cache.data.' + key;
-    this.set(key, val);
-    return this;
-  },
-
-  /**
-   * Create a view collection.
+   * Create a new view collection. View collections are decorated
+   * with special methods for getting, setting and rendering
+   * views from that collection. Collections created with this method
+   * are not stored on `app.views` as with the [create](#create) method.
    *
    * ```js
    * var collection = app.collection();
@@ -200,10 +167,8 @@ Base.extend(Templates, {
   },
 
   /**
-   * Create a new view collection. View collections are stored
-   * on the `app.views` object and are decorated with special methods for
-   * getting, setting and rendering views from that collection. For example,
-   * if you create a collection named `posts`, then all `posts` will be
+   * Create a new view collection that is stored on the `app.views` object.
+   * For example, if you create a collection named `posts`, then all `posts` will be
    * stored on `app.views.posts`, and a `posts` method will be added to
    * `app`, allowing you to add posts to the collection using `app.posts()`.
    *
@@ -628,7 +593,7 @@ Base.extend(Templates, {
    * @api public
    */
 
-  route: function(/*path*/) {
+  route: function(path) {
     this.lazyRouter();
     return this.router.route.apply(this.router, arguments);
   },
