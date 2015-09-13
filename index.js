@@ -47,9 +47,10 @@ Base.extend(Templates, {
   constructor: Templates,
 
   defaultConfig: function () {
+    // used in plugins to verify the app instance
+    this.isApp = true;
     // decorate `option` method onto instance
     utils.option(this);
-
     // decorate `view` method onto instance
     utils.createView(this);
 
@@ -72,6 +73,9 @@ Base.extend(Templates, {
         callback: 'is async and expects a callback function',
         engine: 'cannot find an engine for: ',
         method: 'expects engines to have a render method',
+      },
+      layouts: {
+        registered: 'no layouts are registered, but one is defined: '
       }
     });
 
@@ -339,7 +343,6 @@ Base.extend(Templates, {
   extendViews: function (collection, options) {
     var opts = utils.merge({}, this.options, options);
     var app = this;
-
     var addView = collection.addView;
     utils.define(collection, 'addView', function () {
       var view = addView.apply(this, arguments);
@@ -356,6 +359,7 @@ Base.extend(Templates, {
     if (!collection.options.hasOwnProperty('renameKey')) {
       collection.option('renameKey', this.renameKey);
     }
+
     if (opts.extendViews) {
       collection = opts.extendViews(collection);
     }
@@ -819,12 +823,8 @@ Base.extend(Templates, {
       return view;
     }
 
-    if (registered === 0) {
-      throw new Error('no layouts are registered.');
-    }
-
-    if (!stack.hasOwnProperty(name)) {
-      throw new Error('cannot find layout: ' + name);
+    if (registered === 0 || !stack.hasOwnProperty(name)) {
+      throw this.error('layouts', 'registered', name);
     }
 
     var opts = {};
@@ -1131,7 +1131,6 @@ Base.extend(Templates, {
     err.reason = reason;
     err.id = id;
     err.msg = msg;
-    this.emit('error', err);
     return err;
   },
 
@@ -1150,6 +1149,7 @@ Base.extend(Templates, {
       err.method = method;
       err.reason = msg;
       err.id = 'rethrow';
+      err._called = true;
       return err;
     }
   },
