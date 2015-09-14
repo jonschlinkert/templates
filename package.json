@@ -26,6 +26,7 @@
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "define-property": "^0.2.5",
+    "dest": "^0.2.1",
     "en-route": "^0.7.3",
     "engine-base": "^0.1.2",
     "engine-cache": "^0.14.1",
