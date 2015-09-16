@@ -261,6 +261,11 @@ Base.extend(Templates, {
 
   create: function(name, opts) {
     opts = opts || {};
+
+    if (!opts.views && !opts.options) {
+      opts = utils.merge({}, this.options, opts);
+    }
+
     var collection = this.collection(opts);
 
     // get the collection inflections, e.g. page/pages
@@ -293,9 +298,10 @@ Base.extend(Templates, {
     collection.define(plural, this[plural]);
     collection.define(single, this[single]);
 
+
     // add collection and view helpers
-    helpers.plural(this, collection, opts);
-    // helpers.single(this, this[single], opts);
+    helpers.plural(this, this[plural], opts);
+    helpers.single(this, this[single], opts);
     return collection;
   },
 
