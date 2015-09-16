@@ -956,6 +956,10 @@ Base.extend(Templates, {
       locals = {};
     }
 
+    if (typeof cb !== 'function') {
+      throw this.error('render', 'callback');
+    }
+
     // if `view` is a function, it's probably from chaining
     // a collection method
     if (typeof view === 'function') {
@@ -976,13 +980,15 @@ Base.extend(Templates, {
     // get the engine
     var extname = view.ext || (view.ext = path.extname(view.path));
     var ext = locals.engines || view.engine || extname;
-    var engine = this.getEngine(ext);
 
-    if (typeof cb !== 'function') {
-      throw this.error('render', 'callback');
+    // if no extension is provided, assume there is no engine
+    if (ext === '') {
+      return cb(null, view);
     }
-    if (typeof engine === 'undefined') {
-      return cb(this.error('render', 'engine', extname));
+
+    var engine = this.getEngine(ext);
+    if (!engine) {
+      return cb(this.error('render', 'engine', ext));
     }
 
     var isAsync = typeof cb === 'function';
