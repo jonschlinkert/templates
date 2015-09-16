@@ -307,7 +307,6 @@ Base.extend(Templates, {
     // addView/addViews to support chaining
     collection.define(plural, this[plural]);
     collection.define(single, this[single]);
-    collection.use = collection.use || utils.identity;
 
     // run collection plugins
     this.plugins.forEach(function (fn) {
@@ -788,7 +787,8 @@ Base.extend(Templates, {
    */
 
   getEngine: function(ext) {
-    ext = utils.formatExt(ext || this.option('view engine'));
+    if (ext === '') ext = '*';
+    ext = ext ? utils.formatExt(ext) : null;
     return this._.engines.getEngine(ext);
   },
 
@@ -980,13 +980,8 @@ Base.extend(Templates, {
     // get the engine
     var extname = view.ext || (view.ext = path.extname(view.path));
     var ext = locals.engines || view.engine || extname;
-
-    // if no extension is provided, assume there is no engine
-    if (ext === '') {
-      return cb(null, view);
-    }
-
     var engine = this.getEngine(ext);
+
     if (!engine) {
       return cb(this.error('render', 'engine', ext));
     }
