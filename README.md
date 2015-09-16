@@ -16,7 +16,7 @@ $ npm i templates --save
 var templates = require('templates');
 ```
 
-## API
+# API
 
 ### [Templates](index.js#L32)
 
@@ -33,14 +33,14 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.use](index.js#L140)
+### [.use](index.js#L145)
 
-Run a plugin on the instance.
+Run a plugin on the instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
 
 **Params**
 
-* **{Function}**: fn
-* `returns` **{Object}**
+* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each collection created on the instance.
+* `returns` **{Object}**: Returns the instance for chaining.
 
 **Example**
 
@@ -51,7 +51,7 @@ var app = assemble()
   .use(require('baz'))
 ```
 
-### [.view](index.js#L161)
+### [.view](index.js#L169)
 
 Returns a new view, using the `View` class currently defined on the instance.
 
@@ -69,7 +69,7 @@ var view = app.view('foo', {conetent: '...'});
 var view = app.view({path: 'foo', conetent: '...'});
 ```
 
-### [.data](index.js#L178)
+### [.data](index.js#L186)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -86,7 +86,7 @@ console.log(app.cache.data);
 * `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.    
 * `returns` **{Object}**: Returns an instance of `Templates` for chaining.  
 
-### [.collection](index.js#L220)
+### [.collection](index.js#L228)
 
 Create a new view collection. View collections are decorated with special methods for getting, setting and rendering views from that collection. Collections created with this method are not stored on `app.views` as with the [create](#create) method.
 
@@ -109,7 +109,7 @@ collection.addView('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.create](index.js#L262)
+### [.create](index.js#L273)
 
 Create a new view collection that is stored on the `app.views` object. For example, if you create a collection named `posts`, then all `posts` will be stored on `app.views.posts`, and a `posts` method will be added to `app`, allowing you to add posts to the collection using `app.posts()`.
 
@@ -134,7 +134,7 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.find](index.js#L406)
+### [.find](index.js#L413)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
@@ -153,7 +153,7 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
-### [.getView](index.js#L444)
+### [.getView](index.js#L451)
 
 Get view `key` from the specified `collection`.
 
@@ -175,7 +175,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](index.js#L483)
+### [.getViews](index.js#L490)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -194,7 +194,7 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.matchView](index.js#L515)
+### [.matchView](index.js#L522)
 
 Returns the first view from `collection` with a key that matches the given glob pattern.
 
@@ -215,7 +215,7 @@ var posts = app.matchView('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.matchViews](index.js#L543)
+### [.matchViews](index.js#L550)
 
 Returns any views from the specified collection with keys that match the given glob pattern.
 
@@ -236,7 +236,7 @@ var posts = app.matchViews('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.handle](index.js#L585)
+### [.handle](index.js#L592)
 
 Handle a middleware `method` for `view`.
 
@@ -252,6 +252,10 @@ Handle a middleware `method` for `view`.
 ```js
 app.handle('customMethod', view, callback);
 ```
+
+### [.route](index.js#L681)
+
+Create a new Route for the given path. Each route contains a separate middleware stack.
 
 See the [route API documentation][route-api] for details on
 adding handlers and middleware to routes.
@@ -274,7 +278,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](index.js#L695)
+### [.all](index.js#L703)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -293,7 +297,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](index.js#L724)
+### [.param](index.js#L732)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -317,6 +321,10 @@ app.onLoad('/blog/:title', function (view, next) {
 });
 ```
 
+### [.engine](index.js#L759)
+
+Register a view engine callback `fn` as `ext`.
+
 **Params**
 
 * `exts` **{String|Array}**: String or array of file extensions.
@@ -337,7 +345,7 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
-### [.compile](index.js#L882)
+### [.compile](index.js#L892)
 
 Compile `content` with the given `locals`.
 
@@ -362,7 +370,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](index.js#L945)
+### [.render](index.js#L955)
 
 Render a view with the given `locals` and `callback`.
 
@@ -379,6 +387,280 @@ var blogPost = app.post.getView('2015-09-01-foo-bar');
 app.render(blogPost, {title: 'Foo'}, function(err, view) {
   // `view` is an object with a rendered `content` property
 });
+```
+
+## Collections
+
+### [Views](lib/views.js#L17)
+
+Create an instance of `Views` with the given `options`.
+
+**Params**
+
+* `options` **{Object}**
+
+**Example**
+
+```js
+var collection = new Views();
+collection.addView('foo', {content: 'bar'});
+```
+
+### [.use](lib/views.js#L75)
+
+Run a plugin on the collection instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
+
+**Params**
+
+* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each view created on the instance.
+* `returns` **{Object}**: Returns the instance for chaining.
+
+**Example**
+
+```js
+collection.use(function(views) {
+  // `views` is the instance, as is `this`
+
+  // optionally return a function to be passed to
+  // the `.use` method of each view created on the
+  // instance
+  return function(view) {
+    // do stuff to each `view`
+  };
+});
+```
+
+### [.view](lib/views.js#L99)
+
+Returns a new view, using the `View` class currently defined on the instance.
+
+**Params**
+
+* `key` **{String|Object}**: View key or object
+* `value` **{Object}**: If key is a string, value is the view object.
+* `returns` **{Object}**: returns the `view` object
+
+**Example**
+
+```js
+var view = app.view('foo', {conetent: '...'});
+// or
+var view = app.view({path: 'foo', conetent: '...'});
+```
+
+### [.setView](lib/views.js#L114)
+
+Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
+
+**Params**
+
+* `key` **{String|Object}**: View key or object
+* `value` **{Object}**: If key is a string, value is the view object.
+* `returns` **{Object}**: returns the `view` instance.
+
+**Example**
+
+```js
+collection.setView('foo', {content: 'bar'});
+```
+
+### [.addView](lib/views.js#L128)
+
+Adds event emitting and custom loading to [setView](#setView).
+
+**Params**
+
+* `key` **{String}**
+* `value` **{Object}**
+
+### [.addViews](lib/views.js#L154)
+
+Load multiple views onto the collection.
+
+**Params**
+
+* `views` **{Object|Array}**
+* `returns` **{Object}**: returns the `collection` object
+
+**Example**
+
+```js
+collection.addViews({
+  'a.html': {content: '...'},
+  'b.html': {content: '...'},
+  'c.html': {content: '...'}
+});
+```
+
+### [.addList](lib/views.js#L184)
+
+Load an array of views onto the collection.
+
+**Params**
+
+* `views` **{Object|Array}**
+* `returns` **{Object}**: returns the `collection` object
+
+**Example**
+
+```js
+collection.addViews([
+  {path: 'a.html', content: '...'},
+  {path: 'b.html', content: '...'},
+  {path: 'c.html', content: '...'}
+]);
+```
+
+### [.getView](lib/views.js#L211)
+
+Get a view from the collection.
+
+**Params**
+
+* `key` **{String}**: Key of the view to get.
+* `returns` **{Object}**
+
+**Example**
+
+```js
+collection.getView('a.html');
+```
+
+## List
+
+### [.groupBy](lib/list.js#L114)
+
+Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
+
+* `returns` **{Object}**: Returns the grouped items.
+
+**Example**
+
+```js
+var list = new List();
+list.addItems(...);
+var groups = list.groupBy('data.date', 'data.slug');
+```
+
+### [.sortBy](lib/list.js#L140)
+
+Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
+
+* `returns` **{Object}**: Returns a new `List` instance with sorted items.
+
+**Example**
+
+```js
+var list = new List();
+list.addItems(...);
+var result = list.sortBy('data.date');
+//=> new sorted list
+```
+
+### [.paginate](lib/list.js#L174)
+
+Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
+
+* `returns` **{Object}**: Returns the paginated items.
+
+**Example**
+
+```js
+var list = new List(items);
+var pages = list.paginate({limit: 5});
+```
+
+### [.pagination](lib/list.js#L209)
+
+Getter for returning an array of pagination objects for each list item. Useful when you just want `prev/next` type information.
+
+* `returns` **{Array}**: Returns the array of pagination pages.
+
+**Example**
+
+```js
+var list = new List([
+  {name: 'one'},
+  {name: 'two'},
+  {name: 'three'}
+]);
+
+var pages = list.pages;
+// [
+//  {idx: 0, current: 1, next: 2, item: {name: 'one'}},
+//  {idx: 1, current: 2, next: 3, prev: 1, item: {name: 'two'}},
+//  {idx: 2, current: 3, prev: 2, item: {name: 'three'}}
+// ]
+```
+
+## View
+
+### [.use](lib/view.js#L76)
+
+Run a plugin on the `view` instance.
+
+**Params**
+
+* `fn` **{Function}**
+* `returns` **{Object}**
+
+**Example**
+
+```js
+var view = new View({path: 'abc', contents: '...'})
+  .use(require('foo'))
+  .use(require('bar'))
+  .use(require('baz'))
+```
+
+### [.compile](lib/view.js#L96)
+
+Synchronously compile a view.
+
+**Params**
+
+* `locals` **{Object}**: Optionally pass locals to the engine.
+* `returns` **{Object}** `View`: instance, for chaining.
+
+**Example**
+
+```js
+var view = page.compile();
+view.fn({title: 'A'});
+view.fn({title: 'B'});
+view.fn({title: 'C'});
+```
+
+### [.render](lib/view.js#L114)
+
+Asynchronously render a view.
+
+**Params**
+
+* `locals` **{Object}**: Optionally pass locals to the engine.
+* `returns` **{Object}** `View`: instance, for chaining.
+
+**Example**
+
+```js
+view.render({title: 'Home'}, function(err, res) {
+  //=> view object with rendered `content`
+});
+```
+
+### [.clone](lib/view.js#L148)
+
+Re-decorate View methods after calling vinyl's `.clone()` method.
+
+**Params**
+
+* `options` **{Object}**
+* `returns` **{Object}** `view`: Cloned instance
+
+**Example**
+
+```js
+view.clone({deep: true}); // false by default
 ```
 
 ## Related projects
@@ -416,4 +698,4 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 13, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 16, 2015._

@@ -672,6 +672,7 @@ Base.extend(Templates, {
    *
    * app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
    * ```
+   * @name .route
    * @param {String} `path`
    * @return {Object} `Route` for chaining
    * @api public
@@ -748,6 +749,7 @@ Base.extend(Templates, {
    * // get a registered engine
    * var swig = app.engine('swig');
    * ```
+   * @name .engine
    * @param {String|Array} `exts` String or array of file extensions.
    * @param {Function|Object} `fn` or `settings`
    * @param {Object} `settings` Optionally pass engine options as the last argument.
