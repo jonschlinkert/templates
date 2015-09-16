@@ -52,8 +52,6 @@ Base.extend(Templates, {
     this.isApp = true;
     // decorate `option` method onto instance
     utils.option(this);
-    // decorate `view` method onto instance
-    utils.createView(this);
 
     for (var key in this.options.mixins) {
       this.mixin(key, this.options.mixins[key]);
@@ -101,6 +99,10 @@ Base.extend(Templates, {
    */
 
   initialize: function () {
+    // expose `view` method on app instance
+    utils.createView(this);
+
+    // expose constructors on app instance
     this.define('Base', Base);
     this.define('View', this.options.View || View);
     this.define('List', this.options.List || List);
@@ -143,7 +145,7 @@ Base.extend(Templates, {
   use: function (fn) {
     var plugin = fn.call(this, this, this.options);
     if (typeof plugin === 'function') {
-      this.plugins.push(plugin.bind(this));
+      this.plugins.push(plugin);
     }
     return this;
   },
@@ -225,19 +227,22 @@ Base.extend(Templates, {
 
   collection: function (opts) {
     if (!this.initialized) this.initialize();
-    var collection = null;
     var Views = this.get('Views');
+    var collection;
 
     if (opts instanceof Views) {
       collection = opts;
-      opts = {};
+      opts = this.options;
     } else {
       opts = opts || {};
       opts.View = opts.View || this.get('View');
       collection = new Views(opts);
     }
-    // pass the `View` constructor from `App` to the collection
-    return this.extendViews(collection, opts);
+
+    // emit the collection
+    this.emit('collection', collection, opts);
+    this.extendViews(collection, opts);
+    return collection;
   },
 
   /**
@@ -267,7 +272,6 @@ Base.extend(Templates, {
 
   create: function(name, opts) {
     opts = opts || {};
-
     if (!opts.views && !opts.options) {
       opts = utils.merge({}, this.options, opts);
     }
@@ -305,9 +309,13 @@ Base.extend(Templates, {
     collection.define(single, this[single]);
     collection.use = collection.use || utils.identity;
 
+    // run collection plugins
     this.plugins.forEach(function (fn) {
-      collection.use(fn.bind(this), opts);
+      collection.use(fn, opts);
     }.bind(this));
+
+    // emit create
+    this.emit('create', collection, opts);
 
     // add collection and view helpers
     helpers.plural(this, this[plural], opts);
@@ -344,12 +352,6 @@ Base.extend(Templates, {
     view.context = function(locals) {
       return utils.merge({}, this.locals, this.data, locals);
     };
-
-    // support custom `extendView` function on options
-    if (typeof opts.extendView === 'function') {
-      opts.extendView(view);
-    }
-    return view;
   },
 
   /**
@@ -359,27 +361,17 @@ Base.extend(Templates, {
   extendViews: function (collection, options) {
     var opts = utils.merge({}, this.options, options);
     var app = this;
-    var addView = collection.addView;
-    utils.define(collection, 'addView', function () {
-      var view = addView.apply(this, arguments);
-      app.handleView('onLoad', view);
-      return view;
-    });
-
-    var extendView = collection.extendView;
-    utils.define(collection, 'extendView', function () {
-      var view = extendView.apply(this, arguments);
-      return app.extendView(view, options);
-    });
 
     if (!collection.options.hasOwnProperty('renameKey')) {
       collection.option('renameKey', this.renameKey);
     }
 
-    if (opts.extendViews) {
-      collection = opts.extendViews(collection);
-    }
-    return collection;
+    collection.on('view', function (view) {
+      utils.define(view, 'addView', collection.addView.bind(collection));
+      app.extendView(view, opts);
+      app.handleView('onLoad', view);
+      app.emit('view', view);
+    });
   },
 
   /**
