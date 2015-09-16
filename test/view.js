@@ -104,7 +104,7 @@ describe('View', function () {
 
   describe('clone', function () {
     it('should clone the view:', function () {
-      view = new View({contents: new Buffer('foo')});
+      view = new View({content: 'foo'});
       view.set({path: 'foo/bar'});
       view.set('options.one', 'two');
       var clone = view.clone();
@@ -120,7 +120,7 @@ describe('View', function () {
     });
 
     it('should deep clone the entire object', function () {
-      view = new View({contents: new Buffer('foo')});
+      view = new View({content: 'foo'});
       view.set({path: 'foo/bar'});
       view.set('options.one', 'two');
       var clone = view.clone({deep: true});
