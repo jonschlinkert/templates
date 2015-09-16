@@ -1,10 +1,10 @@
 var templates = require('./');
 var app = templates();
 
-app.engine('html', require('engine-base'));
+app.engine('*', require('engine-base'));
 
 app.create('pages')
-  .addView('home.html', {content: 'The <%= title %> page'})
+  .addView('home', {content: 'The <%= title %> page'})
   .set('locals.title', 'Home')
   .render(function (err, res) {
     if (err) return console.log(err);
