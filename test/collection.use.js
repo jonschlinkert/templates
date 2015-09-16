@@ -67,6 +67,33 @@ describe('collection.use', function () {
     assert(collection.views.hasOwnProperty('c'));
   });
 
+  it('should work when a custom `View` constructor is passed:', function () {
+    collection = new Views({View: require('vinyl')});
+    collection
+      .use(function (views) {
+        assert(views instanceof Views);
+        views.foo = views.addView.bind(views);
+      })
+      .use(function (views) {
+        assert(views instanceof Views);
+        views.bar = views.addView.bind(views);
+      })
+      .use(function (views) {
+        assert(views instanceof Views);
+        views.baz = views.addView.bind(views);
+      });
+
+    var pages = collection;
+
+    pages.foo({path: 'a', content: '...'})
+    pages.bar({path: 'b', content: '...'})
+    pages.baz({path: 'c', content: '...'})
+
+    assert(collection.views.hasOwnProperty('a'));
+    assert(collection.views.hasOwnProperty('b'));
+    assert(collection.views.hasOwnProperty('c'));
+  });
+
   it('should pass to view `use` if a function is returned:', function () {
     collection.use(function (views) {
       assert(views instanceof Views);
