@@ -369,8 +369,7 @@ describe('list', function () {
     ];
 
     it('should paginate a list:', function () {
-      list = new List();
-      list.addList(items);
+      list = new List(items);
 
       var res = list.paginate();
       assert.equal(res.length, 2);
@@ -379,10 +378,9 @@ describe('list', function () {
     });
 
     it('should paginate a list with given options:', function () {
-      list = new List();
-      list.addList(items);
-
+      list = new List(items);
       var res = list.paginate({limit: 5});
+
       assert.equal(res.length, 3);
       assert.containEql(res[0].items, items.slice(0, 5));
       assert.containEql(res[1].items, items.slice(5, 10));
@@ -390,7 +388,7 @@ describe('list', function () {
     });
   });
 
-  describe('pagination', function() {
+  describe('list pages', function() {
     var items = [
       { path: 'a.md', locals: { date: '2014-01-01', foo: 'zzz', bar: 1 } },
       { path: 'f.md', locals: { date: '2014-01-01', foo: 'mmm', bar: 2 } },
@@ -407,14 +405,13 @@ describe('list', function () {
       { path: 'g.md', locals: { date: '2014-02-02', foo: 'yyy', bar: 12 } },
     ];
 
-    it('should create a pagination array from the list:', function () {
-      list = new List();
-      list.addList(items);
+    it('should create an array of pagination pages from the list:', function () {
+      list = new List(items);
+      var pages = list.pagination;
 
-      var res = list.pagination();
-      assert.equal(res.length, items.length);
-      res.forEach(function (info) {
-        assert.containEql(info.item, items[info.idx]);
+      assert.equal(pages.length, items.length);
+      pages.forEach(function (page) {
+        assert.containEql(page.item, items[page.idx]);
       });
     });
   });
@@ -497,24 +494,6 @@ describe('list', function () {
 
       assert(list.one === 'two');
       assert(list.options.foo === 'bar');
-    });
-  });
-
-  describe('count', function() {
-    beforeEach(function() {
-      list = new List();
-    });
-
-    it('should get the number of views:', function () {
-      list.addItem('one', {content: 'aaa'});
-      list.addItem('two', {content: 'zzz'});
-      assert(list.count === 2);
-    });
-
-    it('should throw an error if attemptin to set count:', function () {
-      (function () {
-        list.count = 5;
-      }).should.throw('count is a read-only getter and cannot be defined.');
     });
   });
 });

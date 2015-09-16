@@ -147,21 +147,20 @@ describe('create', function () {
     });
   });
 
-  describe('options', function () {
+  describe('events', function () {
     beforeEach(function () {
       app = new App();
       app.engine('tmpl', require('engine-base'));
     });
 
-    it('should support a custom extendView function passed on options:', function () {
-      app.create('layout', {
-        viewType: 'layout',
-        extendViews: function (layouts) {
-          layouts.options.foo = 'bar';
-          return layouts;
+    it('should emit `create` when a collection is created:', function () {
+      app.on('create', function (collection) {
+        if (collection.options.plural === 'layouts') {
+          collection.options.foo = 'bar';
         }
       });
 
+      app.create('layout');
       app.layout('one', {path: 'two', contents: '...'});
       assert(app.layouts.options.foo === 'bar');
     });

@@ -220,6 +220,79 @@ describe('views', function () {
       assert(isBuffer(collection.views.one.contents));
       assert(isBuffer(collection.views.two.contents));
     });
+
+    it('should throw an error when list is not an array:', function () {
+      var views = new Views();
+      (function () {
+        views.addList();
+      }).should.throw('expected list to be an array.');
+
+      (function () {
+        views.addList({});
+      }).should.throw('expected list to be an array.');
+
+      (function () {
+        views.addList('foo');
+      }).should.throw('expected list to be an array.');
+    });
+
+    it('should load an array of items from an event:', function () {
+      var collection = new Views();
+
+      collection.on('addList', function (list) {
+        while (list.length) {
+          collection.addView({path: list.pop()});
+        }
+      });
+
+      collection.addList(['a.txt', 'b.txt', 'c.txt']);
+      assert(collection.views.hasOwnProperty('a.txt'));
+      assert(collection.views['a.txt'].path === 'a.txt');
+    });
+
+    it('should load an object of views from an event:', function () {
+      var collection = new Views();
+
+      collection.on('addViews', function (views) {
+        for (var key in views) {
+          collection.addView('foo/' + key, views[key]);
+          delete views[key];
+        }
+      });
+
+      collection.addViews({
+        a: {path: 'a.txt'},
+        b: {path: 'b.txt'},
+        c: {path: 'c.txt'}
+      });
+
+      assert(collection.views.hasOwnProperty('foo/a'));
+      assert(collection.views['foo/a'].path === 'a.txt');
+    });
+
+    it('should signal `loaded` when finished:', function () {
+      var collection = new Views();
+
+      collection.on('addViews', function (views) {
+        for (var key in views) {
+          if (key === 'c') {
+            collection.loaded = true;
+            break;
+          }
+          collection.addView('foo/' + key, views[key]);
+        }
+      });
+
+      collection.addViews({
+        a: {path: 'a.txt'},
+        b: {path: 'b.txt'},
+        c: {path: 'c.txt'}
+      });
+
+      assert(collection.views.hasOwnProperty('foo/a'));
+      assert(!collection.views.hasOwnProperty('foo/c'));
+      assert(collection.views['foo/a'].path === 'a.txt');
+    });
   });
 
   describe('getView', function() {
