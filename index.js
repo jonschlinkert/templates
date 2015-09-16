@@ -35,6 +35,7 @@ function Templates(options) {
   }
   Base.call(this);
   this.options = options || {};
+  this.plugins = [];
   utils.renameKey(this);
   this.defaultConfig();
 }
@@ -122,7 +123,9 @@ Base.extend(Templates, {
   },
 
   /**
-   * Run a plugin on the instance.
+   * Run a plugin on the instance. Plugins
+   * are invoked immediately upon creating the collection
+   * in the order in which they were defined.
    *
    * ```
    * var app = assemble()
@@ -132,13 +135,16 @@ Base.extend(Templates, {
    * ```
    *
    * @name .use
-   * @param {Function} fn
-   * @return {Object}
+   * @param {Function} `fn` Plugin function. If the plugin returns a function it will be passed to the `use` method of each collection created on the instance.
+   * @return {Object} Returns the instance for chaining.
    * @api public
    */
 
   use: function (fn) {
-    fn.call(this, this);
+    var plugin = fn.call(this, this, this.options);
+    if (typeof plugin === 'function') {
+      this.plugins.push(plugin.bind(this));
+    }
     return this;
   },
 
@@ -297,7 +303,11 @@ Base.extend(Templates, {
     // addView/addViews to support chaining
     collection.define(plural, this[plural]);
     collection.define(single, this[single]);
+    collection.use = collection.use || utils.identity;
 
+    this.plugins.forEach(function (fn) {
+      collection.use(fn.bind(this), opts);
+    }.bind(this));
 
     // add collection and view helpers
     helpers.plural(this, this[plural], opts);
