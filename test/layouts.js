@@ -19,8 +19,8 @@ describe('layouts', function () {
 
     app.render(page, function (err, view) {
       if (err) return done(err);
-      assert.equal(typeof view.contents.toString(), 'string');
-      assert.equal(view.contents.toString(), 'a b c');
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'a b c');
       done();
     });
   });
@@ -32,8 +32,8 @@ describe('layouts', function () {
 
     app.render(page, function (err, view) {
       if (err) return done(err);
-      assert.equal(typeof view.contents.toString(), 'string');
-      assert.equal(view.contents.toString(), 'a b c');
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'a b c');
       done();
     });
   });
@@ -49,25 +49,8 @@ describe('layouts', function () {
 
     app.render(page, function (err, view) {
       if (err) return done(err);
-      assert.equal(typeof view.contents.toString(), 'string');
-      assert.equal(view.contents.toString(), 'outter c b a inner a b c outter');
-      done();
-    });
-  });
-
-  it('should apply nested layouts to a view:', function (done) {
-    app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
-    app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
-    app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});
-    app.layout('base', {path: 'base.tmpl', content: 'outter {% body %} outter'});
-
-    app.pages('z.tmpl', {path: 'a.tmpl', content: 'inner', layout: 'a'});
-    var page = app.pages.getView('z.tmpl');
-
-    app.render(page, function (err, view) {
-      if (err) return done(err);
-      assert.equal(typeof view.contents.toString(), 'string');
-      assert.equal(view.contents.toString(), 'outter c b a inner a b c outter');
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'outter c b a inner a b c outter');
       done();
     });
   });
@@ -76,7 +59,7 @@ describe('layouts', function () {
     app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
     app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
     app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});
-    app.layout('base', {path: 'base.tmpl', content: 'outter {% body %} outter'});
+    app.layout('base', {path: 'base.tmpl', content: 'outter {% body %} outter'})
 
     app.pages('z.tmpl', {path: 'a.tmpl', content: 'inner', layout: 'a'});
     var page = app.pages.getView('z.tmpl');
@@ -101,8 +84,8 @@ describe('layouts', function () {
 
     app.render(page, function (err, view) {
       if (err) return done(err);
-      assert.equal(typeof view.contents.toString(), 'string');
-      assert.equal(view.contents.toString(), 'outter c b a inner a b c outter');
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'outter c b a inner a b c outter');
       done();
     });
   });
@@ -121,8 +104,8 @@ describe('layouts', function () {
 
     app.render(page, function (err, view) {
       if (err) return done(err);
-      assert.equal(typeof view.contents.toString(), 'string');
-      assert.equal(view.contents.toString(), 'outter c b a inner a b c outter');
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'outter c b a inner a b c outter');
       done();
     });
   });
