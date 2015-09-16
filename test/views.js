@@ -275,10 +275,7 @@ describe('views', function () {
 
       collection.on('addViews', function (views) {
         for (var key in views) {
-          if (key === 'c') {
-            collection.loaded = true;
-            break;
-          }
+          if (key === 'c') break;
           collection.addView('foo/' + key, views[key]);
         }
       });

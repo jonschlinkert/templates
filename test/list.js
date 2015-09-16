@@ -337,6 +337,36 @@ describe('list', function () {
       list = new List();
       list.addList(items);
 
+      var res = list.groupBy('locals.foo');
+      var keys = ['zzz', 'mmm', 'xxx', 'aaa', 'ccc', 'rrr', 'ttt', 'yyy'];
+      assert.deepEqual(Object.keys(res), keys);
+    });
+  });
+
+  describe('sort and group', function() {
+    var items = [
+      { path: 'a.md', locals: { date: '2014-01-01', foo: 'zzz', bar: 1 } },
+      { path: 'f.md', locals: { date: '2014-01-01', foo: 'mmm', bar: 2 } },
+      { path: 'd.md', locals: { date: '2013-01-01', foo: 'xxx', bar: 3 } },
+      { path: 'i.md', locals: { date: '2013-02-01', foo: 'xxx', bar: 5 } },
+      { path: 'i.md', locals: { date: '2013-02-01', foo: 'lll', bar: 5 } },
+      { path: 'k.md', locals: { date: '2013-03-01', foo: 'xxx', bar: 1 } },
+      { path: 'j.md', locals: { date: '2013-02-01', foo: 'xxx', bar: 4 } },
+      { path: 'h.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 6 } },
+      { path: 'm.md', locals: { date: '2014-01-01', foo: 'xxx', bar: 7 } },
+      { path: 'n.md', locals: { date: '2013-01-01', foo: 'xxx', bar: 7 } },
+      { path: 'o.md', locals: { date: '2013-01-01', foo: 'xxx', bar: 7 } },
+      { path: 'p.md', locals: { date: '2013-01-01', foo: 'xxx', bar: 7 } },
+      { path: 'e.md', locals: { date: '2015-01-02', foo: 'aaa', bar: 8 } },
+      { path: 'b.md', locals: { date: '2012-01-02', foo: 'ccc', bar: 9 } },
+      { path: 'f.md', locals: { date: '2014-06-01', foo: 'rrr', bar: 10 } },
+      { path: 'c.md', locals: { date: '2015-04-12', foo: 'ttt', bar: 11 } },
+      { path: 'g.md', locals: { date: '2014-02-02', foo: 'yyy', bar: 12 } },
+    ];
+
+    it('should group a list by a property:', function () {
+      list = new List(items);
+
       var compare = function(prop) {
         return function (a, b, fn) {
           var valA = get(a, prop);
@@ -345,9 +375,21 @@ describe('list', function () {
         };
       };
 
-      var res = list.groupBy('locals.foo');
-      var keys = ['zzz', 'mmm', 'xxx', 'aaa', 'ccc', 'rrr', 'ttt', 'yyy'];
-      assert.deepEqual(Object.keys(res), keys);
+      var context = list
+        .sortBy('locals.date')
+        .groupBy(function (view) {
+          var date = view.locals.date;
+          view.locals.year = date.slice(0, 4);
+          view.locals.month = date.slice(5, 7);
+          view.locals.day = date.slice(8, 10);
+          return view.locals.year;
+        }, 'locals.month');
+
+      var keys = Object.keys(context);
+      assert(keys[0] === '2012');
+      assert(keys[1] === '2013');
+      assert(keys[2] === '2014');
+      assert(keys[3] === '2015');
     });
   });
 
