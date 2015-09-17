@@ -61,6 +61,7 @@ Base.extend(Templates, {
     this.engines = {};
     lib.helpers(this);
     this._.engines = new utils.Engines(this.engines);
+    this.engine('default', utils.engine);
 
     this.define('errors', {
       compile: {
@@ -777,7 +778,6 @@ Base.extend(Templates, {
 
   setEngine: function(ext, fn, settings) {
     ext = utils.formatExt(ext);
-    if (!this.option('view engine')) this.option('view engine', ext);
     this._.engines.setEngine(ext, fn, settings);
     return this;
   },
@@ -789,8 +789,12 @@ Base.extend(Templates, {
    */
 
   getEngine: function(ext) {
-    if (ext === '') ext = '*';
     ext = ext ? utils.formatExt(ext) : null;
+    var engine = this._.engines.getEngine(ext);
+    if (engine) {
+      return engine;
+    }
+    ext = this.option('view engine');
     return this._.engines.getEngine(ext);
   },
 
@@ -901,16 +905,18 @@ Base.extend(Templates, {
 
     // get the engine to use
     locals = utils.merge({settings: {}}, locals);
-    var extname = view.ext || (view.ext = path.extname(view.path));
-    var ext = locals.engines || view.engine || extname;
+    var ext = locals.engine
+      || view.engine
+      || view.ext
+      || (view.ext = path.extname(view.path));
+
     var engine = this.getEngine(ext);
+    if (typeof engine === 'undefined') {
+      throw this.error('compile', 'engine', view.ext);
+    }
 
     if (engine && engine.options) {
       locals.settings = utils.merge({}, locals.settings, engine.options);
-    }
-
-    if (typeof engine === 'undefined') {
-      throw this.error('compile', 'engine', view.ext);
     }
 
     var ctx = view.context(locals);
