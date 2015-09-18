@@ -59,6 +59,11 @@ describe('partials', function () {
   });
 
   it('should pass partials to handlebars:', function (done) {
+    app.onMerge(/\.hbs$/, function (view, next) {
+      app.applyLayout(view);
+      next();
+    });
+
     app.layout('default', {path: 'a.hbs', content: 'a {% body %} c'});
     app.include('foo', {path: 'foo.hbs', content: 'foo', layout: 'default'});
     app.pages('a.hbs', {path: 'c.hbs', content: '{{> foo }}'});
@@ -73,6 +78,11 @@ describe('partials', function () {
   });
 
   it('should only merge in the specified viewTypes:', function (done) {
+    app.onMerge(/\.hbs$/, function (view, next) {
+      app.applyLayout(view);
+      next();
+    });
+
     app.layout('default', {path: 'a.hbs', content: 'a {% body %} c'});
     app.option('mergeTypes', ['includes']);
 
@@ -91,8 +101,13 @@ describe('partials', function () {
   });
 
   it('should merge the specified viewTypes in the order defined:', function (done) {
+    app.onMerge(/\.hbs$/, function (view, next) {
+      app.applyLayout(view);
+      next();
+    });
+
     app.layout('default', {path: 'a.hbs', content: 'a {% body %} c'});
-    app.option('mergeTypes', ['partials', 'includes']);
+    app.option('mergeTypes', ['includes', 'partials']);
 
     app.partial('foo', {path: 'bar.hbs', content: 'bar', layout: 'default'});
     app.include('foo', {path: 'foo.hbs', content: 'foo', layout: 'default'});
@@ -102,7 +117,50 @@ describe('partials', function () {
       .render(function (err, view) {
         if (err) return done(err);
         assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'a bar c');
+        done();
+      });
+  });
+
+  it('should not merge in partials with `options.nomerge` defined:', function (done) {
+    app.onMerge(/\.hbs$/, function (view, next) {
+      app.applyLayout(view);
+      next();
+    });
+
+    app.layout('default', {path: 'a.hbs', content: 'a {% body %} c'});
+    app.option('mergeTypes', ['includes', 'partials']);
+
+    app.partial('foo', {path: 'bar.hbs', content: 'bar', layout: 'default', options: {nomerge: true}});
+    app.include('foo', {path: 'foo.hbs', content: 'foo', layout: 'default'});
+
+    app.pages('a.hbs', {path: 'c.hbs', content: '{{> foo }}'});
+    app.pages.getView('a.hbs')
+      .render(function (err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
         assert.equal(view.content, 'a foo c');
+        done();
+      });
+  });
+
+  it('should emit an `onMerge` event:', function (done) {
+    app.on('onMerge', function (view) {
+      app.applyLayout(view);
+    });
+
+    app.layout('default', {path: 'a.hbs', content: 'a {% body %} c'});
+    app.option('mergeTypes', ['includes', 'partials']);
+
+    app.partial('foo', {path: 'bar.hbs', content: 'bar', layout: 'default'});
+    app.include('foo', {path: 'foo.hbs', content: 'foo', layout: 'default'});
+
+    app.pages('a.hbs', {path: 'c.hbs', content: '{{> foo }}'});
+    app.pages.getView('a.hbs')
+      .render(function (err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'a bar c');
         done();
       });
   });

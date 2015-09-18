@@ -50,6 +50,7 @@ Base.extend(Templates, {
   defaultConfig: function () {
     // used in plugins to verify the app instance
     this.isApp = true;
+
     // decorate `option` method onto instance
     utils.option(this);
 
@@ -964,12 +965,6 @@ Base.extend(Templates, {
       throw this.error('render', 'callback');
     }
 
-    // if `view` is a function, it's probably from chaining
-    // a collection method
-    if (typeof view === 'function') {
-      return view.call(this);
-    }
-
     // if `view` is a string, see if it's a cached view
     if (typeof view === 'string') {
       view = this.find(view);
@@ -1044,15 +1039,10 @@ Base.extend(Templates, {
       for (var key in collection) {
         var view = collection[key];
 
-        // apply layout to partial, if defined
-        if (!opts.noLayout) {
-          view = self.applyLayout(view);
-        }
-
         // handle `onMerge` middleware
         self.handleView('onMerge', view);
 
-        if (view.options.nomerge) return;
+        if (view.options.nomerge) continue;
         if (opts.mergePartials !== false) {
           name = 'partials';
         }
