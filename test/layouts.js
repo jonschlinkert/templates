@@ -59,7 +59,7 @@ describe('layouts', function () {
     app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
     app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
     app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});
-    app.layout('base', {path: 'base.tmpl', content: 'outter {% body %} outter'})
+    app.layout('base', {path: 'base.tmpl', content: 'outter {% body %} outter'});
 
     app.pages('z.tmpl', {path: 'a.tmpl', content: 'inner', layout: 'a'});
     var page = app.pages.getView('z.tmpl');
@@ -73,7 +73,7 @@ describe('layouts', function () {
     });
   });
 
-  it('should handle contents as a buffer:', function (done) {
+  it('should track layout stack history on `layoutStack`:', function (done) {
     app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
     app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
     app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});

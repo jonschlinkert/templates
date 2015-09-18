@@ -150,6 +150,7 @@ Base.extend(Templates, {
     if (typeof plugin === 'function') {
       this.plugins.push(plugin);
     }
+    this.emit('use');
     return this;
   },
 
