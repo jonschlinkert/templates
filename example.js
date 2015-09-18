@@ -5,6 +5,7 @@ var app = templates();
  * Engine
  */
 
+app.option('view engine', '*');
 app.engine('*', require('engine-base'));
 
 /**
