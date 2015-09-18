@@ -3,9 +3,9 @@ require('should');
 var path = require('path');
 var assert = require('assert');
 var isBuffer = require('is-buffer');
-var List = require('../lib/list');
-var View = require('../lib/view');
-var Views = require('../lib/views');
+var List = require('..').List;
+var View = require('..').View;
+var Views = require('..').Views;
 var collection;
 
 describe('views', function () {

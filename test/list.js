@@ -2,9 +2,9 @@ require('mocha');
 require('should');
 var path = require('path');
 var get = require('get-value');
-var List = require('../lib/list');
-var Views = require('../lib/views');
-var View = require('../lib/view');
+var List = require('../').List;
+var Views = require('../').Views;
+var View = require('../').View;
 var assert = require('./support/');
 var list, views;
 

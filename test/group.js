@@ -1,7 +1,7 @@
 require('mocha');
 require('should');
-var List = require('../lib/list');
-var Group = require('../lib/group');
+var List = require('..').List;
+var Group = require('..').Group;
 var assert = require('./support/');
 var group;
 

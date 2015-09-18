@@ -38,7 +38,7 @@ describe('view.option()', function () {
     });
   });
 
-  describe('.dest:', function () {
+  describe.skip('.dest:', function () {
     it('should expose `.dest` for calculating the view destination:', function (done) {
       app.page('a.tmpl', {path: 'a.tmpl', content: '<%= a %>', locals: {a: 'bbb'}})
         .dest('test/actual', function (err, res) {
