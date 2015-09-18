@@ -1092,10 +1092,11 @@ Base.extend(Templates, {
     if (isAsync) utils.extend(helpers, this._.helpers.async);
     utils.extend(helpers, locals.helpers);
 
+    var options = {};
+
     // support helper options: `app.option('helper.foo', 'bar')`
     if (this.options.hasOwnProperty('helper')) {
       var opts = this.options.helper;
-      var options = {};
       for (var key in opts) {
         if (opts.hasOwnProperty(key) && helpers.hasOwnProperty(key)) {
           options[key] = opts[key];
