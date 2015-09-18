@@ -213,7 +213,7 @@ Base.extend(Templates, {
    * @api public
    */
 
-  collection: function (opts) {
+  collection: function (opts, created) {
     if (!this.initialized) this.initialize();
     var Views = this.get('Views');
     var collection;
@@ -229,7 +229,9 @@ Base.extend(Templates, {
 
     // emit the collection
     this.emit('collection', collection, opts);
-    this.extendViews(collection, opts);
+    if (created !== true) {
+      this.extendViews(collection, opts);
+    }
     return collection;
   },
 
@@ -265,7 +267,7 @@ Base.extend(Templates, {
       opts = utils.merge({}, this.options, opts);
     }
 
-    var collection = this.collection(opts);
+    var collection = this.collection(opts, true);
 
     // get the collection inflections, e.g. page/pages
     var single = utils.single(name);
@@ -304,6 +306,7 @@ Base.extend(Templates, {
 
     // emit create
     this.emit('create', collection, opts);
+    this.extendViews(collection, opts);
 
     // add collection and view helpers
     helpers.plural(this, this[plural], opts);
@@ -320,7 +323,9 @@ Base.extend(Templates, {
     var app = this;
 
     // decorate `option` method onto `view`
-    utils.option(view);
+    if (typeof view.option !== 'function') {
+      utils.option(view);
+    }
 
     // decorate `compile` method onto `view`
     view.compile = function () {
@@ -357,6 +362,9 @@ Base.extend(Templates, {
     collection.on('view', function (view) {
       utils.define(view, 'addView', collection.addView.bind(collection));
       app.extendView(view, opts);
+      if (collection.options.engine) {
+        view.option('engine', collection.options.engine);
+      }
       app.handleView('onLoad', view);
       app.emit('view', view);
     });
@@ -891,16 +899,14 @@ Base.extend(Templates, {
       throw this.error('compile', 'callback');
     }
 
-    // get the engine to use
     locals = utils.merge({settings: {}}, locals);
-    var ext = locals.engine
-      || view.engine
-      || view.ext
-      || (view.ext = path.extname(view.path));
 
+    // get the engine to use
+    var ext = utils.resolveEngine(view, locals, this.options);
     var engine = this.getEngine(ext);
+
     if (typeof engine === 'undefined') {
-      throw this.error('compile', 'engine', view.ext);
+      throw this.error('compile', 'engine', ext);
     }
 
     if (engine && engine.options) {
@@ -970,13 +976,13 @@ Base.extend(Templates, {
 
     view.locals = utils.merge({}, view.locals, locals);
     locals = utils.merge({}, this.cache.data, view.locals);
+    var opts = this.options;
 
     // handle `preRender` middleware
     this.handleView('preRender', view, locals);
 
     // get the engine
-    var extname = view.ext || (view.ext = path.extname(view.path));
-    var ext = locals.engines || view.engine || extname;
+    var ext = utils.resolveEngine(view, locals, opts);
     var engine = this.getEngine(ext);
 
     if (!engine) {
@@ -996,7 +1002,6 @@ Base.extend(Templates, {
       }
     }
 
-    var opts = this.options;
     var ctx = view.context(locals);
     var context = this.context(view, ctx, locals);
 
