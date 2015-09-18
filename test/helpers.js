@@ -226,11 +226,7 @@ describe('built-in helpers:', function () {
 
       // parse front matter
       app.onLoad(/./, function (view, next) {
-        matter.parse(view, function(err, res) {
-          view.contents = new Buffer(res.content);
-          view.data = res.data;
-          next();
-        });
+        matter.parse(view, next);
       });
     });
 
@@ -321,11 +317,7 @@ describe('built-in helpers:', function () {
 
       // parse front matter
       app.onLoad(/./, function (view, next) {
-        matter.parse(view, function(err, res) {
-          view.contents = new Buffer(res.content);
-          view.data = res.data;
-          next();
-        });
+        matter.parse(view, next);
       });
     });
 
@@ -373,11 +365,7 @@ describe('built-in helpers:', function () {
 
       // parse front matter
       app.onLoad(/./, function (view, next) {
-        matter.parse(view, function(err, res) {
-          view.contents = new Buffer(res.content);
-          view.data = res.data;
-          next();
-        });
+        matter.parse(view, next);
       });
     });
 
@@ -448,17 +436,10 @@ describe('helpers defaults', function () {
 });
 
 describe('helpers integration', function () {
-  var actual = __dirname + '/helpers-actual';
-
-  beforeEach(function (done) {
+  beforeEach(function () {
     app = new App();
-    rimraf(actual, done);
     app.create('pages');
     app.engine('md', require('engine-base'));
-  });
-
-  afterEach(function (done) {
-    rimraf(actual, done);
   });
 
   describe('.helpers()', function () {
@@ -483,8 +464,8 @@ describe('helpers integration', function () {
       app.helper('cwd', function (fp) {
         return path.join(this.options.cwd, fp);
       });
-      app.option('cwd', 'foo/bar');
 
+      app.option('cwd', 'foo/bar');
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function (err, res) {
           if (err) return done(err);
@@ -548,6 +529,81 @@ describe('helpers integration', function () {
           assert(res.content === 'a HALLE b');
           done();
         });
+    });
+  });
+});
+
+describe('collection helpers', function () {
+  beforeEach(function () {
+    app = new App();
+    app.create('posts');
+    app.create('pages', {engine: 'hbs'});
+    app.create('partials', {viewType: 'partial', engine: 'hbs'});
+    app.create('snippet', {viewType: 'partial'});
+    app.engine('hbs', require('engine-handlebars'));
+    app.helper('log', function (ctx) {
+      console.log(ctx);
+    });
+  });
+
+  describe('plural', function () {
+    it('should get the given collection', function (done) {
+      app.post('a.hbs', {content: 'foo'});
+      app.post('b.hbs', {content: 'bar'});
+      app.post('c.hbs', {content: 'baz'});
+
+      app.partial('list.hbs', {
+        content: '{{#posts}}{{#each items}}{{content}}{{/each}}{{/posts}}'
+      });
+
+      app.page('index.hbs', {
+        content: '{{> list.hbs }}'
+      })
+        .render(function (err, res) {
+          if (err) return done(err);
+          assert(res.content === 'foobarbaz');
+          done();
+        });
+    });
+  });
+
+  describe('single', function () {
+    it('should get a view from an unspecified collection', function (done) {
+      app.post('a.hbs', {content: 'post-a'});
+      app.post('b.hbs', {content: 'post-b'});
+
+      var one = app.page('one', {content: '{{view "a.hbs"}}'})
+        .compile()
+        .fn()
+
+      var two = app.page('two', {content: '{{view "b.hbs"}}'})
+        .compile()
+        .fn()
+
+      assert(one === 'post-a');
+      assert(two === 'post-b');
+      done();
+    });
+
+    it('should get a specific view from the given collection', function (done) {
+      app.post('a.hbs', {content: 'post-a'});
+      app.post('b.hbs', {content: 'post-b'});
+      app.post('c.hbs', {content: 'post-c'});
+      app.page('a.hbs', {content: 'page-a'});
+      app.page('b.hbs', {content: 'page-b'});
+      app.page('c.hbs', {content: 'page-c'});
+
+      var one = app.page('one', {content: '{{view "a.hbs" "posts"}}'})
+        .compile()
+        .fn()
+
+      var two = app.page('two', {content: '{{view "b.hbs" "pages"}}'})
+        .compile()
+        .fn()
+
+      assert(one === 'post-a');
+      assert(two === 'page-b');
+      done();
     });
   });
 });
