@@ -233,10 +233,11 @@ Base.extend(Templates, {
   },
 
   /**
-   * Create a new view collection that is stored on the `app.views` object.
-   * For example, if you create a collection named `posts`, then all `posts` will be
-   * stored on `app.views.posts`, and a `posts` method will be added to
-   * `app`, allowing you to add posts to the collection using `app.posts()`.
+   * Create a new view collection that is stored on the `app.views` object. For example, if you create a collection named `posts`:
+   *
+   *  - all `posts` will be stored on `app.views.posts`
+   *  - a `post` method will be added to `app`, allowing you to add a single view to the `posts` collection using `app.post()` (equivalent to `collection.addView()`)
+   *  - a `posts` method will be added to `app`, allowing you to add views to the `posts` collection using `app.posts()` (equivalent to `collection.addViews()`)
    *
    * ```js
    * app.create('posts');
