@@ -1,11 +1,21 @@
 require('mocha');
 require('should');
+var fs = require('fs');
+var path = require('path');
 var assert = require('assert');
-var matter = require('parser-front-matter');
+var forOwn = require('for-own');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
+var matter = require('parser-front-matter');
+var rimraf = require('rimraf');
 var swig = consolidate.swig;
 require('swig');
+
+function load(fp) {
+  fp = path.join(__dirname, 'fixtures', fp);
+  var str = fs.readFileSync(fp, 'utf8');
+  return str;
+}
 
 var App = require('..');
 var app;
@@ -47,9 +57,13 @@ describe('helpers', function () {
       assert(typeof app._.helpers.sync.c === 'function');
     });
 
-    it('should fail gracefully on bad globs:', function () {
-      app.helpers('test/fixtures/helpers/*.foo');
-      app._.helpers.sync.should.eql({});
+    it('should fail gracefully on bad globs:', function (done) {
+      try {
+        app.helpers('test/fixtures/helpers/*.foo');
+        done();
+      } catch(err) {
+        done(new Error('should not throw an error.'));
+      }
     });
 
     it('should add a glob of sync helper objects:', function () {
@@ -106,10 +120,13 @@ describe('helpers', function () {
       assert(typeof app._.helpers.async.three === 'function');
     });
 
-    it('should fail gracefully on bad globs:', function () {
-      (function() {
-      app.asyncHelpers('test/fixtures/helpers/*.foo');
-      }).should.not.throw;
+    it('should fail gracefully on bad globs:', function (done) {
+      try {
+        app.asyncHelpers('test/fixtures/helpers/*.foo');
+        done();
+      } catch(err) {
+        done(new Error('should not throw an error.'));
+      }
     });
 
     it('should add a glob with mixed helper objects and functions:', function () {
@@ -146,8 +163,8 @@ describe('sync helpers', function () {
   it('should register a helper:', function () {
     app.helper('a', function () {});
     app.helper('b', function () {});
-    app._.helpers.sync.should.have.property('a');
-    app._.helpers.sync.should.have.property('b');
+    assert(app._.helpers.sync.hasOwnProperty('a'));
+    assert(app._.helpers.sync.hasOwnProperty('b'));
   });
 
   it('should use a helper:', function (done) {
@@ -415,3 +432,122 @@ describe('built-in helpers:', function () {
   });
 });
 
+describe('helpers defaults', function () {
+  beforeEach(function () {
+    app = new App();
+  });
+
+  it('should return an empty list of helpers.', function () {
+    assert(!Object.keys(app._.helpers.async).length);
+    assert(!Object.keys(app._.helpers.sync).length);
+
+    forOwn(app.engines, function (engine) {
+      assert(!Object.keys(engine.helpers).length);
+    });
+  });
+});
+
+describe('helpers integration', function () {
+  var actual = __dirname + '/helpers-actual';
+
+  beforeEach(function (done) {
+    app = new App();
+    rimraf(actual, done);
+    app.create('pages');
+    app.engine('md', require('engine-base'));
+  });
+
+  afterEach(function (done) {
+    rimraf(actual, done);
+  });
+
+  describe('.helpers()', function () {
+    it('should add helpers and use them in templates.', function (done) {
+      app.helpers({
+        upper: function (str) {
+          return str.toUpperCase();
+        }
+      });
+
+      app.page('doc.md', {content: 'a <%= upper(name) %> b'})
+        .render({name: 'Halle'}, function (err, res) {
+          if (err) return done(err);
+          assert(res.content === 'a HALLE b');
+          done();
+        });
+    });
+  });
+
+  describe('helper options:', function () {
+    it('should expose `this.options` to helpers:', function (done) {
+      app.helper('cwd', function (fp) {
+        return path.join(this.options.cwd, fp);
+      });
+      app.option('cwd', 'foo/bar');
+
+      app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
+        .render(function (err, res) {
+          if (err) return done(err);
+          assert(res.content === 'a foo/bar/baz b');
+          done();
+        });
+    });
+
+    it('should pass helper options to helpers:', function (done) {
+      app.helper('cwd', function (fp) {
+        return path.join(this.options.cwd, fp);
+      });
+
+      app.option('helper.cwd', 'foo/bar');
+
+      app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
+        .render(function (err, res) {
+          if (err) return done(err);
+          assert(res.content === 'a foo/bar/baz b');
+          done();
+        });
+    });
+  });
+
+  describe('options.helpers', function () {
+    it('should register helpers passed on the options:', function (done) {
+      app.option({
+        helpers: {
+          upper: function (str) {
+            return str.toUpperCase();
+          },
+          foo: function (str) {
+            return 'foo' + str;
+          }
+        }
+      });
+
+      app.page('doc.md', {content: 'a <%= upper(name) %> <%= foo("bar") %> b'})
+        .render({name: 'Halle'}, function (err, res) {
+          if (err) return done(err);
+          assert(res.content === 'a HALLE foobar b');
+          done();
+        });
+    });
+  });
+
+  describe('options.helpers', function () {
+    it('should add helpers and use them in templates.', function (done) {
+      app.options.helpers = {
+        upper: function (str) {
+          return str.toUpperCase();
+        },
+        foo: function (str) {
+          return 'foo' + str;
+        }
+      };
+
+      app.page('doc.md', {content: 'a <%= upper(name) %> b'})
+        .render({name: 'Halle'}, function (err, res) {
+          if (err) return done(err);
+          assert(res.content === 'a HALLE b');
+          done();
+        });
+    });
+  });
+});

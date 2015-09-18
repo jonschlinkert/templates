@@ -2,10 +2,18 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var path = require('path');
+var globby = require('globby');
 var assert = require('assert');
 var Templates = require('../');
 var utils = require('../lib/utils');
 var app;
+
+function resolveGlob(patterns, options) {
+  var opts = utils.merge({cwd: process.cwd()}, options);
+  return globby.sync(patterns, opts).map(function (fp) {
+    return path.resolve(opts.cwd, fp);
+  });
+}
 
 describe('lookups', function () {
   beforeEach(function () {
@@ -16,7 +24,7 @@ describe('lookups', function () {
     app.create('pages')
       .use(function (pages) {
         pages.on('addViews', function (glob) {
-          var files = utils.resolveGlob(glob);
+          var files = resolveGlob(glob);
           files.forEach(function (fp) {
             pages.addView(fp, {path: fp});
           });
@@ -27,8 +35,8 @@ describe('lookups', function () {
             this.contents = fs.readFileSync(this.path);
           };
           return view;
-        }
-      })
+        };
+      });
 
     app.pages('test/fixtures/templates/*.tmpl');
   });
