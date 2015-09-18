@@ -120,7 +120,8 @@ Base.extend(Templates, {
     });
 
     this.on('error', function (err) {
-      if (err && err.id === 'rethrow') {
+      if (!err || err.id !== 'rethrow') return;
+      if (this.options.silent !== true) {
         console.error(err.reason);
       }
     });
@@ -793,7 +794,7 @@ Base.extend(Templates, {
    * @return {Object} Returns a `view` object.
    */
 
-  applyLayout: function(view, locals) {
+  applyLayout: function(view) {
     if (view.options.layoutApplied) {
       return view;
     }
@@ -909,7 +910,7 @@ Base.extend(Templates, {
     var ctx = view.context(locals);
 
     // apply layout
-    view = this.applyLayout(view, ctx);
+    view = this.applyLayout(view);
 
     // handle `preCompile` middleware
     this.handleView('preCompile', view, locals);
@@ -919,6 +920,7 @@ Base.extend(Templates, {
 
     // shallow clone the context and locals
     var settings = utils.extend({}, ctx, locals);
+    utils.extend(settings, this.mergePartials(settings));
 
     // compile the string
     var str = view.contents.toString();
@@ -1016,17 +1018,18 @@ Base.extend(Templates, {
 
   /**
    * Merge "partials" view types. This is necessary for template
-   * engines that only support one class of partials.
+   * engines have no support for partials or only support one
+   * type of partials.
    *
    * @name .mergePartials
-   * @param {Object} `locals`
-   * @param {Array} `viewTypes` Optionally pass an array of viewTypes to include.
+   * @param {Object} `options` Optionally pass an array of viewTypes to include on `options.viewTypes`
    * @return {Object} Merged partials
+   * @api public
    */
 
-  mergePartials: function (locals, viewTypes) {
-    var names = viewTypes || this.viewTypes.partial;
-    var opts = utils.extend({}, this.options, locals);
+  mergePartials: function (options) {
+    var opts = utils.extend({}, this.options, options);
+    var names = opts.mergeTypes || this.viewTypes.partial;
     var partials = {};
     var self = this;
 
@@ -1035,8 +1038,13 @@ Base.extend(Templates, {
       for (var key in collection) {
         var view = collection[key];
 
+        // apply layout to partial, if defined
+        if (!opts.noLayout) {
+          view = self.applyLayout(view);
+        }
+
         // handle `onMerge` middleware
-        self.handleView('onMerge', view, locals);
+        self.handleView('onMerge', view);
 
         if (view.options.nomerge) return;
         if (opts.mergePartials !== false) {
@@ -1084,9 +1092,20 @@ Base.extend(Templates, {
     if (isAsync) utils.extend(helpers, this._.helpers.async);
     utils.extend(helpers, locals.helpers);
 
+    // support helper options: `app.option('helper.foo', 'bar')`
+    if (this.options.hasOwnProperty('helper')) {
+      var opts = this.options.helper;
+      var options = {};
+      for (var key in opts) {
+        if (opts.hasOwnProperty(key) && helpers.hasOwnProperty(key)) {
+          options[key] = opts[key];
+        }
+      }
+    }
+
     // build the context to expose as `this` in helpers
     var thisArg = {};
-    thisArg.options = utils.extend({}, this.options, locals);
+    thisArg.options = utils.extend({}, this.options, options, locals);
     thisArg.context = context || {};
     thisArg.context.view = view;
     thisArg.app = this;
