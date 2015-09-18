@@ -114,7 +114,6 @@ describe('views', function () {
     });
 
     it('should allow an `View` constructor to be passed:', function () {
-      var View = require('../lib/view');
       View.prototype.foo = function(key, value) {
         this[key] = value;
       };
@@ -125,7 +124,6 @@ describe('views', function () {
     });
 
     it('should allow an instance of `View` to be passed:', function () {
-      var View = require('../lib/view');
       var collection = new Views({View: View});
       var view = new View({content: '...'});
       collection.addView('one', view);

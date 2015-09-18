@@ -95,7 +95,6 @@ describe('list', function () {
     });
 
     it('should allow an instance of `Item` to be passed:', function () {
-      var View = require('../lib/view');
       var list = new List({Item: View});
       var view = new View({content: '...'});
       list.addItem('one', view);
@@ -361,14 +360,6 @@ describe('list', function () {
     it('should group a list by a property:', function () {
       list = new List(items);
 
-      var compare = function(prop) {
-        return function (a, b, fn) {
-          var valA = get(a, prop);
-          var valB = get(b, prop);
-          return fn(valA, valB);
-        };
-      };
-
       var context = list
         .sortBy('locals.date')
         .groupBy(function (view) {
@@ -496,7 +487,7 @@ describe('list', function () {
         .use(function (list, options) {
           options.foo = 'bar';
         })
-        .use(function (list, options) {
+        .use(function () {
           this.set('one', 'two');
         });
 
