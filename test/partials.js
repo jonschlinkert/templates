@@ -105,6 +105,5 @@ describe('partials', function () {
         assert.equal(view.content, 'a foo c');
         done();
       });
-
   });
 });

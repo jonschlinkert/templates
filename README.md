@@ -64,6 +64,7 @@ $ npm i templates --save
 
 ```js
 var templates = require('templates');
+var app = templates();
 ```
 
 ## API
@@ -83,7 +84,7 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.use](index.js#L147)
+### [.use](index.js#L148)
 
 Run a plugin on the instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
 
@@ -101,7 +102,7 @@ var app = assemble()
   .use(require('baz'))
 ```
 
-### [.data](index.js#L173)
+### [.data](index.js#L174)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -120,7 +121,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.collection](index.js#L215)
+### [.collection](index.js#L216)
 
 Create a new view collection. View collections are decorated with special methods for getting, setting and rendering views from that collection. Collections created with this method are not stored on `app.views` as with the [create](#create) method.
 
@@ -143,7 +144,7 @@ collection.addView('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.create](index.js#L261)
+### [.create](index.js#L262)
 
 Create a new view collection that is stored on the `app.views` object. For example, if you create a collection named `posts`:
 
@@ -172,7 +173,7 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.find](index.js#L401)
+### [.find](index.js#L402)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
@@ -191,7 +192,7 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
-### [.getView](index.js#L439)
+### [.getView](index.js#L440)
 
 Get view `key` from the specified `collection`.
 
@@ -213,7 +214,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](index.js#L478)
+### [.getViews](index.js#L479)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -232,7 +233,7 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.matchView](index.js#L510)
+### [.matchView](index.js#L511)
 
 Returns the first view from `collection` with a key that matches the given glob pattern.
 
@@ -253,7 +254,7 @@ var posts = app.matchView('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.matchViews](index.js#L538)
+### [.matchViews](index.js#L539)
 
 Returns any views from the specified collection with keys that match the given glob pattern.
 
@@ -274,7 +275,7 @@ var posts = app.matchViews('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.handle](index.js#L580)
+### [.handle](index.js#L581)
 
 Handle a middleware `method` for `view`.
 
@@ -291,7 +292,7 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.route](index.js#L669)
+### [.route](index.js#L670)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -316,7 +317,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](index.js#L691)
+### [.all](index.js#L692)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -335,7 +336,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](index.js#L720)
+### [.param](index.js#L721)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -359,7 +360,7 @@ app.onLoad('/blog/:title', function (view, next) {
 });
 ```
 
-### [.engine](index.js#L747)
+### [.engine](index.js#L748)
 
 Register a view engine callback `fn` as `ext`.
 
@@ -383,7 +384,7 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
-### [.compile](index.js#L883)
+### [.compile](index.js#L884)
 
 Compile `content` with the given `locals`.
 
@@ -408,7 +409,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](index.js#L948)
+### [.render](index.js#L950)
 
 Render a view with the given `locals` and `callback`.
 
@@ -427,7 +428,18 @@ app.render(blogPost, {title: 'Foo'}, function(err, view) {
 });
 ```
 
-### [.view](index.js#L1196)
+### [.mergePartials](index.js#L1030)
+
+Merge "partials" view types. This is necessary for template
+engines have no support for partials or only support one
+type of partials.
+
+**Params**
+
+* `options` **{Object}**: Optionally pass an array of viewTypes to include on `options.viewTypes`
+* `returns` **{Object}**: Merged partials
+
+### [.view](index.js#L1215)
 
 Returns a new view, using the `View` class currently defined on the instance.
 
@@ -976,6 +988,8 @@ $ npm i -d && npm test
 
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/templates/issues/new).
 
+If this project doesn't do what you need, [please let us know][issue].
+
 ## Author
 
 **Jon Schlinkert**
@@ -990,4 +1004,4 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 17, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 18, 2015._
