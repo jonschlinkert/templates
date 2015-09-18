@@ -144,7 +144,7 @@ collection.addView('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.create](index.js#L262)
+### [.create](index.js#L264)
 
 Create a new view collection that is stored on the `app.views` object. For example, if you create a collection named `posts`:
 
@@ -173,7 +173,7 @@ app.post('home.hbs', {content: 'foo <%= title %> bar'})
   });
 ```
 
-### [.find](index.js#L402)
+### [.find](index.js#L410)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
@@ -192,7 +192,7 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
-### [.getView](index.js#L440)
+### [.getView](index.js#L448)
 
 Get view `key` from the specified `collection`.
 
@@ -214,7 +214,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](index.js#L479)
+### [.getViews](index.js#L487)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -233,7 +233,7 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
-### [.matchView](index.js#L511)
+### [.matchView](index.js#L519)
 
 Returns the first view from `collection` with a key that matches the given glob pattern.
 
@@ -254,7 +254,7 @@ var posts = app.matchView('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.matchViews](index.js#L539)
+### [.matchViews](index.js#L547)
 
 Returns any views from the specified collection with keys that match the given glob pattern.
 
@@ -275,7 +275,7 @@ var posts = app.matchViews('posts', '2010-*');
 //=> {'2015-10-10.md': { ... }, ...}
 ```
 
-### [.handle](index.js#L581)
+### [.handle](index.js#L589)
 
 Handle a middleware `method` for `view`.
 
@@ -292,7 +292,7 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.route](index.js#L670)
+### [.route](index.js#L678)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -317,7 +317,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](index.js#L692)
+### [.all](index.js#L700)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -336,7 +336,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](index.js#L721)
+### [.param](index.js#L729)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -360,7 +360,7 @@ app.onLoad('/blog/:title', function (view, next) {
 });
 ```
 
-### [.engine](index.js#L748)
+### [.engine](index.js#L756)
 
 Register a view engine callback `fn` as `ext`.
 
@@ -384,7 +384,7 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
-### [.compile](index.js#L884)
+### [.compile](index.js#L892)
 
 Compile `content` with the given `locals`.
 
@@ -409,7 +409,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](index.js#L950)
+### [.render](index.js#L956)
 
 Render a view with the given `locals` and `callback`.
 
@@ -428,7 +428,7 @@ app.render(blogPost, {title: 'Foo'}, function(err, view) {
 });
 ```
 
-### [.mergePartials](index.js#L1030)
+### [.mergePartials](index.js#L1035)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -439,7 +439,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of viewTypes to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.view](index.js#L1215)
+### [.view](index.js#L1221)
 
 Returns a new view, using the `View` class currently defined on the instance.
 
@@ -689,7 +689,7 @@ var view = new View({
 });
 ```
 
-### [.use](lib/view.js#L79)
+### [.use](lib/view.js#L80)
 
 Run a plugin on the `view` instance.
 
@@ -707,7 +707,7 @@ var view = new View({path: 'abc', contents: '...'})
   .use(require('baz'))
 ```
 
-### [.compile](lib/view.js#L100)
+### [.compile](lib/view.js#L101)
 
 Synchronously compile a view.
 
@@ -725,7 +725,7 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.render](lib/view.js#L118)
+### [.render](lib/view.js#L119)
 
 Asynchronously render a view.
 
@@ -742,7 +742,7 @@ view.render({title: 'Home'}, function(err, res) {
 });
 ```
 
-### [.clone](lib/view.js#L152)
+### [.clone](lib/view.js#L153)
 
 Re-decorate View methods after calling vinyl's `.clone()` method.
 
@@ -954,7 +954,7 @@ Run a plugin on the group instance. Plugins are invoked immediately upon creatin
 
 **Params**
 
-* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each view created on the instance.
+* `fn` **{Function}**: Plugin function.
 * `returns` **{Object}**: Returns the instance for chaining.
 
 **Example**
