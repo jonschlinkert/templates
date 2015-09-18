@@ -35,7 +35,7 @@ function Templates(options) {
   }
   Base.call(this);
   this.options = options || {};
-  this.plugins = [];
+  this.define('plugins', []);
   utils.renameKey(this);
   this.defaultConfig();
 }
@@ -96,14 +96,11 @@ Base.extend(Templates, {
   },
 
   /**
-   * Initialize defaults
+   * Initialize defaults. Exposes constructors on
+   * app instance.
    */
 
   initialize: function () {
-    // expose `view` method on app instance
-    utils.viewFactory(this, 'view', 'View');
-
-    // expose constructors on app instance
     this.define('Base', Base);
     this.define('View', this.options.View || View);
     this.define('List', this.options.List || List);
@@ -117,11 +114,15 @@ Base.extend(Templates, {
 
   listen: function () {
     this.on('option', function (key, value) {
-      if (key === 'mixins') this.visit('mixin', value);
+      if (key === 'mixins') {
+        this.visit('mixin', value);
+      }
     });
 
     this.on('error', function (err) {
-      if (err && err.id === 'rethrow') console.error(err.reason);
+      if (err && err.id === 'rethrow') {
+        console.error(err.reason);
+      }
     });
   },
 
@@ -130,7 +131,7 @@ Base.extend(Templates, {
    * are invoked immediately upon creating the collection
    * in the order in which they were defined.
    *
-   * ```
+   * ```js
    * var app = assemble()
    *   .use(require('foo'))
    *   .use(require('bar'))
@@ -152,22 +153,6 @@ Base.extend(Templates, {
   },
 
   /**
-   * Returns a new view, using the `View` class
-   * currently defined on the instance.
-   *
-   * ```js
-   * var view = app.view('foo', {conetent: '...'});
-   * // or
-   * var view = app.view({path: 'foo', conetent: '...'});
-   * ```
-   * @name .view
-   * @param {String|Object} `key` View key or object
-   * @param {Object} `value` If key is a string, value is the view object.
-   * @return {Object} returns the `view` object
-   * @api public
-   */
-
-  /**
    * Set, get and load data to be passed to templates as
    * context at render-time.
    *
@@ -176,7 +161,8 @@ Base.extend(Templates, {
    * app.data({c: 'd'});
    * console.log(app.cache.data);
    * //=> {a: 'b', c: 'd'}
-   * ---
+   * ```
+   *
    * @name .data
    * @param {String|Object} `key` Pass a key-value pair or an object to set.
    * @param {any} `val` Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
@@ -1189,6 +1175,24 @@ utils.methods.forEach(function (method) {
     return this;
   };
 });
+
+/**
+ * Returns a new view, using the `View` class
+ * currently defined on the instance.
+ *
+ * ```js
+ * var view = app.view('foo', {conetent: '...'});
+ * // or
+ * var view = app.view({path: 'foo', conetent: '...'});
+ * ```
+ * @name .view
+ * @param {String|Object} `key` View key or object
+ * @param {Object} `value` If key is a string, value is the view object.
+ * @return {Object} returns the `view` object
+ * @api public
+ */
+
+utils.viewFactory(Templates.prototype, 'view', 'View');
 
 /**
  * Expose `Templates`
