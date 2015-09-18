@@ -101,7 +101,7 @@ Base.extend(Templates, {
 
   initialize: function () {
     // expose `view` method on app instance
-    utils.createView(this);
+    utils.viewFactory(this, 'view', 'View');
 
     // expose constructors on app instance
     this.define('Base', Base);

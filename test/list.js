@@ -72,12 +72,6 @@ describe('list', function () {
       list = new List();
     });
 
-    it('should throw an error when value is invalid:', function () {
-      (function () {
-        list.addItem('foo');
-      }).should.throw('expected value to be an object.');
-    });
-
     it('should add an item to `items`:', function () {
       list.addItem('one', {content: '...'});
       assert(list.items.length === 1);
