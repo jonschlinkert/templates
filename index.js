@@ -9,10 +9,12 @@
 
 var Base = require('base-methods');
 var helpers = require('./lib/helpers/');
-var utils = require('./lib/utils');
-var Views = require('./lib/views');
-var List = require('./lib/list');
+var Item = require('./lib/item');
 var View = require('./lib/view');
+var List = require('./lib/list');
+var Views = require('./lib/views');
+var Group = require('./lib/group');
+var utils = require('./lib/utils');
 var lib = require('./lib/');
 
 /**
@@ -111,9 +113,11 @@ Templates.prototype.defaultConfig = function () {
 
 Templates.prototype.initialize = function () {
   this.define('Base', Base);
+  this.define('Item', this.options.Item || Item);
   this.define('View', this.options.View || View);
   this.define('List', this.options.List || List);
   this.define('Views', this.options.Views || Views);
+  this.define('Group', this.options.Group || Group);
   this.define('initialized', true);
 };
 
@@ -155,6 +159,7 @@ Templates.prototype.listen = function () {
  */
 
 Templates.prototype.use = function (fn) {
+  if (!this.initialized) this.initialize();
   var plugin = fn.call(this, this, this.options);
   if (typeof plugin === 'function') {
     this.plugins.push(plugin);
@@ -216,7 +221,25 @@ Templates.prototype.data = function (key, val) {
  * @api public
  */
 
-utils.viewFactory(Templates.prototype, 'view', 'View');
+utils.itemFactory(Templates.prototype, 'view', 'View');
+
+/**
+ * Returns a new item, using the `Item` class
+ * currently defined on the instance.
+ *
+ * ```js
+ * var item = app.item('foo', {conetent: '...'});
+ * // or
+ * var item = app.item({path: 'foo', conetent: '...'});
+ * ```
+ * @name .item
+ * @param {String|Object} `key` Item key or object
+ * @param {Object} `value` If key is a string, value is the item object.
+ * @return {Object} returns the `item` object
+ * @api public
+ */
+
+utils.itemFactory(Templates.prototype, 'item', 'Item');
 
 /**
  * Create a new view collection. View collections are decorated
@@ -1250,10 +1273,12 @@ module.exports = Templates;
  * Expose constructors
  */
 
-module.exports.Group = require('./lib/group');
+module.exports.Base = Base;
+module.exports.Item = Item;
 module.exports.View = View;
 module.exports.List = List;
 module.exports.Views = Views;
+module.exports.Group = Group;
 
 /**
  * Expose utils
