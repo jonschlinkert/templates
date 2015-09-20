@@ -2,6 +2,7 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var assert = require('assert');
+var utils = require('../lib/utils');
 var App = require('../');
 var app;
 
@@ -28,7 +29,19 @@ describe('collection', function () {
 
   describe('adding views', function () {
     beforeEach(function () {
-      app = new App();
+      app = new App()
+        .use(function () {
+          return function (collection) {
+            utils.define(this, 'count', {
+              get: function() {
+                return Object.keys(this.views).length;
+              },
+              set: function () {
+                throw new Error('count is a read-only getter and cannot be defined.');
+              }
+            });
+          };
+        })
       app.engine('tmpl', require('engine-base'));
       app.create('pages');
     });

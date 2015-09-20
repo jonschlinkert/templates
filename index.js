@@ -48,12 +48,6 @@ function Templates(options) {
 Base.extend(Templates);
 
 /**
- * `Templates` prototype methods
- */
-
-Templates.prototype.constructor = Templates;
-
-/**
  * Initialize Templates default configuration
  */
 
@@ -274,7 +268,7 @@ Templates.prototype.collection = function (opts, fromCreate) {
     opts = this.options;
   } else {
     opts = opts || {};
-    opts.View = opts.View || this.get('View');
+    opts.Item = opts.Item || this.get('Item');
     collection = new Views(opts);
   }
 

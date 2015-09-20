@@ -49,12 +49,6 @@ describe('views', function () {
       collection = new Views();
     });
 
-    it('should throw an error if attempting to set count:', function () {
-      (function () {
-        collection.count = 5;
-      }).should.throw('count is a read-only getter and cannot be defined.');
-    });
-
     it('should set a value on the instance:', function () {
       collection.set('a', 'b');
       assert(collection.a ==='b');
@@ -312,7 +306,7 @@ describe('views', function () {
     it('should get the number of views:', function () {
       collection.addView('one', {content: 'aaa'});
       collection.addView('two', {content: 'zzz'});
-      assert(collection.count === 2);
+      assert(Object.keys(collection.views).length === 2);
     });
   });
 });
