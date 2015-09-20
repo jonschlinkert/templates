@@ -7,7 +7,7 @@
 
 'use strict';
 
-require('time-require');
+// require('time-require');
 
 var Base = require('base-methods');
 var helpers = require('./lib/helpers/');
@@ -1065,7 +1065,7 @@ Templates.prototype.render = function (view, locals, cb) {
   }
 
   view.locals = utils.merge({}, view.locals, locals);
-  utils.defaultsDeep(view.locals, this.cache.data);
+  view.locals = utils.merge({}, this.cache.data, view.locals);
   var opts = this.options;
 
   // handle `preRender` middleware
