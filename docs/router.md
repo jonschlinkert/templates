@@ -1,10 +1,10 @@
-# Router
+---
+title: Router
+---
 
 ## Overview
 
 This document describes the various features, options and API router methods available on Templates.js.
-
-<!-- toc -->
 
 ## Router methods
 

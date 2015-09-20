@@ -1,6 +1,6 @@
-# View types
-
-<!-- toc -->
+---
+title: View types
+---
 
 **Jump ahead**
 
@@ -10,12 +10,13 @@ Available view types:
 - [partial](#partial)
 - [layout](#layout)
 
-**Overview**
+**The basics**
 
 View types determine what will happen to templates in a collection at certain points during the build process, and:
 
-- every view collection belongs to at least one view type
-- View types are determined when a collection is created using the `.create()` method
+- every view collection must define at least one view type. If no type is defined, `renderable` is used by default.
+- more than one type may be defined, but this should be done sparingly to avoid unnecessarily creating methods and logic that aren't needed (continue reading to learn more about this below).
+- view types are defined on the `.create()` or `.collection()` method options.
 
 ## Defining view types
 
@@ -35,9 +36,9 @@ console.log(app.pages.options)
 //=> {viewType: ['renderable']}
 ```
 
-## Types
+## Choosing a type
 
-This section describes each type and its unique attributes.
+This section describes each type, its unique attributes, and why you might need one type versus another.
 
 ### Renderable
 
