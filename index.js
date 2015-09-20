@@ -74,7 +74,7 @@ Templates.prototype.defaultConfig = function () {
 
   this.engine('default', utils.engine);
   this.inflections = {};
-  this.listen();
+  this.listen(this);
 };
 
 /**
@@ -109,16 +109,19 @@ Templates.prototype.initialize = function () {
  * Listen for events
  */
 
-Templates.prototype.listen = function () {
+Templates.prototype.listen = function (app) {
   this.on('option', function (key, value) {
     if (key === 'mixins') {
-      this.visit('mixin', value);
+      app.visit('mixin', value);
     }
+    // if (key === 'view engine') {
+    //   app.defaultEngine(value);
+    // }
   });
 
   this.on('error', function (err) {
     if (!err || err.id !== 'rethrow') return;
-    if (this.options.silent !== true) {
+    if (app.options.silent !== true) {
       console.error(err.reason);
     }
   });

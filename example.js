@@ -1,12 +1,15 @@
 var templates = require('./');
 var app = templates();
+var green = require('ansi-green');
+var yellow = require('ansi-yellow');
+var red = require('ansi-red');
 
 /**
  * Engine
  */
 
-app.option('view engine', '*');
 app.engine('*', require('engine-base'));
+app.option('view engine', '*');
 
 /**
  * Collections and rendering
@@ -46,22 +49,31 @@ app.section('articles')
   .foo('one.html', {content: 'The <%= title %> page'})
   .set('locals.title', 'One')
   .render(function (err, res) {
-    console.log(res.content)
+    if (err) return console.log(err.stack);
   })
   // this `.foo` is from a `view` instance
   .foo('two.html', {content: 'The <%= title %> page'})
   .set('locals.title', 'Two')
   .render(function (err, res) {
-    console.log(res.content)
+    if (err) return console.log(err.stack)
   })
 
-console.log(app.views.articles)
+// console.log(app.views.articles)
 
 /**
  * Events
  */
 
 var posts = app.create('posts');
+posts.engine('*', app.engine('*'));
+posts.on('error', function (err) {
+  // if (err) return console.log(err)
+})
+
+posts.preRender(/./, function (view, next) {
+  view.engine = '*';
+  next();
+});
 
 posts.on('addView', function (key, value) {
   posts.queue.push(posts.view(key, {content: value}));
@@ -69,5 +81,11 @@ posts.on('addView', function (key, value) {
 });
 
 var post = posts.addView('home.html', 'The <%= title %> page');
-console.log(posts);
-console.log(post);
+// console.log(posts);
+// console.log(post);
+
+
+// posts.render('home.html', {title: 'Home'}, function (err, res) {
+posts.render('home.html', function (err, res) {
+  // console.log(err);
+});

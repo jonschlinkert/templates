@@ -8,7 +8,7 @@ var forOwn = require('for-own');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
 var matter = require('parser-front-matter');
-var helpers = require('../lib/helpers');
+var helpers = require('../lib/decorate/helpers');
 var rimraf = require('rimraf');
 var swig = consolidate.swig;
 require('swig');

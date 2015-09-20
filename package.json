@@ -48,6 +48,9 @@
     "vinyl": "^0.5.3"
   },
   "devDependencies": {
+    "ansi-green": "^0.1.1",
+    "ansi-red": "^0.1.1",
+    "ansi-yellow": "^0.1.1",
     "async": "^1.4.2",
     "consolidate": "^0.13.1",
     "engine-handlebars": "^0.8.0",
