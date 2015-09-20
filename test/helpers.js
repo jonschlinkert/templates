@@ -2,11 +2,13 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var path = require('path');
+var Base = require('base-methods');
 var assert = require('assert');
 var forOwn = require('for-own');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
 var matter = require('parser-front-matter');
+var helpers = require('../lib/helpers');
 var rimraf = require('rimraf');
 var swig = consolidate.swig;
 require('swig');
@@ -37,6 +39,18 @@ describe('helpers', function () {
     });
     it('should expose `asyncHelper`', function () {
       assert(typeof app.asyncHelper ==='function');
+    });
+  });
+
+  describe('instance', function () {
+    it('should prime _', function () {
+      function Foo() {
+        Base.call(this)
+      }
+      Base.extend(Foo);
+      helpers(Foo.prototype);
+      var foo = new Foo();
+      assert(typeof foo._ ==='object');
     });
   });
 

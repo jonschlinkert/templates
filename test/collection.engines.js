@@ -131,7 +131,17 @@ describe('engine selection:', function (done) {
       });
   });
 
-  it('should use the engine defined on `view.data`:', function (done) {
+  it('should use the engine defined on view.options:', function (done) {
+    var posts = new Views();
+    posts.addView('a', {content: '{{a}}', data: {a: 'b'}, options: {engine: 'hbs'}})
+      .render(function (err, view) {
+        if (err) return done(err);
+        assert(view.content === 'b');
+        done();
+      });
+  });
+
+  it('should use the engine defined on view.data:', function (done) {
     var posts = new Views();
     posts.addView('a', {content: '{{a}}', locals: {a: 'b'}, data: {engine: 'hbs'}})
       .render(function (err, view) {

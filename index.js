@@ -7,8 +7,6 @@
 
 'use strict';
 
-// require('time-require');
-
 var Base = require('base-methods');
 var decorate = require('./lib/decorate/');
 var helpers = require('./lib/helpers/');
@@ -78,6 +76,10 @@ Templates.prototype.defaultConfig = function () {
   this.inflections = {};
   this.listen();
 };
+
+/**
+ * Decorate methods onto the Templates prototype
+ */
 
 decorate.config(Templates.prototype);
 decorate.routes(Templates.prototype);
