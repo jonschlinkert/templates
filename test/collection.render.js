@@ -95,11 +95,9 @@ describe('render', function () {
       });
     });
 
-    it.skip('should use a plugin for rendering:', function (done) {
-      pages.engine('tmpl', require('engine-base'));
+    it('should use a plugin for rendering:', function (done) {
       pages.preRender(/./, function (view, next) {
         view.engine = 'tmpl';
-        // console.log(view)
         next();
       });
 
@@ -118,23 +116,24 @@ describe('render', function () {
 
       pages.use(function (collection) {
         var list = new List(collection);
+
+        collection.option('resolveEngine', function (ext) {
+          if (ext.charAt(0) !== '.') ext = '.' + ext;
+          return ext;
+        });
+
         collection.renderEach = function (cb) {
           async.map(list.items, function (item, next) {
-            try {
-              collection.render(item, next);
-            } catch(err) {
-              return next(err);
-            }
+            collection.render(item, next);
           }, cb);
         };
       })
 
       pages.renderEach(function (err, items) {
         if (err) return done(err);
-        // console.log(err.stack)
-        // assert(items[0].content === 'aaa');
-        // assert(items[9].content === 'jjj');
-        // assert(items.length === 10);
+        assert(items[0].content === 'aaa');
+        assert(items[9].content === 'jjj');
+        assert(items.length === 10);
         done();
       });
     });
