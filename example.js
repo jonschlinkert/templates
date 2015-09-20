@@ -31,24 +31,25 @@ app.use(function (app) {
       console.log(views._callbacks)
     });
 
-    // create a custom `.add()` method
-    // on the collection
-    views.add = views.addView;
+    // create a custom `.foo()` method on the collection
+    views.define('foo', views.addView);
     return function (view) {
 
-      // also add `.add()` to the view instance for chaining
-      view.add = views.add.bind(views);
+      // also add `.foo()` to the view instance for chaining
+      view.define('foo', views.foo.bind(views));
     };
   };
 });
 
 app.section('articles')
-  .add('one.html', {content: 'The <%= title %> page'})
+  // this first `.foo` is from the collection instance
+  .foo('one.html', {content: 'The <%= title %> page'})
   .set('locals.title', 'One')
   .render(function (err, res) {
     console.log(res.content)
   })
-  .add('two.html', {content: 'The <%= title %> page'})
+  // this `.foo` is from a `view` instance
+  .foo('two.html', {content: 'The <%= title %> page'})
   .set('locals.title', 'Two')
   .render(function (err, res) {
     console.log(res.content)
@@ -67,5 +68,6 @@ posts.on('addView', function (key, value) {
   posts.loaded = true;
 });
 
-posts.addView('home.html', 'The <%= title %> page');
-console.log(posts.views);
+var post = posts.addView('home.html', 'The <%= title %> page');
+console.log(posts);
+console.log(post);
