@@ -5,7 +5,7 @@ var jshint = require('gulp-jshint');
 var del = require('rimraf');
 require('jshint-stylish');
 
-var lint = ['index.js', 'lib/*.js'];
+var lint = ['index.js', 'lib/**/*.js'];
 
 gulp.task('coverage', function () {
   return gulp.src(lint)

@@ -7,15 +7,28 @@
 
 'use strict';
 
+require('time-require');
+
 var Base = require('base-methods');
 var helpers = require('./lib/helpers/');
-var Item = require('./lib/item');
-var View = require('./lib/view');
-var List = require('./lib/list');
-var Views = require('./lib/views');
-var Group = require('./lib/group');
-var utils = require('./lib/utils');
+var utils = require('./lib/utils/');
 var lib = require('./lib/');
+
+/**
+ * Item constructors
+ */
+
+var Item = lib.item;
+var View = lib.view;
+
+/**
+ * Collection constructors
+ */
+
+var Collection = lib.collection;
+var List = lib.list;
+var Views = lib.views;
+var Group = lib.group;
 
 /**
  * This function is the main export of the templates module.
@@ -110,6 +123,7 @@ Templates.prototype.initialize = function () {
   this.define('Item', this.options.Item || Item);
   this.define('View', this.options.View || View);
   this.define('List', this.options.List || List);
+  this.define('Collection', this.options.Collection || Collection);
   this.define('Views', this.options.Views || Views);
   this.define('Group', this.options.Group || Group);
   this.define('initialized', true);
@@ -236,45 +250,39 @@ utils.itemFactory(Templates.prototype, 'view', 'View');
 utils.itemFactory(Templates.prototype, 'item', 'Item');
 
 /**
- * Create a new view collection. View collections are decorated
- * with special methods for getting, setting and rendering
- * views from that collection. Collections created with this method
- * are not stored on `app.views` as with the [create](#create) method.
+ * Create a new collection. Collections are decorated
+ * with special methods for getting and setting items
+ * from that collection. Collections created with this
+ * method are not cached.
  *
- * ```js
- * var collection = app.collection();
- * collection.addViews({...}); // add an object of views
- * collection.addView('foo', {content: '...'}); // add a single view
+ * See the [collection docs](docs/collections.md) for more
+ * information about collections.
  *
- * // collection methods are chainable too
- * collection.addView('home.hbs', {content: 'foo <%= title %> bar'})
- *   .render({title: 'Home'}, function(err, res) {
- *     //=> 'foo Home bar'
- *   });
- * ```
  * @name .collection
  * @param  {Object} `opts` Collection options
  * @return {Object} Returns the `collection` instance for chaining.
  * @api public
  */
 
-Templates.prototype.collection = function (opts, fromCreate) {
+Templates.prototype.collection = function (opts) {
   if (!this.initialized) this.initialize();
-  var Views = this.get('Views');
-  var collection;
+  opts = opts || {};
 
-  if (opts instanceof Views) {
+  if (!opts.views && !opts.options) {
+    utils.defaults(opts, this.options);
+  }
+
+  var Collection = opts.Collection || this.get('Collection');
+  var collection = {};
+
+  if (opts instanceof Collection) {
     collection = opts;
-    opts = this.options;
   } else {
-    opts = opts || {};
     opts.Item = opts.Item || this.get('Item');
-    collection = new Views(opts);
+    collection = new Collection(opts);
   }
 
-  if (fromCreate !== true) {
-    this.extendViews(collection, opts);
-  }
+  this.extendViews(collection, opts);
 
   // emit the collection
   this.emit('collection', collection, opts);
@@ -282,23 +290,51 @@ Templates.prototype.collection = function (opts, fromCreate) {
 };
 
 /**
- * Create a new view collection that is stored on the `app.views` object. For example, if you create a collection named `posts`:
+ * Create a new view collection. View collections are decorated
+ * with special methods for getting, setting and rendering
+ * views from that collection. Collections created with this method
+ * are not stored on `app.views` as with the [create](#create) method.
  *
- *  - all `posts` will be stored on `app.views.posts`
- *  - a `post` method will be added to `app`, allowing you to add a single view to the `posts` collection using `app.post()` (equivalent to `collection.addView()`)
- *  - a `posts` method will be added to `app`, allowing you to add views to the `posts` collection using `app.posts()` (equivalent to `collection.addViews()`)
+ * See the [collection docs](docs/collections.md#view-collections) for more
+ * information about view collections.
  *
- * ```js
- * app.create('posts');
- * app.posts({...}); // add an object of views
- * app.post('foo', {content: '...'}); // add a single view
+ * @name .viewCollection
+ * @param  {Object} `opts` View collection options.
+ * @return {Object} Returns the view collection instance for chaining.
+ * @api public
+ */
+
+Templates.prototype.viewCollection = function (opts, created) {
+  if (!this.initialized) this.initialize();
+  opts = opts || {};
+
+  if (!opts.views && !opts.options) {
+    utils.defaults(opts, this.options);
+  }
+
+  var Views = opts.Views || this.get('Views');
+  var views = {};
+
+  if (opts instanceof Views) {
+    views = opts;
+  } else {
+    opts.View = opts.View || this.get('View');
+    views = new Views(opts);
+  }
+
+  if (created !== true) {
+    this.extendViews(views, opts);
+  }
+
+  // emit the views
+  this.emit('viewCollection', views, opts);
+  return views;
+};
+
+/**
+ * Create a new view collection to be stored on the `app.views` object. See
+ * the [create docs](docs/collections.md#create) for more details.
  *
- * // collection methods are chainable too
- * app.post('home.hbs', {content: 'foo <%= title %> bar'})
- *   .render({title: 'Home'}, function(err, res) {
- *     //=> 'foo Home bar'
- *   });
- * ```
  * @name .create
  * @param  {String} `name` The name of the collection. Plural or singular form.
  * @param  {Object} `opts` Collection options
@@ -310,10 +346,10 @@ Templates.prototype.collection = function (opts, fromCreate) {
 Templates.prototype.create = function(name, opts) {
   opts = opts || {};
   if (!opts.views && !opts.options) {
-    opts = utils.merge({}, this.options, opts);
+    utils.defaults(opts, this.options);
   }
 
-  var collection = this.collection(opts, true);
+  var collection = this.viewCollection(opts, true);
 
   // get the collection inflections, e.g. page/pages
   var single = utils.single(name);
@@ -379,6 +415,7 @@ Templates.prototype.viewDefaults = function (view, options) {
   // decorate `option` method onto `view`
   if (typeof view.option !== 'function') {
     utils.option(view);
+    utils.defaults(view.options, options);
   }
 
   // decorate `compile` method onto `view`
@@ -402,11 +439,11 @@ Templates.prototype.viewDefaults = function (view, options) {
 };
 
 /**
- * Decorate or override methods on a collection instance.
+ * Decorate or override methods on a view collection instance.
  */
 
 Templates.prototype.extendViews = function (views, options) {
-  this.collectionDefaults(views, options);
+  this.viewsDefaults(views, options);
 };
 
 /**
@@ -414,12 +451,8 @@ Templates.prototype.extendViews = function (views, options) {
  * each collection.
  */
 
-Templates.prototype.collectionDefaults = function(views, options) {
+Templates.prototype.viewsDefaults = function(views, options) {
   var app = this;
-
-  function opts(view) {
-    return utils.merge({}, app.options, options);
-  }
 
   if (!views.options.hasOwnProperty('renameKey')) {
     views.option('renameKey', this.renameKey);
@@ -427,11 +460,7 @@ Templates.prototype.collectionDefaults = function(views, options) {
 
   views.on('view', function (view) {
     utils.define(view, 'addView', views.addView.bind(views));
-    app.extendView(view, opts);
-
-    if (views.options.engine && !view.options.engine) {
-      view.option('engine', views.options.engine);
-    }
+    app.extendView(view, options);
 
     app.handleView('onLoad', view);
     app.emit('view', view);
@@ -966,7 +995,7 @@ Templates.prototype.compile = function(view, locals, isAsync) {
     throw this.error('compile', 'callback');
   }
 
-  locals = utils.merge({settings: {}}, locals);
+  locals = utils.extend({settings: {}}, locals);
 
   // get the engine to use
   var ext = utils.resolveEngine(view, locals, this.options);
@@ -1036,7 +1065,7 @@ Templates.prototype.render = function (view, locals, cb) {
   }
 
   view.locals = utils.merge({}, view.locals, locals);
-  locals = utils.merge({}, this.cache.data, view.locals);
+  utils.defaultsDeep(view.locals, this.cache.data);
   var opts = this.options;
 
   // handle `preRender` middleware
@@ -1094,7 +1123,7 @@ Templates.prototype.render = function (view, locals, cb) {
  */
 
 Templates.prototype.mergePartials = function (options) {
-  var opts = utils.extend({}, this.options, options);
+  var opts = utils.merge({}, this.options, options);
   var names = opts.mergeTypes || this.viewTypes.partial;
   var partials = {};
   var self = this;
@@ -1270,8 +1299,9 @@ module.exports = Templates;
 module.exports.Base = Base;
 module.exports.Item = Item;
 module.exports.View = View;
-module.exports.List = List;
+module.exports.Collection = Collection;
 module.exports.Views = Views;
+module.exports.List = List;
 module.exports.Group = Group;
 
 /**

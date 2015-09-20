@@ -64,7 +64,8 @@
     "rimraf": "^2.4.3",
     "should": "*",
     "swig": "^1.4.2",
-    "template-helpers": "^0.3.4"
+    "template-helpers": "^0.3.4",
+    "time-require": "jonschlinkert/time-require"
   },
   "keywords": [
     "compile",
