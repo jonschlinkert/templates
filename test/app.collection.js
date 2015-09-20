@@ -41,7 +41,8 @@ describe('collection', function () {
               }
             });
           };
-        })
+        });
+
       app.engine('tmpl', require('engine-base'));
       app.create('pages');
     });
@@ -85,6 +86,31 @@ describe('collection', function () {
         .pages('test/fixtures/pages/c.hbs');
 
       assert(app.pages.count === 3);
+    });
+  });
+
+  describe('addItem', function () {
+    it('should add items to a collection', function () {
+      var pages = app.collection();
+      pages.addItem('foo');
+      pages.addItem('bar');
+      pages.addItem('baz');
+
+      pages.items.hasOwnProperty('foo');
+      pages.items.hasOwnProperty('bar');
+      pages.items.hasOwnProperty('baz');
+    });
+
+    it('should create a collection from an existing collection:', function () {
+      var pages = app.collection();
+      pages.addItem('foo');
+      pages.addItem('bar');
+      pages.addItem('baz');
+
+      var posts = app.collection(pages);
+      posts.items.hasOwnProperty('foo');
+      posts.items.hasOwnProperty('bar');
+      posts.items.hasOwnProperty('baz');
     });
   });
 

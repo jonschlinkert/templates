@@ -11,13 +11,13 @@ describe('vc', function () {
       vc = new Views();
     });
 
-    it('should expose the vc method', function () {
-      assert(typeof Views === 'function');
-    });
-
-    it('should return a new vc', function () {
+    it('should return a new view collection', function () {
       var vc = new Views();
       assert(typeof vc === 'object');
+    });
+
+    it('should create an instance without new', function () {
+      assert(typeof Views === 'function');
     });
 
     it('should have isCollection property', function () {
@@ -36,26 +36,12 @@ describe('vc', function () {
       vc.views.should.have.property('a.hbs');
     });
 
-    it('should allow vc methods to be chained:', function () {
+    it('should allow collection methods to be chained:', function () {
       vc
         .addViews({'a.hbs': {path: 'a.hbs'}})
         .addViews({'b.hbs': {path: 'b.hbs'}})
         .addViews({'c.hbs': {path: 'c.hbs'}});
 
-      vc.views.should.have.properties([
-        'a.hbs',
-        'b.hbs',
-        'c.hbs'
-      ]);
-    });
-
-    it('should expose the `option` method:', function () {
-      vc.option('foo', 'bar')
-        .addViews('a.hbs')
-        .addViews('b.hbs')
-        .addViews('c.hbs');
-
-      vc.options.should.have.property('foo', 'bar');
       vc.views.should.have.properties([
         'a.hbs',
         'b.hbs',
@@ -105,19 +91,21 @@ describe('vc', function () {
       assert(vc.views.hasOwnProperty('c.html'));
       assert(vc.getView('c.html').content === 'ccc');
     });
+  });
+});
 
-    it('should expose the `option` method:', function () {
-      vc.option('foo', 'bar')
-        .addViews('a.hbs')
-        .addViews('b.hbs')
-        .addViews('c.hbs');
+describe('options', function () {
+  it('should expose the `option` method:', function () {
+    vc.option('foo', 'bar')
+      .addViews('a.hbs')
+      .addViews('b.hbs')
+      .addViews('c.hbs');
 
-      vc.options.should.have.property('foo', 'bar');
-      vc.views.should.have.properties([
-        'a.hbs',
-        'b.hbs',
-        'c.hbs'
-      ]);
-    });
+    vc.options.should.have.property('foo', 'bar');
+    vc.views.should.have.properties([
+      'a.hbs',
+      'b.hbs',
+      'c.hbs'
+    ]);
   });
 });
