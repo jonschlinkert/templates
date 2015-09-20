@@ -241,7 +241,7 @@ utils.viewFactory(Templates.prototype, 'view', 'View');
  * @api public
  */
 
-Templates.prototype.collection = function (opts, created) {
+Templates.prototype.collection = function (opts, fromCreate) {
   if (!this.initialized) this.initialize();
   var Views = this.get('Views');
   var collection;
@@ -255,11 +255,12 @@ Templates.prototype.collection = function (opts, created) {
     collection = new Views(opts);
   }
 
-  // emit the collection
-  this.emit('collection', collection, opts);
-  if (created !== true) {
+  if (fromCreate !== true) {
     this.extendViews(collection, opts);
   }
+
+  // emit the collection
+  this.emit('collection', collection, opts);
   return collection;
 };
 
@@ -343,11 +344,19 @@ Templates.prototype.create = function(name, opts) {
 };
 
 /**
- * Decorate `view` instances in the collection.
+ * Decorate or override methods on a view created by a collection.
  */
 
 Templates.prototype.extendView = function (view, options) {
-  var opts = utils.merge({}, this.options, options);
+  this.viewDefaults(view, options);
+};
+
+/**
+ * Default methods and settings that will be decorated onto
+ * each view created by a collection.
+ */
+
+Templates.prototype.viewDefaults = function (view, options) {
   var app = this;
 
   // decorate `option` method onto `view`
@@ -376,23 +385,35 @@ Templates.prototype.extendView = function (view, options) {
 };
 
 /**
- * Decorate `collection` intances.
+ * Decorate or override methods on a collection instance.
  */
 
-Templates.prototype.extendViews = function (collection, options) {
-  var opts = utils.merge({}, this.options, options);
+Templates.prototype.extendViews = function (views, options) {
+  this.collectionDefaults(views, options);
+};
+
+/**
+ * Default methods and settings that will be decorated onto
+ * each collection.
+ */
+
+Templates.prototype.collectionDefaults = function(views, options) {
   var app = this;
 
-  if (!collection.options.hasOwnProperty('renameKey')) {
-    collection.option('renameKey', this.renameKey);
+  function opts(view) {
+    return utils.merge({}, app.options, options);
   }
 
-  collection.on('view', function (view) {
-    utils.define(view, 'addView', collection.addView.bind(collection));
+  if (!views.options.hasOwnProperty('renameKey')) {
+    views.option('renameKey', this.renameKey);
+  }
+
+  views.on('view', function (view) {
+    utils.define(view, 'addView', views.addView.bind(views));
     app.extendView(view, opts);
 
-    if (collection.options.engine && !view.options.engine) {
-      view.option('engine', collection.options.engine);
+    if (views.options.engine && !view.options.engine) {
+      view.option('engine', views.options.engine);
     }
 
     app.handleView('onLoad', view);
