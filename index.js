@@ -66,14 +66,12 @@ Base.extend(Templates);
 Templates.prototype.defaultConfig = function () {
   // used in plugins to verify the app instance
   this.isApp = true;
+  this.inflections = {};
   decorate.init(this);
 
   for (var key in this.options.mixins) {
     this.mixin(key, this.options.mixins[key]);
   }
-
-  this.engine('default', utils.engine);
-  this.inflections = {};
   this.listen(this);
 };
 
@@ -114,9 +112,6 @@ Templates.prototype.listen = function (app) {
     if (key === 'mixins') {
       app.visit('mixin', value);
     }
-    // if (key === 'view engine') {
-    //   app.defaultEngine(value);
-    // }
   });
 
   this.on('error', function (err) {

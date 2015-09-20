@@ -2,6 +2,7 @@ require('mocha');
 require('should');
 var async = require('async');
 var assert = require('assert');
+var utils = require('../lib/utils');
 var List = require('..').List;
 var Views = require('..').Views;
 var pages;
@@ -96,10 +97,7 @@ describe('render', function () {
     });
 
     it('should use a plugin for rendering:', function (done) {
-      pages.preRender(/./, function (view, next) {
-        view.engine = 'tmpl';
-        next();
-      });
+      pages.engine('tmpl', require('engine-base'));
 
       pages.addViews({
         'a': {content: '<%= title %>', locals: {title: 'aaa'}},
@@ -117,13 +115,9 @@ describe('render', function () {
       pages.use(function (collection) {
         var list = new List(collection);
 
-        collection.option('resolveEngine', function (ext) {
-          if (ext.charAt(0) !== '.') ext = '.' + ext;
-          return ext;
-        });
-
         collection.renderEach = function (cb) {
           async.map(list.items, function (item, next) {
+            item.engine = '.tmpl';
             collection.render(item, next);
           }, cb);
         };
