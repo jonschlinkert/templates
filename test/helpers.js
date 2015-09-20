@@ -420,21 +420,6 @@ describe('built-in helpers:', function () {
   });
 });
 
-describe('helpers defaults', function () {
-  beforeEach(function () {
-    app = new App();
-  });
-
-  it('should return an empty list of helpers.', function () {
-    assert(!Object.keys(app._.helpers.async).length);
-    assert(!Object.keys(app._.helpers.sync).length);
-
-    forOwn(app.engines, function (engine) {
-      assert(!Object.keys(engine.helpers).length);
-    });
-  });
-});
-
 describe('helpers integration', function () {
   beforeEach(function () {
     app = new App();
