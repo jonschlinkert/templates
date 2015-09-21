@@ -9,6 +9,7 @@ var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
 var matter = require('parser-front-matter');
 var helpers = require('../lib/decorate/helpers');
+var init = require('../lib/decorate/init');
 var rimraf = require('rimraf');
 var swig = consolidate.swig;
 require('swig');
@@ -45,7 +46,8 @@ describe('helpers', function () {
   describe('instance', function () {
     it('should prime _', function () {
       function Foo() {
-        Base.call(this)
+        Base.call(this);
+        init(this);
       }
       Base.extend(Foo);
       helpers(Foo.prototype);
