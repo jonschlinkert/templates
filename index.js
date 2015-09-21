@@ -82,6 +82,8 @@ Templates.prototype.defaultConfig = function () {
 decorate.config(Templates.prototype);
 decorate.routes(Templates.prototype);
 decorate.engine(Templates.prototype);
+decorate.context(Templates.prototype);
+decorate.helpers(Templates.prototype);
 decorate.layout(Templates.prototype);
 decorate.render(Templates.prototype);
 decorate.lookup(Templates.prototype);

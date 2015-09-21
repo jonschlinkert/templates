@@ -66,9 +66,10 @@ describe('helpers', function () {
 
     it('should load a glob of sync helper functions:', function () {
       app.helpers('test/fixtures/helpers/[a-c].js');
-      assert(typeof app._.helpers.sync.a === 'function');
-      assert(typeof app._.helpers.sync.b === 'function');
+
       assert(typeof app._.helpers.sync.c === 'function');
+      assert(typeof app._.helpers.sync.b === 'function');
+      assert(typeof app._.helpers.sync.a === 'function');
     });
 
     it('should fail gracefully on bad globs:', function (done) {
@@ -250,7 +251,7 @@ describe('built-in helpers:', function () {
 
       app.render('b.md', function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo AAA bar');
+        res.content.should.equal('foo AAA bar');
         done();
       });
     });
@@ -261,7 +262,7 @@ describe('built-in helpers:', function () {
 
       app.render('xyz.md', {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo CCC bar');
+        res.content.should.equal('foo CCC bar');
         done();
       });
     });
@@ -272,7 +273,7 @@ describe('built-in helpers:', function () {
 
       app.render('xyz.md', {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo AAA bar');
+        res.content.should.equal('foo AAA bar');
         done();
       });
     });
@@ -283,7 +284,7 @@ describe('built-in helpers:', function () {
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md") %> bar'})
         .render({name: 'DDD'}, function (err, res) {
           if (err) return done(err);
-          res.contents.toString().should.equal('foo EEE bar');
+          res.content.should.equal('foo EEE bar');
           done();
         });
     });
@@ -295,7 +296,7 @@ describe('built-in helpers:', function () {
         .render({name: 'DDD'}, function (err, res) {
           if (err) return done(err);
 
-          res.contents.toString().should.equal('foo EEE bar');
+          res.content.should.equal('foo EEE bar');
           done();
         });
     });
@@ -306,7 +307,7 @@ describe('built-in helpers:', function () {
 
       app.render('xyz.md', {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo DDD bar');
+        res.content.should.equal('foo DDD bar');
         done();
       });
     });
@@ -316,7 +317,7 @@ describe('built-in helpers:', function () {
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("def.md", { name: "CCC" }) %> bar'});
       app.render('xyz.md', {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo  bar');
+        res.content.should.equal('foo  bar');
         done();
       });
     });
@@ -341,7 +342,7 @@ describe('built-in helpers:', function () {
 
       app.render('xyz.md', {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo CCC bar');
+        res.content.should.equal('foo CCC bar');
         done();
       });
     });
@@ -354,7 +355,7 @@ describe('built-in helpers:', function () {
 
       app.render(page, {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo BBB bar');
+        res.content.should.equal('foo BBB bar');
         done();
       });
     });
@@ -365,7 +366,7 @@ describe('built-in helpers:', function () {
 
       app.render('xyz.md', {name: 'DDD'}, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('foo DDD bar');
+        res.content.should.equal('foo DDD bar');
         done();
       });
     });
@@ -415,20 +416,20 @@ describe('built-in helpers:', function () {
       var locals = {custom: {locals: {name: 'Halle Nicole' }}};
       app.render('a.hbs', locals, function (err, res) {
         if (err) return console.log(err);
-        res.contents.toString().should.equal('<title>Halle Nicole</title>');
+        res.content.should.equal('<title>Halle Nicole</title>');
       });
 
       app.render('with-partial.hbs', locals, function (err, res) {
         if (err) return console.log(err);
-        res.contents.toString().should.equal('<title>Halle Nicole</title>');
+        res.content.should.equal('<title>Halle Nicole</title>');
       });
 
       var page = app.pages.getView('g.md');
       locals.author = page.data.author || locals.author;
       page.render(locals, function (err, res) {
         if (err) return done(err);
-        res.contents.toString().should.equal('<title>Brian Woodward</title>');
-        done(null, res.contents.toString());
+        res.content.should.equal('<title>Brian Woodward</title>');
+        done(null, res.content);
       });
     });
   });
