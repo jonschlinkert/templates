@@ -72,6 +72,7 @@ Templates.prototype.defaultConfig = function () {
   for (var key in this.options.mixins) {
     this.mixin(key, this.options.mixins[key]);
   }
+  this.initialize();
   this.listen(this);
 };
 
@@ -102,7 +103,6 @@ Templates.prototype.initialize = function () {
   this.define('Collection', this.options.Collection || Collection);
   this.define('Views', this.options.Views || Views);
   this.define('Group', this.options.Group || Group);
-  this.define('initialized', true);
 };
 
 /**
@@ -114,6 +114,7 @@ Templates.prototype.listen = function (app) {
     if (key === 'mixins') {
       app.visit('mixin', value);
     }
+    utils.optionUpdated(app, key, value);
   });
 
   this.on('error', function (err) {
@@ -143,7 +144,6 @@ Templates.prototype.listen = function (app) {
  */
 
 Templates.prototype.use = function (fn) {
-  if (!this.initialized) this.initialize();
   var plugin = fn.call(this, this, this.options);
   if (typeof plugin === 'function') {
     this.plugins.push(plugin);
@@ -204,7 +204,6 @@ utils.itemFactory(Templates.prototype, 'item', 'Item');
  */
 
 Templates.prototype.collection = function (opts) {
-  if (!this.initialized) this.initialize();
   opts = opts || {};
 
   if (!opts.views && !opts.options) {
@@ -244,7 +243,6 @@ Templates.prototype.collection = function (opts) {
  */
 
 Templates.prototype.viewCollection = function (opts, created) {
-  if (!this.initialized) this.initialize();
   opts = opts || {};
 
   if (!opts.views && !opts.options) {
