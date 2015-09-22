@@ -65,7 +65,7 @@ Base.extend(Templates);
 
 Templates.prototype.defaultConfig = function () {
   // used in plugins to verify the app instance
-  this.isApp = true;
+  this.define('isApp', true);
   this.inflections = {};
   decorate.init(this);
 
