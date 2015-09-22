@@ -43,7 +43,7 @@ describe('render', function () {
       pages.render(page, function (err, res) {
         if (err) return done(err);
 
-        assert(res.contents.toString() === 'a HALLE b');
+        assert(res.content === 'a HALLE b');
         done();
       });
     });
@@ -59,7 +59,7 @@ describe('render', function () {
 
       pages.render(page, function (err, res) {
         if (err) return done(err);
-        assert(res.contents.toString() === 'a HALLE b');
+        assert(res.content === 'a HALLE b');
         done();
       });
     });
@@ -98,6 +98,7 @@ describe('render', function () {
 
     it('should use a plugin for rendering:', function (done) {
       pages.engine('tmpl', require('engine-base'));
+      pages.option('engine', 'tmpl');
 
       pages.addViews({
         'a': {content: '<%= title %>', locals: {title: 'aaa'}},
@@ -113,15 +114,14 @@ describe('render', function () {
       });
 
       pages.use(function (collection) {
-        var list = new List(collection);
-
         collection.renderEach = function (cb) {
+          var list = new List(collection);
+
           async.map(list.items, function (item, next) {
-            item.engine = '.tmpl';
             collection.render(item, next);
           }, cb);
         };
-      })
+      });
 
       pages.renderEach(function (err, items) {
         if (err) return done(err);
