@@ -1,17 +1,27 @@
 'use strict';
 
-var assert = module.exports = require('assert');
-require('should');
+var assert = require('assert');
+var ignore = require('./ignore');
 
-assert.containEql = function containEql(actual, expected) {
+exports.containEql = function containEql(actual, expected) {
   if (Array.isArray(expected)) {
     var len = expected.length;
     while (len--) {
-      assert.containEql(actual[len], expected[len]);
+      exports.containEql(actual[len], expected[len]);
     }
   } else {
     for (var key in expected) {
       assert.deepEqual(actual[key], expected[key]);
     }
   }
+};
+
+exports.keys = function keys(obj) {
+  var arr = [];
+  for (var key in obj) {
+    if (ignore.indexOf(key) === -1) {
+      arr.push(key);
+    }
+  }
+  return arr;
 };

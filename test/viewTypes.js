@@ -4,13 +4,14 @@ var app;
 
 
 describe('viewType', function () {
-  describe('viewType', function () {
+  describe('view types', function () {
     beforeEach(function () {
       app = new App();
       app.engine('tmpl', require('engine-base'));
     });
 
     it('should add collection (plural) to the `viewTypes` object', function () {
+      app.viewTypes = []; // reset
       app.create('foo', {viewType: 'layout'});
       app.create('bar', {viewType: 'layout'});
       assert.deepEqual(app.viewTypes.layout, [ 'foos', 'bars' ]);

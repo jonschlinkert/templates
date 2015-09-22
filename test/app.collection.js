@@ -2,33 +2,47 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var assert = require('assert');
+var utils = require('../lib/utils');
 var App = require('../');
 var app;
 
-describe('create', function () {
+describe('collection', function () {
   describe('method', function () {
     beforeEach(function () {
       app = new App();
     });
 
-    it('should expose the create method', function () {
-      assert(typeof app.create === 'function');
+    it('should expose the collection method', function () {
+      assert(typeof app.collection === 'function');
     });
 
-    it('should add a collection to `views`', function () {
-      app.create('pages');
-      assert(typeof app.views.pages === 'object');
+    it('should return a new collection', function () {
+      var collection = app.collection();
+      assert(typeof collection === 'object');
     });
 
-    it('should create a pluralized collection from a singular-form name:', function () {
-      app.create('page');
-      assert(typeof app.views.pages === 'object');
+    it('should have isCollection property', function () {
+      var collection = app.collection();
+      assert(collection.isCollection === true);
     });
   });
 
   describe('adding views', function () {
     beforeEach(function () {
-      app = new App();
+      app = new App()
+        .use(function () {
+          return function (collection) {
+            utils.define(this, 'count', {
+              get: function() {
+                return Object.keys(this.views).length;
+              },
+              set: function () {
+                throw new Error('count is a read-only getter and cannot be defined.');
+              }
+            });
+          };
+        });
+
       app.engine('tmpl', require('engine-base'));
       app.create('pages');
     });
@@ -72,6 +86,31 @@ describe('create', function () {
         .pages('test/fixtures/pages/c.hbs');
 
       assert(app.pages.count === 3);
+    });
+  });
+
+  describe('addItem', function () {
+    it('should add items to a collection', function () {
+      var pages = app.collection();
+      pages.addItem('foo');
+      pages.addItem('bar');
+      pages.addItem('baz');
+
+      pages.items.hasOwnProperty('foo');
+      pages.items.hasOwnProperty('bar');
+      pages.items.hasOwnProperty('baz');
+    });
+
+    it('should create a collection from an existing collection:', function () {
+      var pages = app.collection();
+      pages.addItem('foo');
+      pages.addItem('bar');
+      pages.addItem('baz');
+
+      var posts = app.collection(pages);
+      posts.items.hasOwnProperty('foo');
+      posts.items.hasOwnProperty('bar');
+      posts.items.hasOwnProperty('baz');
     });
   });
 
@@ -124,7 +163,7 @@ describe('collection singular method', function () {
     });
 
     it('should expose the `option` method:', function () {
-      app.pages.option('foo', 'bar')
+      app.pages.option('foo', 'bar');
       app.pages.options.should.have.property('foo', 'bar');
     });
   });

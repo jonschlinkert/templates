@@ -2,10 +2,18 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var path = require('path');
+var globby = require('globby');
 var assert = require('assert');
 var Templates = require('../');
 var utils = require('../lib/utils');
 var app;
+
+function resolveGlob(patterns, options) {
+  var opts = utils.merge({cwd: process.cwd()}, options);
+  return globby.sync(patterns, opts).map(function (fp) {
+    return path.resolve(opts.cwd, fp);
+  });
+}
 
 describe('lookups', function () {
   beforeEach(function () {
@@ -15,22 +23,19 @@ describe('lookups', function () {
     });
     app.create('pages')
       .use(function (pages) {
-        var fn = pages.decorateView;
-        pages.decorateView = function () {
-          var view = fn.apply(fn, arguments);
+        pages.on('addViews', function (glob) {
+          var files = resolveGlob(glob);
+          files.forEach(function (fp) {
+            pages.addView(fp, {path: fp});
+          });
+          pages.loaded = true;
+        });
+        return function (view) {
           view.read = function () {
             this.contents = fs.readFileSync(this.path);
           };
           return view;
         };
-        pages.loader = function (pattern) {
-          var files = utils.resolveGlob(pattern);
-          return files.reduce(function (acc, fp) {
-            acc[fp] = {path: fp};
-            return acc;
-          }, {});
-        };
-        return pages;
       });
 
     app.pages('test/fixtures/templates/*.tmpl');
@@ -80,25 +85,6 @@ describe('lookups', function () {
       (function () {
         app.getViews('nada');
       }).should.throw('getViews cannot find collection: nada');
-    });
-  });
-
-  describe('matchView', function () {
-    it('should find a view', function () {
-      var view = app.matchView('pages', 'a.tmpl');
-      assert(typeof view.path === 'string');
-    });
-
-    it('should find a view using a glob pattern', function () {
-      var view = app.matchView('pages', 'a.*');
-      assert(typeof view.path === 'string');
-    });
-  });
-
-  describe('matchViews', function () {
-    it('should return matching views', function () {
-      var views = app.matchViews('pages', '*.tmpl');
-      assert(Object.keys(views).length > 1);
     });
   });
 

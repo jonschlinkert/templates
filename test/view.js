@@ -5,7 +5,7 @@ var path = require('path');
 var assert = require('assert');
 var Stream = require('stream');
 var es = require('event-stream');
-var View = require('../lib/view');
+var View = require('../').View;
 var view;
 
 describe('View', function () {
@@ -95,9 +95,16 @@ describe('View', function () {
     });
   });
 
+  describe('cwd', function () {
+    it('should get properties from the object', function () {
+      view = new View({cwd: 'test/fixtures'});
+      assert(view.cwd === 'test/fixtures');
+    });
+  });
+
   describe('clone', function () {
     it('should clone the view:', function () {
-      view = new View({contents: new Buffer('foo')});
+      view = new View({content: 'foo'});
       view.set({path: 'foo/bar'});
       view.set('options.one', 'two');
       var clone = view.clone();
@@ -113,7 +120,7 @@ describe('View', function () {
     });
 
     it('should deep clone the entire object', function () {
-      view = new View({contents: new Buffer('foo')});
+      view = new View({content: 'foo'});
       view.set({path: 'foo/bar'});
       view.set('options.one', 'two');
       var clone = view.clone({deep: true});
@@ -166,9 +173,7 @@ describe('View', function () {
       view = new View({path: 'foo', contents: 'a b c', layout: 'default'});
       assert(view.layout === 'default');
     });
-  });
 
-  describe('compile', function () {
     it('should add a compiled function to `view.fn`', function () {
       view = new View({path: 'foo', contents: 'a <%= name %> z'});
       view.compile();
@@ -185,16 +190,7 @@ describe('View', function () {
       });
     });
 
-    it('should render a template', function (done) {
-      view = new View({path: 'foo', contents: 'a <%= name %> z'});
-      view.render({name: 'Halle'}, function (err, res) {
-        if (err) return done(err);
-        assert(res.contents.toString() === 'a Halle z');
-        done();
-      });
-    });
-
-    it('should render fn using data passed on the constructor', function (done) {
+    it('should render `fn` using data passed on the constructor', function (done) {
       view = new View({
         path: 'foo',
         contents: 'a <%= name %> z',
@@ -207,6 +203,17 @@ describe('View', function () {
       view.render(function (err, res) {
         if (err) return done(err);
         assert(res.contents.toString() === 'a Brooke z');
+        done();
+      });
+    });
+  });
+
+  describe('render', function () {
+    it('should render a template', function (done) {
+      view = new View({path: 'foo', contents: 'a <%= name %> z'});
+      view.render({name: 'Halle'}, function (err, res) {
+        if (err) return done(err);
+        assert(res.contents.toString() === 'a Halle z');
         done();
       });
     });
@@ -233,7 +240,7 @@ describe('View', function () {
         contents: 'a <%= name %> z'
       });
 
-      view.render(function (err, res) {
+      view.render(function (err) {
         assert(err.message === 'name is not defined');
         done();
       });
@@ -251,15 +258,15 @@ describe('View', function() {
   describe('isVinyl()', function() {
     it('should return true on a vinyl object', function(done) {
       var view = new View();
-      View.isVinyl(view).should.equal(true);
+      assert(View.isVinyl(view) === true);
       done();
     });
     it('should return false on a normal object', function(done) {
-      View.isVinyl({}).should.equal(false);
+      assert(View.isVinyl({}) === false);
       done();
     });
     it('should return false on a null object', function(done) {
-      View.isVinyl({}).should.equal(false);
+      assert(View.isVinyl({}) === false);
       done();
     });
   });

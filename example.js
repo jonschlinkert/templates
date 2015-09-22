@@ -1,62 +1,108 @@
-var path = require('path');
-var View = require('./lib/view');
-var Views = require('./lib/views');
-var List = require('./lib/list');
-var App = require('./');
+var templates = require('./');
+var app = templates();
+var green = require('ansi-green');
+var yellow = require('ansi-yellow');
+var red = require('ansi-red');
 
-var helpers = require('template-helpers');
-helpers._.log = console.log.bind(console);
-helpers._.base = '_gh_pages/blog';
-helpers._.relative = path.relative.bind(path);
-
-var collection = new Views();
-var index = new View({
-  data: helpers._,
-  // index stuff
-  // content: '{{#items}}{{log .}}{{/items}}'
-  contents: new Buffer(
-    [
-      '<%= dest %>',
-      '<% map(items, function(item) { %>',
-      ' <a href="<%= relative(dest, item.locals.base + "/" + item.path) %>"><%= item.content %></a>',
-      '<% }) %>',
-      '<% if (typeof next !== "undefined") { %><a href="<%= relative(dest, next.data.dest) %>">Next</a><% } %>'
-    ].join('\n')
-  )
-});
-
-collection.addViews({
-  'a/b/c/a.txt': {locals: {base: '_gh_pages/blog'}, content: 'aaa'},
-  'a/b/c/b.txt': {locals: {base: '_gh_pages/blog'}, content: 'bbb'},
-  'a/b/c/c.txt': {locals: {base: '_gh_pages/blog'}, content: 'ccc'},
-  'a/b/c/d.txt': {locals: {base: '_gh_pages/blog'}, content: 'ddd'},
-  'a/b/c/e.txt': {locals: {base: '_gh_pages/blog'}, content: 'eee'},
-  'a/b/c/f.txt': {locals: {base: '_gh_pages/blog'}, content: 'fff'},
-  'a/b/c/g.txt': {locals: {base: '_gh_pages/blog'}, content: 'ggg'},
-  'a/b/c/h.txt': {locals: {base: '_gh_pages/blog'}, content: 'hhh'},
-  'a/b/c/i.txt': {locals: {base: '_gh_pages/blog'}, content: 'iii'},
-  'a/b/c/j.txt': {locals: {base: '_gh_pages/blog'}, content: 'jjj'},
-});
-
-var pagination = require('./pagination');
-var list = new List(collection)
-  .use(pagination({limit: 4, first: 0}))
-
-// console.log(list)
-
-var pages = new Views();
-pages.addList(list.paginate(index));
-
-Object.keys(pages.views).forEach(function (key) {
-  var page = pages.views[key];
-  page.data.dest = path.join(page.data.base, page.path);
-});
-
-Object.keys(pages.views).forEach(function (key) {
-  var page = pages.views[key];
-
-  page.render(function (err, view) {
-    if (err) return console.error(err);
-    console.log(view.contents.toString());
+app.use(function (app) {
+  app.on('error', function (err) {
+    console.log('app:', red(err));
   });
+  return function (collection) {
+    collection.on('error', function (err) {
+      console.log('collection:', red(err));
+    });
+    return function (view) {
+      view.on('error', function (err) {
+        console.log('view:', red(err));
+      });
+    };
+  };
+});
+
+/**
+ * Engine
+ */
+
+app.engine('*', require('engine-base'));
+app.option('view engine', '*');
+
+/**
+ * Collections and rendering
+ */
+
+app.create('pages')
+  .addView('home', {content: 'The <%= title %> page'})
+  .set('locals.title', 'HOOMMMME!')
+  .render(function (err, res) {
+    if (err) return console.log(err);
+    // console.log(res.content);
+  })
+
+/**
+ * Plugins
+ */
+
+app.use(function (app) {
+  app.section = app.create;
+  return function (views) {
+    views.on('addView', function () {
+      // console.log(views._callbacks)
+    });
+
+    // create a custom `.foo()` method on the collection
+    views.define('foo', views.addView);
+    return function (view) {
+
+      // also add `.foo()` to the view instance for chaining
+      view.define('foo', views.foo.bind(views));
+    };
+  };
+});
+
+app.section('articles')
+  // this first `.foo` is from the collection instance
+  .foo('one.html', {content: 'The <%= title %> page'})
+  .set('locals.title', 'One')
+  .render(function (err, res) {
+    if (err) return console.log(err.stack);
+  })
+  // this `.foo` is from a `view` instance
+  .foo('two.html', {content: 'The <%= title %> page'})
+  .set('locals.title', 'Two')
+  .render(function (err, res) {
+    if (err) return console.log(err.stack)
+  })
+
+// console.log(app.views.articles)
+
+/**
+ * Events
+ */
+
+var posts = app.create('posts');
+var engine = app.engine('*');
+posts.engine('html', engine);
+
+posts.on('error', function (err) {
+  if (err) return console.log(err)
+})
+
+posts.preCompile(/./, function (view, next) {
+  view.engine = 'html';
+  // console.log(view)
+  next();
+});
+
+posts.on('addView', function (key, value) {
+  posts.queue.push(posts.view(key, {content: value}));
+  posts.loaded = true;
+});
+
+var post = posts.addView('home.html', 'The <%= title %> page');
+// console.log(posts);
+// console.log(post);
+
+posts.render('home.html', {title: 'Home'}, function (err, res) {
+  // if (err) return console.log(err.stack);
 });

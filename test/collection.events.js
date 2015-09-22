@@ -2,7 +2,7 @@ require('should');
 var App = require('..');
 var app;
 
-describe('collection.option()', function () {
+describe('collection events', function () {
   beforeEach(function () {
     app = new App();
     app.create('page');
@@ -12,7 +12,7 @@ describe('collection.option()', function () {
     app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});
     var events = [];
 
-    app.pages.on('option', function (key, value) {
+    app.pages.on('option', function (key) {
       events.push(key);
     });
 

@@ -4,7 +4,7 @@ var assert = require('assert');
 var App = require('../');
 var app;
 
-describe('helpers', function () {
+describe('render', function () {
   describe('rendering', function () {
     beforeEach(function () {
       app = new App();
@@ -35,7 +35,7 @@ describe('helpers', function () {
         return str.toUpperCase(str);
       });
 
-      app.page('a.tmpl', {contents: new Buffer('a <%= upper(name) %> b'), locals: locals});
+      app.page('a.tmpl', {content: 'a <%= upper(name) %> b', locals: locals});
       var page = app.pages.getView('a.tmpl');
 
       app.render(page, function (err, res) {
@@ -46,26 +46,24 @@ describe('helpers', function () {
       });
     });
 
-    it('should use layouts when render a view:', function (done) {
+    it('should use helpers when rendering a view:', function (done) {
       var locals = {name: 'Halle'};
-
       app.helper('upper', function (str) {
         return str.toUpperCase(str);
       });
 
-      app.page('a.tmpl', {contents: new Buffer('a <%= upper(name) %> b'), locals: locals});
+      app.page('a.tmpl', {content: 'a <%= upper(name) %> b', locals: locals});
       var page = app.pages.getView('a.tmpl');
 
       app.render(page, function (err, res) {
         if (err) return done(err);
-
         assert(res.contents.toString() === 'a HALLE b');
         done();
       });
     });
 
     it('should render a template when contents is a buffer:', function (done) {
-      app.pages('a.tmpl', {contents: new Buffer('<%= a %>'), locals: {a: 'b'}});
+      app.pages('a.tmpl', {content: '<%= a %>', locals: {a: 'b'}});
       var view = app.pages.getView('a.tmpl');
 
       app.render(view, function (err, view) {
