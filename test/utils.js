@@ -119,21 +119,6 @@ describe('utils', function () {
     });
   });
 
-  describe('matchKey', function() {
-    it('should return null if the first argument is invalid:', function () {
-      assert(utils.matchKey('foo') === null);
-    });
-
-    it('should return the first property that matches the given glob:', function () {
-      var obj = {aaa: 'bbb', ccc: 'ddd'};
-      assert(utils.matchKey(obj, '*a') === 'bbb');
-    });
-
-    it('should return null if the first argument is invalid:', function () {
-      assert(utils.matchKey('foo') === null);
-    });
-  });
-
   describe('requireGlob', function() {
     it('should return an empty object for non-requireable files:', function () {
       var files = utils.requireGlob('test/fixtures/**/*.txt');
