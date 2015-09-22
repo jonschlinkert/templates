@@ -119,49 +119,6 @@ describe('utils', function () {
     });
   });
 
-  describe('matchKey', function() {
-    it('should return null if the first argument is invalid:', function () {
-      assert(utils.matchKey('foo') === null);
-    });
-
-    it('should return the first property that matches the given glob:', function () {
-      var obj = {aaa: 'bbb', ccc: 'ddd'};
-      assert(utils.matchKey(obj, '*a') === 'bbb');
-    });
-
-    it('should return a property from a non-glob:', function () {
-      var obj = {aaa: 'bbb', ccc: 'ddd'};
-      assert(utils.matchKey(obj, 'aaa') === 'bbb');
-    });
-
-    it('should return null if no match is found:', function () {
-      var obj = {aaa: 'bbb', ccc: 'ddd'};
-      assert(utils.matchKey(obj, 'foo') === null);
-    });
-
-    it('should only match "own" properties:', function () {
-      function Foo() {
-        this.d = 'd';
-      }
-      Foo.prototype.a === 'a';
-      Foo.prototype.b === 'b';
-      Foo.prototype.c === 'c';
-      var foo = new Foo();
-      assert(utils.matchKey(foo, '*') === 'd');
-    });
-
-    it('should not match non-"own" properties:', function () {
-      function Foo() {
-        this.d = 'd';
-      }
-      Foo.prototype.a === 'a';
-      Foo.prototype.b === 'b';
-      Foo.prototype.c === 'c';
-      var foo = new Foo();
-      assert(utils.matchKey(foo, 'a') === null);
-    });
-  });
-
   describe('requireGlob', function() {
     it('should return an empty object for non-requireable files:', function () {
       var files = utils.requireGlob('test/fixtures/**/*.txt');
