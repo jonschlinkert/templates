@@ -1,8 +1,9 @@
 require('mocha');
 require('should');
 var assert = require('assert');
+var utils = require('../lib/utils');
 var App = require('..');
-var app;
+var app, pages;
 
 describe('partials', function () {
   beforeEach(function () {
@@ -13,7 +14,7 @@ describe('partials', function () {
     app.create('partials', { viewType: 'partial' });
     app.create('include', { viewType: 'partial' });
     app.create('layouts', { viewType: 'layout' });
-    app.create('page');
+    pages = app.create('page');
   });
 
   it('should inject a partial with a helper:', function (done) {
@@ -22,6 +23,41 @@ describe('partials', function () {
     var page = app.pages.getView('a.tmpl');
 
     app.render(page, function (err, view) {
+      if (err) return done(err);
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'a xyz c');
+      done();
+    });
+  });
+
+  it('should inject a partial with a helper on a collection:', function (done) {
+    app.include('base', {path: 'base.tmpl', content: 'xyz'});
+    pages.engine('.tmpl', require('engine-handlebars'));
+    pages.helpers(app._.helpers.sync);
+    pages.asyncHelpers(app._.helpers.async);
+    pages.addView('a.tmpl', {path: 'a.tmpl', content: 'a {{include "base" }} c'});
+    var page = pages.getView('a.tmpl');
+
+    pages.render(page, function (err, view) {
+      if (err) return done(err);
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'a xyz c');
+      done();
+    });
+  });
+
+  it('should use handlebars partial with a helper on a collection:', function (done) {
+    app.include('base', {path: 'base.tmpl', content: 'xyz'});
+    pages.engine('.tmpl', require('engine-handlebars'));
+    pages.helpers(app._.helpers.sync);
+    pages.asyncHelpers(app._.helpers.async);
+    pages.addView('a.tmpl', {path: 'a.tmpl', content: 'a {{> base }} c'});
+    var page = pages.getView('a.tmpl');
+    var fn = pages.context;
+
+    var locals = app.mergePartials(this.options);
+
+    pages.render(page, locals, function (err, view) {
       if (err) return done(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'a xyz c');
