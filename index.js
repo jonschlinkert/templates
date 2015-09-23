@@ -126,12 +126,12 @@ Templates.prototype.listen = function (app) {
 };
 
 /**
- * Run a plugin on the instance. Plugins
- * are invoked immediately upon creating the collection
- * in the order in which they were defined.
+ * Run a plugin on the instance. Plugins are invoked
+ * immediately upon creating the collection in the order
+ * in which they were defined.
  *
  * ```js
- * var app = assemble()
+ * var {%= type %} = {%= ctor %}()
  *   .use(require('foo'))
  *   .use(require('bar'))
  *   .use(require('baz'))
@@ -189,10 +189,10 @@ utils.itemFactory(Templates.prototype, 'view', 'View');
 utils.itemFactory(Templates.prototype, 'item', 'Item');
 
 /**
- * Create a new collection. Collections are decorated
- * with special methods for getting and setting items
- * from that collection. Collections created with this
- * method are not cached.
+ * Create a new collection. Collections are decorated with
+ * special methods for getting and setting items from the
+ * collection. Note that, unlike the [create](#create) method,
+ * collections created with `.collection()` are not cached.
  *
  * See the [collection docs](docs/collections.md) for more
  * information about collections.
@@ -273,9 +273,9 @@ Templates.prototype.viewCollection = function (opts, created) {
  * the [create docs](docs/collections.md#create) for more details.
  *
  * @name .create
- * @param  {String} `name` The name of the collection. Plural or singular form.
+ * @param  {String} `name` The name of the collection to create. Plural or singular form may be used, as the inflections are automatically resolved when the collection
+ * is created.
  * @param  {Object} `opts` Collection options
- * @param  {String|Array|Function} `loaders` Loaders to use for adding views to the created collection.
  * @return {Object} Returns the `collection` instance for chaining.
  * @api public
  */
@@ -287,6 +287,7 @@ Templates.prototype.create = function(name, opts) {
   }
 
   var collection = this.viewCollection(opts, true);
+  var self = this;
 
   // get the collection inflections, e.g. page/pages
   var single = utils.single(name);
@@ -317,6 +318,9 @@ Templates.prototype.create = function(name, opts) {
   // addView/addViews to support chaining
   collection.define(plural, this[plural]);
   collection.define(single, this[single]);
+  collection.define('app', function () {
+    return self;
+  });
 
   // run collection plugins
   this.plugins.forEach(function (fn) {
