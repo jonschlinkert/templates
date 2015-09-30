@@ -210,13 +210,17 @@ Templates.prototype.collection = function (opts, created) {
     utils.defaults(opts, this.options);
   }
 
-  var Collection = opts.Collection || this.get('Views');
+  var Collection = opts.Collection || opts.Views || this.get('Views');
   var collection = {};
 
   if (opts.isCollection === true) {
     collection = opts;
+    if (typeof created === 'object') {
+      collection.option(created);
+    }
+
   } else {
-    opts.Item = opts.Item || this.get('View');
+    opts.Item = opts.Item || opts.View || this.get('View');
     collection = new Collection(opts);
   }
 
@@ -243,7 +247,8 @@ Templates.prototype.collection = function (opts, created) {
 
 Templates.prototype.create = function(name, opts) {
   opts = opts || {};
-  if (!opts.views && !opts.items && !opts.options) {
+
+  if (!opts.isCollection) {
     utils.defaults(opts, this.options);
   }
 
@@ -286,7 +291,7 @@ Templates.prototype.create = function(name, opts) {
   // run collection plugins
   this.plugins.forEach(function (fn) {
     collection.use(fn, opts);
-  }.bind(this));
+  });
 
   // emit create
   this.emit('create', collection, opts);
@@ -323,22 +328,22 @@ Templates.prototype.mixin = function(key, value) {
 };
 
 /**
+ * Expose constructors as static methods.
+ */
+
+Templates.Base = Base;
+Templates.Item = Item;
+Templates.View = View;
+Templates.List = List;
+Templates.Collection = Collection;
+Templates.Views = Views;
+Templates.Group = Group;
+
+/**
  * Expose `Templates`
  */
 
 module.exports = Templates;
-
-/**
- * Expose constructors
- */
-
-module.exports.Base = Base;
-module.exports.Item = Item;
-module.exports.View = View;
-module.exports.Collection = Collection;
-module.exports.Views = Views;
-module.exports.List = List;
-module.exports.Group = Group;
 
 /**
  * Expose utils
