@@ -45,18 +45,18 @@ app.pages.getView('a.html')
   - [View](#view)
     + [Settings](#settings)
     + [Data](#data)
+
   - [Item](#item)
     + [Settings](#settings)
     + [Data](#data)
+
   - [Collections](#collections)
     + [Settings](#settings)
     + [Data](#data)
-  - [View collections](#view-collections)
-  - [Helpers](#helpers)
-    + [Settings](#settings)
-    + [Data](#data)
+
   - [List](#list)
     + [Settings](#settings)
+
   - [Group](#group)
   - [Lookups](#lookups)
   - [Rendering](#rendering)
@@ -135,9 +135,9 @@ Returns a new view, using the `View` class currently defined on the instance.
 **Example**
 
 ```js
-var view = app.view('foo', {conetent: '...'});
+var view = app.view('foo', {content: '...'});
 // or
-var view = app.view({path: 'foo', conetent: '...'});
+var view = app.view({path: 'foo', content: '...'});
 ```
 
 ### [.item](index.js#L189)
@@ -170,19 +170,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.viewCollection](index.js#L245)
-
-Create a new view collection. View collections are decorated with special methods for getting, setting and rendering views from that collection. Collections created with this method are not stored on `app.views` as with the [create](#create) method.
-
-See the [collection docs](docs/collections.md#view-collections) for more
-information about view collections.
-
-**Params**
-
-* `opts` **{Object}**: View collection options.
-* `returns` **{Object}**: Returns the view collection instance for chaining.
-
-### [.create](index.js#L283)
+### [.create](index.js#L248)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -195,7 +183,7 @@ the [create docs](docs/collections.md#create) for more details.
 
 ### Settings
 
-### [.option](lib/decorate/config.js#L24)
+### [.option](lib/decorate/option.js#L22)
 
 Set or get an option value.
 
@@ -394,7 +382,7 @@ view.render({title: 'Home'}, function(err, res) {
 
 #### Settings
 
-### [.option](lib/decorate/config.js#L24)
+### [.option](lib/decorate/option.js#L22)
 
 Set or get an option value.
 
@@ -472,13 +460,13 @@ Run a plugin on the `item` instance.
 
 **Params**
 
-* `fn` **{Function}**
-* `returns` **{Object}**
+* `fn` **{Function}**: plugin function to call
+* `returns` **{Object}**: Returns the item instance for chaining.
 
 **Example**
 
 ```js
-var item = new Item({path: 'abc', contents: '...'})
+var item = new Item({path: 'abc', content: '...'})
   .use(require('foo'))
   .use(require('bar'))
   .use(require('baz'))
@@ -501,7 +489,7 @@ item.clone({deep: true}); // false by default
 
 #### Settings
 
-### [.option](lib/decorate/config.js#L24)
+### [.option](lib/decorate/option.js#L22)
 
 Set or get an option value.
 
@@ -571,7 +559,7 @@ var collection = new Collection();
 collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.use](lib/collection.js#L77)
+### [.use](lib/collection.js#L88)
 
 Run a plugin on the collection instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
 
@@ -595,9 +583,9 @@ collection.use(function(items) {
 });
 ```
 
-### [.item](lib/collection.js#L102)
+### [.item](lib/collection.js#L120)
 
-Returns a new item, using the `Item` class currently defined on the instance.
+Returns a new item, using the `Item` class currently defined on the instance. Items created using this method are not cached on the instance. To cache an item, use [setItem](#setItem)
 
 **Params**
 
@@ -608,14 +596,14 @@ Returns a new item, using the `Item` class currently defined on the instance.
 **Example**
 
 ```js
-var item = app.item('foo', {conetent: '...'});
+var item = app.item('foo', {content: '...'});
 // or
-var item = app.item({path: 'foo', conetent: '...'});
+var item = app.item({path: 'foo', content: '...'});
 ```
 
-### [.setItem](lib/collection.js#L119)
+### [.setItem](lib/collection.js#L138)
 
-Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item.
+Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
 **Params**
 
@@ -629,7 +617,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L133)
+### [.addItem](lib/collection.js#L152)
 
 Adds event emitting and custom loading to [setItem](#setItem).
 
@@ -638,7 +626,7 @@ Adds event emitting and custom loading to [setItem](#setItem).
 * `key` **{String}**
 * `value` **{Object}**
 
-### [.addItems](lib/collection.js#L159)
+### [.addItems](lib/collection.js#L178)
 
 Load multiple items onto the collection.
 
@@ -657,7 +645,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L185)
+### [.addList](lib/collection.js#L204)
 
 Load an array of items onto the collection.
 
@@ -676,7 +664,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L212)
+### [.getItem](lib/collection.js#L231)
 
 Get an item from the collection.
 
@@ -693,7 +681,7 @@ collection.getItem('a.html');
 
 #### Settings
 
-### [.option](lib/decorate/config.js#L24)
+### [.option](lib/decorate/option.js#L22)
 
 Set or get an option value.
 
@@ -746,316 +734,24 @@ type of partials.
 
 ***
 
-### View collections
-
-### [Views](lib/views.js#L20)
-
-Create an instance of `Views` with the given `options`.
-
-**Params**
-
-* `options` **{Object}**
-
-**Example**
-
-```js
-var collection = new Views();
-collection.addView('foo', {content: 'bar'});
-```
-
-### [.use](lib/views.js#L87)
-
-Run a plugin on the collection instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
-
-**Params**
-
-* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each view created on the instance.
-* `returns` **{Object}**: Returns the instance for chaining.
-
-**Example**
-
-```js
-collection.use(function(views) {
-  // `views` is the instance, as is `this`
-
-  // optionally return a function to be passed to
-  // the `.use` method of each view created on the
-  // instance
-  return function(view) {
-    // do stuff to each `view`
-  };
-});
-```
-
-### [.view](lib/views.js#L112)
-
-Returns a new view, using the `View` class currently defined on the instance.
-
-**Params**
-
-* `key` **{String|Object}**: View key or object
-* `value` **{Object}**: If key is a string, value is the view object.
-* `returns` **{Object}**: returns the `view` object
-
-**Example**
-
-```js
-var view = app.view('foo', {conetent: '...'});
-// or
-var view = app.view({path: 'foo', conetent: '...'});
-```
-
-### [.setView](lib/views.js#L129)
-
-Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
-
-**Params**
-
-* `key` **{String|Object}**: View key or object
-* `value` **{Object}**: If key is a string, value is the view object.
-* `returns` **{Object}**: returns the `view` instance.
-
-**Example**
-
-```js
-collection.setView('foo', {content: 'bar'});
-```
-
-### [.addView](lib/views.js#L143)
-
-Adds event emitting and custom loading to [setView](#setView).
-
-**Params**
-
-* `key` **{String}**
-* `value` **{Object}**
-
-### [.addViews](lib/views.js#L171)
-
-Load multiple views onto the collection.
-
-**Params**
-
-* `views` **{Object|Array}**
-* `returns` **{Object}**: returns the `collection` object
-
-**Example**
-
-```js
-collection.addViews({
-  'a.html': {content: '...'},
-  'b.html': {content: '...'},
-  'c.html': {content: '...'}
-});
-```
-
-### [.addList](lib/views.js#L201)
-
-Load an array of views onto the collection.
-
-**Params**
-
-* `list` **{Array}**
-* `returns` **{Object}**: returns the `views` instance
-
-**Example**
-
-```js
-collection.addList([
-  {path: 'a.html', content: '...'},
-  {path: 'b.html', content: '...'},
-  {path: 'c.html', content: '...'}
-]);
-```
-
-### [.loadView](lib/views.js#L226)
-
-Loads and create a new `View` from the file system.
-
-**Params**
-
-* `filename` **{String}**
-* `options` **{Object}**
-* `returns` **{Object}**: Returns view object
-
-### [.getView](lib/views.js#L257)
-
-Get a view from the collection.
-
-**Params**
-
-* `key` **{String}**: Key of the view to get.
-* `returns` **{Object}**
-
-**Example**
-
-```js
-collection.getView('a.html');
-```
-
-### [.extendView](lib/views.js#L271)
-
-Decorate each view on the collection with additional methods
-and properties. This provides a way of easily overriding
-defaults.
-
-**Params**
-
-* `view` **{Object}**
-* `returns` **{Object}**
-
-### Helpers
-
-The following methods are available on view collections as well as the main application instance. Note that when helpers are registered on a specific view collection, they will only be available to views in that collection.
-
-### [.helper](lib/decorate/helpers.js#L33)
-
-Register a template helper.
-
-**Params**
-
-* `name` **{String}**: Helper name
-* `fn` **{Function}**: Helper function.
-
-**Example**
-
-```js
-pages.helper('upper', function(str) {
-  return str.toUpperCase();
-});
-```
-
-### [.helpers](lib/decorate/helpers.js#L53)
-
-Register multiple template helpers.
-
-**Params**
-
-* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
-
-**Example**
-
-```js
-pages.helpers({
-  foo: function() {},
-  bar: function() {},
-  baz: function() {}
-});
-```
-
-### [.asyncHelper](lib/decorate/helpers.js#L79)
-
-Get or set an async helper. If only the name is passed, the helper is returned.
-
-**Params**
-
-* `name` **{String}**: Helper name.
-* `fn` **{Function}**: Helper function
-
-**Example**
-
-```js
-pages.asyncHelper('upper', function(str, next) {
-  next(null, str.toUpperCase());
-});
-```
-
-### [.asyncHelper](lib/decorate/helpers.js#L99)
-
-Register multiple async template helpers.
-
-**Params**
-
-* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
-
-**Example**
-
-```js
-pages.asyncHelpers({
-  foo: function() {},
-  bar: function() {},
-  baz: function() {}
-});
-```
-
-### [.helperGroup](lib/decorate/helpers.js#L127)
-
-Register a namespaced helper group.
-
-**Params**
-
-* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
-
-**Example**
-
-```js
-// markdown-utils
-pages.helperGroup('mdu', {
-  reflink: function() {},
-  link: function() {},
-});
-
-//=> <%%= mdu.link() %>
-```
-
-#### Settings
-
-### [.option](lib/decorate/config.js#L24)
-
-Set or get an option value.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-viewCollection.option('a', 'b');
-viewCollection.option({c: 'd'});
-console.log(viewCollection.options);
-//=> {a: 'b', c: 'd'}
-```
-
-#### Data
-
-### [.data](lib/decorate/context.js#L25)
-
-Set, get and load data to be passed to templates as context at render-time.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-viewCollection.data('a', 'b');
-viewCollection.data({c: 'd'});
-console.log(viewCollection.cache.data);
-//=> {a: 'b', c: 'd'}
-```
-
-### [.mergePartials](lib/decorate/context.js#L121)
-
-Merge "partials" view types. This is necessary for template
-engines have no support for partials or only support one
-type of partials.
-
-**Params**
-
-* `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
-* `returns` **{Object}**: Merged partials
-
-***
-
 ### List
 
-### [.use](lib/list.js#L85)
+### [List](lib/list.js#L22)
+
+Create an instance of `List` with the given options. Lists differ from collections in that items are stored as an array, allowing items to be paginated, sorted, and grouped.
+
+**Params**
+
+* `options` **{Object}**
+
+**Example**
+
+```js
+var list = new List();
+list.addItem('foo', {content: 'bar'});
+```
+
+### [.use](lib/list.js#L93)
 
 Run a plugin on the list instance. Plugins are invoked immediately upon creating the list in the order in which they were defined.
 
@@ -1079,7 +775,7 @@ list.use(function(views) {
 });
 ```
 
-### [.item](lib/list.js#L110)
+### [.item](lib/list.js#L118)
 
 Returns a new item, using the `Item` class currently defined on the instance.
 
@@ -1092,12 +788,12 @@ Returns a new item, using the `Item` class currently defined on the instance.
 **Example**
 
 ```js
-var item = app.item('foo', {conetent: '...'});
+var item = app.item('foo', {content: '...'});
 // or
-var item = app.item({path: 'foo', conetent: '...'});
+var item = app.item({path: 'foo', content: '...'});
 ```
 
-### [.setItem](lib/list.js#L127)
+### [.setItem](lib/list.js#L135)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item.
 
@@ -1113,14 +809,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-Adds event emitting and custom loading to [setItem](#setItem).
-
-**Params**
-
-* `key` **{String}**
-* `value` **{Object}**
-
-### [.addItem](lib/list.js#L156)
+### [.addItem](lib/list.js#L160)
 
 Add an item to the list. An item may be an instance of `Item`, and if not the item is converted to an instance of `Item`.
 
@@ -1135,7 +824,7 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L180)
+### [.addItems](lib/list.js#L184)
 
 Add an object of `views` to the list.
 
@@ -1152,7 +841,7 @@ list.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L198)
+### [.addList](lib/list.js#L202)
 
 Add the items from another instance of `List`.
 
@@ -1169,7 +858,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.getIndex](lib/list.js#L223)
+### [.getIndex](lib/list.js#L227)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1185,7 +874,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L239)
+### [.getItem](lib/list.js#L243)
 
 Get a specific item from the list by `key`.
 
@@ -1201,7 +890,7 @@ list.getItem('foo.html');
 //=> '<View <foo.html>>'
 ```
 
-### [.removeItem](lib/list.js#L256)
+### [.removeItem](lib/list.js#L260)
 
 Remove an item from the list.
 
@@ -1218,7 +907,7 @@ list.addItems({
 });
 ```
 
-### [.groupBy](lib/list.js#L280)
+### [.groupBy](lib/list.js#L284)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array][] for the full range of available features and options.
 
@@ -1232,7 +921,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L306)
+### [.sortBy](lib/list.js#L310)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort][] for the full range of available features and options.
 
@@ -1247,7 +936,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L340)
+### [.paginate](lib/list.js#L344)
 
 Paginate all `items` in the list with the given options, See [paginationator][] for the full range of available features and options.
 
@@ -1262,7 +951,7 @@ var pages = list.paginate({limit: 5});
 
 #### Settings
 
-### [.option](lib/decorate/config.js#L24)
+### [.option](lib/decorate/option.js#L22)
 
 Set or get an option value.
 
@@ -1285,7 +974,7 @@ console.log(list.options);
 
 ### Group
 
-### [Group](lib/group.js#L20)
+### [Group](lib/group.js#L18)
 
 Create an instance of `Group` with the given `options`.
 
@@ -1297,13 +986,11 @@ Create an instance of `Group` with the given `options`.
 
 ```js
 var group = new Group({
-  'foo': {
-    items: [1,2,3]
-   }
+  'foo': { items: [1,2,3] }
 });
 ```
 
-### [.use](lib/group.js#L48)
+### [.use](lib/group.js#L46)
 
 Run a plugin on the group instance. Plugins are invoked immediately upon creating the group in the order in which they were defined.
 
@@ -1589,6 +1276,6 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 22, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 30, 2015._
 
 {%= reflinks(verb.related.list.concat(['micromatch', 'group-array', 'array-sort', 'paginationator'])) %}
