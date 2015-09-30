@@ -60,27 +60,10 @@ function Templates(options) {
 Base.extend(Templates);
 
 /**
- * Initialize Templates default configuration
- */
-
-Templates.prototype.defaultConfig = function () {
-  // used in plugins to verify the app instance
-  this.define('isApp', true);
-  this.inflections = {};
-  decorate.init(this);
-
-  for (var key in this.options.mixins) {
-    this.mixin(key, this.options.mixins[key]);
-  }
-  this.initialize();
-  this.listen(this);
-};
-
-/**
  * Decorate methods onto the Templates prototype
  */
 
-decorate.config(Templates.prototype);
+decorate.option(Templates.prototype);
 decorate.routes(Templates.prototype);
 decorate.engine(Templates.prototype);
 decorate.context(Templates.prototype);
@@ -91,6 +74,23 @@ decorate.lookup(Templates.prototype);
 decorate.errors(Templates.prototype, 'Templates');
 
 /**
+ * Initialize Templates default configuration
+ */
+
+Templates.prototype.defaultConfig = function () {
+  this.define('isApp', true);
+  decorate.init(this);
+  this.inflections = {};
+  this.items = {};
+  this.views = {};
+  for (var key in this.options.mixins) {
+    this.mixin(key, this.options.mixins[key]);
+  }
+  this.initialize(this.options);
+  this.listen(this);
+};
+
+/**
  * Initialize defaults. Exposes constructors on
  * app instance.
  */
@@ -98,11 +98,11 @@ decorate.errors(Templates.prototype, 'Templates');
 Templates.prototype.initialize = function () {
   this.define('Base', Base);
   this.define('Item', this.options.Item || Item);
-  this.define('View', this.options.View || View);
   this.define('List', this.options.List || List);
+  this.define('View', this.options.View || View);
   this.define('Collection', this.options.Collection || Collection);
-  this.define('Views', this.options.Views || Views);
   this.define('Group', this.options.Group || Group);
+  this.define('Views', this.options.Views || Views);
 };
 
 /**
@@ -114,7 +114,7 @@ Templates.prototype.listen = function (app) {
     if (key === 'mixins') {
       app.visit('mixin', value);
     }
-    utils.optionUpdated(app, key, value);
+    utils.updateOptions(app, key, value);
   });
 
   this.on('error', function (err) {
@@ -157,9 +157,9 @@ Templates.prototype.use = function (fn) {
  * currently defined on the instance.
  *
  * ```js
- * var view = app.view('foo', {conetent: '...'});
+ * var view = app.view('foo', {content: '...'});
  * // or
- * var view = app.view({path: 'foo', conetent: '...'});
+ * var view = app.view({path: 'foo', content: '...'});
  * ```
  * @name .view
  * @param {String|Object} `key` View key or object
@@ -354,7 +354,7 @@ Templates.prototype.extendViews = function (views, options) {
 };
 
 /**
- * Mix in a prototype method
+ * Add a property to the `Templates` prototype
  */
 
 Templates.prototype.mixin = function(key, value) {
