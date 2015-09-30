@@ -36,7 +36,7 @@ app.create('pages')
   .set('locals.title', 'HOOMMMME!')
   .render(function (err, res) {
     if (err) return console.log(err);
-    // console.log(res.content);
+    console.log(res.content);
   })
 
 /**
@@ -72,6 +72,7 @@ app.section('articles')
   .set('locals.title', 'Two')
   .render(function (err, res) {
     if (err) return console.log(err.stack)
+    console.log(res.content)
   })
 
 // console.log(app.views.articles)
@@ -81,28 +82,9 @@ app.section('articles')
  */
 
 var posts = app.create('posts');
-var engine = app.engine('*');
-posts.engine('html', engine);
+posts.engine('html', require('engine-base'));
 
-posts.on('error', function (err) {
-  if (err) return console.log(err)
-})
-
-posts.preCompile(/./, function (view, next) {
-  view.engine = 'html';
-  // console.log(view)
-  next();
-});
-
-posts.on('addView', function (key, value) {
-  posts.queue.push(posts.view(key, {content: value}));
-  posts.loaded = true;
-});
-
-var post = posts.addView('home.html', 'The <%= title %> page');
-// console.log(posts);
-// console.log(post);
-
-posts.render('home.html', {title: 'Home'}, function (err, res) {
-  // if (err) return console.log(err.stack);
-});
+posts.addView('home.html', {content: 'The <%= title %> page'})
+  .render({title: 'Home'}, function (err, res) {
+    console.log(res.content);
+  })

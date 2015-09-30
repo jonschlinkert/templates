@@ -28,7 +28,7 @@
     "define-property": "^0.2.5",
     "en-route": "^0.7.3",
     "engine-base": "^0.1.2",
-    "engine-cache": "^0.15.0",
+    "engine-cache": "^0.16.1",
     "export-files": "^2.1.0",
     "extend-shallow": "^2.0.1",
     "globby": "^3.0.1",
@@ -67,9 +67,7 @@
     "parser-front-matter": "^1.2.5",
     "rimraf": "^2.4.3",
     "should": "*",
-    "swig": "^1.4.2",
-    "template-helpers": "^0.3.4",
-    "time-require": "jonschlinkert/time-require"
+    "swig": "^1.4.2"
   },
   "keywords": [
     "compile",
