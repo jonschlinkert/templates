@@ -4,7 +4,6 @@ var path = require('path');
 var assert = require('assert');
 var typeOf = require('kind-of');
 var isBuffer = require('is-buffer');
-var support = require('./support');
 
 var App = require('..');
 var List = App.List;

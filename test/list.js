@@ -188,7 +188,7 @@ describe('list', function () {
       assert(Buffer.isBuffer(list.items[1].contents));
     });
 
-    it('should take a sync callback on `addList`', function () {
+    it('should take a callback on `addList`', function () {
       function addContents(item) {
         item.contents = new Buffer(item.path.charAt(0));
       }
