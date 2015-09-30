@@ -203,69 +203,30 @@ utils.itemFactory(Templates.prototype, 'item', 'Item');
  * @api public
  */
 
-Templates.prototype.collection = function (opts) {
+Templates.prototype.collection = function (opts, created) {
   opts = opts || {};
 
-  if (!opts.views && !opts.options) {
+  if (!opts.isCollection) {
     utils.defaults(opts, this.options);
   }
 
-  var Collection = opts.Collection || this.get('Collection');
+  var Collection = opts.Collection || this.get('Views');
   var collection = {};
 
-  if (opts instanceof Collection) {
+  if (opts.isCollection === true) {
     collection = opts;
   } else {
-    opts.Item = opts.Item || this.get('Item');
+    opts.Item = opts.Item || this.get('View');
     collection = new Collection(opts);
   }
 
-  this.extendViews(collection, opts);
+  if (created !== true) {
+    this.extendViews(collection, opts);
+  }
 
   // emit the collection
   this.emit('collection', collection, opts);
   return collection;
-};
-
-/**
- * Create a new view collection. View collections are decorated
- * with special methods for getting, setting and rendering
- * views from that collection. Collections created with this method
- * are not stored on `app.views` as with the [create](#create) method.
- *
- * See the [collection docs](docs/collections.md#view-collections) for more
- * information about view collections.
- *
- * @name .viewCollection
- * @param  {Object} `opts` View collection options.
- * @return {Object} Returns the view collection instance for chaining.
- * @api public
- */
-
-Templates.prototype.viewCollection = function (opts, created) {
-  opts = opts || {};
-
-  if (!opts.views && !opts.options) {
-    utils.defaults(opts, this.options);
-  }
-
-  var Views = opts.Views || this.get('Views');
-  var views = {};
-
-  if (opts instanceof Views) {
-    views = opts;
-  } else {
-    opts.View = opts.View || this.get('View');
-    views = new Views(opts);
-  }
-
-  if (created !== true) {
-    this.extendViews(views, opts);
-  }
-
-  // emit the views
-  this.emit('viewCollection', views, opts);
-  return views;
 };
 
 /**
@@ -282,11 +243,11 @@ Templates.prototype.viewCollection = function (opts, created) {
 
 Templates.prototype.create = function(name, opts) {
   opts = opts || {};
-  if (!opts.views && !opts.options) {
+  if (!opts.views && !opts.items && !opts.options) {
     utils.defaults(opts, this.options);
   }
 
-  var collection = this.viewCollection(opts, true);
+  var collection = this.collection(opts, true);
   var self = this;
 
   // get the collection inflections, e.g. page/pages
@@ -304,7 +265,7 @@ Templates.prototype.create = function(name, opts) {
   this.viewType(plural, collection.viewType());
 
   // add the collection to `app.views`
-  this.views[plural] = collection.views;
+  this.views[plural] = collection.items || collection.views;
 
   // create loader functions for adding views to this collection
   this.define(plural, collection.addViews.bind(collection));
