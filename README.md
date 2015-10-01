@@ -206,7 +206,7 @@ console.log(app.options);
 
 ### Engines
 
-### [.engine](lib/decorate/engine.js#L38)
+### [.engine](lib/decorate/engine.js#L32)
 
 Register a view engine callback `fn` as `ext`.
 
