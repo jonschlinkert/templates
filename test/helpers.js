@@ -625,7 +625,7 @@ describe('collection helpers', function () {
           assert(err);
           assert(typeof err === 'object');
           assert(typeof err.message === 'string');
-          // assert(/is not a function/.test(err.message));
+          assert(/is not a function/.test(err.message));
           done();
         });
     });
