@@ -12,16 +12,19 @@ gulp.task('coverage', function () {
     .pipe(istanbul.hookRequire());
 });
 
-gulp.task('mocha', ['coverage'], function () {
+gulp.task('mocha', function () {
   return gulp.src('test/*.js')
     .pipe(mocha({reporter: 'spec'}))
-    .pipe(istanbul.writeReports());
+    .pipe(istanbul.writeReports({
+      reporters: [ 'text' ],
+      reportOpts: {dir: 'coverage', file: 'summary.txt'}
+    }))
 });
 
-gulp.task('jshint', function () {
+gulp.task('test', ['mocha', 'coverage'], function () {
   return gulp.src(lint)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('default', ['mocha', 'jshint']);
+gulp.task('default', ['test']);
