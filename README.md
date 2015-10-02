@@ -1,4 +1,4 @@
-# templates [![NPM version](https://badge.fury.io/js/templates.svg)](http://badge.fury.io/js/templates)
+# templates [![NPM version](https://badge.fury.io/js/templates.svg)](http://badge.fury.io/js/templates)  [![Build Status](https://travis-ci.org/jonschlinkert/templates.svg)](https://travis-ci.org/jonschlinkert/templates)
 
 > System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.
 
