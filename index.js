@@ -8,8 +8,8 @@
 'use strict';
 
 var Base = require('base-methods');
-var decorate = require('./lib/decorate/');
 var helpers = require('./lib/helpers/');
+var plugin = require('./lib/plugins/');
 var utils = require('./lib/utils/');
 var lib = require('./lib/');
 
@@ -49,29 +49,26 @@ function Templates(options) {
   Base.call(this);
   this.options = options || {};
   this.define('plugins', []);
-  utils.renameKey(this);
   this.defaultConfig();
 }
 
 /**
- * Inherit Base methods
+ * Inherit `Base`
  */
 
 Base.extend(Templates);
 
 /**
- * Decorate methods onto the Templates prototype
+ * Mixin prototype methods
  */
 
-decorate.option(Templates.prototype);
-decorate.routes(Templates.prototype);
-decorate.engine(Templates.prototype);
-decorate.context(Templates.prototype);
-decorate.helpers(Templates.prototype);
-decorate.layout(Templates.prototype);
-decorate.render(Templates.prototype);
-decorate.lookup(Templates.prototype);
-decorate.errors(Templates.prototype, 'Templates');
+plugin.option(Templates.prototype);
+plugin.routes(Templates.prototype);
+plugin.engine(Templates.prototype);
+plugin.layout(Templates.prototype);
+plugin.render(Templates.prototype);
+plugin.lookup(Templates.prototype);
+plugin.errors(Templates.prototype, 'Templates');
 
 /**
  * Initialize Templates default configuration
@@ -79,7 +76,14 @@ decorate.errors(Templates.prototype, 'Templates');
 
 Templates.prototype.defaultConfig = function () {
   this.define('isApp', true);
-  decorate.init(this);
+
+  this.use(plugin.init);
+  this.use(plugin.renameKey());
+  this.use(plugin.item('item', 'Item'));
+  this.use(plugin.item('view', 'View'));
+  this.use(plugin.context);
+  this.use(plugin.helpers);
+
   this.inflections = {};
   this.items = {};
   this.views = {};
@@ -151,42 +155,6 @@ Templates.prototype.use = function (fn) {
   this.emit('use');
   return this;
 };
-
-/**
- * Returns a new view, using the `View` class
- * currently defined on the instance.
- *
- * ```js
- * var view = app.view('foo', {content: '...'});
- * // or
- * var view = app.view({path: 'foo', content: '...'});
- * ```
- * @name .view
- * @param {String|Object} `key` View key or object
- * @param {Object} `value` If key is a string, value is the view object.
- * @return {Object} returns the `view` object
- * @api public
- */
-
-utils.itemFactory(Templates.prototype, 'view', 'View');
-
-/**
- * Returns a new item, using the `Item` class
- * currently defined on the instance.
- *
- * ```js
- * var item = app.item('foo', {conetent: '...'});
- * // or
- * var item = app.item({path: 'foo', conetent: '...'});
- * ```
- * @name .item
- * @param {String|Object} `key` Item key or object
- * @param {Object} `value` If key is a string, value is the item object.
- * @return {Object} returns the `item` object
- * @api public
- */
-
-utils.itemFactory(Templates.prototype, 'item', 'Item');
 
 /**
  * Create a new collection. Collections are decorated with
@@ -308,23 +276,15 @@ Templates.prototype.create = function(name, opts) {
  */
 
 Templates.prototype.extendView = function (view, options) {
-  decorate.view.all(this, view, options);
+  plugin.view.all(this, view, options);
 };
 
 /**
  * Decorate or override methods on a view collection instance.
  */
 
-Templates.prototype.extendViews = function (views, options) {
-  decorate.views(this, views, options);
-};
-
-/**
- * Add a property to the `Templates` prototype
- */
-
-Templates.prototype.mixin = function(key, value) {
-  Templates.prototype[key] = value;
+Templates.prototype.extendViews = function(views, options) {
+  plugin.views(this, views, options);
 };
 
 /**

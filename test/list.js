@@ -211,12 +211,12 @@ describe('list', function () {
     });
 
     it('should emit arguments on addItem', function (done) {
-      list.on('addItem', function (a, b, c, d, e) {
-        assert(a === 'a');
-        assert(b === 'b');
-        assert(c === 'c');
-        assert(d === 'd');
-        assert(e === 'e');
+      list.on('addItem', function (args) {
+        assert(args[0] === 'a');
+        assert(args[1] === 'b');
+        assert(args[2] === 'c');
+        assert(args[3] === 'd');
+        assert(args[4] === 'e');
         done();
       });
 
@@ -231,9 +231,13 @@ describe('list', function () {
       assert(list.items[1].key === 'b');
     });
 
-    it.skip('should load all items on the queue when addItem is called', function () {
-      list.on('addItem', function (key, value) {
-        list.queue.push(list.item(key, {content: value}));
+    it('should load all items on the queue when addItem is called', function () {
+      list.on('addItem', function (args) {
+        var len = args.length;
+        var last = args[len - 1];
+        if (typeof last === 'string') {
+          args[len - 1] = { content: last };
+        }
       });
 
       list.addItem('a.html', 'aaa');
@@ -241,7 +245,6 @@ describe('list', function () {
       list.addItem('c.html', 'ccc');
 
       assert(list.items[0].path === 'a.html');
-      // console.log(list.getItem('a.html').content)
       assert(list.getItem('a.html').content === 'aaa');
       assert(list.items[1].path === 'b.html');
       assert(list.getItem('b.html').content === 'bbb');
