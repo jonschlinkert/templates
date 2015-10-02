@@ -1,8 +1,8 @@
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
+var stylish = require('jshint-stylish');
 var istanbul = require('gulp-istanbul');
 var jshint = require('gulp-jshint');
-require('jshint-stylish');
 
 var lint = ['index.js', 'lib/**/*.js'];
 
@@ -25,7 +25,7 @@ gulp.task('test', ['coverage'], function () {
 gulp.task('lint', function () {
   return gulp.src(lint)
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter(stylish));
 });
 
 gulp.task('default', ['lint', 'test']);
