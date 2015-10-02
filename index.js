@@ -66,7 +66,6 @@ Base.extend(Templates);
 decorate.option(Templates.prototype);
 decorate.routes(Templates.prototype);
 decorate.engine(Templates.prototype);
-decorate.context(Templates.prototype);
 decorate.helpers(Templates.prototype);
 decorate.layout(Templates.prototype);
 decorate.render(Templates.prototype);
@@ -80,6 +79,7 @@ decorate.errors(Templates.prototype, 'Templates');
 Templates.prototype.defaultConfig = function () {
   this.define('isApp', true);
   decorate.init(this);
+  decorate.context(this);
   this.inflections = {};
   this.items = {};
   this.views = {};
@@ -315,7 +315,7 @@ Templates.prototype.extendView = function (view, options) {
  * Decorate or override methods on a view collection instance.
  */
 
-Templates.prototype.extendViews = function (views, options) {
+Templates.prototype.extendViews = function(views, options) {
   decorate.views(this, views, options);
 };
 

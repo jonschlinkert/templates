@@ -155,17 +155,6 @@ describe('utils', function () {
     });
   });
 
-  describe('resolveGlob', function() {
-    it('should resolve absolute paths for a glob of files:', function () {
-      var files = utils.resolveGlob('test/fixtures/**/*.js');
-      assert(files.length > 0);
-      files.forEach(function (fp) {
-        assert(isAbsolute(fp));
-      });
-    });
-  });
-
-
   describe('stripDot', function() {
     it('should strip the dot preceding a file extension:', function () {
       assert(utils.stripDot('.js') === 'js');
@@ -178,7 +167,6 @@ describe('utils', function () {
       }).should.throw('utils.stripDot() expects `ext` to be a string.');
     });
   });
-
 
   describe('tryRequire', function() {
     it('should require a file:', function () {
