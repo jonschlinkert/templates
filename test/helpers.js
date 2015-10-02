@@ -587,6 +587,44 @@ describe('collection helpers', function () {
       done();
     });
 
+    it('should return an empty string if not found', function (done) {
+      var one = app.page('one', {content: '{{view "foo.hbs"}}'})
+        .compile()
+        .fn()
+      assert(one === '');
+      done();
+    });
+
+    it('should handle engine errors', function (done) {
+      app.page('one', {content: '{{posts "foo.hbs"}}'})
+        .render(function (err, res) {
+          assert(err);
+          assert(err.message === 'undefined is not a function');
+          done();
+        });
+    });
+
+    it('should work with non-handlebars engine', function (done) {
+      app.engine('tmpl', require('engine-base'));
+      app.create('foo', {engine: 'tmpl'});
+      app.create('bar', {engine: 'tmpl'});
+
+      app.foo('a.tmpl', {content: 'foo-a'});
+      app.foo('b.tmpl', {content: 'foo-b'});
+
+      var one = app.bar('one', {content: '<%= view("a.tmpl") %>'})
+        .compile()
+        .fn()
+
+      var two = app.bar('two', {content: '<%= view("b.tmpl") %>'})
+        .compile()
+        .fn()
+
+      assert(one === 'foo-a');
+      assert(two === 'foo-b');
+      done();
+    });
+
     it('should get a specific view from the given collection', function (done) {
       app.post('a.hbs', {content: 'post-a'});
       app.post('b.hbs', {content: 'post-b'});
