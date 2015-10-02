@@ -25,9 +25,9 @@ var View = lib.view;
  */
 
 var Collection = lib.collection;
-var List = lib.list;
 var Views = lib.views;
 var Group = lib.group;
+var List = lib.list;
 
 /**
  * This function is the main export of the templates module.
