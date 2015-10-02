@@ -406,12 +406,12 @@ describe('queue', function () {
   });
 
   it('should emit arguments on addItem', function (done) {
-    collection.on('addItem', function (a, b, c, d, e) {
-      assert(a === 'a');
-      assert(b === 'b');
-      assert(c === 'c');
-      assert(d === 'd');
-      assert(e === 'e');
+    collection.on('addItem', function (args) {
+      assert(args[0] === 'a');
+      assert(args[1] === 'b');
+      assert(args[2] === 'c');
+      assert(args[3] === 'd');
+      assert(args[4] === 'e');
       done();
     });
 
@@ -427,8 +427,12 @@ describe('queue', function () {
   });
 
   it('should load all items on the queue when addItem is called', function () {
-    collection.on('addItem', function (key, value) {
-      collection.queue.push(collection.item(key, {content: value}));
+    collection.on('addItem', function (args) {
+      var len = args.length;
+      var last = args[len - 1];
+      if (typeof last === 'string') {
+        args[len - 1] = { content: last };
+      }
     });
 
     collection.addItem('a.html', 'aaa');
