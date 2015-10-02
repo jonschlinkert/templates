@@ -179,6 +179,18 @@ describe('helpers', function () {
       assert(typeof app._.helpers.async.y === 'function');
       assert(typeof app._.helpers.async.z === 'function');
     });
+
+    it('should add an async helper "group":', function () {
+      app.helperGroup('foo', {
+        x: function () {},
+        y: function () {},
+        z: function () {}
+      }, true);
+
+      assert(typeof app._.helpers.async.foo.x === 'function');
+      assert(typeof app._.helpers.async.foo.y === 'function');
+      assert(typeof app._.helpers.async.foo.z === 'function');
+    });
   });
 });
 
