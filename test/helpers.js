@@ -623,7 +623,7 @@ describe('collection helpers', function () {
       app.page('one', {content: '{{posts "foo.hbs"}}'})
         .render(function (err, res) {
           assert(err);
-          assert(err.message === 'undefined is not a function');
+          assert(/is not a function/.test(err.message));
           done();
         });
     });
