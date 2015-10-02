@@ -8,8 +8,8 @@
 'use strict';
 
 var Base = require('base-methods');
-var decorate = require('./lib/decorate/');
 var helpers = require('./lib/helpers/');
+var plugin = require('./lib/plugins/');
 var utils = require('./lib/utils/');
 var lib = require('./lib/');
 
@@ -49,7 +49,6 @@ function Templates(options) {
   Base.call(this);
   this.options = options || {};
   this.define('plugins', []);
-  utils.renameKey(this);
   this.defaultConfig();
 }
 
@@ -63,14 +62,13 @@ Base.extend(Templates);
  * Decorate methods onto the Templates prototype
  */
 
-decorate.option(Templates.prototype);
-decorate.routes(Templates.prototype);
-decorate.engine(Templates.prototype);
-decorate.helpers(Templates.prototype);
-decorate.layout(Templates.prototype);
-decorate.render(Templates.prototype);
-decorate.lookup(Templates.prototype);
-decorate.errors(Templates.prototype, 'Templates');
+plugin.option(Templates.prototype);
+plugin.routes(Templates.prototype);
+plugin.engine(Templates.prototype);
+plugin.layout(Templates.prototype);
+plugin.render(Templates.prototype);
+plugin.lookup(Templates.prototype);
+plugin.errors(Templates.prototype, 'Templates');
 
 /**
  * Initialize Templates default configuration
@@ -78,8 +76,13 @@ decorate.errors(Templates.prototype, 'Templates');
 
 Templates.prototype.defaultConfig = function () {
   this.define('isApp', true);
-  decorate.init(this);
-  decorate.context(this);
+
+  this.use(plugin.init);
+  this.use(plugin.renameKey());
+  this.use(plugin.item('view', 'View'));
+  this.use(plugin.context);
+  this.use(plugin.helpers);
+
   this.inflections = {};
   this.items = {};
   this.views = {};
@@ -168,7 +171,7 @@ Templates.prototype.use = function (fn) {
  * @api public
  */
 
-utils.itemFactory(Templates.prototype, 'view', 'View');
+// utils.itemFactory(Templates.prototype, 'view', 'View');
 
 /**
  * Returns a new item, using the `Item` class
@@ -186,7 +189,7 @@ utils.itemFactory(Templates.prototype, 'view', 'View');
  * @api public
  */
 
-utils.itemFactory(Templates.prototype, 'item', 'Item');
+// utils.itemFactory(Templates.prototype, 'item', 'Item');
 
 /**
  * Create a new collection. Collections are decorated with
@@ -308,7 +311,7 @@ Templates.prototype.create = function(name, opts) {
  */
 
 Templates.prototype.extendView = function (view, options) {
-  decorate.view.all(this, view, options);
+  plugin.view.all(this, view, options);
 };
 
 /**
@@ -316,7 +319,7 @@ Templates.prototype.extendView = function (view, options) {
  */
 
 Templates.prototype.extendViews = function(views, options) {
-  decorate.views(this, views, options);
+  plugin.views(this, views, options);
 };
 
 /**

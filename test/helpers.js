@@ -8,8 +8,8 @@ var forOwn = require('for-own');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
 var matter = require('parser-front-matter');
-var helpers = require('../lib/decorate/helpers');
-var init = require('../lib/decorate/init');
+var helpers = require('../lib/plugins/helpers');
+var init = require('../lib/plugins/init');
 var rimraf = require('rimraf');
 var swig = consolidate.swig;
 require('swig');
@@ -50,8 +50,8 @@ describe('helpers', function () {
         init(this);
       }
       Base.extend(Foo);
-      helpers(Foo.prototype);
       var foo = new Foo();
+      helpers(foo);
       assert(typeof foo._ ==='object');
     });
   });
