@@ -53,13 +53,13 @@ function Templates(options) {
 }
 
 /**
- * Inherit Base methods
+ * Inherit `Base`
  */
 
 Base.extend(Templates);
 
 /**
- * Decorate methods onto the Templates prototype
+ * Mixin prototype methods
  */
 
 plugin.option(Templates.prototype);
