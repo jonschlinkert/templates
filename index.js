@@ -79,6 +79,7 @@ Templates.prototype.defaultConfig = function () {
 
   this.use(plugin.init);
   this.use(plugin.renameKey());
+  this.use(plugin.item('item', 'Item'));
   this.use(plugin.item('view', 'View'));
   this.use(plugin.context);
   this.use(plugin.helpers);
@@ -154,42 +155,6 @@ Templates.prototype.use = function (fn) {
   this.emit('use');
   return this;
 };
-
-/**
- * Returns a new view, using the `View` class
- * currently defined on the instance.
- *
- * ```js
- * var view = app.view('foo', {content: '...'});
- * // or
- * var view = app.view({path: 'foo', content: '...'});
- * ```
- * @name .view
- * @param {String|Object} `key` View key or object
- * @param {Object} `value` If key is a string, value is the view object.
- * @return {Object} returns the `view` object
- * @api public
- */
-
-// utils.itemFactory(Templates.prototype, 'view', 'View');
-
-/**
- * Returns a new item, using the `Item` class
- * currently defined on the instance.
- *
- * ```js
- * var item = app.item('foo', {conetent: '...'});
- * // or
- * var item = app.item({path: 'foo', conetent: '...'});
- * ```
- * @name .item
- * @param {String|Object} `key` Item key or object
- * @param {Object} `value` If key is a string, value is the item object.
- * @return {Object} returns the `item` object
- * @api public
- */
-
-// utils.itemFactory(Templates.prototype, 'item', 'Item');
 
 /**
  * Create a new collection. Collections are decorated with
@@ -320,14 +285,6 @@ Templates.prototype.extendView = function (view, options) {
 
 Templates.prototype.extendViews = function(views, options) {
   plugin.views(this, views, options);
-};
-
-/**
- * Add a property to the `Templates` prototype
- */
-
-Templates.prototype.mixin = function(key, value) {
-  Templates.prototype[key] = value;
 };
 
 /**
