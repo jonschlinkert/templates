@@ -64,6 +64,7 @@ app.pages.getView('a.html')
   - [Routes and middleware](#routes-and-middleware)
 * [Related projects](#related-projects)
 * [Running tests](#running-tests)
+* [Code coverage](#code-coverage)
 * [Contributing](#contributing)
 * [Author](#author)
 * [License](#license)
@@ -134,7 +135,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L216)
+### [.create](index.js#L213)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -198,7 +199,7 @@ var swig = app.engine('swig');
 
 ### Helpers
 
-### [.helper](lib/plugins/helpers.js#L39)
+### [.helper](lib/plugins/helpers.js#L25)
 
 Register a template helper.
 
@@ -215,7 +216,7 @@ app.helper('upper', function(str) {
 });
 ```
 
-### [.helpers](lib/plugins/helpers.js#L59)
+### [.helpers](lib/plugins/helpers.js#L45)
 
 Register multiple template helpers.
 
@@ -233,7 +234,7 @@ app.helpers({
 });
 ```
 
-### [.asyncHelper](lib/plugins/helpers.js#L85)
+### [.asyncHelper](lib/plugins/helpers.js#L65)
 
 Get or set an async helper. If only the name is passed, the helper is returned.
 
@@ -250,7 +251,7 @@ app.asyncHelper('upper', function(str, next) {
 });
 ```
 
-### [.asyncHelper](lib/plugins/helpers.js#L105)
+### [.asyncHelper](lib/plugins/helpers.js#L85)
 
 Register multiple async template helpers.
 
@@ -268,7 +269,7 @@ app.asyncHelpers({
 });
 ```
 
-### [.helperGroup](lib/plugins/helpers.js#L133)
+### [.helperGroup](lib/plugins/helpers.js#L107)
 
 Register a namespaced helper group.
 
@@ -309,7 +310,7 @@ var view = new View({
 });
 ```
 
-### [.compile](lib/view.js#L63)
+### [.compile](lib/view.js#L48)
 
 Synchronously compile a view.
 
@@ -327,7 +328,7 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.render](lib/view.js#L81)
+### [.render](lib/view.js#L66)
 
 Asynchronously render a view.
 
@@ -386,7 +387,7 @@ console.log(view.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L112)
+### [.mergePartials](lib/plugins/context.js#L104)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -493,7 +494,7 @@ console.log(item.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L112)
+### [.mergePartials](lib/plugins/context.js#L104)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -618,7 +619,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L225)
+### [.getItem](lib/collection.js#L224)
 
 Get an item from the collection.
 
@@ -675,7 +676,7 @@ console.log(collection.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L112)
+### [.mergePartials](lib/plugins/context.js#L104)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -781,7 +782,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L213)
+### [.addList](lib/list.js#L217)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -799,7 +800,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.getIndex](lib/list.js#L246)
+### [.getIndex](lib/list.js#L253)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -815,7 +816,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L262)
+### [.getItem](lib/list.js#L269)
 
 Get a specific item from the list by `key`.
 
@@ -831,7 +832,7 @@ list.getItem('foo.html');
 //=> '<View <foo.html>>'
 ```
 
-### [.removeItem](lib/list.js#L279)
+### [.removeItem](lib/list.js#L286)
 
 Remove an item from the list.
 
@@ -848,7 +849,7 @@ list.addItems({
 });
 ```
 
-### [.extendItem](lib/list.js#L299)
+### [.extendItem](lib/list.js#L306)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -859,7 +860,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L317)
+### [.groupBy](lib/list.js#L324)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -873,7 +874,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L343)
+### [.sortBy](lib/list.js#L350)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -888,7 +889,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L377)
+### [.paginate](lib/list.js#L384)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -1004,7 +1005,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](lib/plugins/lookup.js#L105)
+### [.getViews](lib/plugins/lookup.js#L102)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -1094,7 +1095,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L112)
+### [.mergePartials](lib/plugins/context.js#L104)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1126,7 +1127,7 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.route](lib/plugins/routes.js#L129)
+### [.route](lib/plugins/routes.js#L128)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -1151,7 +1152,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](lib/plugins/routes.js#L151)
+### [.all](lib/plugins/routes.js#L150)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1170,7 +1171,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](lib/plugins/routes.js#L180)
+### [.param](lib/plugins/routes.js#L179)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -1210,6 +1211,17 @@ Install dev dependencies:
 
 ```sh
 $ npm i -d && npm test
+```
+
+## Code coverage
+
+As of October 02, 2015, code coverage is 100%.
+
+```sh
+Statements   : 100% (1162/1162)
+Branches     : 100% (475/475)
+Functions    : 100% (160/160)
+Lines        : 100% (1141/1141)
 ```
 
 ## Contributing
