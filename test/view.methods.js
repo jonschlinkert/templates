@@ -1,5 +1,4 @@
 require('should');
-var path = require('path');
 var App = require('..');
 var app;
 

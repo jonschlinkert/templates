@@ -218,7 +218,6 @@ Templates.prototype.create = function(name, opts) {
   }
 
   var collection = this.collection(opts, true);
-  var self = this;
 
   // get the collection inflections, e.g. page/pages
   var single = utils.single(name);

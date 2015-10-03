@@ -2,7 +2,7 @@ require('mocha');
 require('should');
 var path = require('path');
 var get = require('get-value');
-var isBuffer = require('is-buffer')
+var isBuffer = require('is-buffer');
 var assert = require('assert');
 var typeOf = require('kind-of');
 var support = require('./support/');
@@ -11,7 +11,6 @@ assert.containEql = support.containEql;
 var App = require('..');
 var List = App.List;
 var Views = App.Views;
-var View = App.View;
 var list, views;
 
 describe('list', function () {
@@ -57,7 +56,9 @@ describe('list', function () {
       'emit',
       'listeners',
       'hasListeners' 
-    ].forEach(function (method) {
+    ];
+
+    methods.forEach(function (method) {
       it('should expose the ' + method + ' method', function () {
         assert(typeof list[method] === 'function');
       });
@@ -116,10 +117,10 @@ describe('list', function () {
 
     it('should expose `item` when the plugin returns a function', function () {
       list
-        .use(function (inst) {
+        .use(function () {
           return function (item) {
             item.foo = 'bar';
-          }
+          };
         });
 
       list.addItem('aaa');

@@ -1,24 +1,15 @@
 require('mocha');
 require('should');
-var fs = require('fs');
 var path = require('path');
 var Base = require('base-methods');
 var assert = require('assert');
-var forOwn = require('for-own');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
 var matter = require('parser-front-matter');
 var helpers = require('../lib/plugins/helpers');
 var init = require('../lib/plugins/init');
-var rimraf = require('rimraf');
 var swig = consolidate.swig;
 require('swig');
-
-function load(fp) {
-  fp = path.join(__dirname, 'fixtures', fp);
-  var str = fs.readFileSync(fp, 'utf8');
-  return str;
-}
 
 var App = require('..');
 var app;
@@ -624,11 +615,11 @@ describe('collection helpers', function () {
 
       var one = app.page('one', {content: '{{view "a.hbs"}}'})
         .compile()
-        .fn()
+        .fn();
 
       var two = app.page('two', {content: '{{view "b.hbs"}}'})
         .compile()
-        .fn()
+        .fn();
 
       assert(one === 'post-a');
       assert(two === 'post-b');
@@ -638,14 +629,14 @@ describe('collection helpers', function () {
     it('should return an empty string if not found', function (done) {
       var one = app.page('one', {content: '{{view "foo.hbs"}}'})
         .compile()
-        .fn()
+        .fn();
       assert(one === '');
       done();
     });
 
     it('should handle engine errors', function (done) {
       app.page('one', {content: '{{posts "foo.hbs"}}'})
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err);
           assert(typeof err === 'object');
           assert(typeof err.message === 'string');
@@ -662,7 +653,7 @@ describe('collection helpers', function () {
       app.create('foo', {viewType: 'partial'});
       app.foo('foo.tmpl', {path: 'foo.tmpl', content: '<%= blah.bar %>'});
       app.bar('one.tmpl', {content: '<%= foo("foo.tmpl") %>'})
-        .render(function (err, res) {
+        .render(function (err) {
           assert(err);
           assert(typeof err === 'object');
           assert(/blah is not defined/.test(err.message));
@@ -680,11 +671,11 @@ describe('collection helpers', function () {
 
       var one = app.bar('one', {content: '<%= view("a.tmpl") %>'})
         .compile()
-        .fn()
+        .fn();
 
       var two = app.bar('two', {content: '<%= view("b.tmpl") %>'})
         .compile()
-        .fn()
+        .fn();
 
       assert(one === 'foo-a');
       assert(two === 'foo-b');
@@ -701,11 +692,11 @@ describe('collection helpers', function () {
 
       var one = app.page('one', {content: '{{view "a.hbs" "posts"}}'})
         .compile()
-        .fn()
+        .fn();
 
       var two = app.page('two', {content: '{{view "b.hbs" "pages"}}'})
         .compile()
-        .fn()
+        .fn();
 
       assert(one === 'post-a');
       assert(two === 'page-b');

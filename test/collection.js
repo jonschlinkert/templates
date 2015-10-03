@@ -56,7 +56,9 @@ describe('collection', function () {
       'emit',
       'listeners',
       'hasListeners' 
-    ].forEach(function (method) {
+    ];
+
+    methods.forEach(function (method) {
       it('should expose ' + method + ' method', function () {
         assert(typeof collection[method] === 'function');
       });
@@ -112,10 +114,10 @@ describe('methods', function () {
 
     it('should expose `item` when the plugin returns a function', function () {
       collection
-        .use(function (inst) {
+        .use(function () {
           return function (item) {
             item.foo = 'bar';
-          }
+          };
         });
 
       collection.addItem('aaa');
@@ -372,7 +374,6 @@ describe('methods', function () {
       assert(collection.items.hasOwnProperty('foo/a'));
       assert(!collection.items.hasOwnProperty('foo/c'));
       assert(collection.items['foo/a'].path === 'a.txt');
-      console.log(collection)
     });
 
     it('should signal `loaded` when finished (addList)', function () {
@@ -472,7 +473,7 @@ describe('options', function() {
     });
 
     it('should expose the `option` method', function () {
-      collection.option('foo', 'bar')
+      collection.option('foo', 'bar');
       collection.options.should.have.property('foo', 'bar');
     });
 

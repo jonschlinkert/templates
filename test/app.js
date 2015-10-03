@@ -90,8 +90,8 @@ describe('app', function () {
       Base.extend(MyGroup);
 
       app = new App();
-      assert.equal(app.Group, Group)
-      assert.equal(app.get('Group'), Group)
+      assert.equal(app.Group, Group);
+      assert.equal(app.get('Group'), Group);
       app.option('Group', MyGroup);
       assert.equal(app.Group, MyGroup);
       assert.equal(app.get('Group'), MyGroup);

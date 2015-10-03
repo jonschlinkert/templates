@@ -2,7 +2,6 @@ require('mocha');
 require('should');
 var async = require('async');
 var assert = require('assert');
-var utils = require('../lib/utils');
 var List = require('..').List;
 var List = require('..').List;
 var pages;

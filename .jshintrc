@@ -10,7 +10,7 @@
   "laxbreak": true,
   "laxcomma": false,
   "mocha": true,
-  "newcap": true,
+  "newcap": false,
   "noarg": true,
   "node": true,
   "proto": true,

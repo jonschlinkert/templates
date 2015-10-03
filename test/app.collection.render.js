@@ -2,10 +2,8 @@ require('mocha');
 require('should');
 var async = require('async');
 var assert = require('assert');
-var utils = require('../lib/utils');
 var templates = require('..');
 var List = templates.List;
-var Views = templates.Views;
 var pages, app;
 
 describe('render', function () {

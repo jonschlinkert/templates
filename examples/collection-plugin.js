@@ -23,17 +23,12 @@ collection.addViews({
   'a/b/c/j.txt': {locals: {base: '_gh_pages/blog'}, content: 'jjj'},
 });
 
-function myPlugin(options) {
-  options = options || {};
-
+function myPlugin() {
   return function (collection) {
     collection.match = function (re) {
       for (var key in collection.views) {
-        if (re.test(key)) {
-          return collection.views[key];
-        }
+        if (re.test(key)) return collection.views[key];
       }
-      return null;
     };
 
     return function (view) {

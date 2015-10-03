@@ -38,7 +38,7 @@ describe('helpers', function () {
       app.layout('bar.tmpl', {content: 'b {% body %} b'});
       app.pages('a.tmpl', {content: '<%= title %>'});
 
-      var page = app.pages.getView('a.tmpl')
+      app.pages.getView('a.tmpl')
         .option('resolveLayout', function () {
           return 'bar.tmpl';
         })

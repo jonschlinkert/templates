@@ -1,8 +1,6 @@
 require('mocha');
 require('should');
-var path = require('path');
 var assert = require('assert');
-var isAbsolute = require('is-absolute');
 var utils = require('../lib/utils');
 
 describe('utils', function () {
@@ -88,7 +86,6 @@ describe('utils', function () {
     });
 
     it('should no blow up when first arg is null:', function () {
-      var a = {foo: 'bar', hash: {one: 'two'}};
       var b = {baz: 'qux', hash: {three: 'four'}};
 
       assert.deepEqual(utils.getLocals(null, b), {
@@ -99,7 +96,6 @@ describe('utils', function () {
 
     it('should no blow up when second arg is null:', function () {
       var a = {foo: 'bar', hash: {one: 'two'}};
-      var b = {baz: 'qux', hash: {three: 'four'}};
 
       assert.deepEqual(utils.getLocals(a, null), {
         one: 'two',

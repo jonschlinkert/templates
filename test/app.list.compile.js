@@ -3,7 +3,7 @@ require('should');
 var assert = require('assert');
 var App = require('../');
 var List = App.List;
-var app;
+var list;
 
 describe('app.list.compile', function () {
   beforeEach(function () {

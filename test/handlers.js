@@ -1,7 +1,6 @@
 'use strict';
 
-var assert = require('assert');
-var should = require('should');
+require('should');
 var App = require('..');
 var app;
 

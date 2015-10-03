@@ -2,7 +2,7 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var assert = require('assert');
-var utils = require('../lib/utils');
+var define = require('define-property');
 var App = require('../');
 var Collection = App.Collection;
 var app;
@@ -32,8 +32,8 @@ describe('collection', function () {
     beforeEach(function () {
       app = new App()
         .use(function () {
-          return function (collection) {
-            utils.define(this, 'count', {
+          return function () {
+            define(this, 'count', {
               get: function() {
                 return Object.keys(this.views).length;
               },
@@ -90,7 +90,7 @@ describe('collection', function () {
     });
   });
 
-  describe('custom constructor', function () {
+  describe('addItem', function () {
     beforeEach(function () {
       app = new App();
     });

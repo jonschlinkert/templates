@@ -93,11 +93,12 @@ describe('engines', function () {
 });
 
 
-describe('engine selection:', function (done) {
-  beforeEach(function () {
+describe('engine selection:', function () {
+  beforeEach(function (done) {
     collection = new Views();
     collection.engine('tmpl', require('engine-base'));
     collection.engine('hbs', require('engine-handlebars'));
+    done();
   });
 
   it('should get the engine from file extension:', function (done) {
