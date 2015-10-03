@@ -18,6 +18,12 @@ describe('collection', function () {
       assert(collection instanceof Collection);
       assert(typeof collection === 'object');
     });
+
+    it('should instantiate without new', function () {
+      var collection = Collection();
+      assert(collection instanceof Collection);
+      assert(typeof collection === 'object');
+    });
   });
 
   describe('static methods', function () {
@@ -314,6 +320,16 @@ describe('methods', function () {
       assert(collection.items['a.txt'].path === 'a.txt');
     });
 
+    it('should load an array of items from the addList callback:', function () {
+      var collection = new Collection();
+
+      collection.addList(['a.txt', 'b.txt', 'c.txt'], function (fp) {
+        return {path: fp};
+      });
+      assert(collection.items.hasOwnProperty('a.txt'));
+      assert(collection.items['a.txt'].path === 'a.txt');
+    });
+
     it('should load an object of items from an event', function () {
       var collection = new Collection();
 
@@ -356,6 +372,7 @@ describe('methods', function () {
       assert(collection.items.hasOwnProperty('foo/a'));
       assert(!collection.items.hasOwnProperty('foo/c'));
       assert(collection.items['foo/a'].path === 'a.txt');
+      console.log(collection)
     });
 
     it('should signal `loaded` when finished (addList)', function () {

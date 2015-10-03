@@ -14,6 +14,14 @@ describe('Item', function () {
       item = new Item();
       assert(item instanceof Item);
     });
+
+    it('inspect should not double name `Stream` when ctor is `Stream`', function(done) {
+      var val = new Stream();
+      var item = new Item({contents: val});
+      var name = require('util').inspect(item);
+      console.log(name);
+      done();
+    });
   });
 
   describe('static methods', function () {

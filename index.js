@@ -183,9 +183,6 @@ Templates.prototype.collection = function (opts, created) {
 
   if (opts.isCollection === true) {
     collection = opts;
-    if (typeof created === 'object') {
-      collection.option(created);
-    }
 
   } else {
     opts.Item = opts.Item || opts.View || this.get('View');
@@ -252,9 +249,6 @@ Templates.prototype.create = function(name, opts) {
   // addView/addViews to support chaining
   collection.define(plural, this[plural]);
   collection.define(single, this[single]);
-  collection.define('app', function () {
-    return self;
-  });
 
   // run collection plugins
   this.plugins.forEach(function (fn) {

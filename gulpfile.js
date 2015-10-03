@@ -1,3 +1,5 @@
+'use strict';
+
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var stylish = require('jshint-stylish');
@@ -20,6 +22,9 @@ gulp.task('test', ['coverage'], function () {
       reporters: [ 'text' ],
       reportOpts: {dir: 'coverage', file: 'summary.txt'}
     }))
+    // .on('end', function () {
+
+    // })
 });
 
 gulp.task('lint', function () {

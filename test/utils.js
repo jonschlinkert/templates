@@ -6,6 +6,15 @@ var isAbsolute = require('is-absolute');
 var utils = require('../lib/utils');
 
 describe('utils', function () {
+  describe('errors', function () {
+    it('should throw an error when duplicate util names are defined:', function () {
+      (function () {
+        utils('clone');
+        utils('clone');
+      }).should.throw('Cannot redefine property: clone');
+    });
+  });
+
   describe('bindAll', function() {
     it('should bind a context to fns passed on an object:', function () {
       var ctx = {app: {views: {}}, context: {a: 'b'}};
@@ -77,6 +86,26 @@ describe('utils', function () {
         foo: 'bar'
       });
     });
+
+    it('should no blow up when first arg is null:', function () {
+      var a = {foo: 'bar', hash: {one: 'two'}};
+      var b = {baz: 'qux', hash: {three: 'four'}};
+
+      assert.deepEqual(utils.getLocals(null, b), {
+        three: 'four',
+        baz: 'qux'
+      });
+    });
+
+    it('should no blow up when second arg is null:', function () {
+      var a = {foo: 'bar', hash: {one: 'two'}};
+      var b = {baz: 'qux', hash: {three: 'four'}};
+
+      assert.deepEqual(utils.getLocals(a, null), {
+        one: 'two',
+        foo: 'bar'
+      });
+    });
   });
 
   describe('isView', function() {
@@ -84,7 +113,11 @@ describe('utils', function () {
       assert(utils.isView({a: 'b', c: 'd', contents: '...'}));
       assert(utils.isView({a: 'b', c: 'd', content: '...'}));
       assert(utils.isView({a: 'b', c: 'd', path: '...'}));
+    });
+
+    it('should return false if a value is not a view:', function () {
       assert(!utils.isView({a: 'b', c: 'd'}));
+      assert(!utils.isView('foo'));
     });
   });
 });

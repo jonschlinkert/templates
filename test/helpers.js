@@ -215,6 +215,28 @@ describe('sync helpers', function () {
     });
 
     var page = app.pages.getView('a.tmpl');
+
+    app.render(page, function (err, view) {
+      if (err) return done(err);
+
+      assert.equal(typeof view.contents.toString(), 'string');
+      assert.equal(view.contents.toString(), 'BBB');
+      done();
+    });
+  });
+
+  it.skip('should use a namespaced helper:', function (done) {
+    app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= foo.upper(a) %>', locals: {a: 'bbb'}});
+
+    app.helperGroup('foo', {
+      upper: function (str) {
+        return str.toUpperCase();
+      }
+    });
+
+    // console.log(app._.helpers)
+
+    var page = app.pages.getView('a.tmpl');
     app.render(page, function (err, view) {
       if (err) return done(err);
 
@@ -491,6 +513,7 @@ describe('helpers integration', function () {
         return path.join(this.options.cwd, fp);
       });
 
+      app.option('one', 'two');
       app.option('cwd', 'foo/bar');
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function (err, res) {
@@ -506,6 +529,7 @@ describe('helpers integration', function () {
       });
 
       app.option('helper.cwd', 'foo/bar');
+      app.option('helper.whatever', '...');
 
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function (err, res) {
@@ -626,6 +650,22 @@ describe('collection helpers', function () {
           assert(typeof err === 'object');
           assert(typeof err.message === 'string');
           assert(/is not a function/.test(err.message));
+          done();
+        });
+    });
+
+    it('should handle engine errors', function (done) {
+      app.engine('tmpl', require('engine-base'));
+      app.create('foo', {engine: 'tmpl'});
+      app.create('bar', {engine: 'tmpl'});
+
+      app.create('foo', {viewType: 'partial'});
+      app.foo('foo.tmpl', {path: 'foo.tmpl', content: '<%= blah.bar %>'});
+      app.bar('one.tmpl', {content: '<%= foo("foo.tmpl") %>'})
+        .render(function (err, res) {
+          assert(err);
+          assert(typeof err === 'object');
+          assert(/blah is not defined/.test(err.message));
           done();
         });
     });
