@@ -4,14 +4,15 @@ require('mocha');
 require('should');
 var async = require('async');
 var assert = require('assert');
-var templates = require('..');
-var List = templates.List;
+var support = require('./support');
+var App = support.resolve();
+var List = App.List;
 var pages, app;
 
 describe('render', function () {
   describe('rendering', function () {
     beforeEach(function () {
-      app = templates();
+      app = App();
       pages = app.create('pages');
       app.engine('tmpl', require('engine-base'));
       pages.engine('tmpl', require('engine-base'));

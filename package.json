@@ -66,6 +66,7 @@
     "istanbul": "^0.3.21",
     "jshint-stylish": "^2.0.1",
     "kind-of": "^2.0.1",
+    "look-up": "^0.8.1",
     "mocha": "*",
     "parser-front-matter": "^1.2.5",
     "rimraf": "^2.4.3",

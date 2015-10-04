@@ -2,8 +2,10 @@ require('mocha');
 require('should');
 var async = require('async');
 var assert = require('assert');
-var List = require('..').List;
-var Views = require('..').Views;
+var support = require('./support');
+var App = support.resolve();
+var List = App.List;
+var Views = App.Views;
 var pages;
 
 describe('render', function () {

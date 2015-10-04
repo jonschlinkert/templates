@@ -5,7 +5,8 @@ var assert = require('assert');
 var typeOf = require('kind-of');
 var isBuffer = require('is-buffer');
 
-var App = require('..');
+var support = require('./support');
+var App = support.resolve();
 var List = App.List;
 var Item = App.Item;
 var Collection = App.Collection;
@@ -37,7 +38,7 @@ describe('collection', function () {
       collection = new Collection();
     });
 
-    var methods = [ 
+    var methods = [
       'use',
       'setItem',
       'addItem',
@@ -55,7 +56,7 @@ describe('collection', function () {
       'off',
       'emit',
       'listeners',
-      'hasListeners' 
+      'hasListeners'
     ];
 
     methods.forEach(function (method) {
@@ -81,7 +82,7 @@ describe('collection', function () {
     });
   });
 });
-  
+
 describe('methods', function () {
   beforeEach(function() {
     collection = new Collection();
@@ -226,7 +227,7 @@ describe('methods', function () {
       assert(collection.items.one.abc === 'xyz');
     });
   });
-  
+
   describe('addItems', function () {
     it('should add multiple items', function () {
       collection.addItems({

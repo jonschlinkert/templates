@@ -2,10 +2,13 @@ require('mocha');
 var should = require('should');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 var assert = require('assert');
-var Stream = require('stream');
 var es = require('event-stream');
-var Item = require('../').Item;
+var Stream = require('stream');
+var support = require('./support');
+var App = support.resolve();
+var Item = App.Item;
 var item;
 
 describe('Item', function () {
@@ -18,8 +21,7 @@ describe('Item', function () {
     it('inspect should not double name `Stream` when ctor is `Stream`', function(done) {
       var val = new Stream();
       var item = new Item({contents: val});
-      var name = require('util').inspect(item);
-      console.log(name);
+      // console.log(util.inspect(item).name);
       done();
     });
   });

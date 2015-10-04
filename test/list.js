@@ -8,7 +8,8 @@ var typeOf = require('kind-of');
 var support = require('./support/');
 assert.containEql = support.containEql;
 
-var App = require('..');
+var support = require('./support');
+var App = support.resolve();
 var List = App.List;
 var Views = App.Views;
 var list, views;
@@ -37,7 +38,7 @@ describe('list', function () {
       list = new List();
     });
 
-    var methods = [ 
+    var methods = [
       'use',
       'setItem',
       'addItem',
@@ -55,7 +56,7 @@ describe('list', function () {
       'off',
       'emit',
       'listeners',
-      'hasListeners' 
+      'hasListeners'
     ];
 
     methods.forEach(function (method) {

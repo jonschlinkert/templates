@@ -1,7 +1,8 @@
 require('mocha');
 require('should');
 var assert = require('assert');
-var utils = require('../lib/utils');
+var support = require('./support');
+var utils = support.resolve('lib/utils');
 
 describe('utils', function () {
   describe('errors', function () {

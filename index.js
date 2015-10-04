@@ -293,6 +293,12 @@ Templates.Views = Views;
 Templates.Group = Group;
 
 /**
+ * Expose package metadata
+ */
+
+utils.define(Templates, 'metadata', require('./package'));
+
+/**
  * Expose `Templates`
  */
 

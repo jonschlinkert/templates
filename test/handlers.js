@@ -1,7 +1,8 @@
 'use strict';
 
 require('should');
-var App = require('..');
+var support = require('./support');
+var App = support.resolve();
 var app;
 
 describe('handlers', function () {

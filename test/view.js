@@ -5,7 +5,9 @@ var path = require('path');
 var assert = require('assert');
 var Stream = require('stream');
 var es = require('event-stream');
-var View = require('../').View;
+var support = require('./support');
+var App = support.resolve();
+var View = App.View;
 var view;
 
 describe('View', function () {

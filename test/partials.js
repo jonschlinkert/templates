@@ -1,7 +1,8 @@
 require('mocha');
 require('should');
 var assert = require('assert');
-var App = require('..');
+var support = require('./support');
+var App = support.resolve();
 var app, pages;
 
 describe('partials', function () {
@@ -51,7 +52,7 @@ describe('partials', function () {
     pages.helpers(app._.helpers.sync);
     pages.asyncHelpers(app._.helpers.async);
     pages.addView('a.tmpl', {path: 'a.tmpl', content: 'a {{> base }} c'});
-    
+
     var page = pages.getView('a.tmpl');
     var locals = app.mergePartials(this.options);
 

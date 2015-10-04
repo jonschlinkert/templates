@@ -3,7 +3,8 @@ require('should');
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
-var App = require('../');
+var support = require('./support');
+var App = support.resolve();
 var app;
 
 describe('create', function () {

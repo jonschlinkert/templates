@@ -2,18 +2,13 @@ require('mocha');
 require('should');
 var fs = require('fs');
 var path = require('path');
-var globby = require('globby');
 var assert = require('assert');
-var App = require('../');
-var utils = require('../lib/utils');
+var globby = require('globby');
+var resolve = require('resolve-glob');
+var support = require('./support');
+var utils = support.resolve('lib/utils');
+var App = support.resolve();
 var app;
-
-function resolveGlob(patterns, options) {
-  var opts = utils.merge({cwd: process.cwd()}, options);
-  return globby.sync(patterns, opts).map(function (fp) {
-    return path.resolve(opts.cwd, fp);
-  });
-}
 
 describe('lookups', function () {
   beforeEach(function () {
@@ -24,7 +19,7 @@ describe('lookups', function () {
     app.create('pages')
       .use(function (pages) {
         pages.on('addViews', function (glob) {
-          var files = resolveGlob(glob);
+          var files = resolve.sync(glob);
           files.forEach(function (fp) {
             pages.addView(fp, {path: fp});
           });

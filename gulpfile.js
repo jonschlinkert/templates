@@ -22,9 +22,6 @@ gulp.task('test', ['coverage'], function () {
       reporters: [ 'text' ],
       reportOpts: {dir: 'coverage', file: 'summary.txt'}
     }))
-    // .on('end', function () {
-
-    // })
 });
 
 gulp.task('lint', function () {

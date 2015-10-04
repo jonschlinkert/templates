@@ -4,7 +4,8 @@ var path = require('path');
 var assert = require('assert');
 var typeOf = require('kind-of');
 var isBuffer = require('is-buffer');
-var App = require('..');
+var support = require('./support');
+var App = support.resolve();
 var List = App.List;
 var View = App.View;
 var Views = App.Views;
@@ -34,7 +35,7 @@ describe('views', function () {
       collection = new Views();
     });
 
-    var methods = [ 
+    var methods = [
       'use',
       'setView',
       'addView',
@@ -52,7 +53,7 @@ describe('views', function () {
       'off',
       'emit',
       'listeners',
-      'hasListeners' 
+      'hasListeners'
     ];
 
     methods.forEach(function (method) {

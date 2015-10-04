@@ -3,7 +3,8 @@ require('should');
 var fs = require('fs');
 var assert = require('assert');
 var define = require('define-property');
-var App = require('../');
+var support = require('./support');
+var App = support.resolve();
 var Collection = App.Collection;
 var app;
 
