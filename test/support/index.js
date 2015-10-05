@@ -1,6 +1,7 @@
 'use strict';
 
 var path = require('path');
+var pkg = require('load-pkg');
 var lookup = require('look-up');
 var assert = require('assert');
 var ignore = require('./ignore');
@@ -35,11 +36,20 @@ exports.resolve = function(filepath) {
   if (cache.hasOwnProperty(key)) {
     return cache[key];
   }
-  var fp = tryResolve('templates') || tryResolve(process.cwd());
+
+  var prefix = pkg.name !== 'templates'
+    ? 'templates'
+    : '';
+
+  var base = filepath
+    ? path.join(prefix, filepath)
+    : process.cwd();
+
+  var fp = tryResolve(base);
+
   if (typeof fp === 'undefined') {
     throw new Error('cannot resolve: ' + fp);
   }
-  fp = path.resolve(path.dirname(fp), filepath);
   return (cache[key] = require(fp));
 };
 
