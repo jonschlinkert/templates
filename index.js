@@ -47,8 +47,9 @@ function Templates(options) {
     return new Templates(options);
   }
   Base.call(this);
+  this.use(require('base-plugins'));
+  this.use(require('base-options'));
   this.options = options || {};
-  this.define('plugins', []);
   this.defaultConfig();
 }
 
@@ -62,7 +63,6 @@ Base.extend(Templates);
  * Mixin prototype methods
  */
 
-plugin.option(Templates.prototype);
 plugin.routes(Templates.prototype);
 plugin.engine(Templates.prototype);
 plugin.layout(Templates.prototype);
