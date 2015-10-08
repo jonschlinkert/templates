@@ -18,10 +18,15 @@ describe('Item', function () {
       assert(item instanceof Item);
     });
 
+    it('should instantiate without new:', function () {
+      item = Item();
+      assert(item instanceof Item);
+    });
+
     it('inspect should not double name `Stream` when ctor is `Stream`', function(done) {
       var val = new Stream();
       var item = new Item({contents: val});
-      // console.log(util.inspect(item).name);
+      console.log(util.inspect(item).name);
       done();
     });
   });
