@@ -90,6 +90,7 @@ Templates.prototype.defaultConfig = function () {
   for (var key in this.options.mixins) {
     this.mixin(key, this.options.mixins[key]);
   }
+
   this.initialize(this.options);
   this.listen(this);
 };
