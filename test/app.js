@@ -83,6 +83,12 @@ describe('app', function () {
       assert(typeof app.foo ==='function');
     });
 
+    it('should expose constructors from `lib`:', function () {
+      app = new App();
+      app.expose('Collection');
+      assert(typeof app.Collection ==='function');
+    });
+
     it('should update constructors after init:', function () {
       var Group = App.Group;
       function MyGroup() {

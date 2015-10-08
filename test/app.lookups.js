@@ -3,10 +3,8 @@ require('should');
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
-var globby = require('globby');
 var resolve = require('resolve-glob');
 var support = require('./support');
-var utils = support.resolve('lib/utils');
 var App = support.resolve();
 var app;
 

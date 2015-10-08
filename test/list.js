@@ -664,8 +664,8 @@ describe('list', function () {
       list.addItem('two', {content: 'zzz'});
 
       list
-        .use(function (list) {
-          this.set('foo', 'bar')
+        .use(function () {
+          this.set('foo', 'bar');
         })
         .use(function () {
           this.set('one', 'two');

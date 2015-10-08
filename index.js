@@ -132,33 +132,6 @@ Templates.prototype.listen = function (app) {
 };
 
 /**
- * Run a plugin on the instance. Plugins are invoked
- * immediately upon creating the collection in the order
- * in which they were defined.
- *
- * ```js
- * var {%= type %} = {%= ctor %}()
- *   .use(require('foo'))
- *   .use(require('bar'))
- *   .use(require('baz'))
- * ```
- *
- * @name .use
- * @param {Function} `fn` Plugin function. If the plugin returns a function it will be passed to the `use` method of each collection created on the instance.
- * @return {Object} Returns the instance for chaining.
- * @api public
- */
-
-Templates.prototype.use = function (fn) {
-  var plugin = fn.call(this, this, this.options);
-  if (typeof plugin === 'function') {
-    this.plugins.push(plugin);
-  }
-  this.emit('use');
-  return this;
-};
-
-/**
  * Create a new collection. Collections are decorated with
  * special methods for getting and setting items from the
  * collection. Note that, unlike the [create](#create) method,

@@ -4,7 +4,6 @@ var path = require('path');
 var assert = require('assert');
 var resolve = require('resolve-glob');
 var support = require('./support');
-var utils = support.resolve('lib/utils');
 var App = support.resolve();
 var app;
 
