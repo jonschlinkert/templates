@@ -664,15 +664,15 @@ describe('list', function () {
       list.addItem('two', {content: 'zzz'});
 
       list
-        .use(function (list, options) {
-          options.foo = 'bar';
+        .use(function (list) {
+          this.set('foo', 'bar')
         })
         .use(function () {
           this.set('one', 'two');
         });
 
       assert(list.one === 'two');
-      assert(list.options.foo === 'bar');
+      assert(list.foo === 'bar');
     });
   });
 });
