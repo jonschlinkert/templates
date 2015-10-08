@@ -39,6 +39,11 @@ app.pages.getView('a.html')
 * [Install](#install)
 * [Usage](#usage)
 * [API](#api)
+  - [Common](#common)
+    + [.option](#option)
+    + [.use](#use)
+
+  - [Application](#application)
   - [Settings](#settings)
   - [Engines](#engines)
   - [Helpers](#helpers)
@@ -90,6 +95,69 @@ var app = templates();
 
 ## API
 
+### Common
+
+This section describes API features that are shared by all Templates classes.
+
+#### .option
+
+Set or get an option value.
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns the instance for chaining.
+
+**Example**
+
+```js
+app.option('a', 'b');
+app.option({c: 'd'});
+console.log(app.options);
+//=> {a: 'b', c: 'd'}
+```
+
+#### .use
+
+Run a plugin on the given instance. Plugins are invoked immediately upon instantiating in the order in which they were defined.
+
+**Example**
+
+The simplest plugin looks something like the following:
+
+```js
+app.use(function(inst) {
+  // do something to `inst`
+});
+```
+
+Note that `inst` is the instance of the class you're instantiating. So if you create an instance of `Collection`, inst is the collection instance.
+
+**Params**
+
+* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each item created on the instance.
+* `returns` **{Object}**: Returns the instance for chaining.
+
+**Usage**
+
+```js
+collection.use(function(items) {
+  // `items` is the instance, as is `this`
+
+  // optionally return a function to be passed to
+  // the `.use` method of each item created on the
+  // instance
+  return function(item) {
+    // do stuff to each `item`
+  };
+});
+```
+
+### Application
+
+This section describes the methods and features available on the main `Templates` class.
+
 ### [Templates](index.js#L45)
 
 This function is the main export of the templates module. Initialize an instance of `templates` to create your application.
@@ -105,25 +173,7 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.use](index.js#L150)
-
-Run a plugin on the instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
-
-**Params**
-
-* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each collection created on the instance.
-* `returns` **{Object}**: Returns the instance for chaining.
-
-**Example**
-
-```js
-var app = templates()
-  .use(require('foo'))
-  .use(require('bar'))
-  .use(require('baz'))
-```
-
-### [.collection](index.js#L174)
+### [.collection](index.js#L149)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -135,7 +185,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L213)
+### [.create](index.js#L188)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -295,7 +345,9 @@ app.helperGroup('mdu', {
 
 ### View
 
-### [View](lib/view.js#L20)
+API for the `View` class.
+
+### [View](lib/view.js#L26)
 
 Create an instance of `View`. Optionally pass a default object to use.
 
@@ -312,7 +364,7 @@ var view = new View({
 });
 ```
 
-### [.compile](lib/view.js#L48)
+### [.compile](lib/view.js#L54)
 
 Synchronously compile a view.
 
@@ -330,7 +382,7 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.render](lib/view.js#L66)
+### [.render](lib/view.js#L72)
 
 Asynchronously render a view.
 
@@ -389,7 +441,7 @@ console.log(view.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L104)
+### [.mergePartials](lib/plugins/context.js#L100)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -404,7 +456,9 @@ type of partials.
 
 ### Item
 
-### [Item](lib/item.js#L24)
+API for the `Item` class.
+
+### [Item](lib/item.js#L29)
 
 Create an instance of `Item`. Optionally pass a default object to use.
 
@@ -421,25 +475,7 @@ var item = new Item({
 });
 ```
 
-### [.use](lib/item.js#L87)
-
-Run a plugin on the `item` instance.
-
-**Params**
-
-* `fn` **{Function}**: plugin function to call
-* `returns` **{Object}**: Returns the item instance for chaining.
-
-**Example**
-
-```js
-var item = new Item({path: 'abc', content: '...'})
-  .use(require('foo'))
-  .use(require('bar'))
-  .use(require('baz'))
-```
-
-### [.clone](lib/item.js#L105)
+### [.clone](lib/item.js#L88)
 
 Re-decorate Item methods after calling vinyl's `.clone()` method.
 
@@ -496,7 +532,7 @@ console.log(item.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L104)
+### [.mergePartials](lib/plugins/context.js#L100)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -511,7 +547,9 @@ type of partials.
 
 ### Collections
 
-### [Collection](lib/collection.js#L18)
+API for the `Collections` class.
+
+### [Collection](lib/collection.js#L24)
 
 Create an instance of `Collection` with the given `options`.
 
@@ -526,31 +564,7 @@ var collection = new Collection();
 collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.use](lib/collection.js#L94)
-
-Run a plugin on the collection instance. Plugins are invoked immediately upon creating the collection in the order in which they were defined.
-
-**Params**
-
-* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each item created on the instance.
-* `returns` **{Object}**: Returns the instance for chaining.
-
-**Example**
-
-```js
-collection.use(function(items) {
-  // `items` is the instance, as is `this`
-
-  // optionally return a function to be passed to
-  // the `.use` method of each item created on the
-  // instance
-  return function(item) {
-    // do stuff to each `item`
-  };
-});
-```
-
-### [.setItem](lib/collection.js#L119)
+### [.setItem](lib/collection.js#L86)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -566,7 +580,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L140)
+### [.addItem](lib/collection.js#L107)
 
 Similar to `setItem`, adds an item to the collection but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener.  An item may be an instance of `Item`, if not, the item is converted to an instance of `Item`.
 
@@ -582,7 +596,7 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/collection.js#L166)
+### [.addItems](lib/collection.js#L133)
 
 Load multiple items onto the collection.
 
@@ -601,7 +615,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L193)
+### [.addList](lib/collection.js#L160)
 
 Load an array of items onto the collection.
 
@@ -621,7 +635,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L224)
+### [.getItem](lib/collection.js#L191)
 
 Get an item from the collection.
 
@@ -678,7 +692,7 @@ console.log(collection.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L104)
+### [.mergePartials](lib/plugins/context.js#L100)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -693,7 +707,9 @@ type of partials.
 
 ### List
 
-### [List](lib/list.js#L22)
+API for the `List` class.
+
+### [List](lib/list.js#L28)
 
 Create an instance of `List` with the given `options`. Lists differ from collections in that items are stored as an array, allowing items to be paginated, sorted, and grouped.
 
@@ -708,31 +724,7 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.use](lib/list.js#L107)
-
-Run a plugin on the list instance. Plugins are invoked immediately upon creating the list in the order in which they were defined.
-
-**Params**
-
-* `fn` **{Function}**: Plugin function. If the plugin returns a function it will be passed to the `use` method of each view created on the instance.
-* `returns` **{Object}**: Returns the instance for chaining.
-
-**Example**
-
-```js
-list.use(function(views) {
-  // `views` is the instance, as is `this`
-
-  // optionally return a function to be passed to
-  // the `.use` method of each view created on the
-  // instance
-  return function(view) {
-    // do stuff to each `view`
-  };
-});
-```
-
-### [.setItem](lib/list.js#L132)
+### [.setItem](lib/list.js#L105)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -748,7 +740,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L161)
+### [.addItem](lib/list.js#L134)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -765,7 +757,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L188)
+### [.addItems](lib/list.js#L161)
 
 Load multiple items onto the collection.
 
@@ -784,7 +776,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L217)
+### [.addList](lib/list.js#L190)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -802,7 +794,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.getIndex](lib/list.js#L253)
+### [.getIndex](lib/list.js#L226)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -818,7 +810,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L269)
+### [.getItem](lib/list.js#L242)
 
 Get a specific item from the list by `key`.
 
@@ -834,7 +826,7 @@ list.getItem('foo.html');
 //=> '<View <foo.html>>'
 ```
 
-### [.removeItem](lib/list.js#L286)
+### [.removeItem](lib/list.js#L259)
 
 Remove an item from the list.
 
@@ -851,7 +843,7 @@ list.addItems({
 });
 ```
 
-### [.extendItem](lib/list.js#L306)
+### [.extendItem](lib/list.js#L279)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -862,7 +854,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L324)
+### [.groupBy](lib/list.js#L297)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -876,7 +868,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L350)
+### [.sortBy](lib/list.js#L323)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -891,7 +883,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L384)
+### [.paginate](lib/list.js#L357)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -929,7 +921,9 @@ console.log(list.options);
 
 ### Group
 
-### [Group](lib/group.js#L18)
+API for the `Group` class.
+
+### [Group](lib/group.js#L24)
 
 Create an instance of `Group` with the given `options`.
 
@@ -942,23 +936,6 @@ Create an instance of `Group` with the given `options`.
 ```js
 var group = new Group({
   'foo': { items: [1,2,3] }
-});
-```
-
-### [.use](lib/group.js#L46)
-
-Run a plugin on the group instance. Plugins are invoked immediately upon creating the group in the order in which they were defined.
-
-**Params**
-
-* `fn` **{Function}**: Plugin function.
-* `returns` **{Object}**: Returns the instance for chaining.
-
-**Example**
-
-```js
-group.use(function(group) {
-  // `group` is the instance, as is `this`
 });
 ```
 
@@ -1097,7 +1074,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L104)
+### [.mergePartials](lib/plugins/context.js#L100)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1217,7 +1194,7 @@ $ npm i -d && npm test
 
 ## Code coverage
 
-As of October 04, 2015, code coverage is 100%.
+As of October 08, 2015, code coverage is 100%.
 
 ```sh
 Statements   : 100% (1162/1162)
@@ -1246,4 +1223,4 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on October 04, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on October 08, 2015._
