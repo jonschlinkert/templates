@@ -7,10 +7,10 @@
 
 'use strict';
 
-var Base = require('base-methods');
 var helpers = require('./lib/helpers/');
 var plugin = require('./lib/plugins/');
 var utils = require('./lib/utils/');
+var Base = require('./lib/base');
 var lib = require('./lib/');
 
 /**
@@ -47,8 +47,6 @@ function Templates(options) {
     return new Templates(options);
   }
   Base.call(this);
-  this.use(require('base-plugins'));
-  this.use(require('base-options'));
   this.options = options || {};
   this.defaultConfig();
 }
@@ -75,39 +73,42 @@ plugin.errors(Templates.prototype, 'Templates');
  */
 
 Templates.prototype.defaultConfig = function () {
-  this.define('isApp', true);
+  this.is('App');
 
   this.use(plugin.init);
   this.use(plugin.renameKey());
-  this.use(plugin.item('item', 'Item'));
-  this.use(plugin.item('view', 'View'));
   this.use(plugin.context);
   this.use(plugin.helpers);
+  this.use(plugin.item('item', 'Item'));
+  this.use(plugin.item('view', 'View'));
 
   this.inflections = {};
   this.items = {};
   this.views = {};
+
   for (var key in this.options.mixins) {
     this.mixin(key, this.options.mixins[key]);
   }
 
-  this.initialize(this.options);
+  // listen for options events
   this.listen(this);
+
+  // expose constructors on the instance
+  this.expose('Base');
+  this.expose('Item');
+  this.expose('List');
+  this.expose('View');
+  this.expose('Collection');
+  this.expose('Group');
+  this.expose('Views');
 };
 
 /**
- * Initialize defaults. Exposes constructors on
- * app instance.
+ * Expose constructors on app instance.
  */
 
-Templates.prototype.initialize = function () {
-  this.define('Base', Base);
-  this.define('Item', this.options.Item || Item);
-  this.define('List', this.options.List || List);
-  this.define('View', this.options.View || View);
-  this.define('Collection', this.options.Collection || Collection);
-  this.define('Group', this.options.Group || Group);
-  this.define('Views', this.options.Views || Views);
+Templates.prototype.expose = function (name) {
+  this.define(name, this.options[name] || lib[name.toLowerCase()]);
 };
 
 /**
