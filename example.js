@@ -1,8 +1,10 @@
+var path = require('path');
 var templates = require('./');
 var app = templates();
 var green = require('ansi-green');
 var yellow = require('ansi-yellow');
 var red = require('ansi-red');
+
 
 app.use(function (app) {
   app.on('error', function (err) {
@@ -75,7 +77,6 @@ app.section('articles')
     console.log(res.content)
   })
 
-// console.log(app.views.articles)
 
 /**
  * Events
@@ -87,4 +88,18 @@ posts.engine('html', require('engine-base'));
 posts.addView('home.html', {content: 'The <%= title %> page'})
   .render({title: 'Home'}, function (err, res) {
     console.log(res.content);
+  });
+
+
+
+/**
+ * Loading templates
+ */
+
+app.create('docs', {cwd: 'test/fixtures'})
+  .option('renameKey', function (key) {
+    return path.basename(key);
   })
+  .loadViews('templates/*.tmpl')
+
+console.log(app.views.docs)
