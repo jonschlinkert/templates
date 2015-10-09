@@ -163,26 +163,6 @@ describe('views', function () {
     });
   });
 
-  describe('loadView', function() {
-    beforeEach(function() {
-      collection = new Views({
-        renameKey: function (key) {
-          return path.basename(key);
-        }
-      });
-    });
-
-    it('should load a file and add it to `views`:', function () {
-      collection.loadView('test/fixtures/templates/a.tmpl');
-      collection.views.should.have.property('a.tmpl');
-    });
-
-    it('should handle files with no extension:', function () {
-      collection.loadView('test/fixtures/noext/license');
-      collection.views.should.have.property('license');
-    });
-  });
-
   describe('addViews', function() {
     beforeEach(function() {
       collection = new Views();
