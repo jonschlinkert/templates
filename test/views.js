@@ -177,6 +177,18 @@ describe('views', function () {
       assert(isBuffer(collection.views.two.contents));
     });
 
+    it('should return the collection instance for chaining:', function () {
+      var views = collection.addViews({
+        one: {content: 'foo'},
+        two: {content: 'bar'}
+      });
+
+      var view = views.getView('one');
+      assert(view);
+      assert(view.content);
+      assert(view.content === 'foo');
+    });
+
     it('should create views from an instance of Views', function () {
       collection.addViews({
         one: {content: 'foo'},
