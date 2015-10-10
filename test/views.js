@@ -206,9 +206,9 @@ describe('views', function () {
       var one = collection.view('one', {content: 'foo'});
       var two = collection.view('two', {content: 'bar'});
 
-      assert(one instanceof View);
+      assert(one.isView);
       assert(one.path === 'one');
-      assert(two instanceof View);
+      assert(two.isView);
       assert(two.path === 'two');
     });
 
@@ -216,9 +216,9 @@ describe('views', function () {
       var one = collection.view({path: 'one', content: 'foo'});
       var two = collection.view({path: 'two', content: 'bar'});
 
-      assert(one instanceof View);
+      assert(one.isView);
       assert(one.path === 'one');
-      assert(two instanceof View);
+      assert(two.isView);
       assert(two.path === 'two');
     });
   });
