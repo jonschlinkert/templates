@@ -212,40 +212,24 @@ Templates.prototype.create = function(name, opts) {
   this.views[plural] = collection.items || collection.views;
 
   // create loader functions for adding views to this collection
-  utils.forward({
-    fromObj: collection,
-    toObj: this,
-    fromMethod: 'addViews',
-    toMethod: plural
+  this.define(plural, function() {
+    return collection.addViews.apply(collection, arguments);
+  });
+  this.define(single, function() {
+    return collection.addView.apply(collection, arguments);
   });
 
-  utils.forward({
-    fromObj: collection,
-    toObj: this,
-    fromMethod: 'addView',
-    toMethod: single
-  });
+  // decorate loader methods with collection methods
+  this[plural].__proto__ = collection;
+  this[single].__proto__ = collection;
 
-  // create aliases on the collection for
-  // addView/addViews to support chaining
-  utils.forward({
-    fromObj: collection,
-    toObj: collection,
-    fromMethod: 'addViews',
-    toMethod: plural
-  });
-
-  utils.forward({
-    fromObj: collection,
-    toObj: collection,
-    fromMethod: 'addView',
-    toMethod: single
-  });
+  // create aliases on the collection for addView/addViews
+  // to support chaining
+  collection.define(plural, this[plural]);
+  collection.define(single, this[single]);
 
   // run collection plugins
-  this.plugins.forEach(function (fn) {
-    collection.use(fn, opts);
-  });
+  this.run(collection);
 
   // emit create
   this.emit('create', collection, opts);
