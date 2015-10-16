@@ -140,7 +140,59 @@ Templates.prototype.listen = function (app) {
  * See the [collection docs](docs/collections.md) for more
  * information about collections.
  *
- * @name .collection
+ * @param  {Object} `opts` Collection options
+ * @return {Object} Returns the `collection` instance for chaining.
+ * @api public
+ */
+
+// Templates.prototype.list = function(options) {
+//   return new List(options);
+// };
+
+/**
+ * Create a new list. See the [list docs](docs/lists.md) for more
+ * information about lists.
+ *
+ * @param  {Object} `opts` List options
+ * @return {Object} Returns the `list` instance for chaining.
+ * @api public
+ */
+
+Templates.prototype.list = function (opts, created) {
+  opts = opts || {};
+
+  if (!opts.isList) {
+    utils.defaults(opts, this.options);
+  }
+
+  var List = opts.List || opts.Items || this.get('Items');
+  var list = {};
+
+  if (opts.isList === true) {
+    list = opts;
+
+  } else {
+    opts.Item = opts.Item || opts.Item || this.get('Item');
+    list = new List(opts);
+  }
+
+  // customize list items
+  this.extendViews(list, opts);
+
+  // emit the list
+  this.emit('list', list, opts);
+  return list;
+};
+
+/**
+ * Create a new collection. Collections are decorated with
+ * special methods for getting and setting items from the
+ * collection. Note that, unlike the [create](#create) method,
+ * collections created with `.collection()` are not cached.
+ *
+ * See the [collection docs](docs/collections.md) for more
+ * information about collections.
+ *
  * @param  {Object} `opts` Collection options
  * @return {Object} Returns the `collection` instance for chaining.
  * @api public
@@ -177,7 +229,6 @@ Templates.prototype.collection = function (opts, created) {
  * Create a new view collection to be stored on the `app.views` object. See
  * the [create docs](docs/collections.md#create) for more details.
  *
- * @name .create
  * @param  {String} `name` The name of the collection to create. Plural or singular form may be used, as the inflections are automatically resolved when the collection
  * is created.
  * @param  {Object} `opts` Collection options
