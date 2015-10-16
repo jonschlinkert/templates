@@ -185,6 +185,6 @@ describe('create', function () {
 
       assert(app.pages.foo);
       assert(typeof app.pages.foo === 'function');
-    })
+    });
   });
 });

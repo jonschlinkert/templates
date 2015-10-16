@@ -74,6 +74,7 @@ plugin.errors(Templates.prototype, 'Templates');
 
 Templates.prototype.defaultConfig = function () {
   this.is('App');
+  this.plugins = [];
 
   this.use(plugin.init);
   this.use(plugin.renameKey());
@@ -132,40 +133,30 @@ Templates.prototype.listen = function (app) {
 };
 
 /**
- * Create a new collection. Collections are decorated with
- * special methods for getting and setting items from the
- * collection. Note that, unlike the [create](#create) method,
- * collections created with `.collection()` are not cached.
- *
- * See the [collection docs](docs/collections.md) for more
- * information about collections.
- *
- * @param  {Object} `opts` Collection options
- * @return {Object} Returns the `collection` instance for chaining.
- * @api public
- */
-
-// Templates.prototype.list = function(options) {
-//   return new List(options);
-// };
-
-/**
  * Create a new list. See the [list docs](docs/lists.md) for more
  * information about lists.
  *
+ * ```js
+ * var list = app.list();
+ * list.addItem('abc', {content: '...'});
+ *
+ * // or, create list from a collection
+ * app.create('pages');
+ * var list = app.list(app.pages);
+ * ```
  * @param  {Object} `opts` List options
  * @return {Object} Returns the `list` instance for chaining.
  * @api public
  */
 
-Templates.prototype.list = function (opts, created) {
+Templates.prototype.list = function (opts) {
   opts = opts || {};
 
   if (!opts.isList) {
     utils.defaults(opts, this.options);
   }
 
-  var List = opts.List || opts.Items || this.get('Items');
+  var List = opts.List || this.get('List');
   var list = {};
 
   if (opts.isList === true) {
