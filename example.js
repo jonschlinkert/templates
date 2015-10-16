@@ -92,14 +92,12 @@ posts.addView('home.html', {content: 'The <%= title %> page'})
 
 
 
-/**
- * Loading templates
- */
+var collection = app.collection();
 
-app.create('docs', {cwd: 'test/fixtures'})
-  .option('renameKey', function (key) {
-    return path.basename(key);
-  })
-  .loadViews('templates/*.tmpl')
+collection
+  .addView('a', {content: '...'})
+  .addView('b', {content: '...'})
+  .addView('c', {content: '...'})
 
-console.log(app.views.docs)
+var list = app.list(collection)
+console.log(list)
