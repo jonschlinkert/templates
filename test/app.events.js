@@ -5,7 +5,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('events', function () {
+describe.skip('events', function () {
   beforeEach(function () {
     app = new App();
   });
@@ -14,6 +14,9 @@ describe('events', function () {
     var app = new App();
     app.on('foo', function () {
     });
+    app.on('foo', function () {
+    });
+    console.log(app)
     assert(Array.isArray(app._callbacks['$foo']));
   });
 
@@ -23,6 +26,7 @@ describe('events', function () {
       assert(val === 'bar');
       done();
     });
+    console.log(app)
     assert(Array.isArray(app._callbacks['$foo']));
     app.emit('foo', 'bar');
   });

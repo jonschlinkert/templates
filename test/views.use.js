@@ -7,7 +7,7 @@ var Views = App.Views;
 var View = App.View;
 var collection;
 
-describe('collection.use', function () {
+describe('views.use', function () {
   beforeEach(function () {
     collection = new Views();
   });

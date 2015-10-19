@@ -46,8 +46,8 @@ function Templates(options) {
   if (!(this instanceof Templates)) {
     return new Templates(options);
   }
-  Base.call(this);
   this.options = options || {};
+  Base.call(this);
   this.defaultConfig();
 }
 

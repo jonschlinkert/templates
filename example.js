@@ -39,7 +39,8 @@ app.create('pages')
   .render(function (err, res) {
     if (err) return console.log(err);
     console.log(res.content);
-  })
+  });
+
 
 /**
  * Plugins
