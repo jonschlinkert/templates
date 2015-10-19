@@ -44,24 +44,18 @@ app.pages.getView('a.html')
     + [.use](#use)
 
   - [Application](#application)
-  - [Settings](#settings)
   - [Engines](#engines)
   - [Helpers](#helpers)
   - [View](#view)
-    + [Settings](#settings)
-    + [Data](#data)
+    + [data](#data)
 
   - [Item](#item)
-    + [Settings](#settings)
-    + [Data](#data)
+    + [data](#data)
 
   - [Collections](#collections)
-    + [Settings](#settings)
     + [Data](#data)
 
   - [List](#list)
-    + [Settings](#settings)
-
   - [Group](#group)
   - [Lookups](#lookups)
   - [Rendering](#rendering)
@@ -173,7 +167,27 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.collection](index.js#L149)
+### [.list](index.js#L152)
+
+Create a new list. See the [list docs](docs/lists.md) for more information about lists.
+
+**Params**
+
+* `opts` **{Object}**: List options
+* `returns` **{Object}**: Returns the `list` instance for chaining.
+
+**Example**
+
+```js
+var list = app.list();
+list.addItem('abc', {content: '...'});
+
+// or, create list from a collection
+app.create('pages');
+var list = app.list(app.pages);
+```
+
+### [.collection](index.js#L192)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -185,7 +199,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L188)
+### [.create](index.js#L230)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -195,27 +209,6 @@ the [create docs](docs/collections.md#create) for more details.
 * `name` **{String}**: The name of the collection to create. Plural or singular form may be used, as the inflections are automatically resolved when the collection is created.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
-
-### Settings
-
-### [.option](lib/plugins/option.js#L24)
-
-Set or get an option value.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-app.option('a', 'b');
-app.option({c: 'd'});
-console.log(app.options);
-//=> {a: 'b', c: 'd'}
-```
 
 ***
 
@@ -399,28 +392,7 @@ view.render({title: 'Home'}, function(err, res) {
 });
 ```
 
-#### Settings
-
-### [.option](lib/plugins/option.js#L24)
-
-Set or get an option value.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-view.option('a', 'b');
-view.option({c: 'd'});
-console.log(view.options);
-//=> {a: 'b', c: 'd'}
-```
-
-#### Data
+#### data
 
 ### [.data](lib/plugins/context.js#L30)
 
@@ -441,7 +413,7 @@ console.log(view.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L100)
+### [.mergePartials](lib/plugins/context.js#L108)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -490,28 +462,7 @@ Re-decorate Item methods after calling vinyl's `.clone()` method.
 item.clone({deep: true}); // false by default
 ```
 
-#### Settings
-
-### [.option](lib/plugins/option.js#L24)
-
-Set or get an option value.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-item.option('a', 'b');
-item.option({c: 'd'});
-console.log(item.options);
-//=> {a: 'b', c: 'd'}
-```
-
-#### Data
+#### data
 
 ### [.data](lib/plugins/context.js#L30)
 
@@ -532,7 +483,7 @@ console.log(item.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L100)
+### [.mergePartials](lib/plugins/context.js#L108)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -580,7 +531,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L107)
+### [.addItem](lib/collection.js#L108)
 
 Similar to `setItem`, adds an item to the collection but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener.  An item may be an instance of `Item`, if not, the item is converted to an instance of `Item`.
 
@@ -596,7 +547,7 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/collection.js#L133)
+### [.addItems](lib/collection.js#L134)
 
 Load multiple items onto the collection.
 
@@ -615,7 +566,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L160)
+### [.addList](lib/collection.js#L161)
 
 Load an array of items onto the collection.
 
@@ -635,7 +586,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L191)
+### [.getItem](lib/collection.js#L192)
 
 Get an item from the collection.
 
@@ -648,27 +599,6 @@ Get an item from the collection.
 
 ```js
 collection.getItem('a.html');
-```
-
-#### Settings
-
-### [.option](lib/plugins/option.js#L24)
-
-Set or get an option value.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-collection.option('a', 'b');
-collection.option({c: 'd'});
-console.log(collection.options);
-//=> {a: 'b', c: 'd'}
 ```
 
 #### Data
@@ -692,7 +622,7 @@ console.log(collection.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L100)
+### [.mergePartials](lib/plugins/context.js#L108)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -740,7 +670,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L134)
+### [.addItem](lib/list.js#L136)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -757,7 +687,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L161)
+### [.addItems](lib/list.js#L163)
 
 Load multiple items onto the collection.
 
@@ -776,7 +706,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L190)
+### [.addList](lib/list.js#L192)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -794,7 +724,24 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.getIndex](lib/list.js#L226)
+### [.hasItem](lib/list.js#L229)
+
+Return true if the list has the given item (name).
+
+**Params**
+
+* `key` **{String}**
+* `returns` **{Object}**
+
+**Example**
+
+```js
+list.addItem('foo.html', {content: '...'});
+list.hasItem('foo.html');
+//=> true
+```
+
+### [.getIndex](lib/list.js#L245)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -810,7 +757,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L242)
+### [.getItem](lib/list.js#L261)
 
 Get a specific item from the list by `key`.
 
@@ -826,7 +773,7 @@ list.getItem('foo.html');
 //=> '<View <foo.html>>'
 ```
 
-### [.removeItem](lib/list.js#L259)
+### [.removeItem](lib/list.js#L278)
 
 Remove an item from the list.
 
@@ -843,7 +790,7 @@ list.addItems({
 });
 ```
 
-### [.extendItem](lib/list.js#L279)
+### [.extendItem](lib/list.js#L298)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -854,7 +801,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L297)
+### [.groupBy](lib/list.js#L316)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -868,7 +815,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L323)
+### [.sortBy](lib/list.js#L342)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -883,7 +830,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L357)
+### [.paginate](lib/list.js#L376)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -894,27 +841,6 @@ Paginate all `items` in the list with the given options, See [paginationator](ht
 ```js
 var list = new List(items);
 var pages = list.paginate({limit: 5});
-```
-
-#### Settings
-
-### [.option](lib/plugins/option.js#L24)
-
-Set or get an option value.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
-**Example**
-
-```js
-list.option('a', 'b');
-list.option({c: 'd'});
-console.log(list.options);
-//=> {a: 'b', c: 'd'}
 ```
 
 ***
@@ -1074,7 +1000,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.mergePartials](lib/plugins/context.js#L100)
+### [.mergePartials](lib/plugins/context.js#L108)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1194,7 +1120,7 @@ $ npm i -d && npm test
 
 ## Code coverage
 
-As of October 10, 2015, code coverage is 100%.
+As of October 19, 2015, code coverage is 100%.
 
 ```sh
 Statements   : 100% (1162/1162)
@@ -1223,4 +1149,4 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on October 10, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on October 19, 2015._
