@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "array-sort": "^0.1.1",
-    "base-data": "^0.2.0",
+    "base-data": "^0.3.0",
     "base-methods": "^0.2.14",
     "base-options": "^0.3.0",
-    "base-plugins": "^0.2.0",
+    "base-plugins": "^0.2.1",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "define-property": "^0.2.5",
