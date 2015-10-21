@@ -218,7 +218,7 @@ describe('sync helpers', function () {
     });
   });
 
-  it.skip('should use a namespaced helper:', function (done) {
+  it('should use a namespaced helper:', function (done) {
     app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= foo.upper(a) %>', locals: {a: 'bbb'}});
 
     app.helperGroup('foo', {
@@ -330,7 +330,7 @@ describe('built-in helpers:', function () {
         });
     });
 
-    it.skip('should use locals from the `view.render` method:', function (done) {
+    it('should use locals from the `view.render` method:', function (done) {
       app.partial('abc.md', {content: '<%= name %>', locals: {name: 'EEE'}});
 
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md") %> bar'})
