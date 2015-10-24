@@ -6,14 +6,13 @@ var assert = require('assert');
 var consolidate = require('consolidate');
 var handlebars = require('engine-handlebars');
 var matter = require('parser-front-matter');
-var support = require('./support');
-var helpers = support.resolve('lib/plugins/helpers');
-var init = support.resolve('lib/plugins/init');
 var swig = consolidate.swig;
 require('swig');
 
 var support = require('./support');
 var App = support.resolve();
+var helpers = App._.proto.helpers;
+var init = App._.proto.init;
 var app;
 
 describe('helpers', function () {
