@@ -8,7 +8,7 @@
 'use strict';
 
 var helpers = require('./lib/helpers/');
-var plugin = require('./lib/plugins/');
+var proto = require('./lib/plugins/');
 var utils = require('./lib/utils/');
 var Base = require('./lib/base');
 var lib = require('./lib/');
@@ -61,12 +61,12 @@ Base.extend(Templates);
  * Mixin prototype methods
  */
 
-plugin.routes(Templates.prototype);
-plugin.engine(Templates.prototype);
-plugin.layout(Templates.prototype);
-plugin.render(Templates.prototype);
-plugin.lookup(Templates.prototype);
-plugin.errors(Templates.prototype, 'Templates');
+proto.routes(Templates.prototype);
+proto.engine(Templates.prototype);
+proto.layout(Templates.prototype);
+proto.render(Templates.prototype);
+proto.lookup(Templates.prototype);
+proto.errors(Templates.prototype, 'Templates');
 
 /**
  * Initialize Templates default configuration
@@ -76,12 +76,12 @@ Templates.prototype.defaultConfig = function () {
   this.is('App');
   this.plugins = [];
 
-  this.use(plugin.init);
-  this.use(plugin.renameKey());
-  this.use(plugin.context);
-  this.use(plugin.helpers);
-  this.use(plugin.item('item', 'Item'));
-  this.use(plugin.item('view', 'View'));
+  this.use(proto.init);
+  this.use(proto.renameKey());
+  this.use(proto.context);
+  this.use(proto.helpers);
+  this.use(proto.item('item', 'Item'));
+  this.use(proto.item('view', 'View'));
 
   this.inflections = {};
   this.items = {};
@@ -288,7 +288,8 @@ Templates.prototype.create = function(name, opts) {
  */
 
 Templates.prototype.extendView = function (view, options) {
-  plugin.view.all(this, view, options);
+  proto.view.all(this, view, options);
+  return this;
 };
 
 /**
@@ -296,7 +297,8 @@ Templates.prototype.extendView = function (view, options) {
  */
 
 Templates.prototype.extendViews = function(views, options) {
-  plugin.views(this, views, options);
+  proto.views(this, views, options);
+  return this;
 };
 
 /**
@@ -315,16 +317,17 @@ Templates.Group = Group;
  * Expose package metadata
  */
 
-utils.define(Templates, 'metadata', require('./package'));
+utils.define(Templates, 'meta', require('./package'));
+
+/**
+ * Expose properties for unit tests
+ */
+
+utils.define(Templates, 'utils', utils);
+utils.define(Templates, '_', {lib: lib, proto: proto});
 
 /**
  * Expose `Templates`
  */
 
 module.exports = Templates;
-
-/**
- * Expose utils
- */
-
-module.exports.utils = utils;
