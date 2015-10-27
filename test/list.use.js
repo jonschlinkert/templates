@@ -101,7 +101,7 @@ describe('list.use', function () {
 
       return function (item) {
         item.foo = items.addItem.bind(items);
-        assert(item instanceof Item);
+        assert(item.isItem || item.isView);
       };
     });
 

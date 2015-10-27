@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "array-sort": "^0.1.1",
-    "base-data": "^0.3.2",
-    "base-methods": "^0.3.0",
+    "base-data": "^0.3.3",
+    "base-methods": "^0.3.1",
     "base-options": "^0.4.2",
     "base-plugins": "^0.3.0",
     "clone": "^1.0.2",
@@ -37,14 +37,14 @@
     "extend-shallow": "^2.0.1",
     "group-array": "^0.3.0",
     "has-glob": "^0.1.1",
-    "inflection": "^1.7.1",
+    "inflection": "^1.7.2",
     "is-buffer": "^1.1.0",
     "layouts": "^0.10.6",
-    "lazy-cache": "^0.2.3",
-    "load-helpers": "^0.2.8",
+    "lazy-cache": "^0.2.4",
+    "load-helpers": "^0.2.9",
     "paginationator": "^0.1.2",
     "template-error": "^0.1.2",
-    "vinyl": "^1.0.0"
+    "vinyl": "^1.1.0"
   },
   "devDependencies": {
     "ansi-green": "^0.1.1",

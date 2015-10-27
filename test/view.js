@@ -373,13 +373,13 @@ describe('View', function() {
     it('should return false when the contents are a Stream', function(done) {
       var val = new Stream();
       var view = new View({contents: val});
-      view.isBuffer().should.equal(false);
+      assert(!view.isBuffer());
       done();
     });
 
     it('should return false when the contents are a null', function(done) {
       var view = new View({contents: null});
-      view.isBuffer().should.equal(false);
+      assert(!view.isBuffer());
       done();
     });
   });
@@ -388,7 +388,7 @@ describe('View', function() {
     it('should return false when the contents are a Buffer', function(done) {
       var val = new Buffer('test');
       var view = new View({contents: val});
-      view.isStream().should.equal(false);
+      assert(!view.isStream());
       done();
     });
 
@@ -401,7 +401,7 @@ describe('View', function() {
 
     it('should return false when the contents are a null', function(done) {
       var view = new View({contents: null});
-      view.isStream().should.equal(false);
+      assert(!view.isStream());
       done();
     });
   });
@@ -410,14 +410,14 @@ describe('View', function() {
     it('should return false when the contents are a Buffer', function(done) {
       var val = new Buffer('test');
       var view = new View({contents: val});
-      view.isNull().should.equal(false);
+      assert(!view.isNull());
       done();
     });
 
     it('should return false when the contents are a Stream', function(done) {
       var val = new Stream();
       var view = new View({contents: val});
-      view.isNull().should.equal(false);
+      assert(!view.isNull());
       done();
     });
 
@@ -438,14 +438,14 @@ describe('View', function() {
     it('should return false when the contents are a Buffer', function(done) {
       var val = new Buffer('test');
       var view = new View({contents: val, stat: fakeStat});
-      view.isDirectory().should.equal(false);
+      assert(!view.isDirectory());
       done();
     });
 
     it('should return false when the contents are a Stream', function(done) {
       var val = new Stream();
       var view = new View({contents: val, stat: fakeStat});
-      view.isDirectory().should.equal(false);
+      assert(!view.isDirectory());
       done();
     });
 
