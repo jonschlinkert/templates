@@ -72,7 +72,7 @@ proto.errors(Templates.prototype, 'Templates');
  * Initialize Templates default configuration
  */
 
-Templates.prototype.defaultConfig = function () {
+Templates.prototype.defaultConfig = function() {
   this.is('App');
   this.plugins = [];
 
@@ -108,7 +108,7 @@ Templates.prototype.defaultConfig = function () {
  * Expose constructors on app instance.
  */
 
-Templates.prototype.expose = function (name) {
+Templates.prototype.expose = function(name) {
   this.define(name, this.options[name] || lib[name.toLowerCase()]);
 };
 
@@ -116,15 +116,15 @@ Templates.prototype.expose = function (name) {
  * Listen for events
  */
 
-Templates.prototype.listen = function (app) {
-  this.on('option', function (key, value) {
+Templates.prototype.listen = function(app) {
+  this.on('option', function(key, value) {
     if (key === 'mixins') {
       app.visit('mixin', value);
     }
     utils.updateOptions(app, key, value);
   });
 
-  this.on('error', function (err) {
+  this.on('error', function(err) {
     if (!err || err.id !== 'rethrow') return;
     if (app.options.silent !== true) {
       console.error(err.reason);
@@ -149,7 +149,7 @@ Templates.prototype.listen = function (app) {
  * @api public
  */
 
-Templates.prototype.list = function (opts) {
+Templates.prototype.list = function(opts) {
   opts = opts || {};
 
   if (!opts.isList) {
@@ -161,7 +161,6 @@ Templates.prototype.list = function (opts) {
 
   if (opts.isList === true) {
     list = opts;
-
   } else {
     opts.Item = opts.Item || opts.View || this.get('Item');
     list = new List(opts);
@@ -189,7 +188,7 @@ Templates.prototype.list = function (opts) {
  * @api public
  */
 
-Templates.prototype.collection = function (opts, created) {
+Templates.prototype.collection = function(opts, created) {
   opts = opts || {};
 
   if (!opts.isCollection) {
@@ -201,7 +200,6 @@ Templates.prototype.collection = function (opts, created) {
 
   if (opts.isCollection === true) {
     collection = opts;
-
   } else {
     opts.Item = opts.Item || opts.View || this.get('View');
     collection = new Collection(opts);
@@ -287,7 +285,7 @@ Templates.prototype.create = function(name, opts) {
  * Decorate or override methods on a view created by a collection.
  */
 
-Templates.prototype.extendView = function (view, options) {
+Templates.prototype.extendView = function(view, options) {
   proto.view.all(this, view, options);
   return this;
 };

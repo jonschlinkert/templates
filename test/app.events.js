@@ -5,20 +5,20 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('events', function () {
-  beforeEach(function () {
+describe('events', function() {
+  beforeEach(function() {
     app = new App();
   });
 
-  it('should listen for an event:', function () {
+  it('should listen for an event:', function() {
     var app = new App();
-    app.on('foo', function () {});
+    app.on('foo', function() {});
     assert(Array.isArray(app._callbacks['$foo']));
   });
 
-  it('should emit an event:', function (done) {
+  it('should emit an event:', function(done) {
     var app = new App();
-    app.on('foo', function (val) {
+    app.on('foo', function(val) {
       assert(val === 'bar');
       done();
     });
@@ -26,10 +26,10 @@ describe('events', function () {
     app.emit('foo', 'bar');
   });
 
-  it('should listen for `view` events:', function () {
-    var app = new App();
+  it('should listen for `view` events:', function() {
+    app = new App();
 
-    app.on('view', function (view) {
+    app.on('view', function(view) {
       view.foo = 'bar';
     });
 
