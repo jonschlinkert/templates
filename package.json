@@ -1,7 +1,7 @@
 {
   "name": "templates",
   "description": "System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "homepage": "https://github.com/jonschlinkert/templates",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/templates",
@@ -24,9 +24,9 @@
   "dependencies": {
     "array-sort": "^0.1.1",
     "base-data": "^0.3.3",
-    "base-methods": "^0.3.1",
-    "base-options": "^0.4.2",
-    "base-plugins": "^0.3.0",
+    "base-methods": "^0.4.0",
+    "base-options": "^0.5.4",
+    "base-plugins": "^0.4.1",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "define-property": "^0.2.5",
