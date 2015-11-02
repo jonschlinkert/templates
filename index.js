@@ -163,7 +163,7 @@ Templates.prototype.list = function (opts) {
     list = opts;
 
   } else {
-    opts.Item = opts.Item || opts.Item || this.get('Item');
+    opts.Item = opts.Item || opts.View || this.get('Item');
     list = new List(opts);
   }
 
