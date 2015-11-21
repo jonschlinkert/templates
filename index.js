@@ -276,8 +276,7 @@ Templates.prototype.create = function(name, opts) {
   this.extendViews(collection, opts);
 
   // add collection and view helpers
-  helpers.plural(this, this[plural], opts);
-  helpers.single(this, this[single], opts);
+  helpers(this, opts);
   return collection;
 };
 
