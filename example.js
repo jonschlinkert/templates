@@ -1,10 +1,15 @@
+'use strict';
+
 var path = require('path');
-var templates = require('./');
-var app = templates();
+var red = require('ansi-red');
 var green = require('ansi-green');
 var yellow = require('ansi-yellow');
-var red = require('ansi-red');
+var templates = require('./');
+var app = templates();
 
+/**
+ * Listen for errors
+ */
 
 app.use(function (app) {
   app.on('error', function (err) {
@@ -92,13 +97,16 @@ posts.addView('home.html', {content: 'The <%= title %> page'})
   });
 
 
-
 var collection = app.collection();
-
 collection
-  .addView('a', {content: '...'})
-  .addView('b', {content: '...'})
-  .addView('c', {content: '...'})
+  .option('renameKey', function(key) {
+    return path.basename(key);
+  })
+  .addView('foo/bar/baz/a.md', {content: '...'})
+  .addView('foo/bar/baz/b.md', {content: '...'})
+  .addView('foo/bar/baz/c.md', {content: '...'})
 
-var list = app.list(collection)
-console.log(list)
+// var list = app.list(collection)
+// console.log(list)
+
+console.log(collection.views)
