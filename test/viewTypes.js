@@ -29,5 +29,11 @@ describe('viewType', function() {
       app.create('foo', {viewType: ['layout', 'renderable']});
       assert.deepEqual(app.foos.options.viewType, ['layout', 'renderable']);
     });
+
+    it('should expose viewType on `view`', function() {
+      app.create('foo', {viewType: ['layout', 'renderable']});
+      var a = app.foo('a', {content: ''});
+      assert.deepEqual(app.foos.options.viewType, a.options.viewType);
+    });
   });
 });
