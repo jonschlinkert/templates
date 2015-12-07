@@ -74,7 +74,10 @@ proto.errors(Templates.prototype, 'Templates');
 
 Templates.prototype.defaultConfig = function() {
   this.is('App');
-  this.plugins = [];
+
+  if (!this.plugins) {
+    this.plugins = {};
+  }
 
   this.use(proto.init);
   this.use(proto.renameKey());
@@ -259,6 +262,7 @@ Templates.prototype.create = function(name, opts) {
     return collection.addView.apply(collection, arguments);
   });
 
+  /* eslint-disable no-proto */
   // decorate loader methods with collection methods
   this[plural].__proto__ = collection;
   this[single].__proto__ = collection;
