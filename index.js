@@ -46,7 +46,11 @@ function Templates(options) {
   if (!(this instanceof Templates)) {
     return new Templates(options);
   }
+
   this.options = options || {};
+  utils.define(this, 'isApp', true);
+  utils.isName(this, 'Templates');
+
   Base.call(this);
   this.defaultConfig();
 }
@@ -73,8 +77,6 @@ proto.errors(Templates.prototype, 'Templates');
  */
 
 Templates.prototype.defaultConfig = function() {
-  this.is('App');
-
   if (!this.plugins) {
     this.plugins = {};
   }
