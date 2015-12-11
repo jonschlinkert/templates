@@ -10,7 +10,7 @@
   "dependencies": {
     "array-sort": "^0.1.1",
     "base-data": "^0.3.3",
-    "base-methods": "^0.5.0",
+    "base-methods": "^0.6.1",
     "base-options": "^0.5.4",
     "base-plugins": "^0.4.1",
     "clone": "^1.0.2",
@@ -23,7 +23,7 @@
     "extend-shallow": "^2.0.1",
     "group-array": "^0.3.0",
     "has-glob": "^0.1.1",
-    "inflection": "^1.7.2",
+    "inflection": "^1.8.0",
     "is-buffer": "^1.1.0",
     "layouts": "^0.10.6",
     "lazy-cache": "^0.2.4",
