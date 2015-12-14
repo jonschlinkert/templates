@@ -211,11 +211,25 @@ Templates.prototype.collection = function(opts, created) {
   }
 
   if (created !== true) {
-    this.extendViews(collection, opts);
-  }
+    // if it's a view collection, prime the viewType(s)
+    if (collection.isViews) {
+      collection.viewType();
+    }
 
-  // emit the collection
-  this.emit('collection', collection, opts);
+    // run collection plugins
+    this.run(collection);
+
+    // emit the collection
+    this.emit('collection', collection, opts);
+    this.extendViews(collection, opts);
+
+    // add collection and view helpers
+    helpers(this, opts);
+  } else {
+
+    // emit the collection
+    this.emit('collection', collection, opts);
+  }
   return collection;
 };
 
