@@ -6,15 +6,6 @@ var App = support.resolve();
 var utils = App.utils;
 
 describe('utils', function() {
-  describe('errors', function() {
-    it('should throw an error when duplicate util names are defined:', function() {
-      (function() {
-        utils('clone');
-        utils('clone');
-      }).should.throw('Cannot redefine property: clone');
-    });
-  });
-
   describe('bindAll', function() {
     it('should bind a context to fns passed on an object:', function() {
       var ctx = {app: {views: {}}, context: {a: 'b'}};
