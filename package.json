@@ -39,7 +39,7 @@
     "inflection": "^1.8.0",
     "is-buffer": "^1.1.0",
     "layouts": "^0.10.6",
-    "lazy-cache": "^0.2.4",
+    "lazy-cache": "^1.0.2",
     "load-helpers": "^0.2.9",
     "paginationator": "^0.1.2",
     "template-error": "^0.1.2",
@@ -84,6 +84,9 @@
     "templates"
   ],
   "verb": {
+    "plugins": [
+      "gulp-format-md"
+    ],
     "related": {
       "list": [
         "layouts",
