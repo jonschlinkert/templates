@@ -84,22 +84,30 @@
     "templates"
   ],
   "verb": {
-    "plugins": [
-      "gulp-format-md"
-    ],
+    "toc": {
+      "insert": false
+    },
+    "use": {
+      "gulp-format-md": {
+        "method": "preWrite",
+        "path": "./middleware.js",
+        "pattern": "readme\\.md$"
+      }
+    },
     "related": {
       "list": [
-        "layouts",
+        "assemble",
         "en-route",
         "engine",
-        "assemble",
+        "layouts",
         "verb"
       ]
     },
     "reflinks": [
-      "group-array",
       "array-sort",
+      "group-array",
       "paginationator"
-    ]
+    ],
+    "layout": "default"
   }
 }
