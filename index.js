@@ -128,13 +128,6 @@ Templates.prototype.listen = function(app) {
     }
     utils.updateOptions(app, key, value);
   });
-
-  this.on('error', function(err) {
-    if (!err || err.id !== 'rethrow') return;
-    if (app.options.silent !== true) {
-      console.error(err.reason);
-    }
-  });
 };
 
 /**
