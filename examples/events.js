@@ -13,10 +13,12 @@ app.on('view', function(view, type) {
 
 app.on('page', function(view) {
   console.log('page >', view);
+  //=> <Page "a" <Buffer 74 68 69 73 20 69 73 20 61>>
 });
 
 app.on('partial', function(view) {
   console.log('partial >', view);
+  //=> <Partial "foo" <Buffer 74 68 69 73 20 69 73 20 66 6f 6f>>
 });
 
 app.page('a', {content: 'this is a'});
