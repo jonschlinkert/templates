@@ -17,6 +17,11 @@ describe('group', function() {
       assert(group instanceof Group);
     });
 
+    it('should instantiate without new', function() {
+      var group = Group();
+      assert(group instanceof Group);
+    });
+
     it('should create an instance of Group with default List:', function() {
       var group = new Group();
       assert.deepEqual(group.List, List);

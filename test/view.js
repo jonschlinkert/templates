@@ -564,8 +564,6 @@ describe('View', function() {
 
       assert(copy.stat.isFile());
       assert(!copy.stat.isDirectory());
-      assert(view.stat instanceof fs.Stats);
-      assert(copy.stat instanceof fs.Stats);
       done();
     });
 

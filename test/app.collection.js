@@ -53,7 +53,7 @@ describe('collection', function() {
       app.pages('test/fixtures/pages/a.hbs');
       app.views.pages.should.have.property('test/fixtures/pages/a.hbs');
     });
-
+    
     it('should allow collection methods to be chained:', function() {
       app
         .pages('test/fixtures/pages/a.hbs')
