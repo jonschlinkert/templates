@@ -59,6 +59,7 @@
     "gulp-eslint": "^1.1.0",
     "gulp-istanbul": "^0.10.2",
     "gulp-mocha": "^2.2.0",
+    "is-buffer": "^1.1.0",
     "istanbul": "^0.4.0",
     "kind-of": "^3.0.2",
     "load-pkg": "^2.0.1",
