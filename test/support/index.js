@@ -1,8 +1,7 @@
 'use strict';
 
 var path = require('path');
-var pkg = require('load-pkg');
-var lookup = require('look-up');
+var findPkg = require('find-pkg');
 var assert = require('assert');
 var ignore = require('./ignore');
 var cache = {};
@@ -48,6 +47,7 @@ exports.resolve = function(filepath) {
     return cache[key];
   }
 
+  var pkg = findPkg.sync(process.cwd());
   var prefix = pkg.name !== 'templates'
     ? 'templates'
     : '';
