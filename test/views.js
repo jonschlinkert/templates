@@ -161,6 +161,27 @@ describe('views', function() {
       assert(isBuffer(collection.views.one.contents));
       assert(collection.views.one.abc === 'xyz');
     });
+
+    it('should expose the `isType` method on items', function() {
+      var collection = new Views({View: View});
+      var view = new View({content: '...'});
+      collection.setView('one', view);
+
+      var one = collection.getView('one');
+      assert(one.isType('renderable'));
+    });
+
+    it('should set viewTypes on a collection', function() {
+      var collection = new Views({View: View});
+      collection.viewType(['partial']);
+
+      var view = new View({content: '...'});
+      collection.setView('one', view);
+
+      var one = collection.getView('one');
+      assert(!one.isType('renderable'));
+      assert(one.isType('partial'));
+    });
   });
 
   describe('addViews', function() {
