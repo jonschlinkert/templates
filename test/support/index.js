@@ -30,6 +30,17 @@ exports.keys = function keys(obj) {
   return arr;
 };
 
+/**
+ * Return true if the given value is a buffer
+ */
+
+exports.isBuffer = function (val) {
+  if (val && val.constructor && typeof val.constructor.isBuffer === 'function') {
+    return val.constructor.isBuffer(val);
+  }
+  return false;
+};
+
 exports.resolve = function(filepath) {
   filepath = filepath || '';
   var key = 'app:' + filepath;
@@ -62,14 +73,3 @@ function tryResolve(name) {
     return require.resolve(path.resolve(name));
   } catch(err) {}
 }
-
-function tryRequire(name) {
-  try {
-    return require(name);
-  } catch(err) {}
-
-  try {
-    return require(path.resolve(name));
-  } catch(err) {}
-}
-

@@ -3,9 +3,8 @@ require('should');
 var path = require('path');
 var assert = require('assert');
 var typeOf = require('kind-of');
-var isBuffer = require('is-buffer');
-
 var support = require('./support');
+var isBuffer = support.isBuffer;
 var App = support.resolve();
 var List = App.List;
 var Item = App.Item;
