@@ -297,7 +297,7 @@ describe('built-in helpers:', function() {
     });
 
     it('should use helper locals.', function(cb) {
-      app.partial('abc.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
+      app.partial('abc.md', {content: '<%= name %>', locals: {name: 'BBB'}});
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md", { name: "CCC" }) %> bar'});
 
       app.render('xyz.md', {name: 'DDD'}, function(err, res) {
@@ -314,6 +314,17 @@ describe('built-in helpers:', function() {
       app.render('xyz.md', {name: 'DDD'}, function(err, res) {
         if (err) return cb(err);
         res.content.should.equal('foo AAA bar');
+        cb();
+      });
+    });
+
+    it('should prefer helper locals over front-matter', function(cb) {
+      app.partial('abc.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
+      app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md", { name: "CCC" }) %> bar'});
+
+      app.render('xyz.md', {name: 'DDD'}, function(err, res) {
+        if (err) return cb(err);
+        res.content.should.equal('foo CCC bar');
         cb();
       });
     });
@@ -348,6 +359,21 @@ describe('built-in helpers:', function() {
       app.render('xyz.md', {name: 'DDD'}, function(err, res) {
         if (err) return cb(err);
         res.content.should.equal('foo DDD bar');
+        cb();
+      });
+    });
+
+    it('should use a `helperContext` function from app.options', function(cb) {
+      app.option('helperContext', function(view, locals) {
+        return { name: 'blah' };
+      });
+
+      app.partial('abc.md', {content: '<%= name %>'});
+      app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md") %> bar'});
+
+      app.render('xyz.md', {name: 'DDD'}, function(err, res) {
+        if (err) return cb(err);
+        res.content.should.equal('foo blah bar');
         cb();
       });
     });
