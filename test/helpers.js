@@ -1,3 +1,5 @@
+'use strict';
+
 require('mocha');
 require('should');
 var path = require('path');
@@ -662,7 +664,7 @@ describe('collection helpers', function() {
     });
 
     it('should handle engine errors', function(cb) {
-      app.post('foo.hbs', {content: '{{one "two"}}'})
+      app.post('foo.hbs', {content: '{{one "two"}}'});
       app.page('one', {content: '{{posts "foo.hbs"}}'})
         .render(function(err) {
           assert(err);

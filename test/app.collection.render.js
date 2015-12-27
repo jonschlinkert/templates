@@ -25,11 +25,11 @@ describe('render', function() {
     });
 
     it('should throw an error when an engine is not defined:', function(done) {
-      pages.addView('foo.bar', {content: '<%= name %>'});
+      pages.addView('foo.bar', { content: '<%= name %>' });
       var page = pages.getView('foo.bar');
 
       app.pages.render(page, function(err) {
-        assert(err.message === 'Views#render cannot find an engine for: .bar');
+        assert(err.message === 'Views#render cannot find engine: .bar');
         done();
       });
     });

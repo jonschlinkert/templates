@@ -1,6 +1,7 @@
+'use strict';
+
 require('mocha');
 require('should');
-var async = require('async');
 var assert = require('assert');
 var support = require('./support');
 var App = support.resolve();
