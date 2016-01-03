@@ -55,10 +55,11 @@
     "coveralls": "^2.11.6",
     "engine-handlebars": "^0.8.0",
     "event-stream": "^3.3.2",
-    "find-pkg": "^0.1.0",
+    "find-pkg": "^0.1.1",
     "get-value": "^2.0.2",
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.1.1",
+    "gulp-format-md": "^0.1.4",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
     "istanbul": "^0.4.1",
@@ -96,18 +97,14 @@
     "toc": {
       "insert": false
     },
-    "use": {
-      "gulp-format-md": {
-        "method": "preWrite",
-        "path": "./middleware.js",
-        "pattern": "readme\\.md$"
-      }
-    },
     "reflinks": [
       "array-sort",
       "group-array",
       "paginationator"
     ],
-    "layout": "default"
+    "layout": "default",
+    "plugins": [
+      "gulp-format-md"
+    ]
   }
 }
