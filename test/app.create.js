@@ -30,6 +30,59 @@ describe('create', function() {
     });
   });
 
+  describe('renderable views', function() {
+    beforeEach(function() {
+      app = new App();
+      app.create('pages');
+      app.create('partials', {viewType: 'partial'});
+      app.create('layout', {viewType: 'layout'});
+    });
+
+    it('should add renderable views when no type is defined', function() {
+      app.pages.addView('foo', {content: 'bar'});
+      assert(app.views.pages.hasOwnProperty('foo'));
+    });
+
+    it('should add view Ctor names to views', function() {
+      app.pages.addView('foo', {content: 'bar'});
+      assert(app.views.pages.foo._name === 'Page');
+    });
+
+    it('should add partial views when partial type is defined', function() {
+      app.partials.addView('abc', {content: 'xyz'});
+      assert(app.views.partials.hasOwnProperty('abc'));
+    });
+
+    it('should add layout views when layout type is defined', function() {
+      app.layouts.addView('foo', {content: 'bar'});
+      assert(app.views.layouts.hasOwnProperty('foo'));
+    });
+
+    it('should set viewType on renderable views', function() {
+      app.pages.addView('foo', {content: 'bar'});
+      var view = app.pages.getView('foo');
+      assert(view.isType('renderable'));
+      assert(!view.isType('layout'));
+      assert(!view.isType('partial'));
+    });
+
+    it('should set viewType on partial views', function() {
+      app.partials.addView('foo', {content: 'bar'});
+      var view = app.partials.getView('foo');
+      assert(view.isType('partial'));
+      assert(!view.isType('layout'));
+      assert(!view.isType('renderable'));
+    });
+
+    it('should set viewType on layout views', function() {
+      app.layouts.addView('foo', {content: 'bar'});
+      var view = app.layouts.getView('foo');
+      assert(view.isType('layout'));
+      assert(!view.isType('renderable'));
+      assert(!view.isType('partial'));
+    });
+  });
+
   describe('custom constructors', function() {
     beforeEach(function() {
       var Vinyl = require('vinyl');

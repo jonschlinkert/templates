@@ -50,6 +50,9 @@ describe('View', function() {
     it('should expose `render`:', function() {
       assert(typeof view.render === 'function');
     });
+    it('should expose `isType`:', function() {
+      assert(typeof view.isType === 'function');
+    });
   });
 
   describe('properties', function() {
