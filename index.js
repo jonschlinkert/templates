@@ -7,7 +7,7 @@
 
 'use strict';
 
-var helpers = require('./lib/helpers/');
+var helpers = require('./lib/helpers');
 var proto = require('./lib/plugins/');
 var utils = require('./lib/utils/');
 var Base = require('./lib/base');
