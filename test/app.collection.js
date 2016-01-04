@@ -1,3 +1,5 @@
+'use strict';
+
 require('mocha');
 require('should');
 var fs = require('fs');
@@ -53,7 +55,7 @@ describe('collection', function() {
       app.pages('test/fixtures/pages/a.hbs');
       app.views.pages.should.have.property('test/fixtures/pages/a.hbs');
     });
-    
+
     it('should allow collection methods to be chained:', function() {
       app
         .pages('test/fixtures/pages/a.hbs')
@@ -128,16 +130,16 @@ describe('collection', function() {
       app.cache.data = {};
     });
 
-    it('should render a view with inherited app.render', function(done) {
+    it('should render a view with inherited app.render', function(cb) {
       app.page('test/fixtures/templates/a.tmpl')
         .use(function(view) {
           view.contents = fs.readFileSync(view.path);
         })
         .set('data.name', 'Brian')
         .render(function(err, res) {
-          if (err) return done(err);
-          assert(res.contents.toString() === 'Brian');
-          done();
+          if (err) return cb(err);
+          assert(res.content === 'Brian');
+          cb();
         });
     });
   });

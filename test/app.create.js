@@ -178,9 +178,7 @@ describe('create', function() {
         .use(function(views) {
           views.read = function(name) {
             var view = this.getView(name);
-            if (!view.contents) {
-              view.contents = fs.readFileSync(view.path);
-            }
+            view.contents = fs.readFileSync(view.path);
           };
         });
 
