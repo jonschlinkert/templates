@@ -1,3 +1,5 @@
+'use strict';
+
 require('mocha');
 require('should');
 var async = require('async');
@@ -25,7 +27,7 @@ describe('render', function() {
       var page = pages.getItem('foo.bar');
 
       pages.render(page, function(err) {
-        assert(err.message === 'List#render cannot find engine: .bar');
+        assert(err.message === 'List#render cannot find an engine for: .bar');
         done();
       });
     });
