@@ -4,7 +4,7 @@ title: Options
 
 ## options.mergeTypes
 
-Specify the [viewTypes](view-types.md) to merge onto the context with `mergePartials`. 
+Specify the [viewTypes](view-types.md) for the `mergePartials` method to merge onto the context at render time. 
 
 **Type:** `Array`
 

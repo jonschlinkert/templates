@@ -2,27 +2,85 @@
 
 > System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.
 
-- [Install](#install)
 - [Usage](#usage)
 - [API](#api)
   * [Common](#common)
     + [.option](#option)
     + [.use](#use)
   * [Application](#application)
+  * [[Templates](index.js#L45)](#-templates--indexjs-l45-)
+  * [[.list](index.js#L150)](#-list--indexjs-l150-)
+  * [[.collection](index.js#L189)](#-collection--indexjs-l189-)
+  * [[.create](index.js#L240)](#-create--indexjs-l240-)
   * [Engines](#engines)
+  * [[.engine](lib/plugins/engine.js#L32)](#-engine--lib-plugins-enginejs-l32-)
   * [Helpers](#helpers)
+  * [[.helper](lib/plugins/helpers.js#L23)](#-helper--lib-plugins-helpersjs-l23-)
+  * [[.helpers](lib/plugins/helpers.js#L43)](#-helpers--lib-plugins-helpersjs-l43-)
+  * [[.helper](lib/plugins/helpers.js#L62)](#-helper--lib-plugins-helpersjs-l62-)
+  * [[.asyncHelper](lib/plugins/helpers.js#L80)](#-asynchelper--lib-plugins-helpersjs-l80-)
+  * [[.asyncHelpers](lib/plugins/helpers.js#L100)](#-asynchelpers--lib-plugins-helpersjs-l100-)
+  * [[.helperGroup](lib/plugins/helpers.js#L124)](#-helpergroup--lib-plugins-helpersjs-l124-)
   * [View](#view)
+  * [[View](lib/view.js#L27)](#-view--lib-viewjs-l27-)
+  * [[.context](lib/view.js#L56)](#-context--lib-viewjs-l56-)
+  * [[.compile](lib/view.js#L75)](#-compile--lib-viewjs-l75-)
+  * [[.render](lib/view.js#L93)](#-render--lib-viewjs-l93-)
+  * [[.isType](lib/view.js#L127)](#-istype--lib-viewjs-l127-)
     + [Data](#data)
+  * [[.data](lib/plugins/context.js#L30)](#-data--lib-plugins-contextjs-l30-)
+  * [[.context](lib/plugins/context.js#L58)](#-context--lib-plugins-contextjs-l58-)
+  * [[.mergePartials](lib/plugins/context.js#L119)](#-mergepartials--lib-plugins-contextjs-l119-)
   * [Item](#item)
+  * [[Item](lib/item.js#L29)](#-item--lib-itemjs-l29-)
+  * [[.clone](lib/item.js#L85)](#-clone--lib-itemjs-l85-)
     + [Data](#data-1)
+  * [[.data](lib/plugins/context.js#L30)](#-data--lib-plugins-contextjs-l30--1)
+  * [[.context](lib/plugins/context.js#L58)](#-context--lib-plugins-contextjs-l58--1)
+  * [[.mergePartials](lib/plugins/context.js#L119)](#-mergepartials--lib-plugins-contextjs-l119--1)
   * [Collections](#collections)
+  * [[Collection](lib/collection.js#L24)](#-collection--lib-collectionjs-l24-)
+  * [[.setItem](lib/collection.js#L89)](#-setitem--lib-collectionjs-l89-)
+  * [[.addItem](lib/collection.js#L111)](#-additem--lib-collectionjs-l111-)
+  * [[.addItems](lib/collection.js#L137)](#-additems--lib-collectionjs-l137-)
+  * [[.addList](lib/collection.js#L164)](#-addlist--lib-collectionjs-l164-)
+  * [[.getItem](lib/collection.js#L195)](#-getitem--lib-collectionjs-l195-)
     + [Data](#data-2)
+  * [[.data](lib/plugins/context.js#L30)](#-data--lib-plugins-contextjs-l30--2)
+  * [[.context](lib/plugins/context.js#L58)](#-context--lib-plugins-contextjs-l58--2)
+  * [[.mergePartials](lib/plugins/context.js#L119)](#-mergepartials--lib-plugins-contextjs-l119--2)
   * [List](#list)
+  * [[List](lib/list.js#L28)](#-list--lib-listjs-l28-)
+  * [[.setItem](lib/list.js#L106)](#-setitem--lib-listjs-l106-)
+  * [[.addItem](lib/list.js#L137)](#-additem--lib-listjs-l137-)
+  * [[.addItems](lib/list.js#L164)](#-additems--lib-listjs-l164-)
+  * [[.addList](lib/list.js#L193)](#-addlist--lib-listjs-l193-)
+  * [[.hasItem](lib/list.js#L230)](#-hasitem--lib-listjs-l230-)
+  * [[.getIndex](lib/list.js#L246)](#-getindex--lib-listjs-l246-)
+  * [[.getItem](lib/list.js#L262)](#-getitem--lib-listjs-l262-)
+  * [[.removeItem](lib/list.js#L294)](#-removeitem--lib-listjs-l294-)
+  * [[.extendItem](lib/list.js#L314)](#-extenditem--lib-listjs-l314-)
+  * [[.groupBy](lib/list.js#L333)](#-groupby--lib-listjs-l333-)
+  * [[.sortBy](lib/list.js#L359)](#-sortby--lib-listjs-l359-)
+  * [[.paginate](lib/list.js#L393)](#-paginate--lib-listjs-l393-)
   * [Group](#group)
+  * [[Group](lib/group.js#L24)](#-group--lib-groupjs-l24-)
   * [Lookups](#lookups)
+  * [[.find](lib/plugins/lookup.js#L25)](#-find--lib-plugins-lookupjs-l25-)
+  * [[.getView](lib/plugins/lookup.js#L69)](#-getview--lib-plugins-lookupjs-l69-)
+  * [[.getViews](lib/plugins/lookup.js#L105)](#-getviews--lib-plugins-lookupjs-l105-)
   * [Rendering](#rendering)
+  * [[.compile](lib/plugins/render.js#L70)](#-compile--lib-plugins-renderjs-l70-)
+  * [[.render](lib/plugins/render.js#L148)](#-render--lib-plugins-renderjs-l148-)
   * [Context](#context)
+  * [[.data](lib/plugins/context.js#L30)](#-data--lib-plugins-contextjs-l30--3)
+  * [[.context](lib/plugins/context.js#L58)](#-context--lib-plugins-contextjs-l58--3)
+  * [[.mergePartials](lib/plugins/context.js#L119)](#-mergepartials--lib-plugins-contextjs-l119--3)
   * [Routes and middleware](#routes-and-middleware)
+  * [[.handle](lib/plugins/routes.js#L45)](#-handle--lib-plugins-routesjs-l45-)
+  * [[.route](lib/plugins/routes.js#L130)](#-route--lib-plugins-routesjs-l130-)
+  * [[.all](lib/plugins/routes.js#L152)](#-all--lib-plugins-routesjs-l152-)
+  * [[.param](lib/plugins/routes.js#L181)](#-param--lib-plugins-routesjs-l181-)
 - [Code coverage](#code-coverage)
 - [History](#history)
 - [Related projects](#related-projects)
@@ -32,14 +90,6 @@
 - [License](#license)
 
 _(TOC generated by [verb](https://github.com/verbose/verb) using [markdown-toc](https://github.com/jonschlinkert/markdown-toc))_
-
-## Install
-
-Install with [npm](https://www.npmjs.com/):
-
-```sh
-$ npm i templates --save
-```
 
 **Features**
 
@@ -1000,7 +1050,7 @@ var posts = app.getViews('posts');
 
 ### Rendering
 
-### [.compile](lib/plugins/render.js#L49)
+### [.compile](lib/plugins/render.js#L70)
 
 Compile `content` with the given `locals`.
 
@@ -1025,7 +1075,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](lib/plugins/render.js#L127)
+### [.render](lib/plugins/render.js#L148)
 
 Render a view with the given `locals` and `callback`.
 
@@ -1092,7 +1142,7 @@ type of partials.
 
 ### Routes and middleware
 
-### [.handle](lib/plugins/routes.js#L44)
+### [.handle](lib/plugins/routes.js#L45)
 
 Handle a middleware `method` for `view`.
 
@@ -1109,7 +1159,7 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.route](lib/plugins/routes.js#L128)
+### [.route](lib/plugins/routes.js#L130)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -1134,7 +1184,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](lib/plugins/routes.js#L150)
+### [.all](lib/plugins/routes.js#L152)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1153,7 +1203,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](lib/plugins/routes.js#L179)
+### [.param](lib/plugins/routes.js#L181)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -1181,7 +1231,7 @@ app.onLoad('/blog/:title', function(view, next) {
 
 ## Code coverage
 
-As of January 03, 2016, code coverage is 100%.
+As of January 06, 2016, code coverage is 100%.
 
 ```sh
 Statements   : 100% (1162/1162)
@@ -1191,6 +1241,14 @@ Lines        : 100% (1141/1141)
 ```
 
 ## History
+
+**v0.9.5**
+
+* Fixes error messages when no engine is found for a view, and the view does not have a file extension.
+
+**v0.9.4**
+
+* Fixes a lookup bug in render and compile that was returning the first view that matched the given name from _any_ collection. So if a partial and a page shared the same name, if the partial was matched first it was returned. Now the `renderable` view is rendered (e.g. page)
 
 **v0.9.0**
 
@@ -1214,7 +1272,7 @@ Lines        : 100% (1141/1141)
 
 ## Related projects
 
-* [assemble](https://www.npmjs.com/package/assemble): Static site generator for Grunt.js, Yeoman and Node.js. Used by Zurb Foundation, Zurb Ink, H5BP/Effeckt,… [more](https://www.npmjs.com/package/assemble) | [homepage](http://assemble.io)
+* [assemble](https://www.npmjs.com/package/assemble): Assemble is a powerful, extendable and easy to use static site generator for node.js. Used… [more](https://www.npmjs.com/package/assemble) | [homepage](https://github.com/assemble/assemble)
 * [en-route](https://www.npmjs.com/package/en-route): Routing for static site generators, build systems and task runners, heavily based on express.js routes… [more](https://www.npmjs.com/package/en-route) | [homepage](https://github.com/jonschlinkert/en-route)
 * [engine](https://www.npmjs.com/package/engine): Template engine based on Lo-Dash template, but adds features like the ability to register helpers… [more](https://www.npmjs.com/package/engine) | [homepage](https://github.com/jonschlinkert/engine)
 * [layouts](https://www.npmjs.com/package/layouts): Wraps templates with layouts. Layouts can use other layouts and be nested to any depth.… [more](https://www.npmjs.com/package/layouts) | [homepage](https://github.com/doowb/layouts)
@@ -1246,4 +1304,4 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb) on January 03, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb) on January 06, 2016._
