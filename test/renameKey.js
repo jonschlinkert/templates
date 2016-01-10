@@ -1,3 +1,4 @@
+require('should');
 var path = require('path');
 var support = require('./support');
 var App = support.resolve();
@@ -18,6 +19,24 @@ describe('renameKey', function() {
   describe('global options:', function() {
     it('should use `renameKey` function defined on global opts:', function() {
       app.option('renameKey', renameKey);
+
+      app.posts('a/b/c/a.txt', {content: '...'});
+      app.posts('a/b/c/b.txt', {content: '...'});
+      app.posts('a/b/c/c.txt', {content: '...'});
+      app.post('a/b/c/d.txt', {content: '...'});
+      app.post('a/b/c/e.txt', {content: '...'});
+
+      app.views.posts.should.have.property('a');
+      app.views.posts.should.have.property('b');
+      app.views.posts.should.have.property('c');
+      app.views.posts.should.have.property('d');
+      app.views.posts.should.have.property('e');
+    });
+
+    it('should expose `view` when defined on global opts:', function() {
+      app.option('renameKey', function(key, view) {
+        return view.filename;
+      });
 
       app.posts('a/b/c/a.txt', {content: '...'});
       app.posts('a/b/c/b.txt', {content: '...'});
@@ -69,6 +88,26 @@ describe('renameKey', function() {
       app.create('post', {
         renameKey: function(key) {
           return 'posts/' + path.basename(key);
+        }
+      });
+
+      app.posts('a/b/c/a.txt', {content: '...'});
+      app.posts('a/b/c/b.txt', {content: '...'});
+      app.posts('a/b/c/c.txt', {content: '...'});
+      app.post('a/b/c/d.txt', {content: '...'});
+      app.post('a/b/c/e.txt', {content: '...'});
+
+      app.views.posts.should.have.property('posts/a.txt');
+      app.views.posts.should.have.property('posts/b.txt');
+      app.views.posts.should.have.property('posts/c.txt');
+      app.views.posts.should.have.property('posts/d.txt');
+      app.views.posts.should.have.property('posts/e.txt');
+    });
+
+    it('should expose `view` as the second argument', function() {
+      app.create('post', {
+        renameKey: function(key, view) {
+          return 'posts/' + view.basename;
         }
       });
 
@@ -136,6 +175,40 @@ describe('renameKey', function() {
         app.views.posts.should.have.property('post/e.txt');
       });
 
+      it('should expose `view` when defined on collection.options:', function() {
+        app.pages.option('renameKey', function(key, view) {
+          return 'page/' + view.basename;
+        });
+
+        app.posts.option('renameKey', function(key, view) {
+          return 'post/' + view.basename;
+        });
+
+        app.pages('a/b/c/a.txt', {content: '...'});
+        app.pages('a/b/c/b.txt', {content: '...'});
+        app.pages('a/b/c/c.txt', {content: '...'});
+        app.page('a/b/c/d.txt', {content: '...'});
+        app.page('a/b/c/e.txt', {content: '...'});
+
+        app.posts('a/b/c/a.txt', {content: '...'});
+        app.posts('a/b/c/b.txt', {content: '...'});
+        app.posts('a/b/c/c.txt', {content: '...'});
+        app.post('a/b/c/d.txt', {content: '...'});
+        app.post('a/b/c/e.txt', {content: '...'});
+
+        app.views.pages.should.have.property('page/a.txt');
+        app.views.pages.should.have.property('page/b.txt');
+        app.views.pages.should.have.property('page/c.txt');
+        app.views.pages.should.have.property('page/d.txt');
+        app.views.pages.should.have.property('page/e.txt');
+
+        app.views.posts.should.have.property('post/a.txt');
+        app.views.posts.should.have.property('post/b.txt');
+        app.views.posts.should.have.property('post/c.txt');
+        app.views.posts.should.have.property('post/d.txt');
+        app.views.posts.should.have.property('post/e.txt');
+      });
+
       it('should use the `collection.renameKey()` method:', function() {
         app.pages.renameKey(function(key) {
           return 'baz/' + path.basename(key);
@@ -154,9 +227,45 @@ describe('renameKey', function() {
         app.views.pages.should.have.property('baz/e.txt');
       });
 
+      it('should expose `view` with the `collection.renameKey()` method:', function() {
+        app.pages.renameKey(function(key, view) {
+          return 'baz/' + view.basename;
+        });
+
+        app.pages('a/b/c/a.txt', {content: '...'});
+        app.pages('a/b/c/b.txt', {content: '...'});
+        app.pages('a/b/c/c.txt', {content: '...'});
+        app.page('a/b/c/d.txt', {content: '...'});
+        app.page('a/b/c/e.txt', {content: '...'});
+
+        app.views.pages.should.have.property('baz/a.txt');
+        app.views.pages.should.have.property('baz/b.txt');
+        app.views.pages.should.have.property('baz/c.txt');
+        app.views.pages.should.have.property('baz/d.txt');
+        app.views.pages.should.have.property('baz/e.txt');
+      });
+
       it('should use the `app.renameKey()` method:', function() {
         app.renameKey(function(key) {
           return 'app/' + path.basename(key);
+        });
+
+        app.pages('a/b/c/a.txt', {content: '...'});
+        app.pages('a/b/c/b.txt', {content: '...'});
+        app.pages('a/b/c/c.txt', {content: '...'});
+        app.page('a/b/c/d.txt', {content: '...'});
+        app.page('a/b/c/e.txt', {content: '...'});
+
+        app.views.pages.should.have.property('app/a.txt');
+        app.views.pages.should.have.property('app/b.txt');
+        app.views.pages.should.have.property('app/c.txt');
+        app.views.pages.should.have.property('app/d.txt');
+        app.views.pages.should.have.property('app/e.txt');
+      });
+
+      it('should expose `view` with the `app.renameKey()` method:', function() {
+        app.renameKey(function(key, view) {
+          return 'app/' + view.basename;
         });
 
         app.pages('a/b/c/a.txt', {content: '...'});
@@ -265,7 +374,7 @@ describe('renameKey', function() {
             }
           }
         });
-
+        
         app.page('test/fixtures/pages/a.hbs', {
           options: {
             renameKey: function bar(key) {
