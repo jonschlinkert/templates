@@ -382,6 +382,7 @@ describe('built-in helpers:', function() {
     it('should return an empty string when the partial is missing.', function(cb) {
       app.partial('abc.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("def.md", { name: "CCC" }) %> bar'});
+
       app.render('xyz.md', {name: 'DDD'}, function(err, res) {
         if (err) return cb(err);
         res.content.should.equal('foo  bar');
