@@ -596,7 +596,7 @@ describe('list', function() {
       });
     });
 
-    it.skip('should render items when pager is `true`', function(done) {
+    it('should render items when pager is `true`', function(done) {
       list = new List({pager: true});
       list.engine('.md', require('engine-base'));
       list.addList(items);
