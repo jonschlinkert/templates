@@ -1,3 +1,5 @@
+'use strict';
+
 require('should');
 var path = require('path');
 var support = require('./support');
