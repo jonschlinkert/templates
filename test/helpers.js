@@ -297,6 +297,25 @@ describe('built-in helpers:', function() {
       });
     });
 
+    it('should log out a rendering message when options.verbose is true', function(cb) {
+      app.partial('a.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
+      app.page('b.md', {path: 'b.md', content: 'foo <%= partial("a.md") %> bar'});
+      var log = console.log;
+      var count = 0;
+
+      console.log = function(msg) {
+        assert.equal(msg, 'partial helper rendering: "a.md"');
+        count++;
+      };
+
+      app.render('b.md', { verbose: true }, function(err, res) {
+        if (err) return cb(err);
+        assert(count === 1);
+        console.log = log;
+        cb();
+      });
+    });
+
     it('should use helper locals.', function(cb) {
       app.partial('abc.md', {content: '<%= name %>', locals: {name: 'BBB'}});
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md", { name: "CCC" }) %> bar'});

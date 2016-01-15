@@ -2,6 +2,7 @@ require('mocha');
 var should = require('should');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 var assert = require('assert');
 var es = require('event-stream');
 var Stream = require('stream');
@@ -22,16 +23,16 @@ describe('Item', function() {
       assert(item instanceof Item);
     });
 
-    it('inspect should not double name `Stream` when ctor is `Stream`', function(done) {
+    it('inspect should not double name `Stream` when ctor is `Stream`', function(cb) {
       var val = new Stream();
       item = new Item({contents: val});
-      done();
+      cb();
     });
   });
 
   describe('static methods', function() {
     it('should expose `extend`:', function() {
-      assert(typeof Item.extend === 'function');
+      assert.equal(typeof Item.extend, 'function');
     });
   });
 
@@ -41,23 +42,39 @@ describe('Item', function() {
     });
 
     it('should expose `set`:', function() {
-      assert(typeof item.set === 'function');
+      assert.equal(typeof item.set, 'function');
     });
     it('should expose `get`:', function() {
-      assert(typeof item.get === 'function');
+      assert.equal(typeof item.get, 'function');
     });
     it('should expose `del`:', function() {
-      assert(typeof item.del === 'function');
+      assert.equal(typeof item.del, 'function');
     });
     it('should expose `define`:', function() {
-      assert(typeof item.define === 'function');
+      assert.equal(typeof item.define, 'function');
     });
     it('should expose `visit`:', function() {
-      assert(typeof item.visit === 'function');
+      assert.equal(typeof item.visit, 'function');
     });
   });
 
   describe('properties', function() {
+    it('should expose a `_name` property', function() {
+      item = new Item({});
+      assert(item._name);
+    });
+
+    it('should use `Item` as the default `_name`', function() {
+      item = new Item({});
+      assert.equal(item._name, 'Item');
+    });
+
+    it('should allow `_name` to be set after instantiation', function() {
+      item = new Item({});
+      item._name = 'foo';
+      assert.equal(item._name, 'foo');
+    });
+
     it('should expose an `options` property', function() {
       item = new Item({});
       assert.deepEqual(item.options, {});
@@ -66,7 +83,7 @@ describe('Item', function() {
 
     it('should add `options` when passed on the constructor', function() {
       item = new Item({options: {foo: 'bar'}});
-      assert(item.options.foo === 'bar');
+      assert.equal(item.options.foo, 'bar');
     });
 
     it('should expose a `data` property', function() {
@@ -77,12 +94,12 @@ describe('Item', function() {
 
     it('should add `data` when passed on the constructor', function() {
       item = new Item({data: {foo: 'bar'}});
-      assert(item.data.foo === 'bar');
+      assert.equal(item.data.foo, 'bar');
     });
 
     it('should add `locals` when passed on the constructor', function() {
       item = new Item({locals: {foo: 'bar'}});
-      assert(item.locals.foo === 'bar');
+      assert.equal(item.locals.foo, 'bar');
     });
   });
 
@@ -105,7 +122,7 @@ describe('Item', function() {
   describe('cwd', function() {
     it('should get properties from the object', function() {
       item = new Item({cwd: 'test/fixtures'});
-      assert(item.cwd === 'test/fixtures');
+      assert.equal(item.cwd, 'test/fixtures');
     });
   });
 
@@ -119,11 +136,11 @@ describe('Item', function() {
       clone.set('baz', 'quux');
       clone.set('options.three', 'four');
       assert.equal(clone.get('foo'), item.get('foo'));
-      assert(clone.get('baz') === 'quux');
+      assert.equal(clone.get('baz'), 'quux');
       assert(!item.get('baz'));
       // not deep cloned
-      assert(clone.get('options.three') === 'four');
-      assert(item.get('options.three') === 'four');
+      assert.equal(clone.get('options.three'), 'four');
+      assert.equal(item.get('options.three'), 'four');
     });
 
     it('should deep clone the entire object', function() {
@@ -132,9 +149,9 @@ describe('Item', function() {
       item.set('options.one', 'two');
       var clone = item.clone({deep: true});
       clone.set('options.three', 'four');
-      assert(item.get('options.one') === 'two');
-      assert(clone.get('options.one') === 'two');
-      assert(clone.get('options.three') === 'four');
+      assert.equal(item.get('options.one'), 'two');
+      assert.equal(clone.get('options.one'), 'two');
+      assert.equal(clone.get('options.three'), 'four');
       assert(!item.get('options.three'));
     });
   });
@@ -172,173 +189,173 @@ describe('Item', function() {
 
 describe('Item', function() {
   describe('isVinyl()', function() {
-    it('should return true on a vinyl object', function(done) {
+    it('should return true on a vinyl object', function(cb) {
       item = new Item();
-      assert(Item.isVinyl(item) === true);
-      done();
+      assert.equal(Item.isVinyl(item), true);
+      cb();
     });
-    it('should return false on a normal object', function(done) {
-      assert(Item.isVinyl({}) === false);
-      done();
+    it('should return false on a normal object', function(cb) {
+      assert.equal(Item.isVinyl({}), false);
+      cb();
     });
-    it('should return false on a null object', function(done) {
-      assert(Item.isVinyl({}) === false);
-      done();
+    it('should return false on a null object', function(cb) {
+      assert.equal(Item.isVinyl({}), false);
+      cb();
     });
   });
 
   describe('constructor()', function() {
-    it('should default cwd to process.cwd', function(done) {
+    it('should default cwd to process.cwd', function(cb) {
       item = new Item();
       item.cwd.should.equal(process.cwd());
-      done();
+      cb();
     });
 
-    it('should default base to cwd', function(done) {
+    it('should default base to cwd', function(cb) {
       var cwd = '/';
       item = new Item({cwd: cwd});
       item.base.should.equal(cwd);
-      done();
+      cb();
     });
 
-    it('should default base to cwd even when none is given', function(done) {
+    it('should default base to cwd even when none is given', function(cb) {
       item = new Item();
       item.base.should.equal(process.cwd());
-      done();
+      cb();
     });
 
-    it('should default path to null', function(done) {
+    it('should default path to null', function(cb) {
       item = new Item();
       should.not.exist(item.path);
-      done();
+      cb();
     });
 
-    it('should default history to []', function(done) {
+    it('should default history to []', function(cb) {
       item = new Item();
       item.history.should.eql([]);
-      done();
+      cb();
     });
 
-    it('should default stat to null', function(done) {
+    it('should default stat to null', function(cb) {
       item = new Item();
       should.not.exist(item.stat);
-      done();
+      cb();
     });
 
-    it('should default contents to null', function(done) {
+    it('should default contents to null', function(cb) {
       item = new Item();
       should.not.exist(item.contents);
-      done();
+      cb();
     });
 
-    it('should set base to given value', function(done) {
+    it('should set base to given value', function(cb) {
       var val = '/';
       item = new Item({base: val});
       item.base.should.equal(val);
-      done();
+      cb();
     });
 
-    it('should set cwd to given value', function(done) {
+    it('should set cwd to given value', function(cb) {
       var val = '/';
       item = new Item({cwd: val});
       item.cwd.should.equal(val);
-      done();
+      cb();
     });
 
-    it('should set path to given value', function(done) {
+    it('should set path to given value', function(cb) {
       var val = '/test.coffee';
       item = new Item({path: val});
       item.path.should.equal(val);
       item.history.should.eql([val]);
-      done();
+      cb();
     });
 
-    it('should set history to given value', function(done) {
+    it('should set history to given value', function(cb) {
       var val = '/test.coffee';
       item = new Item({history: [val]});
       item.path.should.equal(val);
       item.history.should.eql([val]);
-      done();
+      cb();
     });
 
-    it('should set stat to given value', function(done) {
+    it('should set stat to given value', function(cb) {
       var val = {};
       item = new Item({stat: val});
       item.stat.should.equal(val);
-      done();
+      cb();
     });
 
-    it('should set contents to given value', function(done) {
+    it('should set contents to given value', function(cb) {
       var val = new Buffer('test');
       item = new Item({contents: val});
       item.contents.should.equal(val);
-      done();
+      cb();
     });
   });
 
   describe('isBuffer()', function() {
-    it('should return true when the contents are a Buffer', function(done) {
+    it('should return true when the contents are a Buffer', function(cb) {
       var val = new Buffer('test');
       item = new Item({contents: val});
       item.isBuffer().should.equal(true);
-      done();
+      cb();
     });
 
-    it('should return false when the contents are a Stream', function(done) {
+    it('should return false when the contents are a Stream', function(cb) {
       var val = new Stream();
       var item = new Item({contents: val});
       item.isBuffer().should.equal(false);
-      done();
+      cb();
     });
 
-    it('should return false when the contents are a null', function(done) {
+    it('should return false when the contents are a null', function(cb) {
       var item = new Item({contents: null});
       item.isBuffer().should.equal(false);
-      done();
+      cb();
     });
   });
 
   describe('isStream()', function() {
-    it('should return false when the contents are a Buffer', function(done) {
+    it('should return false when the contents are a Buffer', function(cb) {
       var val = new Buffer('test');
       var item = new Item({contents: val});
       item.isStream().should.equal(false);
-      done();
+      cb();
     });
 
-    it('should return true when the contents are a Stream', function(done) {
+    it('should return true when the contents are a Stream', function(cb) {
       var val = new Stream();
       var item = new Item({contents: val});
       item.isStream().should.equal(true);
-      done();
+      cb();
     });
 
-    it('should return false when the contents are a null', function(done) {
+    it('should return false when the contents are a null', function(cb) {
       var item = new Item({contents: null});
       item.isStream().should.equal(false);
-      done();
+      cb();
     });
   });
 
   describe('isNull()', function() {
-    it('should return false when the contents are a Buffer', function(done) {
+    it('should return false when the contents are a Buffer', function(cb) {
       var val = new Buffer('test');
       var item = new Item({contents: val});
       item.isNull().should.equal(false);
-      done();
+      cb();
     });
 
-    it('should return false when the contents are a Stream', function(done) {
+    it('should return false when the contents are a Stream', function(cb) {
       var val = new Stream();
       var item = new Item({contents: val});
       item.isNull().should.equal(false);
-      done();
+      cb();
     });
 
-    it('should return true when the contents are a null', function(done) {
+    it('should return true when the contents are a null', function(cb) {
       var item = new Item({contents: null});
       item.isNull().should.equal(true);
-      done();
+      cb();
     });
   });
 
@@ -349,29 +366,29 @@ describe('Item', function() {
       }
     };
 
-    it('should return false when the contents are a Buffer', function(done) {
+    it('should return false when the contents are a Buffer', function(cb) {
       var val = new Buffer('test');
       var item = new Item({contents: val, stat: fakeStat});
       item.isDirectory().should.equal(false);
-      done();
+      cb();
     });
 
-    it('should return false when the contents are a Stream', function(done) {
+    it('should return false when the contents are a Stream', function(cb) {
       var val = new Stream();
       var item = new Item({contents: val, stat: fakeStat});
       item.isDirectory().should.equal(false);
-      done();
+      cb();
     });
 
-    it('should return true when the contents are a null', function(done) {
+    it('should return true when the contents are a null', function(cb) {
       var item = new Item({contents: null, stat: fakeStat});
       item.isDirectory().should.equal(true);
-      done();
+      cb();
     });
   });
 
   describe('clone()', function() {
-    it('should copy all attributes over with Buffer', function(done) {
+    it('should copy all attributes over with Buffer', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -387,10 +404,10 @@ describe('Item', function() {
       item2.path.should.equal(item.path);
       item2.contents.should.not.equal(item.contents, 'buffer ref should be different');
       item2.contents.toString('utf8').should.equal(item.contents.toString('utf8'));
-      done();
+      cb();
     });
 
-    it('should copy buffer\'s reference with option contents: false', function(done) {
+    it('should copy buffer\'s reference with option contents: false', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -409,20 +426,20 @@ describe('Item', function() {
       var copy3 = item.clone({ contents: 'any string' });
       copy3.contents.should.not.equal(item.contents);
 
-      done();
+      cb();
     });
 
-    it('should copy all attributes over with Stream', function(done) {
+    it('should copy all attributes over with Stream', function(cb) {
       var contents = new Stream.PassThrough();
-      var options = {
+      
+      var item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
         contents: contents
-      };
-      var item = new Item(options);
-      var item2 = item.clone();
+      });
 
+      var item2 = item.clone();
       contents.write(new Buffer('wa'));
 
       process.nextTick(function() {
@@ -436,17 +453,17 @@ describe('Item', function() {
       item2.path.should.equal(item.path);
       item2.contents.should.not.equal(item.contents, 'stream ref should not be the same');
       item.contents.pipe(es.wait(function(err, data) {
-        if (err) return done(err);
+        if (err) return cb(err);
         item2.contents.pipe(es.wait(function(err, data2) {
-          if (err) return done(err);
+          if (err) return cb(err);
           data2.should.not.equal(data, 'stream contents ref should not be the same');
           data2.should.eql(data, 'stream contents should be the same');
         }));
       }));
-      done();
+      cb();
     });
 
-    it('should copy all attributes over with null', function(done) {
+    it('should copy all attributes over with null', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -461,10 +478,10 @@ describe('Item', function() {
       item2.base.should.equal(item.base);
       item2.path.should.equal(item.path);
       should.not.exist(item2.contents);
-      done();
+      cb();
     });
 
-    it('should properly clone the `stat` property', function(done) {
+    it('should properly clone the `stat` property', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -478,10 +495,10 @@ describe('Item', function() {
 
       assert(copy.stat.isFile());
       assert(!copy.stat.isDirectory());
-      done();
+      cb();
     });
 
-    it('should properly clone the `history` property', function(done) {
+    it('should properly clone the `history` property', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -496,10 +513,10 @@ describe('Item', function() {
       copy.history[0].should.equal(options.path);
       copy.path = 'lol';
       item.path.should.not.equal(copy.path);
-      done();
+      cb();
     });
 
-    it('should copy custom properties', function(done) {
+    it('should copy custom properties', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -518,10 +535,10 @@ describe('Item', function() {
       item2.custom.should.equal(item.custom);
       item2.custom.a.should.equal(item.custom.a);
 
-      done();
+      cb();
     });
 
-    it('should copy history', function(done) {
+    it('should copy history', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -546,10 +563,10 @@ describe('Item', function() {
       ]);
       item2.path.should.eql('/test/test-938di2s.js');
 
-      done();
+      cb();
     });
 
-    it('should copy all attributes deeply', function(done) {
+    it('should copy all attributes deeply', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -580,12 +597,12 @@ describe('Item', function() {
       item5.custom.should.equal(item.custom);
       item5.custom.a.should.equal(item.custom.a);
 
-      done();
+      cb();
     });
   });
 
   describe('pipe()', function() {
-    it('should write to stream with Buffer', function(done) {
+    it('should write to stream with Buffer', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -600,13 +617,13 @@ describe('Item', function() {
         chunk.toString('utf8').should.equal(options.contents.toString('utf8'));
       });
       stream.on('end', function() {
-        done();
+        cb();
       });
       var ret = item.pipe(stream);
       ret.should.equal(stream, 'should return the stream');
     });
 
-    it('should pipe to stream with Stream', function(done) {
+    it('should pipe to stream with Stream', function(cb) {
       var testChunk = new Buffer('test');
       var options = {
         cwd: '/',
@@ -620,7 +637,7 @@ describe('Item', function() {
         should.exist(chunk);
         (chunk instanceof Buffer).should.equal(true, 'should write as a buffer');
         chunk.toString('utf8').should.equal(testChunk.toString('utf8'));
-        done();
+        cb();
       });
       var ret = item.pipe(stream);
       ret.should.equal(stream, 'should return the stream');
@@ -628,7 +645,7 @@ describe('Item', function() {
       item.contents.write(testChunk);
     });
 
-    it('should do nothing with null', function(done) {
+    it('should do nothing with null', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -641,13 +658,13 @@ describe('Item', function() {
         throw new Error('should not write');
       });
       stream.on('end', function() {
-        done();
+        cb();
       });
       var ret = item.pipe(stream);
       ret.should.equal(stream, 'should return the stream');
     });
 
-    it('should write to stream with Buffer', function(done) {
+    it('should write to stream with Buffer', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -660,7 +677,7 @@ describe('Item', function() {
         should.exist(chunk);
         (chunk instanceof Buffer).should.equal(true, 'should write as a buffer');
         chunk.toString('utf8').should.equal(options.contents.toString('utf8'));
-        done();
+        cb();
       });
       stream.on('end', function() {
         throw new Error('should not end');
@@ -669,7 +686,7 @@ describe('Item', function() {
       ret.should.equal(stream, 'should return the stream');
     });
 
-    it('should pipe to stream with Stream', function(done) {
+    it('should pipe to stream with Stream', function(cb) {
       var testChunk = new Buffer('test');
       var options = {
         cwd: '/',
@@ -683,7 +700,7 @@ describe('Item', function() {
         should.exist(chunk);
         (chunk instanceof Buffer).should.equal(true, 'should write as a buffer');
         chunk.toString('utf8').should.equal(testChunk.toString('utf8'));
-        done();
+        cb();
       });
       stream.on('end', function() {
         throw new Error('should not end');
@@ -694,7 +711,7 @@ describe('Item', function() {
       item.contents.write(testChunk);
     });
 
-    it('should do nothing with null', function(done) {
+    it('should do nothing with null', function(cb) {
       var options = {
         cwd: '/',
         base: '/test/',
@@ -711,27 +728,53 @@ describe('Item', function() {
       });
       var ret = item.pipe(stream, {end: false});
       ret.should.equal(stream, 'should return the stream');
-      process.nextTick(done);
+      process.nextTick(cb);
     });
   });
 
   describe('inspect()', function() {
-    it('should return correct format when no contents and no path', function(done) {
+    it('should return correct format when no contents and no path', function(cb) {
       var item = new Item();
-      item.inspect().should.equal('<Item >');
-      done();
+      assert.equal(item.inspect(), '<Item >');
+      cb();
     });
 
-    it('should return correct format when Buffer and no path', function(done) {
+    it('should update the name when `_name` is defined', function(cb) {
+      var item = new Item();
+      item._name = 'Foo';
+      assert.equal(item.inspect(), '<Foo >');
+      cb();
+    });
+
+    it('should not add duplicate `Stream` name to inspect name', function(cb) {
+      function PassThroughStream() {
+        Stream.PassThrough.apply(this, arguments);
+      }
+      util.inherits(PassThroughStream, Stream.PassThrough);
+      var contents = new PassThroughStream();
+      
+      var item = new Item({
+        cwd: '/',
+        base: '/test/',
+        path: '/test/test.coffee',
+        contents: contents
+      });
+
+      contents.write(new Buffer('foo'));
+      assert.equal(item.inspect(), '<Item "test.coffee" <PassThroughStream>>');
+      cb();
+    });
+
+    it('should return correct format when Buffer and no path', function(cb) {
       var val = new Buffer('test');
       var item = new Item({
         contents: val
       });
-      item.inspect().should.equal('<Item <Buffer 74 65 73 74>>');
-      done();
+      assert.equal(item.inspect(), '<Item <Buffer 74 65 73 74>>');
+      cb();
     });
 
-    it('should return correct format when Buffer and relative path', function(done) {
+    it('should return correct format when Buffer and relative path', function(cb) {
       var val = new Buffer('test');
       var item = new Item({
         cwd: '/',
@@ -739,11 +782,11 @@ describe('Item', function() {
         path: '/test/test.coffee',
         contents: val
       });
-      item.inspect().should.equal('<Item "test.coffee" <Buffer 74 65 73 74>>');
-      done();
+      assert.equal(item.inspect(), '<Item "test.coffee" <Buffer 74 65 73 74>>');
+      cb();
     });
 
-    it('should return correct format when Buffer and only path and no base', function(done) {
+    it('should return correct format when Buffer and only path and no base', function(cb) {
       var val = new Buffer('test');
       var item = new Item({
         cwd: '/',
@@ -751,151 +794,151 @@ describe('Item', function() {
         contents: val
       });
       delete item.base;
-      item.inspect().should.equal('<Item "/test/test.coffee" <Buffer 74 65 73 74>>');
-      done();
+      assert.equal(item.inspect(), '<Item "/test/test.coffee" <Buffer 74 65 73 74>>');
+      cb();
     });
 
-    it('should return correct format when Stream and relative path', function(done) {
+    it('should return correct format when Stream and relative path', function(cb) {
       var item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
         contents: new Stream.PassThrough()
       });
-      item.inspect().should.equal('<Item "test.coffee" <PassThroughStream>>');
-      done();
+      assert.equal(item.inspect(), '<Item "test.coffee" <PassThroughStream>>');
+      cb();
     });
 
-    it('should return correct format when null and relative path', function(done) {
+    it('should return correct format when null and relative path', function(cb) {
       var item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
         contents: null
       });
-      item.inspect().should.equal('<Item "test.coffee">');
-      done();
+      assert.equal(item.inspect(), '<Item "test.coffee">');
+      cb();
     });
   });
 
   describe('contents get/set', function() {
-    it('should work with Buffer', function(done) {
+    it('should work with Buffer', function(cb) {
       var val = new Buffer('test');
       var item = new Item();
       item.contents = val;
       item.contents.should.equal(val);
-      done();
+      cb();
     });
 
-    it('should work with Stream', function(done) {
+    it('should work with Stream', function(cb) {
       var val = new Stream.PassThrough();
       var item = new Item();
       item.contents = val;
       item.contents.should.equal(val);
-      done();
+      cb();
     });
 
-    it('should work with null', function(done) {
+    it('should work with null', function(cb) {
       var val = null;
       var item = new Item();
       item.contents = val;
-      (item.contents === null).should.equal(true);
-      done();
+      assert.equal(item.contents, null);
+      cb();
     });
 
-    it('should work with string', function(done) {
+    it('should work with string', function(cb) {
       var val = 'test';
       var item = new Item();
       item.contents = val;
-      item.contents.should.deepEqual(new Buffer(val));
-      done();
+      assert.deepEqual(item.contents, new Buffer(val));
+      cb();
     });
   });
 
   describe('relative get/set', function() {
-    it('should error on set', function(done) {
+    it('should error on set', function(cb) {
       var item = new Item();
       try {
         item.relative = 'test';
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should error on get when no base', function(done) {
+    it('should error on get when no base', function(cb) {
       var item = new Item();
       delete item.base;
       try {
         item.relative;
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should error on get when no path', function(done) {
+    it('should error on get when no path', function(cb) {
       var item = new Item();
       try {
         item.relative;
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should return a relative path from base', function(done) {
+    it('should return a relative path from base', function(cb) {
       var item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
       });
       item.relative.should.equal('test.coffee');
-      done();
+      cb();
     });
 
-    it('should return a relative path from cwd', function(done) {
+    it('should return a relative path from cwd', function(cb) {
       var item = new Item({
         cwd: '/',
         path: '/test/test.coffee'
       });
       item.relative.should.equal(path.join('test', 'test.coffee'));
-      done();
+      cb();
     });
   });
 
   describe('dirname get/set', function() {
-    it('should error on get when no path', function(done) {
+    it('should error on get when no path', function(cb) {
       var item = new Item();
       try {
         item.dirname;
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should return the dirname of the path', function(done) {
+    it('should return the dirname of the path', function(cb) {
       var item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
       });
       item.dirname.should.equal('/test');
-      done();
+      cb();
     });
 
-    it('should error on set when no path', function(done) {
+    it('should error on set when no path', function(cb) {
       var item = new Item();
       try {
         item.dirname = '/test';
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should set the dirname of the path', function(done) {
+    it('should set the dirname of the path', function(cb) {
       var item = new Item({
         cwd: '/',
         base: '/test/',
@@ -903,42 +946,122 @@ describe('Item', function() {
       });
       item.dirname = '/test/foo';
       item.path.should.equal('/test/foo/test.coffee');
-      done();
+      cb();
     });
   });
 
-  describe('basename get/set', function() {
-    it('should error on get when no path', function(done) {
+  describe('stem', function() {
+    it('should error on get when no path', function(cb) {
       item = new Item();
       try {
-        item.basename;
+        item.stem;
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should return the basename of the path', function(done) {
+    it('should set the stem of the path', function(cb) {
       item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
       });
-      item.basename.should.equal('test.coffee');
-      done();
+      item.stem = 'foo';
+      item.path.should.equal('/test/foo.coffee');
+      cb();
     });
 
-    it('should error on set when no path', function(done) {
+    it('should get the stem of the path', function(cb) {
+      item = new Item({
+        cwd: '/',
+        base: '/test/',
+        path: '/test/test.coffee'
+      });
+      item.stem.should.equal('test');
+      cb();
+    });
+
+    it('should error on set when no path', function(cb) {
       item = new Item();
       try {
-        item.basename = 'test.coffee';
+        item.stem = 'test.coffee';
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
+      }
+    });
+  });
+
+  describe('filename', function() {
+    it('should error on get when no path', function(cb) {
+      item = new Item();
+      try {
+        item.filename;
+      } catch (err) {
+        should.exist(err);
+        cb();
       }
     });
 
-    it('should set the basename of the path', function(done) {
+    it('should set the filename of the path', function(cb) {
+      item = new Item({
+        cwd: '/',
+        base: '/test/',
+        path: '/test/test.coffee'
+      });
+      item.filename = 'foo';
+      item.path.should.equal('/test/foo.coffee');
+      cb();
+    });
+
+    it('should get the filename of the path', function(cb) {
+      item = new Item({
+        cwd: '/',
+        base: '/test/',
+        path: '/test/test.coffee'
+      });
+      item.filename.should.equal('test');
+      cb();
+    });
+
+    it('should stay synchronized with stem', function(cb) {
+      item = new Item({
+        cwd: '/',
+        base: '/test/',
+        path: '/test/test.coffee'
+      });
+      assert.equal(item.filename, item.stem);
+      item.stem = 'foo';
+      assert.equal(item.filename, 'foo');
+      item.filename = 'bar';
+      assert.equal(item.stem, 'bar');
+      cb();
+    });
+
+    it('should error on set when no path', function(cb) {
+      item = new Item();
+      try {
+        item.filename = 'test.coffee';
+      } catch (err) {
+        should.exist(err);
+        cb();
+      }
+    });
+  });
+
+  describe('basename', function() {
+    it('should error on get when no path', function(cb) {
+      item = new Item();
+      try {
+        item.basename;
+      } catch (err) {
+        should.exist(err);
+        cb();
+      }
+    });
+
+    it('should set the basename of the path', function(cb) {
       item = new Item({
         cwd: '/',
         base: '/test/',
@@ -946,42 +1069,62 @@ describe('Item', function() {
       });
       item.basename = 'foo.png';
       item.path.should.equal('/test/foo.png');
-      done();
+      cb();
+    });
+
+    it('should get the basename of the path', function(cb) {
+      item = new Item({
+        cwd: '/',
+        base: '/test/',
+        path: '/test/test.coffee'
+      });
+      item.basename.should.equal('test.coffee');
+      cb();
+    });
+
+    it('should error on set when no path', function(cb) {
+      item = new Item();
+      try {
+        item.basename = 'test.coffee';
+      } catch (err) {
+        should.exist(err);
+        cb();
+      }
     });
   });
 
-  describe('extname get/set', function() {
-    it('should error on get when no path', function(done) {
+  describe('extname', function() {
+    it('should error on get when no path', function(cb) {
       item = new Item();
       try {
         item.extname;
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should return the extname of the path', function(done) {
+    it('should return the extname of the path', function(cb) {
       item = new Item({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
       });
       item.extname.should.equal('.coffee');
-      done();
+      cb();
     });
 
-    it('should error on set when no path', function(done) {
+    it('should error on set when no path', function(cb) {
       item = new Item();
       try {
         item.extname = '.coffee';
       } catch (err) {
         should.exist(err);
-        done();
+        cb();
       }
     });
 
-    it('should set the extname of the path', function(done) {
+    it('should set the extname of the path', function(cb) {
       item = new Item({
         cwd: '/',
         base: '/test/',
@@ -989,7 +1132,7 @@ describe('Item', function() {
       });
       item.extname = '.png';
       item.path.should.equal('/test/test.png');
-      done();
+      cb();
     });
   });
 
