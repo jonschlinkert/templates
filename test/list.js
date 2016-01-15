@@ -2,7 +2,6 @@
 
 require('mocha');
 require('should');
-var path = require('path');
 var get = require('get-value');
 var assert = require('assert');
 var typeOf = require('kind-of');

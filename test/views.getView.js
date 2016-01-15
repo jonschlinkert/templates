@@ -6,7 +6,6 @@ var assert = require('assert');
 var support = require('./support');
 var App = support.resolve();
 var Views = App.Views;
-var View = App.View;
 var collection;
 
 describe('views.getView', function() {
