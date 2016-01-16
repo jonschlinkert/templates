@@ -1,7 +1,6 @@
 var path = require('path');
-var templates = require('../');
-var app = templates();
-app.initialize();
+var Templates = require('../');
+var app = new Templates();
 
 var View = app.View;
 var Views = app.Views;
@@ -24,20 +23,20 @@ collection.addViews({
 });
 
 function myPlugin() {
-  return function (collection) {
-    collection.match = function (re) {
+  return function(collection) {
+    collection.match = function(re) {
       for (var key in collection.views) {
         if (re.test(key)) return collection.views[key];
       }
     };
 
-    return function (view) {
-      view.upper = function () {
+    return function(view) {
+      view.upper = function() {
         return view.content.toUpperCase();
       };
       return view;
-    }
-  }
+    };
+  };
 }
 
 var view = collection.match(/a\.txt$/);

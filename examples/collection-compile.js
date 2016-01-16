@@ -1,14 +1,16 @@
 var path = require('path');
 var templates = require('..');
 var Views = templates.Views;
+
 var pages = new Views({
-  renameKey: function (key) {
+  renameKey: function(key) {
     return path.basename(key);
   }
 });
 
 pages.engine('txt', require('engine-base'));
-pages.preCompile(/./, function (view, next) {
+
+pages.preCompile(/./, function(view, next) {
   view.engine = 'txt';
   next();
 });
