@@ -494,7 +494,7 @@ describe('built-in helpers:', function() {
       /**
        * Partial
        */
-      
+
       app.partial('a.hbs', {
         content: '---\nname: "AAA"\n---\n<title>{{name}}</title>',
         locals: {
@@ -505,7 +505,7 @@ describe('built-in helpers:', function() {
       /**
        * Pages
        */
-      
+
       app.page('a.hbs', {
         path: 'a.hbs',
         content: '<title>{{author}}</title>',
@@ -700,7 +700,7 @@ describe('collection helpers', function() {
   });
 
   describe('plural', function() {
-    it('should get the given collection', function(cb) {
+    it('should get the given collection as a block helper', function(cb) {
       app.post('a.hbs', {content: 'foo'});
       app.post('b.hbs', {content: 'bar'});
       app.post('c.hbs', {content: 'baz'});
@@ -715,6 +715,35 @@ describe('collection helpers', function() {
         .render(function(err, res) {
           if (err) return cb(err);
           assert(res.content === 'foobarbaz');
+          cb();
+        });
+    });
+
+    it('should get the given collection as a helper expression', function(cb) {
+      app.post('a.hbs', {content: 'foo'});
+      app.post('b.hbs', {content: 'bar'});
+      app.post('c.hbs', {content: 'baz'});
+
+      app.helper('list', function(list) {
+        return list.items.map(function(item) {
+          return '- ' + item.content;
+        }).join('\n');
+      });
+
+      app.partial('list.hbs', {
+        content: '{{list (posts)}}'
+      });
+
+      app.page('index.hbs', {
+        content: '{{> list.hbs }}'
+      })
+        .render(function(err, res) {
+          if (err) return cb(err);
+          try {
+            assert.equal(res.content, '- foo\n- bar\n- baz');
+          } catch (err) {
+            return cb(err);
+          }
           cb();
         });
     });
