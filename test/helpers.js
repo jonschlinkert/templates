@@ -297,22 +297,17 @@ describe('built-in helpers:', function() {
       });
     });
 
-    it('should log out a rendering message when options.verbose is true', function(cb) {
+    it('should emit `helper` when a built-in helper is called', function(cb) {
       app.partial('a.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
       app.page('b.md', {path: 'b.md', content: 'foo <%= partial("a.md") %> bar'});
-      var log = console.log;
-      var count = 0;
 
-      console.log = function(msg) {
-        assert.equal(msg, 'partial helper rendering: "a.md"');
-        count++;
-      };
-
-      app.render('b.md', { verbose: true }, function(err, res) {
-        if (err) return cb(err);
-        assert(count === 1);
-        console.log = log;
+      app.once('helper', function(msg) {
+        assert(msg);
+        assert.equal(msg, 'partial helper > rendering "a.md"');
         cb();
+      });
+
+      app.render('b.md', function(err, res) {
       });
     });
 
@@ -403,8 +398,8 @@ describe('built-in helpers:', function() {
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("def.md", { name: "CCC" }) %> bar'});
 
       app.render('xyz.md', {name: 'DDD'}, function(err, res) {
-        if (err) return cb(err);
-        res.content.should.equal('foo  bar');
+        assert(err);
+        assert.equal(err.message, 'helper "partial" cannot find "def.md"');
         cb();
       });
     });
