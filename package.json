@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "array-sort": "^0.1.1",
-    "base": "^0.6.3",
+    "base": "^0.6.4",
     "base-data": "^0.3.5",
     "base-options": "^0.5.4",
     "base-plugins": "^0.4.1",
@@ -43,7 +43,7 @@
     "mixin-deep": "^1.1.3",
     "paginationator": "^0.1.3",
     "template-error": "^0.1.2",
-    "vinyl": "^1.1.0",
+    "vinyl": "^1.1.1",
     "word-wrap": "^1.1.0"
   },
   "devDependencies": {
@@ -97,6 +97,8 @@
       "insert": false
     },
     "reflinks": [
+      "base",
+      "assemble",
       "array-sort",
       "group-array",
       "paginationator"
