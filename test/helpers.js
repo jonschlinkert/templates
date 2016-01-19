@@ -244,6 +244,7 @@ describe('async helpers', function() {
   beforeEach(function() {
     app = new App();
     app.engine('tmpl', require('engine-base'));
+    app.create('partials', {viewType: 'partial'});
     app.create('page');
   });
 
@@ -266,6 +267,22 @@ describe('async helpers', function() {
       if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'bbb');
+      cb();
+    });
+  });
+
+  it('should use load a file from the file system in a helper', function(cb) {
+    app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= getPartial("test/fixtures/posts/a.txt") %>', locals: {a: 'BBB'}});
+    app.asyncHelper('getPartial', function(name, next) {
+      var view = this.app.partials.getView(name);
+      next(null, view.content);
+    });
+
+    var page = app.pages.getView('a.tmpl');
+    app.render(page, function(err, view) {
+      if (err) return cb(err);
+      assert.equal(typeof view.content, 'string');
+      assert(/AAA/.test(view.content));
       cb();
     });
   });
