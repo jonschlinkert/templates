@@ -304,7 +304,7 @@ Templates.prototype.create = function(name, opts) {
  */
 
 Templates.prototype.extendView = function(view, options) {
-  plugin.view.all(this, view, options);
+  plugin.view(this, view, options);
   return this;
 };
 
