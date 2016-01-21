@@ -8,21 +8,25 @@
   * [Common](#common)
     + [.option](#option)
     + [.use](#use)
-  * [Application](#application)
+  * [App](#app)
   * [Engines](#engines)
   * [Helpers](#helpers)
+  * [Built-in helpers](#built-in-helpers)
   * [View](#view)
-    + [Data](#data)
+    + [View Data](#view-data)
   * [Item](#item)
-    + [Data](#data-1)
+    + [Item Data](#item-data)
+  * [Views](#views)
+    + [Views Data](#views-data)
+    + [Lookup methods](#lookup-methods)
   * [Collections](#collections)
-    + [Data](#data-2)
   * [List](#list)
   * [Group](#group)
   * [Lookups](#lookups)
   * [Rendering](#rendering)
   * [Context](#context)
   * [Routes and middleware](#routes-and-middleware)
+  * [is](#is)
 - [Code coverage](#code-coverage)
 - [History](#history)
 - [Related projects](#related-projects)
@@ -139,9 +143,9 @@ collection.use(function(items) {
 });
 ```
 
-### Application
+### App
 
-This section describes the methods and features available on the main `Templates` class.
+API for the main `Templates` class.
 
 ### [Templates](index.js#L45)
 
@@ -158,7 +162,7 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.list](index.js#L150)
+### [.list](index.js#L156)
 
 Create a new list. See the [list docs](docs/lists.md) for more information about lists.
 
@@ -178,7 +182,7 @@ app.create('pages');
 var list = app.list(app.pages);
 ```
 
-### [.collection](index.js#L189)
+### [.collection](index.js#L195)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -190,7 +194,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L240)
+### [.create](index.js#L246)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -342,6 +346,36 @@ app.helperGroup('mdu', {
 // <%= mdu.bar() %>
 ```
 
+### Built-in helpers
+
+Get a specific view by `name`, optionally specifying
+the collection to search as the second argument.
+
+**Params**
+
+* `name` **{String}**
+* `collection` **{String}**
+* `returns` **{String}**
+
+If the helper is used as a handlebars block helper, the collection
+array will be exposed as context to `options.fn()`, otherwise
+the `List` array is returned.
+
+**Params**
+
+* `options` **{Object}**: Locals or handlebars options object
+* `callback` **{String}**: Handled internally by the templates library.
+
+**Example**
+
+```js
+// create a collection
+app.create('pages');
+
+// use the `pages` helper
+// {{#pages}} ... {{/pages}}
+```
+
 ***
 
 ### View
@@ -429,7 +463,7 @@ Return true if the view is the given view `type`. Since types are assigned by co
 view.isType('partial');
 ```
 
-#### Data
+#### View Data
 
 ### [.data](lib/plugins/context.js#L30)
 
@@ -509,7 +543,7 @@ Re-decorate Item methods after calling vinyl's `.clone()` method.
 item.clone({deep: true}); // false by default
 ```
 
-#### Data
+#### Item Data
 
 ### [.data](lib/plugins/context.js#L30)
 
@@ -553,6 +587,264 @@ type of partials.
 
 ***
 
+### Views
+
+API for the `Views` class.
+
+### [Views](lib/views.js#L27)
+
+Create an instance of `Views` with the given `options`.
+
+**Params**
+
+* `options` **{Object}**
+
+**Example**
+
+```js
+var collection = new Views();
+collection.addView('foo', {content: 'bar'});
+```
+
+### [.setView](lib/views.js#L110)
+
+Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
+
+**Params**
+
+* `key` **{String|Object}**: View key or object
+* `value` **{Object}**: If key is a string, value is the view object.
+* `returns` **{Object}**: returns the `view` instance.
+
+**Example**
+
+```js
+collection.setView('foo', {content: 'bar'});
+```
+
+### [.addView](lib/views.js#L155)
+
+Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
+
+**Params**
+
+* `key` **{String}**
+* `value` **{Object}**
+* `returns` **{Object}**: Returns the instance of the created `View` to allow chaining view methods.
+
+**Example**
+
+```js
+var views = new Views(...);
+views.addView('a.html', {path: 'a.html', contents: '...'});
+```
+
+### [.deleteView](lib/views.js#L178)
+
+Delete a view from collection `views`.
+
+**Params**
+
+* `key` **{String}**
+* `returns` **{Object}**: Returns the instance for chaining
+
+**Example**
+
+```js
+views.deleteView('foo.html');
+```
+
+### [.addViews](lib/views.js#L201)
+
+Load multiple views onto the collection.
+
+**Params**
+
+* `views` **{Object|Array}**
+* `returns` **{Object}**: returns the `collection` object
+
+**Example**
+
+```js
+collection.addViews({
+  'a.html': {content: '...'},
+  'b.html': {content: '...'},
+  'c.html': {content: '...'}
+});
+```
+
+### [.addList](lib/views.js#L234)
+
+Load an array of views onto the collection.
+
+**Params**
+
+* `list` **{Array}**
+* `returns` **{Object}**: returns the `views` instance
+
+**Example**
+
+```js
+collection.addList([
+  {path: 'a.html', content: '...'},
+  {path: 'b.html', content: '...'},
+  {path: 'c.html', content: '...'}
+]);
+```
+
+### [.getView](lib/views.js#L266)
+
+Get view `name` from `collection.views`.
+
+**Params**
+
+* `key` **{String}**: Key of the view to get.
+* `fn` **{Function}**: Optionally pass a function to modify the key.
+* `returns` **{Object}**
+
+**Example**
+
+```js
+collection.getView('a.html');
+```
+
+### [.extendView](lib/views.js#L300)
+
+Load a view from the file system.
+
+**Params**
+
+* `view` **{Object}**
+* `returns` **{Object}**
+
+**Example**
+
+```js
+collection.loadView(view);
+```
+
+### [.isType](lib/views.js#L315)
+
+Return true if the collection belongs to the given view `type`.
+
+**Params**
+
+* `type` **{String}**: (`renderable`, `partial`, `layout`)
+
+**Example**
+
+```js
+collection.isType('partial');
+```
+
+#### Views Data
+
+### [.data](lib/plugins/context.js#L30)
+
+Set, get and load data to be passed to templates as context at render-time.
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
+
+**Example**
+
+```js
+views.data('a', 'b');
+views.data({c: 'd'});
+console.log(views.cache.data);
+//=> {a: 'b', c: 'd'}
+```
+
+### [.context](lib/plugins/context.js#L51)
+
+Build the context for the given `view` and `locals`.
+
+**Params**
+
+* `view` **{Object}**: The view being rendered
+* `locals` **{Object}**
+* `returns` **{Object}**: The object to be passed to engines/views as context.
+
+### [.mergePartials](lib/plugins/context.js#L112)
+
+Merge "partials" view types. This is necessary for template
+engines have no support for partials or only support one
+type of partials.
+
+**Params**
+
+* `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
+* `returns` **{Object}**: Merged partials
+
+***
+
+#### Lookup methods
+
+### [.find](lib/plugins/lookup.js#L25)
+
+Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
+
+**Params**
+
+* `name` **{String}**: The name/key of the view to find
+* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
+* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
+
+**Example**
+
+```js
+var page = app.find('my-page.hbs');
+
+// optionally pass a collection name as the second argument
+var page = app.find('my-page.hbs', 'pages');
+```
+
+### [.getView](lib/plugins/lookup.js#L69)
+
+Get view `key` from the specified `collection`.
+
+**Params**
+
+* `collection` **{String}**: Collection name, e.g. `pages`
+* `key` **{String}**: Template name
+* `fn` **{Function}**: Optionally pass a `renameKey` function
+* `returns` **{Object}**
+
+**Example**
+
+```js
+var view = app.getView('pages', 'a/b/c.hbs');
+
+// optionally pass a `renameKey` function to modify the lookup
+var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
+  return path.basename(fp);
+});
+```
+
+### [.getViews](lib/plugins/lookup.js#L103)
+
+Get all views from a `collection` using the collection's singular or plural name.
+
+**Params**
+
+* `name` **{String}**: The collection name, e.g. `pages` or `page`
+* `returns` **{Object}**
+
+**Example**
+
+```js
+var pages = app.getViews('pages');
+//=> { pages: {'home.hbs': { ... }}
+
+var posts = app.getViews('posts');
+//=> { posts: {'2015-10-10.md': { ... }}
+```
+
+***
+
 ### Collections
 
 API for the `Collections` class.
@@ -572,7 +864,7 @@ var collection = new Collection();
 collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/collection.js#L89)
+### [.setItem](lib/collection.js#L94)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -588,7 +880,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L111)
+### [.addItem](lib/collection.js#L116)
 
 Similar to `setItem`, adds an item to the collection but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener.  An item may be an instance of `Item`, if not, the item is converted to an instance of `Item`.
 
@@ -604,7 +896,22 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/collection.js#L137)
+### [.deleteItem](lib/collection.js#L138)
+
+Delete an item from collection `items`.
+
+**Params**
+
+* `key` **{String}**
+* `returns` **{Object}**: Returns the instance for chaining
+
+**Example**
+
+```js
+items.deleteItem('abc');
+```
+
+### [.addItems](lib/collection.js#L161)
 
 Load multiple items onto the collection.
 
@@ -623,7 +930,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L164)
+### [.addList](lib/collection.js#L188)
 
 Load an array of items onto the collection.
 
@@ -643,7 +950,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L195)
+### [.getItem](lib/collection.js#L219)
 
 Get an item from the collection.
 
@@ -657,8 +964,6 @@ Get an item from the collection.
 ```js
 collection.getItem('a.html');
 ```
-
-#### Data
 
 ### [.data](lib/plugins/context.js#L30)
 
@@ -706,7 +1011,7 @@ type of partials.
 
 API for the `List` class.
 
-### [List](lib/list.js#L29)
+### [List](lib/list.js#L31)
 
 Create an instance of `List` with the given `options`. Lists differ from collections in that items are stored as an array, allowing items to be paginated, sorted, and grouped.
 
@@ -721,7 +1026,7 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/list.js#L107)
+### [.setItem](lib/list.js#L119)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -737,7 +1042,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L141)
+### [.addItem](lib/list.js#L154)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -754,7 +1059,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L168)
+### [.addItems](lib/list.js#L181)
 
 Load multiple items onto the collection.
 
@@ -773,7 +1078,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L197)
+### [.addList](lib/list.js#L210)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -791,7 +1096,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L234)
+### [.hasItem](lib/list.js#L247)
 
 Return true if the list has the given item (name).
 
@@ -808,7 +1113,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L250)
+### [.getIndex](lib/list.js#L263)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -824,40 +1129,67 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L295)
+### [.getItem](lib/list.js#L307)
 
 Get a specific item from the list by `key`.
 
 **Params**
 
-* `key` **{String}**
+* `key` **{String}**: The item name/key.
 * `returns` **{Object}**
 
 **Example**
 
 ```js
 list.getItem('foo.html');
-//=> '<View <foo.html>>'
+//=> '<Item <foo.html>>'
 ```
 
-### [.removeItem](lib/list.js#L333)
+### [.getView](lib/list.js#L326)
+
+Proxy for `getItem`
+
+**Params**
+
+* `key` **{String}**: Pass the key of the `item` to get.
+* `returns` **{Object}**
+
+**Example**
+
+```js
+list.getItem('foo.html');
+//=> '<Item "foo.html" <buffer e2 e2 e2>>'
+```
+
+### [.deleteItem](lib/list.js#L340)
 
 Remove an item from the list.
 
 **Params**
 
-* `items` **{Object}**: Object of views
+* `key` **{Object|String}**: Pass an `item` instance (object) or `item.key` (string).
 
 **Example**
 
 ```js
-var list = new List(...);
-list.addItems({
-  'a.html': {path: 'a.html', contents: '...'}
-});
+list.deleteItem('a.html');
 ```
 
-### [.extendItem](lib/list.js#L353)
+### [.removeItem](lib/list.js#L362)
+
+Remove an item from the list.
+
+**Params**
+
+* `key` **{Object|String}**: Pass an `item` instance or `item.key`
+
+**Example**
+
+```js
+list.removeItem('a.html');
+```
+
+### [.extendItem](lib/list.js#L374)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -868,7 +1200,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L372)
+### [.groupBy](lib/list.js#L393)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -882,7 +1214,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L398)
+### [.sortBy](lib/list.js#L419)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -897,7 +1229,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L432)
+### [.paginate](lib/list.js#L467)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -909,6 +1241,46 @@ Paginate all `items` in the list with the given options, See [paginationator](ht
 var list = new List(items);
 var pages = list.paginate({limit: 5});
 ```
+
+### [.data](lib/plugins/context.js#L30)
+
+Set, get and load data to be passed to templates as context at render-time.
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
+
+**Example**
+
+```js
+list.data('a', 'b');
+list.data({c: 'd'});
+console.log(list.cache.data);
+//=> {a: 'b', c: 'd'}
+```
+
+### [.context](lib/plugins/context.js#L51)
+
+Build the context for the given `view` and `locals`.
+
+**Params**
+
+* `view` **{Object}**: The view being rendered
+* `locals` **{Object}**
+* `returns` **{Object}**: The object to be passed to engines/views as context.
+
+### [.mergePartials](lib/plugins/context.js#L112)
+
+Merge "partials" view types. This is necessary for template
+engines have no support for partials or only support one
+type of partials.
+
+**Params**
+
+* `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
+* `returns` **{Object}**: Merged partials
 
 ***
 
@@ -977,7 +1349,7 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
-### [.getViews](lib/plugins/lookup.js#L105)
+### [.getViews](lib/plugins/lookup.js#L103)
 
 Get all views from a `collection` using the collection's singular or plural name.
 
@@ -1000,7 +1372,7 @@ var posts = app.getViews('posts');
 
 ### Rendering
 
-### [.compile](lib/plugins/render.js#L70)
+### [.compile](lib/plugins/render.js#L71)
 
 Compile `content` with the given `locals`.
 
@@ -1025,7 +1397,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](lib/plugins/render.js#L148)
+### [.render](lib/plugins/render.js#L149)
 
 Render a view with the given `locals` and `callback`.
 
@@ -1179,9 +1551,156 @@ app.onLoad('/blog/:title', function(view, next) {
 
 ***
 
+### is
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var app = templates();
+
+templates.isApp(templates);
+//=> false
+
+templates.isApp(app);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var app = templates();
+
+app.create('pages');
+templates.isCollection(app.pages);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var app = templates();
+
+app.create('pages');
+templates.isViews(app.pages);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var List = templates.List;
+var app = templates();
+
+var list = new List();
+templates.isList(list);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var Group = templates.Group;
+var app = templates();
+
+var group = new Group();
+templates.isGroup(group);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var app = templates();
+
+templates.isView('foo');
+//=> false
+
+var view = app.view('foo', {content: '...'});
+templates.isView(view);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var templates = require('templates');
+var app = templates();
+
+templates.isItem('foo');
+//=> false
+
+var view = app.view('foo', {content: '...'});
+templates.isItem(view);
+//=> true
+```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
+
+**Example**
+
+```js
+var File = require('vinyl');
+var templates = require('templates');
+var app = templates();
+
+var view = app.view('foo', {content: '...'});
+templates.isVinyl(view);
+//=> true
+
+var file = new File({path: 'foo', contents: new Buffer('...')});
+templates.isVinyl(file);
+//=> true
+```
+
+***
+
 ## Code coverage
 
-As of January 19, 2016, code coverage is 100%.
+As of January 21, 2016, code coverage is 100%.
 
 ```sh
 Statements   : 100% (1162/1162)
@@ -1266,4 +1785,4 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb) on January 19, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb) on January 21, 2016._
