@@ -12,10 +12,11 @@ describe('layouts', function() {
     app = new App();
     app.engine('tmpl', require('engine-base'));
     app.create('layout', { viewType: 'layout' });
+    app.create('partial', { viewType: 'partial' });
     app.create('page');
   });
 
-  it('should apply a layout to a view:', function(done) {
+  it('should add a layout to a view:', function(done) {
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
     app.pages('a.tmpl', {path: 'a.tmpl', content: 'b', layout: 'base'});
     var page = app.pages.getView('a.tmpl');
@@ -28,7 +29,92 @@ describe('layouts', function() {
     });
   });
 
-  it('should not apply a layout when `layoutApplied` is set:', function(done) {
+  it('should use a "default" layout defined on global options', function(done) {
+    app.option('layout', 'base');
+
+    app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
+    app.page('a.tmpl', {path: 'a.tmpl', content: 'b'})
+      .render(function(err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'a b c');
+        done();
+      });
+  });
+
+  it('should use a "default" layout defined on collection options', function(done) {
+    app.pages.option('layout', 'base');
+
+    app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
+    app.page('a.tmpl', {path: 'a.tmpl', content: 'b'})
+      .render(function(err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'a b c');
+        done();
+      });
+  });
+
+  it('should use the "default" layout on layouts', function(done) {
+    app.option('layout', 'base');
+
+    var base = app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
+
+    app.render(base, function(err, view) {
+      if (err) return done(err);
+      assert.equal(typeof view.content, 'string');
+      assert.equal(view.content, 'a {% body %} c');
+      done();
+    });
+  });
+
+  it('should not use the "default" layout on partials', function(done) {
+    app.option('layout', 'base');
+
+    app.partial('foo.tmpl', {content: 'c'});
+    app.layout('base.tmpl', {content: 'a {% body %} d'});
+
+    app.page('a.tmpl', {path: 'a.tmpl', content: 'b <%= partial("foo") %>'})
+      .render(function(err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'a b c d');
+        done();
+      });
+  });
+
+  it('should add a layout to a partial when defined on a partial', function(done) {
+    app.option('layout', 'base');
+
+    app.partial('foo.tmpl', {content: 'c', layout: 'base'});
+    app.layout('base.tmpl', {content: 'a {% body %} d'});
+
+    app.page('a.tmpl', {path: 'a.tmpl', content: 'b <%= partial("foo") %>'})
+      .render(function(err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'a b a c d d');
+        done();
+      });
+  });
+
+  it('should add a layout to a layout when defined on a layout', function(done) {
+    app.option('layout', 'base');
+
+    app.partial('foo.tmpl', {content: 'c'});
+    app.layout('default.tmpl', {content: 'x {% body %} z'});
+    app.layout('base.tmpl', {content: 'a {% body %} d', layout: 'default'});
+
+    app.page('a.tmpl', {path: 'a.tmpl', content: 'b <%= partial("foo") %>'})
+      .render(function(err, view) {
+        if (err) return done(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'x a b c d z');
+        done();
+      });
+  });
+
+  it('should not add a layout when `layoutApplied` is set:', function(done) {
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
     app.pages('a.tmpl', {path: 'a.tmpl', content: 'b', layout: 'base'});
     var page = app.pages.getView('a.tmpl');

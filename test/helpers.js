@@ -12,18 +12,11 @@ require('swig');
 
 var support = require('./support');
 var App = support.resolve();
-var helpers = App._.proto.helpers;
-var init = App._.proto.init;
+var helpers = App._.plugin.helpers;
+var init = App._.plugin.init;
 var app;
 
 describe('helpers', function() {
-  describe('constructor', function() {
-    it('should create an instance of Helpers:', function() {
-      app = new App();
-      assert(app instanceof App);
-    });
-  });
-
   describe('prototype methods', function() {
     beforeEach(function() {
       app = new App();
@@ -219,15 +212,19 @@ describe('sync helpers', function() {
   });
 
   it('should use a namespaced helper:', function(cb) {
-    app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= foo.upper(a) %>', locals: {a: 'bbb'}});
+    app.pages('a.tmpl', {
+      path: 'a.tmpl',
+      content: '<%= foo.upper(a) %>',
+      locals: {
+        a: 'bbb'
+      }
+    });
 
     app.helperGroup('foo', {
       upper: function(str) {
         return str.toUpperCase();
       }
     });
-
-    // console.log(app._.helpers)
 
     var page = app.pages.getView('a.tmpl');
     app.render(page, function(err, view) {
@@ -836,7 +833,7 @@ describe('collection helpers', function() {
       cb();
     });
 
-    it('should get a specific view from the given collection', function(cb) {
+    it('should render a specific view from the given collection', function(cb) {
       app.post('a.hbs', {content: 'post-a'});
       app.post('b.hbs', {content: 'post-b'});
       app.post('c.hbs', {content: 'post-c'});
@@ -844,16 +841,16 @@ describe('collection helpers', function() {
       app.page('b.hbs', {content: 'page-b'});
       app.page('c.hbs', {content: 'page-c'});
 
-      var one = app.page('one', {content: '{{view "a.hbs" "posts"}}'})
+      var one = app.page('one', {content: '\\{{view "a.hbs" "posts"}}'})
         .compile()
         .fn();
 
-      var two = app.page('two', {content: '{{view "b.hbs" "pages"}}'})
+      var two = app.page('two', {content: '\\{{view "b.hbs" "pages"}}'})
         .compile()
         .fn();
 
-      assert(one === 'post-a');
-      assert(two === 'page-b');
+      assert.equal(one, 'post-a');
+      assert.equal(two, 'page-b');
       cb();
     });
   });

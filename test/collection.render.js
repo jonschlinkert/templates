@@ -17,13 +17,13 @@ describe('render', function() {
       pages.engine('tmpl', require('engine-base'));
     });
 
-    it('should throw an error when no callback is given:', function() {
+    it('should throw an error when no callback is given', function() {
       (function() {
         pages.render({});
       }).should.throw('Views#render is async and expects a callback function');
     });
 
-    it('should throw an error when an engine is not defined:', function(done) {
+    it('should throw an error when an engine is not defined', function(done) {
       pages.addView('foo.bar', {content: '<%= name %>'});
       var page = pages.getView('foo.bar');
 
@@ -33,7 +33,7 @@ describe('render', function() {
       });
     });
 
-    it('should use helpers to render a view:', function(done) {
+    it('should use helpers to render a view', function(done) {
       var locals = {name: 'Halle'};
 
       pages.helper('upper', function(str) {
@@ -51,7 +51,25 @@ describe('render', function() {
       });
     });
 
-    it('should use helpers when rendering a view:', function(done) {
+    it('should use globally defined data to render a view', function(done) {
+      pages.data({name: 'Halle'});
+
+      pages.helper('upper', function(str) {
+        return str.toUpperCase(str);
+      });
+
+      pages.addView('a.tmpl', {content: 'a <%= upper(name) %> b'});
+      var page = pages.getView('a.tmpl');
+
+      pages.render(page, function(err, res) {
+        if (err) return done(err);
+
+        assert(res.content === 'a HALLE b');
+        done();
+      });
+    });
+
+    it('should use helpers when rendering a view', function(done) {
       var locals = {name: 'Halle'};
       pages.helper('upper', function(str) {
         return str.toUpperCase(str);
@@ -67,7 +85,7 @@ describe('render', function() {
       });
     });
 
-    it('should render a template when contents is a buffer:', function(done) {
+    it('should render a template when contents is a buffer', function(done) {
       pages.addView('a.tmpl', {content: '<%= a %>', locals: {a: 'b'}});
       var view = pages.getView('a.tmpl');
 
@@ -78,7 +96,7 @@ describe('render', function() {
       });
     });
 
-    it('should render a template when content is a string:', function(done) {
+    it('should render a template when content is a string', function(done) {
       pages.addView('a.tmpl', {content: '<%= a %>', locals: {a: 'b'}});
       var view = pages.getView('a.tmpl');
 
@@ -89,7 +107,7 @@ describe('render', function() {
       });
     });
 
-    it('should render a view from its path:', function(done) {
+    it('should render a view from its path', function(done) {
       pages.addView('a.tmpl', {content: '<%= a %>', locals: {a: 'b'}});
 
       pages.render('a.tmpl', function(err, view) {
@@ -99,7 +117,7 @@ describe('render', function() {
       });
     });
 
-    it('should use a plugin for rendering:', function(done) {
+    it('should use a plugin for rendering', function(done) {
       pages.engine('tmpl', require('engine-base'));
       pages.option('engine', 'tmpl');
 

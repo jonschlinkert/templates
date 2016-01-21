@@ -186,6 +186,37 @@ describe('views', function() {
     });
   });
 
+  describe('deleteView', function() {
+    beforeEach(function() {
+      collection = new Views();
+    });
+
+    it('should delete an view from `views` by view instance', function() {
+      collection.addView('foo');
+      assert(collection.views.hasOwnProperty('foo'));
+
+      collection.addView('one', {content: '...'});
+      assert(collection.views.hasOwnProperty('one'));
+      assert.equal(Object.keys(collection.views).length, 2);
+
+      var foo = collection.getView('foo');
+      collection.deleteView(foo);
+      assert.equal(Object.keys(collection.views).length, 1);
+    });
+
+    it('should delete an view from `views` by view `key`', function() {
+      collection.addView('foo');
+      assert(collection.views.hasOwnProperty('foo'));
+
+      collection.addView('one', {content: '...'});
+      assert(collection.views.hasOwnProperty('one'));
+      assert.equal(Object.keys(collection.views).length, 2);
+
+      collection.deleteView('foo');
+      assert.equal(Object.keys(collection.views).length, 1);
+    });
+  });
+
   describe('addViews', function() {
     beforeEach(function() {
       collection = new Views();

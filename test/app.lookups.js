@@ -47,9 +47,9 @@ describe('lookups', function() {
       assert(typeof view.path === 'string');
     });
 
-    it('should return null when nothing is found', function() {
+    it('should return undefined when nothing is found', function() {
       var view = app.getView('pages', 'test/fixtures/templates/foo.tmpl');
-      assert(view === null);
+      assert(typeof view === 'undefined');
     });
 
     it('should find a view using a glob pattern', function() {

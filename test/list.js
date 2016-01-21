@@ -147,36 +147,6 @@ describe('list', function() {
     });
   });
 
-  describe('removeItem', function() {
-    beforeEach(function() {
-      list = new List();
-    });
-
-    it('should remove an item from `items`', function() {
-      list.addItem('a', {content: '...'});
-      list.addItem('b', {content: '...'});
-      list.addItem('c', {content: '...'});
-      assert(list.items.length === 3);
-      var a = list.getItem('a');
-      list.removeItem(a);
-      assert(list.items.length === 2);
-      var c = list.getItem('c');
-      list.removeItem(c);
-      assert(list.items[0].key === 'b');
-    });
-
-    it('should remove an item from `items` by key', function() {
-      list.addItem('a', {content: '...'});
-      list.addItem('b', {content: '...'});
-      list.addItem('c', {content: '...'});
-      assert(list.items.length === 3);
-      list.removeItem('c');
-      assert(list.items.length === 2);
-      list.removeItem('b');
-      assert(list.items[0].key === 'a');
-    });
-  });
-
   describe('addItems', function() {
     beforeEach(function() {
       list = new List();
@@ -638,7 +608,7 @@ describe('list', function() {
       list = new List();
     });
 
-    it('should get an view from `views`', function() {
+    it('should get an item from `items`', function() {
       list.addItem('one', {content: 'aaa'});
       list.addItem('two', {content: 'zzz'});
       assert(list.items.length === 2);
@@ -646,6 +616,10 @@ describe('list', function() {
       assert(isBuffer(list.getItem('one').contents));
       assert(list.getItem('one').contents.toString() === 'aaa');
       assert(list.getItem('two').contents.toString() === 'zzz');
+    });
+
+    it('should return `undefined` when the item is not found', function() {
+      assert.equal(typeof list.getItem('flflflfl'), 'undefined');
     });
   });
 
