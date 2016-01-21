@@ -4,22 +4,48 @@ var fs = require('fs');
 var path = require('path');
 var ent = require('ent');
 var Remarkable = require('remarkable');
-var merge = require('mixin-deep');
 var utils = require('../lib/utils');
 var templates = require('..');
 var app = templates();
 
-app.engine('text', require('engine-base'));
-app.create('pages', {engine: 'text'});
-app.create('partials', {viewType: 'partial', engine: 'text'});
+/**
+ * Defin the engine to use
+ */
 
-app.page('home', {content: '<%= partial("foo") %>\n<%= render(md(read("fixtures/post.md"))) %>'});
-// app.page('two', {content: '<%= view("home", {render: "false"}) %>'});
-app.page('two', {content: '<%= view("home") %>'});
+app.engine('txt', require('engine-base'));
+app.option('engine', 'txt');
 
-app.partial('foo', {content: 'this is <%= title %>'});
-app.partial('bar', {content: 'this is <%= title %>'});
-app.partial('baz', {content: 'this is <%= title %>'});
+/**
+ * Create view collections
+ */
+
+app.create('pages');
+app.create('layouts', {viewType: 'layout'});
+app.create('headings', {viewType: 'partial'});
+
+/**
+ * Add some views
+ */
+
+// layout
+app.layout('base', {content: '<div>{% body %}</div>'});
+
+// headings
+app.heading('h1', {content: '<h1><%= title %></h1>'});
+app.heading('h2', {content: '<h2><%= title %></h2>'});
+app.heading('h3', {content: '<h3><%= title %></h3>'});
+
+// pages
+app.page('three', {content: '<%= view("one") %>'});
+app.page('two', {content: '<%= render(view("one")) %>'});
+app.page('one', {
+  content: '<%= heading("h1") %>\n<%= md(read("fixtures/post.md")) %>',
+  layout: 'base'
+});
+
+/**
+ * Define template helpers
+ */
 
 app.helper('read', function(fp) {
   return fs.readFileSync(fp, 'utf8');
@@ -31,29 +57,33 @@ app.helper('md', function(str, options) {
   return ent.decode(res);
 });
 
-app.asyncHelper('render', function(str, context, cb) {
+app.asyncHelper('render', function(view, context, cb) {
   if (typeof context === 'function') {
     cb = context;
     context = {};
   }
 
-  // var view;
-  // if (utils.isObject(str) && (str.isView || str.isItem)) {
-  //   view = str;
-  // } else {
-  //   view = this.app.view({path: 'n/a', content: str});
-  // }
+  if (typeof view === 'string') {
+    view = app.view({content: view, path: 'string'});
+  }
 
-  var ctx = merge({}, this.context, context);
-  this.app.renderString(str, ctx, function(err, res) {
+  if (!view) return cb(null, '');
+
+  var ctx = utils.merge({}, this.context, context, view.ctx);
+  view.compile();
+
+  view.render(ctx, function(err, res) {
     if (err) return cb(err);
     cb(null, res.content);
   });
 });
 
+/**
+ * Render a view
+ */
 
 app.render('two', {title: 'Home', name: 'Test!!!'}, function(err, res) {
-  if (err) return console.log(err);
+  if (err) return console.log(err.stack);
 
   console.log(res.content);
 });
