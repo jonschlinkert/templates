@@ -8,17 +8,10 @@
 'use strict';
 
 var helpers = require('./lib/helpers');
-var proto = require('./lib/plugins/');
+var plugin = require('./lib/plugins/');
 var utils = require('./lib/utils/');
 var Base = require('./lib/base');
 var lib = require('./lib/');
-
-/**
- * Item constructors
- */
-
-var Item = lib.item;
-var View = lib.view;
 
 /**
  * Collection constructors
@@ -28,6 +21,13 @@ var Collection = lib.collection;
 var Views = lib.views;
 var Group = lib.group;
 var List = lib.list;
+
+/**
+ * Item constructors
+ */
+
+var Item = lib.item;
+var View = lib.view;
 
 /**
  * This function is the main export of the templates module.
@@ -49,7 +49,7 @@ function Templates(options) {
 
   this.options = options || {};
   utils.define(this, 'isApp', true);
-  utils.isName(this, 'Templates');
+  this.is('Templates');
 
   Base.call(this);
   this.defaultConfig();
@@ -62,15 +62,21 @@ function Templates(options) {
 Base.extend(Templates);
 
 /**
+ * Mixin static methods
+ */
+
+plugin.is(Templates);
+
+/**
  * Mixin prototype methods
  */
 
-proto.routes(Templates.prototype);
-proto.engine(Templates.prototype);
-proto.layout(Templates.prototype);
-proto.render(Templates.prototype);
-proto.lookup(Templates.prototype);
-proto.errors(Templates.prototype, 'Templates');
+plugin.routes(Templates.prototype);
+plugin.engine(Templates.prototype);
+plugin.layout(Templates.prototype);
+plugin.render(Templates.prototype);
+plugin.lookup(Templates.prototype);
+plugin.errors(Templates.prototype, 'Templates');
 
 /**
  * Initialize Templates default configuration
@@ -81,12 +87,12 @@ Templates.prototype.defaultConfig = function() {
     this.plugins = {};
   }
 
-  this.use(proto.init);
-  this.use(proto.renameKey());
-  this.use(proto.context);
-  this.use(proto.helpers);
-  this.use(proto.item('item', 'Item'));
-  this.use(proto.item('view', 'View'));
+  this.use(plugin.init);
+  this.use(plugin.renameKey());
+  this.use(plugin.context);
+  this.use(plugin.helpers);
+  this.use(plugin.item('item', 'Item'));
+  this.use(plugin.item('view', 'View'));
 
   this.inflections = {};
   this.items = {};
@@ -298,7 +304,7 @@ Templates.prototype.create = function(name, opts) {
  */
 
 Templates.prototype.extendView = function(view, options) {
-  proto.view.all(this, view, options);
+  plugin.view.all(this, view, options);
   return this;
 };
 
@@ -307,8 +313,20 @@ Templates.prototype.extendView = function(view, options) {
  */
 
 Templates.prototype.extendViews = function(views, options) {
-  proto.views(this, views, options);
+  plugin.views(this, views, options);
   return this;
+};
+
+/**
+ * Resolve the name of the layout to use for `view`
+ */
+
+Templates.prototype.resolveLayout = function(view) {
+  if (utils.isRenderable(view)) {
+    var views = this[view.options.collection];
+    return views.resolveLayout(view) || this.option('layout');
+  }
+  return view.layout;
 };
 
 /**
@@ -334,7 +352,7 @@ utils.define(Templates, 'meta', require('./package'));
  */
 
 utils.define(Templates, 'utils', utils);
-utils.define(Templates, '_', {lib: lib, proto: proto});
+utils.define(Templates, '_', {lib: lib, plugin: plugin});
 
 /**
  * Expose `Templates`
