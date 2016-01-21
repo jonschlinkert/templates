@@ -22,10 +22,10 @@ describe('helpers', function() {
       app = new App();
     });
     it('should expose `helper`', function() {
-      assert(typeof app.helper === 'function');
+      assert.equal(typeof app.helper, 'function');
     });
     it('should expose `asyncHelper`', function() {
-      assert(typeof app.asyncHelper === 'function');
+      assert.equal(typeof app.asyncHelper, 'function');
     });
   });
 
@@ -38,7 +38,7 @@ describe('helpers', function() {
       App.extend(Foo);
       var foo = new Foo();
       helpers(foo);
-      assert(typeof foo._ === 'object');
+      assert.equal(typeof foo._, 'object');
     });
   });
 
@@ -49,15 +49,15 @@ describe('helpers', function() {
 
     it('should add a sync helper to the `sync` object:', function() {
       app.helper('one', function() {});
-      assert(typeof app._.helpers.sync.one === 'function');
+      assert.equal(typeof app._.helpers.sync.one, 'function');
     });
 
     it('should load a glob of sync helper functions:', function() {
       app.helpers('test/fixtures/helpers/[a-c].js');
 
-      assert(typeof app._.helpers.sync.c === 'function');
-      assert(typeof app._.helpers.sync.b === 'function');
-      assert(typeof app._.helpers.sync.a === 'function');
+      assert.equal(typeof app._.helpers.sync.c, 'function');
+      assert.equal(typeof app._.helpers.sync.b, 'function');
+      assert.equal(typeof app._.helpers.sync.a, 'function');
     });
 
     it('should fail gracefully on bad globs:', function(cb) {
@@ -71,19 +71,19 @@ describe('helpers', function() {
 
     it('should add a glob of sync helper objects:', function() {
       app.helpers('test/fixtures/helpers/!([a-c]).js');
-      assert(typeof app._.helpers.sync.one === 'function');
-      assert(typeof app._.helpers.sync.two === 'function');
-      assert(typeof app._.helpers.sync.three === 'function');
+      assert.equal(typeof app._.helpers.sync.one, 'function');
+      assert.equal(typeof app._.helpers.sync.two, 'function');
+      assert.equal(typeof app._.helpers.sync.three, 'function');
     });
 
     it('should add a glob with mixed helper objects and functions:', function() {
       app.helpers('test/fixtures/helpers/*.js');
-      assert(typeof app._.helpers.sync.a === 'function');
-      assert(typeof app._.helpers.sync.b === 'function');
-      assert(typeof app._.helpers.sync.c === 'function');
-      assert(typeof app._.helpers.sync.one === 'function');
-      assert(typeof app._.helpers.sync.two === 'function');
-      assert(typeof app._.helpers.sync.three === 'function');
+      assert.equal(typeof app._.helpers.sync.a, 'function');
+      assert.equal(typeof app._.helpers.sync.b, 'function');
+      assert.equal(typeof app._.helpers.sync.c, 'function');
+      assert.equal(typeof app._.helpers.sync.one, 'function');
+      assert.equal(typeof app._.helpers.sync.two, 'function');
+      assert.equal(typeof app._.helpers.sync.three, 'function');
     });
 
     it('should add an object of sync helpers to the `sync` object:', function() {
@@ -93,9 +93,9 @@ describe('helpers', function() {
         z: function() {}
       });
 
-      assert(typeof app._.helpers.sync.x === 'function');
-      assert(typeof app._.helpers.sync.y === 'function');
-      assert(typeof app._.helpers.sync.z === 'function');
+      assert.equal(typeof app._.helpers.sync.x, 'function');
+      assert.equal(typeof app._.helpers.sync.y, 'function');
+      assert.equal(typeof app._.helpers.sync.z, 'function');
     });
 
     it('should add a helper "group":', function() {
@@ -105,9 +105,9 @@ describe('helpers', function() {
         z: function() {}
       });
 
-      assert(typeof app._.helpers.sync.foo.x === 'function');
-      assert(typeof app._.helpers.sync.foo.y === 'function');
-      assert(typeof app._.helpers.sync.foo.z === 'function');
+      assert.equal(typeof app._.helpers.sync.foo.x, 'function');
+      assert.equal(typeof app._.helpers.sync.foo.y, 'function');
+      assert.equal(typeof app._.helpers.sync.foo.z, 'function');
     });
   });
 
@@ -118,21 +118,21 @@ describe('helpers', function() {
 
     it('should add an async helper to the `async` object:', function() {
       app.asyncHelper('two', function() {});
-      assert(typeof app._.helpers.async.two === 'function');
+      assert.equal(typeof app._.helpers.async.two, 'function');
     });
 
     it('should load a glob of async helper functions:', function() {
       app.asyncHelpers('test/fixtures/helpers/[a-c].js');
-      assert(typeof app._.helpers.async.a === 'function');
-      assert(typeof app._.helpers.async.b === 'function');
-      assert(typeof app._.helpers.async.c === 'function');
+      assert.equal(typeof app._.helpers.async.a, 'function');
+      assert.equal(typeof app._.helpers.async.b, 'function');
+      assert.equal(typeof app._.helpers.async.c, 'function');
     });
 
     it('should add a glob of async helper objects:', function() {
       app.asyncHelpers('test/fixtures/helpers/!([a-c]).js');
-      assert(typeof app._.helpers.async.one === 'function');
-      assert(typeof app._.helpers.async.two === 'function');
-      assert(typeof app._.helpers.async.three === 'function');
+      assert.equal(typeof app._.helpers.async.one, 'function');
+      assert.equal(typeof app._.helpers.async.two, 'function');
+      assert.equal(typeof app._.helpers.async.three, 'function');
     });
 
     it('should fail gracefully on bad globs:', function(cb) {
@@ -146,12 +146,12 @@ describe('helpers', function() {
 
     it('should add a glob with mixed helper objects and functions:', function() {
       app.asyncHelpers('test/fixtures/helpers/*.js');
-      assert(typeof app._.helpers.async.a === 'function');
-      assert(typeof app._.helpers.async.b === 'function');
-      assert(typeof app._.helpers.async.c === 'function');
-      assert(typeof app._.helpers.async.one === 'function');
-      assert(typeof app._.helpers.async.two === 'function');
-      assert(typeof app._.helpers.async.three === 'function');
+      assert.equal(typeof app._.helpers.async.a, 'function');
+      assert.equal(typeof app._.helpers.async.b, 'function');
+      assert.equal(typeof app._.helpers.async.c, 'function');
+      assert.equal(typeof app._.helpers.async.one, 'function');
+      assert.equal(typeof app._.helpers.async.two, 'function');
+      assert.equal(typeof app._.helpers.async.three, 'function');
     });
 
     it('should add an object of async helpers to the `async` object:', function() {
@@ -161,9 +161,9 @@ describe('helpers', function() {
         z: function() {}
       });
 
-      assert(typeof app._.helpers.async.x === 'function');
-      assert(typeof app._.helpers.async.y === 'function');
-      assert(typeof app._.helpers.async.z === 'function');
+      assert.equal(typeof app._.helpers.async.x, 'function');
+      assert.equal(typeof app._.helpers.async.y, 'function');
+      assert.equal(typeof app._.helpers.async.z, 'function');
     });
 
     it('should add an async helper "group":', function() {
@@ -173,9 +173,9 @@ describe('helpers', function() {
         z: function() {}
       }, true);
 
-      assert(typeof app._.helpers.async.foo.x === 'function');
-      assert(typeof app._.helpers.async.foo.y === 'function');
-      assert(typeof app._.helpers.async.foo.z === 'function');
+      assert.equal(typeof app._.helpers.async.foo.x, 'function');
+      assert.equal(typeof app._.helpers.async.foo.y, 'function');
+      assert.equal(typeof app._.helpers.async.foo.z, 'function');
     });
   });
 });
@@ -613,7 +613,7 @@ describe('helpers integration', function() {
       app.page('doc.md', {content: 'a <%= upper(name) %> b'})
         .render({name: 'Halle'}, function(err, res) {
           if (err) return cb(err);
-          assert(res.content === 'a HALLE b');
+          assert.equal(res.content, 'a HALLE b');
           cb();
         });
     });
@@ -630,7 +630,7 @@ describe('helpers integration', function() {
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function(err, res) {
           if (err) return cb(err);
-          assert(res.content === 'a foo/bar/baz b');
+          assert.equal(res.content, 'a foo/bar/baz b');
           cb();
         });
     });
@@ -646,7 +646,7 @@ describe('helpers integration', function() {
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function(err, res) {
           if (err) return cb(err);
-          assert(res.content === 'a foo/bar/baz b');
+          assert.equal(res.content, 'a foo/bar/baz b');
           cb();
         });
     });
@@ -668,7 +668,7 @@ describe('helpers integration', function() {
       app.page('doc.md', {content: 'a <%= upper(name) %> <%= foo("bar") %> b'})
         .render({name: 'Halle'}, function(err, res) {
           if (err) return cb(err);
-          assert(res.content === 'a HALLE foobar b');
+          assert.equal(res.content, 'a HALLE foobar b');
           cb();
         });
     });
@@ -688,7 +688,7 @@ describe('helpers integration', function() {
       app.page('doc.md', {content: 'a <%= upper(name) %> b'})
         .render({name: 'Halle'}, function(err, res) {
           if (err) return cb(err);
-          assert(res.content === 'a HALLE b');
+          assert.equal(res.content, 'a HALLE b');
           cb();
         });
     });
@@ -723,7 +723,7 @@ describe('collection helpers', function() {
       })
         .render(function(err, res) {
           if (err) return cb(err);
-          assert(res.content === 'foobarbaz');
+          assert.equal(res.content, 'foobarbaz');
           cb();
         });
     });
@@ -763,25 +763,21 @@ describe('collection helpers', function() {
       app.post('a.hbs', {content: 'post-a'});
       app.post('b.hbs', {content: 'post-b'});
 
-      var one = app.page('one', {content: '{{view "a.hbs"}}'})
-        .compile()
-        .fn();
-
-      var two = app.page('two', {content: '{{view "b.hbs"}}'})
-        .compile()
-        .fn();
-
-      assert(one === 'post-a');
-      assert(two === 'post-b');
-      cb();
+      app.page('one', {content: '{{view "a.hbs"}}'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(res.content, 'post-a');
+          cb();
+        });
     });
 
     it('should return an empty string if not found', function(cb) {
-      var one = app.page('one', {content: '{{view "foo.hbs"}}'})
-        .compile()
-        .fn();
-      assert(one === '');
-      cb();
+      app.page('one', {content: '{{view "foo.hbs"}}'})
+        .render(function(err, view) {
+          if (err) return cb(err);
+          assert.equal(view.content, '');
+          cb();
+        });
     });
 
     it('should handle engine errors', function(cb) {
@@ -789,8 +785,8 @@ describe('collection helpers', function() {
       app.page('one', {content: '{{posts "foo.hbs"}}'})
         .render(function(err) {
           assert(err);
-          assert(typeof err === 'object');
-          assert(typeof err.message === 'string');
+          assert.equal(typeof err, 'object');
+          assert.equal(typeof err.message, 'string');
           assert(/Missing helper: "one"/.test(err.message));
           cb();
         });
@@ -806,7 +802,7 @@ describe('collection helpers', function() {
       app.bar('one.tmpl', {content: '<%= foo("foo.tmpl") %>'})
         .render(function(err) {
           assert(err);
-          assert(typeof err === 'object');
+          assert.equal(typeof err, 'object');
           assert(/blah is not defined/.test(err.message));
           cb();
         });
@@ -818,19 +814,21 @@ describe('collection helpers', function() {
       app.create('bar', {engine: 'tmpl'});
 
       app.foo('a.tmpl', {content: 'foo-a'});
-      app.foo('b.tmpl', {content: 'foo-b'});
+      app.bar('b.tmpl', {content: 'bar-b'});
 
-      var one = app.bar('one', {content: '<%= view("a.tmpl") %>'})
-        .compile()
-        .fn();
+      app.bar('one', {content: '<%= view("a.tmpl", "foos", { render: true }) %>'})
+        .render(function(err, foo) {
+          if (err) return cb(err);
 
-      var two = app.bar('two', {content: '<%= view("b.tmpl") %>'})
-        .compile()
-        .fn();
+          assert.equal(foo.content, 'foo-a');
 
-      assert(one === 'foo-a');
-      assert(two === 'foo-b');
-      cb();
+          app.bar('two', {content: '<%= view("b.tmpl", "bars", { render: true }) %>'})
+            .render(function(err, bar) {
+              if (err) return cb(err);
+              assert.equal(bar.content, 'bar-b');
+              cb();
+            });
+        });
     });
 
     it('should render a specific view from the given collection', function(cb) {
@@ -841,17 +839,20 @@ describe('collection helpers', function() {
       app.page('b.hbs', {content: 'page-b'});
       app.page('c.hbs', {content: 'page-c'});
 
-      var one = app.page('one', {content: '\\{{view "a.hbs" "posts"}}'})
-        .compile()
-        .fn();
+      app.page('one', {content: '{{view "a.hbs" "posts" render=true}}'})
+        .render(function(err, post) {
+          if (err) return cb(err);
 
-      var two = app.page('two', {content: '\\{{view "b.hbs" "pages"}}'})
-        .compile()
-        .fn();
+          assert.equal(post.content, 'post-a');
 
-      assert.equal(one, 'post-a');
-      assert.equal(two, 'page-b');
-      cb();
+          app.page('two', {content: '{{view "b.hbs" "pages" render=true}}'})
+            .render(function(err, page) {
+              if (err) return cb(err);
+              assert.equal(page.content, 'page-b')
+              cb();
+            });
+        });
+
     });
   });
 });
