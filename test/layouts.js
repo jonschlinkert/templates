@@ -16,59 +16,59 @@ describe('layouts', function() {
     app.create('page');
   });
 
-  it('should add a layout to a view:', function(done) {
+  it('should add a layout to a view:', function(cb) {
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
     app.pages('a.tmpl', {path: 'a.tmpl', content: 'b', layout: 'base'});
     var page = app.pages.getView('a.tmpl');
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'a b c');
-      done();
+      cb();
     });
   });
 
-  it('should use a "default" layout defined on global options', function(done) {
+  it('should use a "default" layout defined on global options', function(cb) {
     app.option('layout', 'base');
 
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
     app.page('a.tmpl', {path: 'a.tmpl', content: 'b'})
       .render(function(err, view) {
-        if (err) return done(err);
+        if (err) return cb(err);
         assert.equal(typeof view.content, 'string');
         assert.equal(view.content, 'a b c');
-        done();
+        cb();
       });
   });
 
-  it('should use a "default" layout defined on collection options', function(done) {
+  it('should use a "default" layout defined on collection options', function(cb) {
     app.pages.option('layout', 'base');
 
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
     app.page('a.tmpl', {path: 'a.tmpl', content: 'b'})
       .render(function(err, view) {
-        if (err) return done(err);
+        if (err) return cb(err);
         assert.equal(typeof view.content, 'string');
         assert.equal(view.content, 'a b c');
-        done();
+        cb();
       });
   });
 
-  it('should use the "default" layout on layouts', function(done) {
+  it('should use the "default" layout on layouts', function(cb) {
     app.option('layout', 'base');
 
     var base = app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
 
     app.render(base, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'a {% body %} c');
-      done();
+      cb();
     });
   });
 
-  it('should not use the "default" layout on partials', function(done) {
+  it('should not use the "default" layout on partials', function(cb) {
     app.option('layout', 'base');
 
     app.partial('foo.tmpl', {content: 'c'});
@@ -76,14 +76,14 @@ describe('layouts', function() {
 
     app.page('a.tmpl', {path: 'a.tmpl', content: 'b <%= partial("foo") %>'})
       .render(function(err, view) {
-        if (err) return done(err);
+        if (err) return cb(err);
         assert.equal(typeof view.content, 'string');
         assert.equal(view.content, 'a b c d');
-        done();
+        cb();
       });
   });
 
-  it('should add a layout to a partial when defined on a partial', function(done) {
+  it('should add a layout to a partial when defined on a partial', function(cb) {
     app.option('layout', 'base');
 
     app.partial('foo.tmpl', {content: 'c', layout: 'base'});
@@ -91,14 +91,14 @@ describe('layouts', function() {
 
     app.page('a.tmpl', {path: 'a.tmpl', content: 'b <%= partial("foo") %>'})
       .render(function(err, view) {
-        if (err) return done(err);
+        if (err) return cb(err);
         assert.equal(typeof view.content, 'string');
         assert.equal(view.content, 'a b a c d d');
-        done();
+        cb();
       });
   });
 
-  it('should add a layout to a layout when defined on a layout', function(done) {
+  it('should add a layout to a layout when defined on a layout', function(cb) {
     app.option('layout', 'base');
 
     app.partial('foo.tmpl', {content: 'c'});
@@ -107,41 +107,41 @@ describe('layouts', function() {
 
     app.page('a.tmpl', {path: 'a.tmpl', content: 'b <%= partial("foo") %>'})
       .render(function(err, view) {
-        if (err) return done(err);
+        if (err) return cb(err);
         assert.equal(typeof view.content, 'string');
         assert.equal(view.content, 'x a b c d z');
-        done();
+        cb();
       });
   });
 
-  it('should not add a layout when `layoutApplied` is set:', function(done) {
+  it('should not add a layout when `layoutApplied` is set:', function(cb) {
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
     app.pages('a.tmpl', {path: 'a.tmpl', content: 'b', layout: 'base'});
     var page = app.pages.getView('a.tmpl');
     page.option('layoutApplied', true);
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'b');
-      done();
+      cb();
     });
   });
 
-  it('should not apply a layout to itself:', function(done) {
+  it('should not apply a layout to itself:', function(cb) {
     app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c', layout: 'base'});
     app.pages('a.tmpl', {path: 'a.tmpl', content: 'b', layout: 'base'});
     var page = app.pages.getView('a.tmpl');
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'a b c');
-      done();
+      cb();
     });
   });
 
-  it('should apply nested layouts to a view:', function(done) {
+  it('should apply nested layouts to a view:', function(cb) {
     app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
     app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
     app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});
@@ -151,14 +151,14 @@ describe('layouts', function() {
     var page = app.pages.getView('z.tmpl');
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'outter c b a inner a b c outter');
-      done();
+      cb();
     });
   });
 
-  it('should track layout stack history on `layoutStack`:', function(done) {
+  it('should track layout stack history on `layoutStack`:', function(cb) {
     app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
     app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
     app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});
@@ -168,15 +168,15 @@ describe('layouts', function() {
     var page = app.pages.getView('z.tmpl');
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert(view.layoutStack.length === 4);
       assert(typeof view.layoutStack[0] === 'object');
       assert(typeof view.layoutStack[0].depth === 'number');
-      done();
+      cb();
     });
   });
 
-  it('should track layout stack history on `layoutStack`:', function(done) {
+  it('should track layout stack history on `layoutStack`:', function(cb) {
     app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', layout: 'b'});
     app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', layout: 'c'});
     app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', layout: 'base'});
@@ -186,14 +186,14 @@ describe('layouts', function() {
     var page = app.pages.getView('z.tmpl');
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'outter c b a inner a b c outter');
-      done();
+      cb();
     });
   });
 
-  it('should get layouts from `layout` viewTypes:', function(done) {
+  it('should get layouts from `layout` viewTypes:', function(cb) {
     app.create('section', { viewType: 'layout' });
     app.create('block', { viewType: 'layout' });
 
@@ -206,10 +206,10 @@ describe('layouts', function() {
     var page = app.pages.getView('z.tmpl');
 
     app.render(page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
       assert.equal(view.content, 'outter c b a inner a b c outter');
-      done();
+      cb();
     });
   });
 });

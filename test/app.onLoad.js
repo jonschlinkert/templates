@@ -13,12 +13,12 @@ describe('onLoad', function() {
   });
 
   describe('app.collection', function() {
-    it('should emit an onLoad when view is created', function(done) {
+    it('should emit an onLoad when view is created', function(cb) {
       var collection = app.collection();
 
       app.on('onLoad', function(view) {
         assert(view.path === 'blog/foo.js');
-        done();
+        cb();
       });
 
       app.onLoad('blog/:title', function(view, next) {
@@ -31,12 +31,12 @@ describe('onLoad', function() {
   });
 
   describe('view collections', function() {
-    it('should emit an onLoad when view is created', function(done) {
+    it('should emit an onLoad when view is created', function(cb) {
       app.create('posts');
 
       app.on('onLoad', function(view) {
         assert(view.path === 'blog/foo.js');
-        done();
+        cb();
       });
 
       app.onLoad('blog/:title', function(view, next) {

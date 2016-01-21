@@ -13,14 +13,14 @@ describe('view.use', function() {
     view = new View();
   });
 
-  it('should expose the instance to `use`:', function(done) {
+  it('should expose the instance to `use`:', function(cb) {
     view.use(function(inst) {
       assert(inst instanceof View);
-      done();
+      cb();
     });
   });
 
-  it('should be chainable:', function(done) {
+  it('should be chainable:', function(cb) {
     view.use(function(inst) {
       assert(inst instanceof View);
     })
@@ -29,7 +29,7 @@ describe('view.use', function() {
       })
       .use(function(inst) {
         assert(inst instanceof View);
-        done();
+        cb();
       });
   });
 

@@ -14,14 +14,14 @@ describe('collection.use', function() {
     collection = new Collection();
   });
 
-  it('should expose the instance to `use`:', function(done) {
+  it('should expose the instance to `use`:', function(cb) {
     collection.use(function(inst) {
       assert(inst instanceof Collection);
-      done();
+      cb();
     });
   });
 
-  it('should be chainable:', function(done) {
+  it('should be chainable:', function(cb) {
     collection.use(function(inst) {
       assert(inst instanceof Collection);
     })
@@ -30,7 +30,7 @@ describe('collection.use', function() {
       })
       .use(function(inst) {
         assert(inst instanceof Collection);
-        done();
+        cb();
       });
   });
 

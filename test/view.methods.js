@@ -29,12 +29,12 @@ describe('view.option()', function() {
   });
 
   describe('.render:', function() {
-    it('should expose `.render` for rendering a view:', function(done) {
+    it('should expose `.render` for rendering a view:', function(cb) {
       app.page('a.tmpl', {path: 'a.tmpl', content: '<%= a %>', locals: {a: 'bbb'}})
         .render({}, function(err, res) {
-          if (err) return done(err);
+          if (err) return cb(err);
           res.contents.toString().should.equal('bbb');
-          done();
+          cb();
         });
     });
   });

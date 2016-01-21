@@ -14,26 +14,26 @@ describe('handler', function() {
     app.handlers(['foo']);
   });
 
-  it('should support custom handle methods:', function(done) {
+  it('should support custom handle methods:', function(cb) {
     var page = app.page('foo', {contents: null});
 
     app.handle('foo', page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       
       assert(typeof view.path === 'string');
-      done();
+      cb();
     });
   });
 
-  it('should not blow up if `options.handled` does not exist:', function(done) {
+  it('should not blow up if `options.handled` does not exist:', function(cb) {
     var page = app.page('foo', {contents: null});
     delete page.options.handled;
 
     app.handle('foo', page, function(err, view) {
-      if (err) return done(err);
+      if (err) return cb(err);
       
       assert(typeof view.path === 'string');
-      done();
+      cb();
     });
   });
 });

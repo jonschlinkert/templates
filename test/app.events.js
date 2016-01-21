@@ -18,11 +18,11 @@ describe('events', function() {
     assert(Array.isArray(app._callbacks['$foo']));
   });
 
-  it('should emit an event:', function(done) {
+  it('should emit an event:', function(cb) {
     var app = new App();
     app.on('foo', function(val) {
       assert(val === 'bar');
-      done();
+      cb();
     });
     assert(Array.isArray(app._callbacks['$foo']));
     app.emit('foo', 'bar');
@@ -46,12 +46,12 @@ describe('onLoad', function() {
   });
 
   describe('app.collection', function() {
-    it('should emit a `view` event when view is created', function(done) {
+    it('should emit a `view` event when view is created', function(cb) {
       var collection = app.collection();
 
       app.on('view', function(view) {
         assert(view.path === 'blog/foo.js');
-        done();
+        cb();
       });
 
       app.onLoad('blog/:title', function(view, next) {
@@ -62,12 +62,12 @@ describe('onLoad', function() {
       collection.addView('whatever', {path: 'blog/foo.js', content: 'bar baz'});
     });
 
-    it('should emit an onLoad event when view is created', function(done) {
+    it('should emit an onLoad event when view is created', function(cb) {
       var collection = app.collection();
 
       app.on('onLoad', function(view) {
         assert(view.path === 'blog/foo.js');
-        done();
+        cb();
       });
 
       app.onLoad('blog/:title', function(view, next) {
@@ -80,12 +80,12 @@ describe('onLoad', function() {
   });
 
   describe('view collections', function() {
-    it('should emit a view event when view is created', function(done) {
+    it('should emit a view event when view is created', function(cb) {
       app.create('posts');
 
       app.on('view', function(view) {
         assert(view.path === 'blog/foo.js');
-        done();
+        cb();
       });
 
       app.onLoad('blog/:title', function(view, next) {
@@ -96,12 +96,12 @@ describe('onLoad', function() {
       app.post('whatever', {path: 'blog/foo.js', content: 'bar baz'});
     });
 
-    it('should emit an onLoad event when view is created', function(done) {
+    it('should emit an onLoad event when view is created', function(cb) {
       app.create('posts');
 
       app.on('onLoad', function(view) {
         assert(view.path === 'blog/foo.js');
-        done();
+        cb();
       });
 
       app.onLoad('blog/:title', function(view, next) {

@@ -460,14 +460,14 @@ describe('queue', function() {
     collection = new Collection();
   });
 
-  it('should emit arguments on addItem', function(done) {
+  it('should emit arguments on addItem', function(cb) {
     collection.on('addItem', function(args) {
       assert(args[0] === 'a');
       assert(args[1] === 'b');
       assert(args[2] === 'c');
       assert(args[3] === 'd');
       assert(args[4] === 'e');
-      done();
+      cb();
     });
 
     collection.addItem('a', 'b', 'c', 'd', 'e');

@@ -88,7 +88,7 @@ describe('list', function() {
       app.create('pages');
     });
 
-    it('should render a item with inherited app.render', function(done) {
+    it('should render a item with inherited app.render', function(cb) {
       app.page('test/fixtures/templates/a.tmpl')
         .use(function(item) {
           if (!item.content) {
@@ -97,9 +97,9 @@ describe('list', function() {
         })
         .set('data.name', 'Brian')
         .render(function(err, res) {
-          if (err) return done(err);
+          if (err) return cb(err);
           assert(res.contents.toString() === 'Brian');
-          done();
+          cb();
         });
     });
   });

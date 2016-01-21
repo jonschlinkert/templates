@@ -10,7 +10,7 @@ var App = support.resolve();
 var Collection = App.Collection;
 var app;
 
-describe('collection', function() {
+describe('app.collection', function() {
   describe('method', function() {
     beforeEach(function() {
       app = new App();
