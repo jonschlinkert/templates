@@ -27,7 +27,6 @@
   * [Context](#context)
   * [Routes and middleware](#routes-and-middleware)
   * [is](#is)
-- [Code coverage](#code-coverage)
 - [History](#history)
 - [Related projects](#related-projects)
 - [Running tests](#running-tests)
@@ -348,14 +347,17 @@ app.helperGroup('mdu', {
 
 ### Built-in helpers
 
-Get a specific view by `name`, optionally specifying
-the collection to search as the second argument.
-
 **Params**
 
 * `name` **{String}**
 * `collection` **{String}**
 * `returns` **{String}**
+
+**Example**
+
+```html
+<%= view("foo") %>
+```
 
 If the helper is used as a handlebars block helper, the collection
 array will be exposed as context to `options.fn()`, otherwise
@@ -591,7 +593,7 @@ type of partials.
 
 API for the `Views` class.
 
-### [Views](lib/views.js#L27)
+### [Views](lib/views.js#L25)
 
 Create an instance of `Views` with the given `options`.
 
@@ -606,7 +608,7 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
-### [.setView](lib/views.js#L110)
+### [.setView](lib/views.js#L108)
 
 Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
@@ -622,7 +624,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L155)
+### [.addView](lib/views.js#L153)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -639,7 +641,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L178)
+### [.deleteView](lib/views.js#L176)
 
 Delete a view from collection `views`.
 
@@ -654,7 +656,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L201)
+### [.addViews](lib/views.js#L199)
 
 Load multiple views onto the collection.
 
@@ -673,7 +675,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L234)
+### [.addList](lib/views.js#L232)
 
 Load an array of views onto the collection.
 
@@ -692,7 +694,7 @@ collection.addList([
 ]);
 ```
 
-### [.getView](lib/views.js#L266)
+### [.getView](lib/views.js#L264)
 
 Get view `name` from `collection.views`.
 
@@ -708,7 +710,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L300)
+### [.extendView](lib/views.js#L298)
 
 Load a view from the file system.
 
@@ -723,7 +725,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L315)
+### [.isType](lib/views.js#L313)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -1372,7 +1374,7 @@ var posts = app.getViews('posts');
 
 ### Rendering
 
-### [.compile](lib/plugins/render.js#L71)
+### [.compile](lib/plugins/render.js#L70)
 
 Compile `content` with the given `locals`.
 
@@ -1397,7 +1399,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](lib/plugins/render.js#L149)
+### [.render](lib/plugins/render.js#L148)
 
 Render a view with the given `locals` and `callback`.
 
@@ -1698,18 +1700,17 @@ templates.isVinyl(file);
 
 ***
 
-## Code coverage
-
-As of January 21, 2016, code coverage is 100%.
-
-```sh
-Statements   : 100% (1162/1162)
-Branches     : 100% (475/475)
-Functions    : 100% (160/160)
-Lines        : 100% (1141/1141)
-```
-
 ## History
+
+**v0.11.0**
+
+* Default `engine` can now be defined on `app` or a collection using using `app.option('engine')`, `views.option('engine')`
+* Default `layout` can now defined using `app.option('layout')`, `views.option('layout')`. No changes have been made to `view.layout`, it should work as before. Resolves [issue/#818](../../issues/818)
+* Improves logic for finding a layout, this should make layouts easier to define and find going forward.
+* The built-in `view` helper has been refactored completely. The helper is now async and renders the view before returning its content.
+* Adds `isApp`, `isViews`, `isCollection`, `isList`, `isView`, `isGroup`, and `isItem` static methods. All return true when the given value is an instance of the respective class.
+* Adds `deleteItem` method to List and Collection, and `deleteView` method to Views.
+* Last, the static `  _.proto` property which is only exposed for unit tests was renamed to `  _.plugin`.
 
 **v0.10.7**
 
