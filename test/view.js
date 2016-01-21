@@ -12,7 +12,7 @@ var App = support.resolve();
 var View = App.View;
 var view;
 
-describe('View', function() {
+describe('view', function() {
   describe('instance', function() {
     it('should create an instance of View:', function() {
       view = new View();

@@ -7,7 +7,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('events', function() {
+describe('app.events', function() {
   beforeEach(function() {
     app = new App();
   });

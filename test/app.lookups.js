@@ -10,7 +10,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('lookups', function() {
+describe('app.lookups', function() {
   beforeEach(function() {
     app = new App();
     app.option('renameKey', function(key) {

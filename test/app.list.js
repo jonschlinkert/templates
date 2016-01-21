@@ -9,7 +9,7 @@ var App = support.resolve();
 var List = App.List;
 var app;
 
-describe('list', function() {
+describe('app.list', function() {
   describe('method', function() {
     beforeEach(function() {
       app = new App();

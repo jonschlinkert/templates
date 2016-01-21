@@ -5,7 +5,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('handlers', function() {
+describe('app.handlers', function() {
   describe('custom handlers', function() {
     beforeEach(function() {
       app = new App();

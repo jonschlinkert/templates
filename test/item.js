@@ -13,7 +13,7 @@ var App = support.resolve();
 var Item = App.Item;
 var item;
 
-describe('Item', function() {
+describe('item', function() {
   describe('instance', function() {
     it('should create an instance of Item:', function() {
       item = new Item();

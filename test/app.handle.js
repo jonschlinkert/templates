@@ -7,7 +7,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('handler', function() {
+describe('app.handle', function() {
   beforeEach(function() {
     app = new App();
     app.create('pages');

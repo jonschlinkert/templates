@@ -5,7 +5,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('mergePartials', function() {
+describe('app.mergePartials', function() {
   beforeEach(function() {
     app = new App();
   });

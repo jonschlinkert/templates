@@ -9,7 +9,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('create', function() {
+describe('app.create', function() {
   describe('inflections', function() {
     beforeEach(function() {
       app = new App();

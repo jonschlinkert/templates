@@ -7,7 +7,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('engine support', function() {
+describe('app.engines', function() {
   beforeEach(function() {
     app = new App();
   });

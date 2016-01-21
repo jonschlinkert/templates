@@ -7,7 +7,7 @@ var support = require('./support');
 var App = support.resolve();
 var app;
 
-describe('onLoad', function() {
+describe('app.onLoad', function() {
   beforeEach(function() {
     app = new App();
   });
