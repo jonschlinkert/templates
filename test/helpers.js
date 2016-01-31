@@ -620,13 +620,13 @@ describe('helpers integration', function() {
   });
 
   describe('helper options:', function() {
-    it('should expose `this.options` to helpers:', function(cb) {
+    it('should expose global options to helpers:', function(cb) {
       app.helper('cwd', function(fp) {
         return path.join(this.options.cwd, fp);
       });
 
-      app.option('one', 'two');
       app.option('cwd', 'foo/bar');
+
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function(err, res) {
           if (err) return cb(err);
@@ -635,13 +635,28 @@ describe('helpers integration', function() {
         });
     });
 
-    it('should pass helper options to helpers:', function(cb) {
+    it('should expose helper-specific options to helpers:', function(cb) {
       app.helper('cwd', function(fp) {
         return path.join(this.options.cwd, fp);
       });
 
       app.option('helper.cwd', 'foo/bar');
-      app.option('helper.whatever', '...');
+
+      app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(res.content, 'a foo/bar/baz b');
+          cb();
+        });
+    });
+
+    it('should prefer helper options over global options:', function(cb) {
+      app.helper('cwd', function(fp) {
+        return path.join(this.options.cwd, fp);
+      });
+
+      app.option('cwd', 'one/two');
+      app.option('helper.cwd', 'foo/bar');
 
       app.page('doc.md', {content: 'a <%= cwd("baz") %> b'})
         .render(function(err, res) {

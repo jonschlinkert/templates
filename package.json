@@ -1,7 +1,7 @@
 {
   "name": "templates",
   "description": "System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "homepage": "https://github.com/jonschlinkert/templates",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/templates",
@@ -22,18 +22,18 @@
   },
   "dependencies": {
     "array-sort": "^0.1.1",
-    "base": "^0.6.4",
-    "base-data": "^0.3.5",
-    "base-options": "^0.5.4",
+    "base": "^0.6.7",
+    "base-data": "^0.3.6",
+    "base-options": "^0.5.5",
     "base-plugins": "^0.4.1",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
-    "deep-bind": "^0.1.0",
+    "deep-bind": "^0.2.1",
     "define-property": "^0.2.5",
     "en-route": "^0.7.5",
     "engine-base": "^0.1.2",
     "engine-cache": "^0.16.1",
-    "export-files": "^2.1.0",
+    "export-files": "^2.1.1",
     "extend-shallow": "^2.0.1",
     "get-view": "^0.1.1",
     "group-array": "^0.3.0",
@@ -55,7 +55,6 @@
     "consolidate": "^0.13.1",
     "coveralls": "^2.11.6",
     "engine-handlebars": "^0.8.0",
-    "ent": "^2.2.0",
     "event-stream": "^3.3.2",
     "find-pkg": "^0.1.1",
     "get-value": "^2.0.2",
@@ -69,7 +68,6 @@
     "kind-of": "^3.0.2",
     "mocha": "*",
     "parser-front-matter": "^1.3.0",
-    "remarkable": "^1.6.1",
     "resolve-glob": "^0.1.7",
     "should": "*",
     "swig": "^1.4.2"
@@ -88,6 +86,12 @@
     "template",
     "templates"
   ],
+  "lintDeps": {
+    "ignore": [
+      "examples",
+      "docs"
+    ]
+  },
   "verb": {
     "related": {
       "list": [

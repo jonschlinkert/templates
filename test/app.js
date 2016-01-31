@@ -1,6 +1,5 @@
 'use strict';
 
-/* deps: coveralls istanbul */
 require('mocha');
 require('should');
 var assert = require('assert');
