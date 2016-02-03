@@ -7,6 +7,7 @@
 
 'use strict';
 
+var debug = require('debug')('templates');
 var helpers = require('./lib/helpers');
 var plugin = require('./lib/plugins/');
 var utils = require('./lib/utils/');
@@ -49,6 +50,7 @@ function Templates(options) {
 
   this.options = options || {};
   utils.define(this, 'isApp', true);
+  debug('Initializing templates');
   this.is('Templates');
 
   Base.call(this);
@@ -129,9 +131,6 @@ Templates.prototype.expose = function(name) {
 
 Templates.prototype.listen = function(app) {
   this.on('option', function(key, value) {
-    if (key === 'mixins') {
-      app.visit('mixin', value);
-    }
     utils.updateOptions(app, key, value);
   });
 };
@@ -244,6 +243,7 @@ Templates.prototype.collection = function(opts, created) {
  */
 
 Templates.prototype.create = function(name, opts) {
+  debug('creating view collection: "%s"', name);
   opts = opts || {};
 
   if (!opts.isCollection) {
@@ -323,6 +323,7 @@ Templates.prototype.extendViews = function(views, options) {
 
 Templates.prototype.resolveLayout = function(view) {
   if (utils.isRenderable(view)) {
+    debug('resolving layout for "%s"', view.key);
     var views = this[view.options.collection];
     return views.resolveLayout(view) || this.option('layout');
   }

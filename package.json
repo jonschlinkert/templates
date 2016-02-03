@@ -28,6 +28,7 @@
     "base-plugins": "^0.4.1",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
+    "debug": "^2.2.0",
     "deep-bind": "^0.2.1",
     "define-property": "^0.2.5",
     "en-route": "^0.7.5",
