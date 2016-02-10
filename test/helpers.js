@@ -809,13 +809,12 @@ describe('collection helpers', function() {
 
     it('should handle engine errors2', function(cb) {
       app.engine('tmpl', require('engine-base'));
-      app.create('foo', {engine: 'tmpl'});
+      app.create('foo', {viewType: 'partial'});
       app.create('bar', {engine: 'tmpl'});
 
-      app.create('foo', {viewType: 'partial'});
-      app.foo('foo.tmpl', {path: 'foo.tmpl', content: '<%= blah.bar %>'});
-      app.bar('one.tmpl', {content: '<%= foo("foo.tmpl") %>'})
-        .render(function(err) {
+      app.foo('a.tmpl', {path: 'a.tmpl', content: '<%= blah.baz %>'});
+      app.bar('b.tmpl', {content: '<%= foo("a.tmpl") %>'})
+        .render(function(err, res) {
           assert(err);
           assert.equal(typeof err, 'object');
           assert(/blah is not defined/.test(err.message));

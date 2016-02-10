@@ -8,7 +8,7 @@
 'use strict';
 
 var debug = require('debug')('templates');
-var helpers = require('./lib/helpers');
+var helpers = require('./lib/helpers/');
 var plugin = require('./lib/plugins/');
 var utils = require('./lib/utils/');
 var Base = require('./lib/base');
@@ -103,6 +103,9 @@ Templates.prototype.defaultConfig = function() {
   for (var key in this.options.mixins) {
     this.mixin(key, this.options.mixins[key]);
   }
+
+  // create an async `view` helper
+  helpers.view(this);
 
   // listen for options events
   this.listen(this);
@@ -222,7 +225,8 @@ Templates.prototype.collection = function(opts, created) {
     this.extendViews(collection, opts);
 
     // add collection and view helpers
-    helpers(this, opts);
+    helpers.singular(this, collection);
+    helpers.plural(this, collection);
   } else {
 
     // emit the collection
@@ -295,7 +299,8 @@ Templates.prototype.create = function(name, opts) {
   this.extendViews(collection, opts);
 
   // add collection and view helpers
-  helpers(this, opts);
+  helpers.singular(this, collection);
+  helpers.plural(this, collection);
   return collection;
 };
 
