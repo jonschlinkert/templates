@@ -22,9 +22,9 @@
   },
   "dependencies": {
     "array-sort": "^0.1.1",
-    "base": "^0.6.7",
+    "base": "^0.7.1",
     "base-data": "^0.3.6",
-    "base-options": "^0.5.5",
+    "base-options": "^0.6.0",
     "base-plugins": "^0.4.1",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
@@ -94,6 +94,11 @@
     ]
   },
   "verb": {
+    "toc": true,
+    "layout": "default",
+    "plugins": [
+      "gulp-format-md"
+    ],
     "related": {
       "list": [
         "assemble",
@@ -103,19 +108,12 @@
         "verb"
       ]
     },
-    "toc": {
-      "insert": false
-    },
     "reflinks": [
-      "base",
-      "assemble",
       "array-sort",
+      "assemble",
+      "base",
       "group-array",
       "paginationator"
-    ],
-    "layout": "default",
-    "plugins": [
-      "gulp-format-md"
     ]
   }
 }
