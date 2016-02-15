@@ -50,23 +50,60 @@ describe('app.render', function() {
     });
   });
 
-  it.skip('should render the same template twice with a helper', function(cb) {
+  it('should render the same template twice with a helper', function(cb) {
     app.partial('button.tmpl', {content: '<%= name %>'});
-    app.partial('foo.hbs', {content: 'bar'});
-    app.partial('foo.tmpl', {content: 'bar'});
-    app.partial('bar.tmpl', {content: 'bar'});
-
-    // app.page('a.tmpl', {content: 'a <%= partial("button.tmpl", {name: "foo"}) %> <%= partial("button.tmpl", {name: "bar"}) %> b'});
-    app.page('a.tmpl', {content: 'a <%= partial("foo.tmpl") %> <%= partial("foo.tmpl") %> b'});
-    // app.page('a.hbs', {content: 'a {{partial "foo.hbs"}} {{partial "foo.hbs"}} b'});
+    app.page('a.tmpl', {content: 'a <%= partial("button.tmpl", {name: "foo"}) %> <%= partial("button.tmpl", {name: "bar"}) %> b'});
 
     app.pages.getView('a.tmpl')
       .render(function(err, res) {
         if (err) return cb(err);
-        console.log(res.content)
-        // assert(res.contents.toString() === 'a HALLE b');
+        assert.equal(res.content,'a foo bar b');
         cb();
       });
+  });
+
+  it('should render the same template multiple times with different engines', function(cb) {
+    app.partial('button.tmpl', {content: '<%= name %>'});
+    app.partial('foo.hbs', {content: '{{name}}'});
+
+    app.page('a.hbs', {content: 'a <%= partial("button.tmpl", {name: "foo"}) %> <%= partial("button.tmpl", {name: "bar"}) %> {{partial "foo.hbs" name="one"}} {{partial "foo.hbs" name="two"}} b'});
+
+    var view = app.pages.getView('a.hbs');
+
+    app.render(view, function(err, res) {
+      if (err) return cb(err);
+
+      res.engine = 'tmpl';
+
+      app.render(res, function(err, res) {
+        if (err) return cb(err);
+        assert.equal(res.content,'a foo bar one two b');
+        cb();
+      });
+    });
+  });
+
+  it.skip('should render the same template multiple times with different engines', function(cb) {
+    app.partial('button.tmpl', {content: '{{title}}', engine: 'hbs'});
+    app.partial('foo.hbs', {content: '{{title}}'});
+
+    app.page('a.hbs', {
+      content: 'a <%= partial("button.tmpl", {title: "foo"}) %> <%= partial("button.tmpl", {title: "bar"}) %> {{partial "foo.hbs" title="one"}} {{partial "foo.hbs" title="two"}} b'
+    });
+
+    var view = app.pages.getView('a.hbs');
+
+    app.render(view, function(err, res) {
+      if (err) return cb(err);
+
+      res.engine = 'tmpl';
+
+      app.render(res, function(err, res) {
+        if (err) return cb(err);
+        assert.equal(res.content,'a foo bar one two b');
+        cb();
+      });
+    });
   });
 
   it('should use helpers when rendering a view:', function(cb) {
