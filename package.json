@@ -96,6 +96,9 @@
   "verb": {
     "toc": true,
     "layout": "default",
+    "tasks": [
+      "readme"
+    ],
     "plugins": [
       "gulp-format-md"
     ],
