@@ -322,6 +322,7 @@ describe('built-in helpers:', function() {
       });
 
       app.render('b.md', function(err, res) {
+        if (err) return cb(err);
       });
     });
 
@@ -862,7 +863,7 @@ describe('collection helpers', function() {
           app.page('two', {content: '{{view "b.hbs" "pages" render=true}}'})
             .render(function(err, page) {
               if (err) return cb(err);
-              assert.equal(page.content, 'page-b')
+              assert.equal(page.content, 'page-b');
               cb();
             });
         });

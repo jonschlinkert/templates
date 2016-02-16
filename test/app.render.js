@@ -57,7 +57,7 @@ describe('app.render', function() {
     app.pages.getView('a.tmpl')
       .render(function(err, res) {
         if (err) return cb(err);
-        assert.equal(res.content,'a foo bar b');
+        assert.equal(res.content, 'a foo bar b');
         cb();
       });
   });
@@ -77,7 +77,7 @@ describe('app.render', function() {
 
       app.render(res, function(err, res) {
         if (err) return cb(err);
-        assert.equal(res.content,'a foo bar one two b');
+        assert.equal(res.content, 'a foo bar one two b');
         cb();
       });
     });
@@ -100,7 +100,7 @@ describe('app.render', function() {
 
       app.render(res, function(err, res) {
         if (err) return cb(err);
-        assert.equal(res.content,'a foo bar one two b');
+        assert.equal(res.content, 'a foo bar one two b');
         cb();
       });
     });
