@@ -37,6 +37,7 @@
     "engine-cache": "^0.16.1",
     "export-files": "^2.1.1",
     "extend-shallow": "^2.0.1",
+    "falsey": "^0.3.0",
     "get-view": "^0.1.1",
     "group-array": "^0.3.0",
     "has-glob": "^0.1.1",
@@ -88,10 +89,7 @@
     "templates"
   ],
   "lintDeps": {
-    "ignore": [
-      "examples",
-      "docs"
-    ]
+    "ignore": ["coverage"]
   },
   "verb": {
     "toc": true,
