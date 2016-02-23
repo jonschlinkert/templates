@@ -68,7 +68,7 @@ describe('item', function() {
 
     it('should use `Item` as the default `_name`', function() {
       item = new Item({});
-      assert.equal(item._name, 'Item');
+      assert.equal(item._name, 'item');
     });
 
     it('should allow `_name` to be set after instantiation', function() {
