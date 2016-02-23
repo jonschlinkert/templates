@@ -1840,7 +1840,7 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 Generate readme and API documentation with [verb][]:
 
 ```sh
-$ npm i -d && npm run docs
+$ npm i verb && npm run docs
 ```
 
 Or, if [verb][] is installed globally:
