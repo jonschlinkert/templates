@@ -433,6 +433,92 @@ describe('built-in helpers:', function() {
       });
     });
 
+    it('should expose a "this" object', function(cb) {
+      app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
+      app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
+      var count = 0;
+      app.option('helper.foo', {some: 'opt'})
+
+      app.helper('foo', function() {
+        assert(this);
+        count++;
+        return 'foo';
+      });
+
+      app.render('xyz.md', function(err, res) {
+        if (err) return cb(err);
+        assert.equal(count, 1);
+        res.content.should.equal('a foo b');
+        cb();
+      });
+    });
+
+    it.only('should expose a "this.helper" object', function(cb) {
+      app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
+      app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
+      var count = 0;
+      app.option('helper.foo', {some: 'opt'})
+
+      app.helper('foo', function() {
+        assert(this.helper);
+        console.log(this.context.view);
+        console.log('------');
+        console.log(this.view);
+        assert.equal(typeof this.helper, 'object');
+        count++;
+        return 'foo';
+      });
+
+      app.render('xyz.md', function(err, res) {
+        if (err) return cb(err);
+        assert.equal(count, 1);
+        res.content.should.equal('a foo b');
+        cb();
+      });
+    });
+
+    it('should expose a "this.options" object', function(cb) {
+      app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
+      app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
+      var count = 0;
+      app.option('helper.foo', {some: 'opt'})
+
+      app.helper('foo', function() {
+        assert(this.options);
+        assert.equal(typeof this.options, 'object');
+        count++;
+        return 'foo';
+      });
+
+      app.render('xyz.md', function(err, res) {
+        if (err) return cb(err);
+        assert.equal(count, 1);
+        res.content.should.equal('a foo b');
+        cb();
+      });
+    });
+
+    it('should expose a "this.context" object', function(cb) {
+      app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
+      app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
+      var count = 0;
+      app.option('helper.foo', {some: 'opt'})
+
+      app.helper('foo', function() {
+        assert(this.context);
+        assert.equal(typeof this.context, 'object');
+        count++;
+        return 'foo';
+      });
+
+      app.render('xyz.md', function(err, res) {
+        if (err) return cb(err);
+        assert.equal(count, 1);
+        res.content.should.equal('a foo b');
+        cb();
+      });
+    });
+
     it('should prefer helper locals over view locals.', function(cb) {
       app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
       app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= partial("abc.md", { name: "CCC" }) %> bar'});
@@ -596,10 +682,38 @@ describe('built-in helpers:', function() {
   });
 });
 
+describe('helper debug', function() {
+  beforeEach(function() {
+    app = new App();
+    app.create('pages');
+    app.engine('hbs', require('engine-handlebars'));
+    app.engine('md', require('engine-base'));
+  });
+
+  it('should expose a `debug` method on the context', function(cb) {
+    var count = 0;
+    app.helper('foo', function(str) {
+      assert.equal(typeof this.debug, 'function');
+      this.debug('rendering "%s"', str);
+      count++;
+      return str;
+    });
+
+    app.page('doc.md', {content: 'a <%= foo("some string") %> b'})
+      .render(function(err, res) {
+        if (err) return cb(err);
+        assert.equal(count, 1);
+        assert.equal(res.content, 'a some string b');
+        cb();
+      });
+  });
+});
+
 describe('helpers integration', function() {
   beforeEach(function() {
     app = new App();
     app.create('pages');
+    app.engine('hbs', require('engine-handlebars'));
     app.engine('md', require('engine-base'));
   });
 
@@ -666,6 +780,109 @@ describe('helpers integration', function() {
           cb();
         });
     });
+
+    it('should expose a `merge` method on context options', function(cb) {
+      var count = 0;
+      app.helper('foo', function(str) {
+        assert.equal(typeof this.options.merge, 'function');
+        count++;
+        return str;
+      });
+
+      app.page('doc.md', {content: 'a <%= foo("foo") %> b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(count, 1);
+          assert.equal(res.content, 'a foo b');
+          cb();
+        });
+    });
+
+    it('should merge the given object onto context options', function(cb) {
+      var count = 0;
+      app.helper('foo', function(options) {
+        this.options.merge(options);
+        count++;
+        return this.options.one;
+      });
+
+      app.page('doc.md', {content: 'a <%= foo({one: "two"}) %> b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(count, 1);
+          assert.equal(res.content, 'a two b');
+          cb();
+        });
+    });
+
+    it('should merge a list of objects onto context options', function(cb) {
+      var count = 0;
+      app.helper('foo', function(locals, options) {
+        this.options.merge(locals, options);
+
+        count++;
+        return this.options.abc + this.options.one;
+      });
+
+      app.page('doc.md', {content: 'a <%= foo({abc: "def"}, {one: "two"}) %> b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(count, 1);
+          assert.equal(res.content, 'a deftwo b');
+          cb();
+        });
+    });
+
+    it('should merge the handlebars "hash" object onto context options', function(cb) {
+      var count = 0;
+      app.helper('foo', function(options) {
+        this.options.merge(options);
+        count++;
+        return this.options.abc;
+      });
+
+      app.page('doc.hbs', {content: 'a {{foo abc="xyz"}} b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(count, 1);
+          assert.equal(res.content, 'a xyz b');
+          cb();
+        });
+    });
+
+    it('should expose a `get` method on context options', function(cb) {
+      var count = 0;
+      app.helper('foo', function(str) {
+        assert.equal(typeof this.options.get, 'function');
+        count++;
+        return str;
+      });
+
+      app.page('doc.md', {content: 'a <%= foo("foo") %> b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(count, 1);
+          assert.equal(res.content, 'a foo b');
+          cb();
+        });
+    });
+
+    it('should expose a `set` method on context options', function(cb) {
+      var count = 0;
+      app.helper('foo', function(str) {
+        assert.equal(typeof this.options.set, 'function');
+        count++;
+        return str;
+      });
+
+      app.page('doc.md', {content: 'a <%= foo("foo") %> b'})
+        .render(function(err, res) {
+          if (err) return cb(err);
+          assert.equal(count, 1);
+          assert.equal(res.content, 'a foo b');
+          cb();
+        });
+    });
   });
 
   describe('options.helpers', function() {
@@ -720,7 +937,7 @@ describe('collection helpers', function() {
     app.create('snippet', {viewType: 'partial'});
     app.engine('hbs', require('engine-handlebars'));
     app.helper('log', function(ctx) {
-      console.log(ctx);
+      // console.log(ctx);
     });
   });
 
