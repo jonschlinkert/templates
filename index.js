@@ -121,6 +121,19 @@ Templates.prototype.defaultConfig = function() {
   this.expose('Collection');
   this.expose('Group');
   this.expose('Views');
+
+  // ensure that plugins are loaded onto collections
+  // created after the plugins are registered
+  this.on('use', function(fn, app) {
+    if (!fn || fn._createRegistered) return;
+    fn._createRegistered = true;
+
+    for (var key in app.views) {
+      if (app.views.hasOwnProperty(key)) {
+        app[key].use(fn);
+      }
+    }
+  });
 };
 
 /**
