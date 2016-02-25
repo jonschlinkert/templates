@@ -461,9 +461,6 @@ describe('built-in helpers:', function() {
 
       app.helper('foo', function() {
         assert(this.helper);
-        console.log(this.context.view);
-        console.log('------');
-        console.log(this.view);
         assert.equal(typeof this.helper, 'object');
         count++;
         return 'foo';
