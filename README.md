@@ -161,7 +161,7 @@ This function is the main export of the templates module. Initialize an instance
 
 **GFM_2**
 
-### [.list](index.js#L161)
+### [.list](index.js#L174)
 
 Create a new list. See the [list docs](docs/lists.md) for more information about lists.
 
@@ -181,7 +181,7 @@ app.create('pages');
 var list = app.list(app.pages);
 ```
 
-### [.collection](index.js#L200)
+### [.collection](index.js#L213)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -193,7 +193,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L252)
+### [.create](index.js#L265)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -651,7 +651,7 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
-### [.setView](lib/views.js#L112)
+### [.setView](lib/views.js#L134)
 
 Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
@@ -667,7 +667,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L158)
+### [.addView](lib/views.js#L180)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -684,7 +684,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L181)
+### [.deleteView](lib/views.js#L203)
 
 Delete a view from collection `views`.
 
@@ -699,7 +699,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L205)
+### [.addViews](lib/views.js#L227)
 
 Load multiple views onto the collection.
 
@@ -718,7 +718,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L239)
+### [.addList](lib/views.js#L261)
 
 Load an array of views onto the collection.
 
@@ -737,7 +737,7 @@ collection.addList([
 ]);
 ```
 
-### [.getView](lib/views.js#L272)
+### [.getView](lib/views.js#L294)
 
 Get view `name` from `collection.views`.
 
@@ -753,7 +753,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L307)
+### [.extendView](lib/views.js#L329)
 
 Load a view from the file system.
 
@@ -768,7 +768,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L322)
+### [.isType](lib/views.js#L344)
 
 Return true if the collection belongs to the given view `type`.
 
