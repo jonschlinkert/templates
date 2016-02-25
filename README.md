@@ -1431,7 +1431,7 @@ Compile `content` with the given `locals`.
 * `view` **{Object|String}**: View object.
 * `locals` **{Object}**
 * `isAsync` **{Boolean}**: Load async helpers
-* `returns` **{Object}**: View object with `fn` property with the compiled function.
+* `returns` **{Object}**: View object with compiled `view.fn` property.
 
 **Example**
 
@@ -1447,7 +1447,27 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.render](lib/plugins/render.js#L230)
+### [.compileAsync](lib/plugins/render.js#L162)
+
+Asynchronously compile `content` with the given `locals` and callback.
+
+**Params**
+
+* `view` **{Object|String}**: View object.
+* `locals` **{Object}**
+* `isAsync` **{Boolean}**: Pass true to load helpers as async (mostly used internally)
+* `callback` **{Function}**: function that exposes `err` and the `view` object with compiled `view.fn` property
+
+**Example**
+
+```js
+var indexPage = app.page('some-index-page.hbs');
+app.compileAsync(indexPage, function(err, view) {
+  // view.fn => compiled function
+});
+```
+
+### [.render](lib/plugins/render.js#L247)
 
 Render a view with the given `locals` and `callback`.
 
