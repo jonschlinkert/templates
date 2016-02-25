@@ -453,7 +453,7 @@ describe('built-in helpers:', function() {
       });
     });
 
-    it.only('should expose a "this.helper" object', function(cb) {
+    it('should expose a "this.helper" object', function(cb) {
       app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
       app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
       var count = 0;
