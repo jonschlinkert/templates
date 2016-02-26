@@ -178,7 +178,7 @@ describe('app > collection .use', function() {
   it('should pass plugins down to collections after a collection is created', function(cb) {
     var count = 0;
     app.create('pages');
-    
+
     app.use(function(inst) {
       return function(collection) {
         count++;
@@ -226,7 +226,7 @@ describe('app > collection .use', function() {
         return function(view) {
           count[name]++;
           view.count = count[name];
-        }
+        };
       };
     });
 

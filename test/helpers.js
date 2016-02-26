@@ -437,7 +437,7 @@ describe('built-in helpers:', function() {
       app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
       app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
       var count = 0;
-      app.option('helper.foo', {some: 'opt'})
+      app.option('helper.foo', {some: 'opt'});
 
       app.helper('foo', function() {
         assert(this);
@@ -457,7 +457,7 @@ describe('built-in helpers:', function() {
       app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
       app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
       var count = 0;
-      app.option('helper.foo', {some: 'opt'})
+      app.option('helper.foo', {some: 'opt'});
 
       app.helper('foo', function() {
         assert(this.helper);
@@ -478,7 +478,7 @@ describe('built-in helpers:', function() {
       app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
       app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
       var count = 0;
-      app.option('helper.foo', {some: 'opt'})
+      app.option('helper.foo', {some: 'opt'});
 
       app.helper('foo', function() {
         assert(this.options);
@@ -499,7 +499,7 @@ describe('built-in helpers:', function() {
       app.partial('abc.md', {content: '<%= name %>', name: 'BBB'});
       app.page('xyz.md', {path: 'xyz.md', content: 'a <%= foo() %> b'});
       var count = 0;
-      app.option('helper.foo', {some: 'opt'})
+      app.option('helper.foo', {some: 'opt'});
 
       app.helper('foo', function() {
         assert(this.context);
