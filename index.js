@@ -114,21 +114,30 @@ Templates.prototype.defaultConfig = function() {
   this.listen(this);
 
   // expose constructors on the instance
-  this.expose('Base');
   this.expose('Item');
-  this.expose('List');
   this.expose('View');
+  this.expose('List');
   this.expose('Collection');
   this.expose('Group');
   this.expose('Views');
 };
 
 /**
- * Expose constructors on app instance.
+ * Expose constructors on app instance, allowing them to be
+ * overridden by the user after Templates is instantiated.
  */
 
 Templates.prototype.expose = function(name) {
-  this.define(name, this.options[name] || lib[name.toLowerCase()]);
+  this.define(name, {
+    configurable: true,
+    enumerable: true,
+    set: function(val) {
+      this.define(this, name, val);
+    },
+    get: function() {
+      return this.options[name] || lib[name.toLowerCase()];
+    }
+  });
 };
 
 /**
