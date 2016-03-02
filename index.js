@@ -52,12 +52,12 @@ function Templates(options) {
 
   this.is('templates');
   this.define('isApp', true);
-  this.debug('initializing');
   debug(this);
 
+  this.debug('initializing');
   this.use(utils.option());
   this.use(utils.plugin());
-  this.defaultConfig();
+  this.initTemplates();
 }
 
 /**
@@ -84,13 +84,21 @@ plugin.lookup(Templates.prototype);
 plugin.errors(Templates.prototype, 'Templates');
 
 /**
- * Initialize Templates default configuration
+ * Initialize Templates
  */
 
-Templates.prototype.defaultConfig = function() {
+Templates.prototype.initTemplates = function() {
   if (!this.plugins) {
     this.plugins = {};
   }
+
+  this.items = {};
+  this.views = {};
+  this.inflections = {};
+  this.utils = utils;
+
+  // listen for options events
+  this.listen(this);
 
   this.use(plugin.init);
   this.use(plugin.renameKey());
@@ -99,19 +107,12 @@ Templates.prototype.defaultConfig = function() {
   this.use(plugin.item('item', 'Item'));
   this.use(plugin.item('view', 'View'));
 
-  this.inflections = {};
-  this.items = {};
-  this.views = {};
-
   for (var key in this.options.mixins) {
     this.mixin(key, this.options.mixins[key]);
   }
 
   // create an async `view` helper
   helpers.view(this);
-
-  // listen for options events
-  this.listen(this);
 
   // expose constructors on the instance
   this.expose('Item');
@@ -120,6 +121,8 @@ Templates.prototype.defaultConfig = function() {
   this.expose('Collection');
   this.expose('Group');
   this.expose('Views');
+
+  Templates.setup(this, 'Templates');
 };
 
 /**
@@ -274,8 +277,10 @@ Templates.prototype.create = function(name, opts) {
   opts = opts || {};
 
   if (!opts.isCollection) {
-    utils.defaults(opts, this.options);
+    opts = utils.merge({}, this.options, opts);
   }
+
+  this.emit('create', name, opts);
 
   var collection = this.collection(opts, true);
 
@@ -317,9 +322,11 @@ Templates.prototype.create = function(name, opts) {
   // run collection plugins
   this.run(collection);
 
-  // emit create
-  this.emit('create', collection, opts);
+  // extend collection views
   this.extendViews(collection, opts);
+
+  // emit create
+  this.emit('postCreate', collection, opts);
 
   // add collection and view helpers
   helpers.singular(this, collection);
@@ -371,6 +378,30 @@ Templates.Views = Views;
 Templates.Group = Group;
 
 /**
+ * Expose static `setup` method for providing access to an
+ * instance before any other use code is run.
+ *
+ * ```js
+ * function App(options) {
+ *   Templates.call(this, options);
+ *   Templates.setup(this);
+ * }
+ * Templates.extend(App);
+ * ```
+ * @param {Object} `app` Application instance
+ * @param {String} `name` Optionally pass the constructor name to use.
+ * @return {undefined}
+ * @api public
+ */
+
+Templates.setup = function(app, name) {
+  var setup = app.options['init' + name || app.constructor.name];
+  if (typeof setup === 'function') {
+    setup.call(app, app, app.options);
+  }
+};
+
+/**
  * Expose package metadata
  */
 
@@ -382,7 +413,7 @@ utils.define(Templates, 'meta', require('./package'));
 
 utils.define(Templates, 'utils', utils);
 utils.define(Templates, 'debug', debug);
-utils.define(Templates, '_', {lib: lib, plugin: plugin});
+utils.define(Templates, '_', { lib: lib, plugin: plugin });
 
 /**
  * Expose `Templates`
