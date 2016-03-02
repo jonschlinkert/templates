@@ -1,3 +1,10 @@
+### v0.15.0
+
+- removes `.removeItem` method that was deprecated in v0.10.7 from `List`
+- `.handleView` is deprecated in favor of `.handleOnce` and will be removed in a future version. Start using `.handleOnce` now.
+- adds a static `Templates.setup()` method for initializing any setup code that should have access to the instance before any other use code is run.
+- upgrade to [base-data][] v0.4.0, which adds `app.option.set`, `app.option.get` and `app.option.merge`
+
 ### v0.14.0
 
 Although 99% of users won't be effected by the changes in this release, there were some **potentially breaking changes**. 

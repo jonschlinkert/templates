@@ -159,9 +159,12 @@ This function is the main export of the templates module. Initialize an instance
 
 **Example**
 
-**GFM_2**
+```js
+var templates = require('templates');
+var app = templates();
+```
 
-### [.list](index.js#L172)
+### [.list](index.js#L184)
 
 Create a new list. See the [list docs](docs/lists.md) for more information about lists.
 
@@ -181,7 +184,7 @@ app.create('pages');
 var list = app.list(app.pages);
 ```
 
-### [.collection](index.js#L211)
+### [.collection](index.js#L223)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -193,7 +196,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L263)
+### [.create](index.js#L275)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -203,6 +206,26 @@ the [create docs](docs/collections.md#create) for more details.
 * `name` **{String}**: The name of the collection to create. Plural or singular form may be used, as the inflections are automatically resolved when the collection is created.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
+
+### [.setup](index.js#L397)
+
+Expose static `setup` method for providing access to an instance before any other use code is run.
+
+**Params**
+
+* `app` **{Object}**: Application instance
+* `name` **{String}**: Optionally pass the constructor name to use.
+* `returns` **{undefined}**
+
+**Example**
+
+```js
+function App(options) {
+  Templates.call(this, options);
+  Templates.setup(this);
+}
+Templates.extend(App);
+```
 
 ***
 
@@ -587,7 +610,12 @@ Set, get and load data to be passed to templates as context at render-time.
 
 **Example**
 
-**GFM_23**
+```js
+app.data('a', 'b');
+app.data({c: 'd'});
+console.log(app.cache.data);
+//=> {a: 'b', c: 'd'}
+```
 
 ### [.context](lib/plugins/context.js#L60)
 
@@ -651,7 +679,7 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
-### [.setView](lib/views.js#L135)
+### [.setView](lib/views.js#L137)
 
 Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
@@ -667,7 +695,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L181)
+### [.addView](lib/views.js#L183)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -684,7 +712,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L204)
+### [.deleteView](lib/views.js#L206)
 
 Delete a view from collection `views`.
 
@@ -699,7 +727,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L228)
+### [.addViews](lib/views.js#L230)
 
 Load multiple views onto the collection.
 
@@ -718,7 +746,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L262)
+### [.addList](lib/views.js#L264)
 
 Load an array of views onto the collection.
 
@@ -737,7 +765,7 @@ collection.addList([
 ]);
 ```
 
-### [.getView](lib/views.js#L295)
+### [.getView](lib/views.js#L297)
 
 Get view `name` from `collection.views`.
 
@@ -753,7 +781,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L330)
+### [.extendView](lib/views.js#L332)
 
 Load a view from the file system.
 
@@ -768,7 +796,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L345)
+### [.isType](lib/views.js#L347)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -794,7 +822,12 @@ Set, get and load data to be passed to templates as context at render-time.
 
 **Example**
 
-**GFM_23**
+```js
+app.data('a', 'b');
+app.data({c: 'd'});
+console.log(app.cache.data);
+//=> {a: 'b', c: 'd'}
+```
 
 ### [.context](lib/plugins/context.js#L60)
 
@@ -920,7 +953,7 @@ var collection = new Collection();
 collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/collection.js#L96)
+### [.setItem](lib/collection.js#L98)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -936,7 +969,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L119)
+### [.addItem](lib/collection.js#L121)
 
 Similar to `setItem`, adds an item to the collection but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener.  An item may be an instance of `Item`, if not, the item is converted to an instance of `Item`.
 
@@ -952,7 +985,7 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteItem](lib/collection.js#L143)
+### [.deleteItem](lib/collection.js#L145)
 
 Delete an item from collection `items`.
 
@@ -967,7 +1000,7 @@ Delete an item from collection `items`.
 items.deleteItem('abc');
 ```
 
-### [.addItems](lib/collection.js#L166)
+### [.addItems](lib/collection.js#L168)
 
 Load multiple items onto the collection.
 
@@ -986,7 +1019,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L193)
+### [.addList](lib/collection.js#L195)
 
 Load an array of items onto the collection.
 
@@ -998,9 +1031,15 @@ Load an array of items onto the collection.
 
 **Example**
 
-**GFM_32**
+```js
+collection.addList([
+  {path: 'a.html', content: '...'},
+  {path: 'b.html', content: '...'},
+  {path: 'c.html', content: '...'}
+]);
+```
 
-### [.getItem](lib/collection.js#L224)
+### [.getItem](lib/collection.js#L226)
 
 Get an item from the collection.
 
@@ -1027,7 +1066,12 @@ Set, get and load data to be passed to templates as context at render-time.
 
 **Example**
 
-**GFM_23**
+```js
+app.data('a', 'b');
+app.data({c: 'd'});
+console.log(app.cache.data);
+//=> {a: 'b', c: 'd'}
+```
 
 ### [.context](lib/plugins/context.js#L60)
 
@@ -1091,7 +1135,7 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/list.js#L122)
+### [.setItem](lib/list.js#L124)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -1103,9 +1147,11 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 
 **Example**
 
-**GFM_41**
+```js
+collection.setItem('foo', {content: 'bar'});
+```
 
-### [.addItem](lib/list.js#L159)
+### [.addItem](lib/list.js#L161)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -1122,7 +1168,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L186)
+### [.addItems](lib/list.js#L188)
 
 Load multiple items onto the collection.
 
@@ -1133,9 +1179,15 @@ Load multiple items onto the collection.
 
 **Example**
 
-**GFM_44**
+```js
+collection.addItems({
+  'a.html': {content: '...'},
+  'b.html': {content: '...'},
+  'c.html': {content: '...'}
+});
+```
 
-### [.addList](lib/list.js#L215)
+### [.addList](lib/list.js#L217)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -1153,7 +1205,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L252)
+### [.hasItem](lib/list.js#L254)
 
 Return true if the list has the given item (name).
 
@@ -1170,7 +1222,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L268)
+### [.getIndex](lib/list.js#L270)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1186,7 +1238,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L312)
+### [.getItem](lib/list.js#L314)
 
 Get a specific item from the list by `key`.
 
@@ -1202,7 +1254,7 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
-### [.getView](lib/list.js#L331)
+### [.getView](lib/list.js#L333)
 
 Proxy for `getItem`
 
@@ -1218,7 +1270,7 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
-### [.deleteItem](lib/list.js#L345)
+### [.deleteItem](lib/list.js#L347)
 
 Remove an item from the list.
 
@@ -1232,21 +1284,7 @@ Remove an item from the list.
 list.deleteItem('a.html');
 ```
 
-### [.removeItem](lib/list.js#L367)
-
-Remove an item from the list.
-
-**Params**
-
-* `key` **{Object|String}**: Pass an `item` instance or `item.key`
-
-**Example**
-
-```js
-list.removeItem('a.html');
-```
-
-### [.extendItem](lib/list.js#L379)
+### [.extendItem](lib/list.js#L366)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -1257,7 +1295,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L398)
+### [.groupBy](lib/list.js#L385)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -1271,7 +1309,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L424)
+### [.sortBy](lib/list.js#L411)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -1286,7 +1324,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L472)
+### [.paginate](lib/list.js#L459)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -1311,7 +1349,12 @@ Set, get and load data to be passed to templates as context at render-time.
 
 **Example**
 
-**GFM_23**
+```js
+app.data('a', 'b');
+app.data({c: 'd'});
+console.log(app.cache.data);
+//=> {a: 'b', c: 'd'}
+```
 
 ### [.context](lib/plugins/context.js#L60)
 
@@ -1360,7 +1403,7 @@ have no support for partials or only support one type of partials.
 
 API for the `Group` class.
 
-### [Group](lib/group.js#L24)
+### [Group](lib/group.js#L25)
 
 Create an instance of `Group` with the given `options`.
 
@@ -1390,7 +1433,12 @@ Find a view by `name`, optionally passing a `collection` to limit the search. If
 
 **Example**
 
-**GFM_37**
+```js
+var page = app.find('my-page.hbs');
+
+// optionally pass a collection name as the second argument
+var page = app.find('my-page.hbs', 'pages');
+```
 
 ### [.getView](lib/plugins/lookup.js#L69)
 
@@ -1405,7 +1453,14 @@ Get view `key` from the specified `collection`.
 
 **Example**
 
-**GFM_38**
+```js
+var view = app.getView('pages', 'a/b/c.hbs');
+
+// optionally pass a `renameKey` function to modify the lookup
+var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
+  return path.basename(fp);
+});
+```
 
 ### [.getViews](lib/plugins/lookup.js#L103)
 
@@ -1418,7 +1473,13 @@ Get all views from a `collection` using the collection's singular or plural name
 
 **Example**
 
-**GFM_39**
+```js
+var pages = app.getViews('pages');
+//=> { pages: {'home.hbs': { ... }}
+
+var posts = app.getViews('posts');
+//=> { posts: {'2015-10-10.md': { ... }}
+```
 
 ***
 
@@ -1500,7 +1561,12 @@ Set, get and load data to be passed to templates as context at render-time.
 
 **Example**
 
-**GFM_23**
+```js
+app.data('a', 'b');
+app.data({c: 'd'});
+console.log(app.cache.data);
+//=> {a: 'b', c: 'd'}
+```
 
 ### [.context](lib/plugins/context.js#L60)
 
@@ -1562,7 +1628,11 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.route](lib/plugins/routes.js#L148)
+### [.handleView](lib/plugins/routes.js#L109)
+
+Deprecated, use `.handleOnce`
+
+### [.route](lib/plugins/routes.js#L159)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -1587,7 +1657,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](lib/plugins/routes.js#L170)
+### [.all](lib/plugins/routes.js#L181)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1606,7 +1676,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](lib/plugins/routes.js#L199)
+### [.param](lib/plugins/routes.js#L210)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -1781,6 +1851,13 @@ templates.isVinyl(file);
 
 ## History
 
+### v0.15.0
+
+* removes `.removeItem` method that was deprecated in v0.10.7 from `List`
+* `.handleView` is deprecated in favor of `.handleOnce` and will be removed in a future version. Start using `.handleOnce` now.
+* adds a static `Templates.setup()` method for initializing any setup code that should have access to the instance before any other use code is run.
+* upgrade to [base-data][] v0.4.0, which adds `app.option.set`, `app.option.get` and `app.option.merge`
+
 ### v0.14.0
 
 Although 99% of users won't be effected by the changes in this release, there were some **potentially breaking changes**.
@@ -1888,4 +1965,4 @@ Released under the [MIT license](https://github.com/jonschlinkert/templates/blob
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on February 27, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on March 02, 2016._
