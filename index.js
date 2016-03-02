@@ -49,12 +49,12 @@ function Templates(options) {
   }
 
   Base.call(this, null, options);
-
   this.is('templates');
   this.define('isApp', true);
   debug(this);
 
   this.debug('initializing');
+  this.use(utils.logger());
   this.use(utils.option());
   this.use(utils.plugin());
   this.initTemplates();
