@@ -213,8 +213,18 @@ describe('app.create', function() {
       app.engine('tmpl', require('engine-base'));
     });
 
-    it('should emit `create` when a collection is created:', function() {
-      app.on('create', function(collection) {
+    it('should emit `create` before a collection is created:', function() {
+      app.on('create', function(name, options) {
+        options.viewType = 'partial';
+      });
+
+      app.create('includes');
+      app.include('one', {path: 'two', contents: '...'});
+      assert(app.includes.isType('partial'));
+    });
+
+    it('should emit `postCreate` after a collection is created:', function() {
+      app.on('postCreate', function(collection) {
         if (collection.options.plural === 'layouts') {
           collection.options.foo = 'bar';
         }
