@@ -2,6 +2,7 @@
 
 require('mocha');
 require('should');
+var async = require('async');
 var assert = require('assert');
 var support = require('./support');
 var App = support.resolve();
@@ -156,6 +157,27 @@ describe('layouts', function() {
       assert.equal(view.content, 'outter c b a inner a b c outter');
       cb();
     });
+  });
+
+  it('should apply nested layouts to multiple views when layout is defined on data property:', function(cb) {
+    app.layout('a', {path: 'a.tmpl', content: 'a {% body %} a', data: { layout: 'b' }});
+    app.layout('b', {path: 'b.tmpl', content: 'b {% body %} b', data: { layout: 'c' }});
+    app.layout('c', {path: 'c.tmpl', content: 'c {% body %} c', data: { layout: 'base' }});
+    app.layout('base', {path: 'base.tmpl', content: 'outter {% body %} outter'});
+
+    app.pages('x.tmpl', {path: 'x.tmpl', content: 'x inner x', data: { layout: 'a' }});
+    app.pages('y.tmpl', {path: 'y.tmpl', content: 'y inner y', data: { layout: 'a' }});
+    app.pages('z.tmpl', {path: 'z.tmpl', content: 'z inner z', data: { layout: 'a' }});
+
+    async.eachSeries(['x', 'y', 'z'], function(key, next) {
+      var page = app.pages.getView(key + '.tmpl');
+      app.render(page, function(err, view) {
+        if (err) return next(err);
+        assert.equal(typeof view.content, 'string');
+        assert.equal(view.content, 'outter c b a ' + key + ' inner ' + key + ' a b c outter');
+        next();
+      });
+    }, cb);
   });
 
   it('should track layout stack history on `layoutStack`:', function(cb) {
