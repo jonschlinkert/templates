@@ -54,7 +54,6 @@ function Templates(options) {
   debug(this);
 
   this.debug('initializing');
-  this.use(utils.logger());
   this.use(utils.option());
   this.use(utils.plugin());
   this.initTemplates();
