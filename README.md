@@ -207,7 +207,7 @@ the [create docs](docs/collections.md#create) for more details.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.setup](index.js#L396)
+### [.setup](index.js#L398)
 
 Expose static `setup` method for providing access to an instance before any other use code is run.
 
@@ -695,7 +695,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L183)
+### [.addView](lib/views.js#L184)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -712,7 +712,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L206)
+### [.deleteView](lib/views.js#L207)
 
 Delete a view from collection `views`.
 
@@ -727,7 +727,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L230)
+### [.addViews](lib/views.js#L231)
 
 Load multiple views onto the collection.
 
@@ -746,7 +746,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L264)
+### [.addList](lib/views.js#L265)
 
 Load an array of views onto the collection.
 
@@ -765,7 +765,7 @@ collection.addList([
 ]);
 ```
 
-### [.getView](lib/views.js#L297)
+### [.getView](lib/views.js#L300)
 
 Get view `name` from `collection.views`.
 
@@ -781,7 +781,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L332)
+### [.extendView](lib/views.js#L335)
 
 Load a view from the file system.
 
@@ -796,7 +796,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L347)
+### [.isType](lib/views.js#L350)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -809,6 +809,10 @@ Return true if the collection belongs to the given view `type`.
 ```js
 collection.isType('partial');
 ```
+
+### [.viewTypes](lib/views.js#L397)
+
+Alias for `viewType`
 
 ### [.data](lib/plugins/context.js#L32)
 
@@ -1628,11 +1632,11 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.handleView](lib/plugins/routes.js#L109)
+### [.handleView](lib/plugins/routes.js#L110)
 
 Deprecated, use `.handleOnce`
 
-### [.route](lib/plugins/routes.js#L159)
+### [.route](lib/plugins/routes.js#L160)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -1657,7 +1661,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](lib/plugins/routes.js#L181)
+### [.all](lib/plugins/routes.js#L182)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1676,7 +1680,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](lib/plugins/routes.js#L210)
+### [.param](lib/plugins/routes.js#L211)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
