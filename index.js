@@ -279,8 +279,10 @@ Templates.prototype.create = function(name, opts) {
     opts = utils.merge({}, this.options, opts);
   }
 
+  // emit the collection name and options
   this.emit('create', name, opts);
 
+  // create the actual collection
   var collection = this.collection(opts, true);
 
   // get the collection inflections, e.g. page/pages
@@ -356,7 +358,7 @@ Templates.prototype.extendViews = function(views, options) {
  */
 
 Templates.prototype.resolveLayout = function(view) {
-  if (utils.isRenderable(view)) {
+  if (!utils.isPartial(view)) {
     this.debug('resolving layout for "%s"', view.key);
     var views = this[view.options.collection];
     return views.resolveLayout(view) || this.option('layout');
