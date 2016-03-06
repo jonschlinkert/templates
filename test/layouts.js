@@ -59,12 +59,13 @@ describe('layouts', function() {
   it('should use the "default" layout on layouts', function(cb) {
     app.option('layout', 'base');
 
-    var base = app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
+    app.layout('base', {path: 'base.tmpl', content: 'a {% body %} c'});
+    var foo = app.layout('foo.tmpl', {content: 'b'});
 
-    app.render(base, function(err, view) {
+    app.render(foo, function(err, view) {
       if (err) return cb(err);
       assert.equal(typeof view.content, 'string');
-      assert.equal(view.content, 'a {% body %} c');
+      assert.equal(view.content, 'a b c');
       cb();
     });
   });
