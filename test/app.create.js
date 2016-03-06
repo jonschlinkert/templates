@@ -72,8 +72,8 @@ describe('app.create', function() {
       app.partials.addView('foo', {content: 'bar'});
       var view = app.partials.getView('foo');
       assert(view.isType('partial'));
-      assert(!view.isType('layout'));
       assert(!view.isType('renderable'));
+      assert(!view.isType('layout'));
     });
 
     it('should set viewType on layout views', function() {
