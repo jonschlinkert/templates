@@ -49,7 +49,7 @@ function Templates(options) {
   }
 
   Base.call(this, null, options);
-  this.is('templates');
+  this.is(Templates);
   this.define('isApp', true);
   debug(this);
 
@@ -64,6 +64,7 @@ function Templates(options) {
  */
 
 Base.extend(Templates);
+Base.bubble(Templates, ['preInit', 'Init']);
 
 /**
  * Mixin static methods
@@ -87,6 +88,8 @@ plugin.errors(Templates.prototype, 'Templates');
  */
 
 Templates.prototype.initTemplates = function() {
+  Templates.emit('preInit', this);
+
   if (!this.plugins) {
     this.plugins = {};
   }
@@ -94,11 +97,11 @@ Templates.prototype.initTemplates = function() {
   this.items = {};
   this.views = {};
   this.inflections = {};
-  this.utils = utils;
 
   // listen for options events
   this.listen(this);
 
+  this.define('utils', utils);
   this.use(plugin.init);
   this.use(plugin.renameKey());
   this.use(plugin.context);
@@ -122,6 +125,7 @@ Templates.prototype.initTemplates = function() {
   this.expose('Views');
 
   Templates.setup(this, 'Templates');
+  Templates.emit('init', this);
 };
 
 /**

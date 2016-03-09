@@ -4,6 +4,19 @@
 var path = require('path');
 var red = require('ansi-red');
 var templates = require('./');
+
+templates.on('preInit', function(app) {
+  console.log(app);
+});
+
+templates.on('init', function(app) {
+  console.log(app);
+});
+
+/**
+ * Create our `app`
+ */
+
 var app = templates();
 
 /**
