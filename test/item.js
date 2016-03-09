@@ -154,7 +154,8 @@ describe('item', function() {
       assert.equal(item.get('options.one'), 'two');
       assert.equal(clone.get('options.one'), 'two');
       assert.equal(clone.get('options.three'), 'four');
-      assert(!item.get('options.three'));
+
+      assert.equal(typeof item.get('options.three'), 'undefined');
     });
   });
 

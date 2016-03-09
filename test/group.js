@@ -85,6 +85,14 @@ describe('group', function() {
     });
   });
 
+  describe('option', function() {
+    it('should set options on group.options', function() {
+      var group = new Group();
+      group.option('a', {b: {c: 'd'}});
+      assert.equal(group.option('a.b.c'), 'd');
+    });
+  });
+
   describe('get', function() {
     it('should get a normal value when not an array', function() {
       var group = new Group({'foo': {items: [1, 2, 3]}});
