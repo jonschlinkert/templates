@@ -2,6 +2,17 @@
 title: View types
 ---
 
+Whereas "view collections" are used for organizing and caching views, "view types" determine how the individual views in a collection will be handled during the render cycle. For example, views with the `partial` view type will be merged onto the context before being passed to the template engine for rendering, but views with the `layout` and `renderable` types will not.
+
+**View types**
+
+This library currently supports three view types: `partial`, `renderable` and `layout`.  Passed on the `viewType` option with a collection is created, collections may have one _or more_ view types, defaulting to `renderable` if no other types are defined. 
+
+- `partial`: allows "partial views" to be injected into other views. useful for components, document fragments, or other snippets of reusable code or content. 
+- `layout`: allows views to "wrap" other views (of any type, including other layouts or partials) with common code or content. 
+- `renderable`: views that have a one-to-one relationship with rendered files that will eventually be visible to a user or visitor to a website. For example: pages or blog posts.
+
+
 **Jump ahead**
 
 Available view types:

@@ -11,7 +11,6 @@ TODO:
 app.Collection;
 app.Views;
 app.collection();
-app.viewCollection();
 app.create()
 ```
 
