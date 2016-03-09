@@ -25,7 +25,7 @@
     "async": "^1.5.2",
     "base": "^0.7.9",
     "base-data": "^0.4.0",
-    "base-option": "^0.6.2",
+    "base-option": "^0.7.0",
     "base-plugins": "^0.4.4",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
