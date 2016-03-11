@@ -49,7 +49,7 @@ function Templates(options) {
   }
 
   Base.call(this, null, options);
-  this.is(Templates);
+  this.is('templates');
   this.define('isApp', true);
   debug(this);
 

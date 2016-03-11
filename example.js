@@ -1,6 +1,5 @@
 'use strict';
 
-/*eslint-disable no-multiple-empty-lines*/
 var path = require('path');
 var red = require('ansi-red');
 var templates = require('./');
@@ -39,14 +38,12 @@ app.use(function(app) {
   };
 });
 
-
 /**
  * Engine
  */
 
 app.engine('*', require('engine-base'));
 app.option('view engine', '*');
-
 
 /**
  * Collections and rendering
@@ -59,7 +56,6 @@ app.create('pages')
     if (err) return console.log(err);
     console.log(res.content);
   });
-
 
 /**
  * Plugins
@@ -96,7 +92,6 @@ app.section('articles')
     if (err) return console.log(err.stack);
     console.log(res.content);
   });
-
 
 /**
  * Events
