@@ -23,10 +23,10 @@
   "dependencies": {
     "array-sort": "^0.1.1",
     "async": "^1.5.2",
-    "base": "^0.7.10",
+    "base": "^0.8.0",
     "base-data": "^0.4.0",
     "base-option": "^0.7.0",
-    "base-plugins": "^0.4.4",
+    "base-plugins": "^0.4.5",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "debug": "^2.2.0",
@@ -52,8 +52,7 @@
     "paginationator": "^0.1.3",
     "set-value": "^0.3.3",
     "template-error": "^0.1.2",
-    "vinyl": "^1.1.1",
-    "word-wrap": "^1.1.0"
+    "vinyl": "^1.1.1"
   },
   "devDependencies": {
     "ansi-red": "^0.1.1",
@@ -67,14 +66,15 @@
     "gulp-format-md": "^0.1.7",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
-    "is-buffer": "^1.1.2",
+    "is-buffer": "^1.1.3",
     "kind-of": "^3.0.2",
     "mocha": "*",
     "parser-front-matter": "^1.3.0",
     "remarkable": "^1.6.2",
-    "resolve-glob": "^0.1.7",
-    "should": "*",
-    "swig": "^1.4.2"
+    "resolve-glob": "^0.1.8",
+    "should": "^8.2.2",
+    "swig": "^1.4.2",
+    "through2": "^2.0.1"
   },
   "keywords": [
     "compile",
