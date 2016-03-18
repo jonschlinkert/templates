@@ -91,6 +91,7 @@
     "templates"
   ],
   "verb": {
+    "run": true,
     "toc": true,
     "layout": "default",
     "tasks": [
@@ -113,8 +114,13 @@
       "assemble",
       "base",
       "group-array",
-      "paginationator"
-    ]
+      "paginationator",
+      "base-data",
+      "verb"
+    ],
+    "lint": {
+      "reflinks": true
+    }
   },
   "lintDeps": {
     "ignore": [
