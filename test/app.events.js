@@ -77,6 +77,84 @@ describe('onLoad', function() {
 
       collection.addView('whatever', {path: 'blog/foo.js', content: 'bar baz'});
     });
+
+    it('should not emit an onLoad event when view is created and `app.options.onLoad` is `false', function(cb) {
+      var emitted = false;
+      var handled = false;
+      var collection = app.collection();
+      app.options.onLoad = false;
+
+      app.on('onLoad', function(view) {
+        emitted = true;
+      });
+
+      app.onLoad('blog/:title', function(view, next) {
+        handled = true;
+        next();
+      });
+
+      collection.addView('whatever', {path: 'blog/foo.js', content: 'bar baz'});
+      setImmediate(function() {
+        assert.equal(typeof collection.views.whatever, 'object');
+        assert.equal(emitted, false);
+        assert.equal(handled, false);
+        cb();
+      });
+    });
+
+    it('should not emit an onLoad event when view is created and `collection.options.onLoad` is `false', function(cb) {
+      var emitted = false;
+      var handled = false;
+      var collection = app.collection();
+      collection.options.onLoad = false;
+
+      app.on('onLoad', function(view) {
+        emitted = true;
+      });
+
+      app.onLoad('blog/:title', function(view, next) {
+        handled = true;
+        next();
+      });
+
+      collection.addView('whatever', {path: 'blog/foo.js', content: 'bar baz'});
+      setImmediate(function() {
+        assert.equal(typeof collection.views.whatever, 'object');
+        assert.equal(emitted, false);
+        assert.equal(handled, false);
+        cb();
+      });
+    });
+
+    it('should not emit an onLoad event when view is created and `view.options.onLoad` is `false', function(cb) {
+      var emitted = false;
+      var handled = false;
+      var collection = app.collection();
+
+      app.on('onLoad', function(view) {
+        emitted = true;
+      });
+
+      app.onLoad('blog/:title', function(view, next) {
+        handled = true;
+        next();
+      });
+
+      collection.addView('whatever', {
+        options: {
+          onLoad: false
+        },
+        path: 'blog/foo.js',
+        content: 'bar baz'
+      });
+
+      setImmediate(function() {
+        assert.equal(typeof collection.views.whatever, 'object');
+        assert.equal(emitted, false);
+        assert.equal(handled, false);
+        cb();
+      });
+    });
   });
 
   describe('view collections', function() {
