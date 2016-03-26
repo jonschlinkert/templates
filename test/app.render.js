@@ -50,6 +50,36 @@ describe('app.render', function() {
     });
   });
 
+  it('should use global app data in template.', function(cb) {
+    app.data({name: 'CCC'});
+    app.page('a.tmpl', {content: 'a <%= name %> b'});
+    app.render('a.tmpl', function(err, res) {
+      if (err) return cb(err);
+      res.content.should.equal('a CCC b');
+      cb();
+    });
+  });
+
+  it('should use page data in template.', function(cb) {
+    app.data({name: 'CCC'});
+    app.page('a.tmpl', {content: 'a <%= name %> b', data: {name: 'DDD'}});
+    app.render('a.tmpl', function(err, res) {
+      if (err) return cb(err);
+      res.content.should.equal('a DDD b');
+      cb();
+    });
+  });
+
+  it('should use passed in locals in template.', function(cb) {
+    app.data({name: 'CCC'});
+    app.page('a.tmpl', {content: 'a <%= name %> b', data: {name: 'DDD'}});
+    app.render('a.tmpl', {name: 'EEE'}, function(err, res) {
+      if (err) return cb(err);
+      res.content.should.equal('a EEE b');
+      cb();
+    });
+  });
+
   it('should render the same template twice with a helper', function(cb) {
     app.partial('button.tmpl', {content: '<%= name %>'});
     app.page('a.tmpl', {content: 'a <%= partial("button.tmpl", {name: "foo"}) %> <%= partial("button.tmpl", {name: "bar"}) %> b'});
@@ -83,7 +113,7 @@ describe('app.render', function() {
     });
   });
 
-  it.skip('should render the same template multiple times with different engines', function(cb) {
+  it('should render the same template multiple times with different engines', function(cb) {
     app.partial('button.tmpl', {content: '{{title}}', engine: 'hbs'});
     app.partial('foo.hbs', {content: '{{title}}'});
 
