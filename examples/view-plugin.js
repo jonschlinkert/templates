@@ -29,5 +29,5 @@ function myPlugin(view) {
 }
 
 var view = collection.getView('a/b/c/a.txt')
-  .use(myPlugin)
-console.log(view.sayFoo('bar'))
+  .use(myPlugin);
+console.log(view.sayFoo('bar'));
