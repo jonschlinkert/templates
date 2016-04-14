@@ -91,7 +91,7 @@ describe('collection.routes', function() {
 
       page.render({}, function(err, res) {
         if (err) return cb(err);
-        res.contents.toString().should.equal('app::preRender collection::preRender aaa');
+        res.contents.toString().should.equal('collection::preRender app::preRender aaa');
         cb();
       });
     });
@@ -122,7 +122,7 @@ describe('collection.routes', function() {
 
       page.render({}, function(err, res) {
         if (err) return cb(err);
-        res.contents.toString().should.equal('aaa collection::postRender app::postRender');
+        res.contents.toString().should.equal('aaa app::postRender collection::postRender');
         cb();
       });
     });
