@@ -1,7 +1,7 @@
 {
   "name": "templates",
   "description": "System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.",
-  "version": "0.16.2",
+  "version": "0.17.0",
   "homepage": "https://github.com/jonschlinkert/templates",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/templates",
@@ -23,10 +23,10 @@
   "dependencies": {
     "array-sort": "^0.1.1",
     "async": "^1.5.2",
-    "base": "^0.8.0",
+    "base": "^0.8.1",
     "base-data": "^0.4.0",
     "base-option": "^0.7.0",
-    "base-plugins": "^0.4.5",
+    "base-plugins": "^0.4.10",
     "clone": "^1.0.2",
     "clone-stats": "0.0.1",
     "debug": "^2.2.0",
@@ -38,12 +38,12 @@
     "export-files": "^2.1.1",
     "extend-shallow": "^2.0.1",
     "falsey": "^0.3.0",
-    "get-value": "^2.0.3",
+    "get-value": "^2.0.5",
     "get-view": "^0.1.1",
     "group-array": "^0.3.0",
     "has-glob": "^0.1.1",
-    "has-value": "^0.3.0",
-    "inflection": "^1.8.0",
+    "has-value": "^0.3.1",
+    "inflection": "^1.9.0",
     "layouts": "^0.11.0",
     "lazy-cache": "^1.0.3",
     "load-helpers": "^0.2.10",
@@ -64,15 +64,15 @@
     "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
     "gulp-format-md": "^0.1.7",
-    "gulp-istanbul": "^0.10.3",
+    "gulp-istanbul": "^0.10.4",
     "gulp-mocha": "^2.2.0",
     "is-buffer": "^1.1.3",
     "kind-of": "^3.0.2",
-    "mocha": "*",
+    "mocha": "^2.4.5",
     "parser-front-matter": "^1.3.0",
     "remarkable": "^1.6.2",
     "resolve-glob": "^0.1.8",
-    "should": "^8.2.2",
+    "should": "^8.3.1",
     "swig": "^1.4.2",
     "through2": "^2.0.1"
   },
@@ -91,12 +91,8 @@
     "templates"
   ],
   "verb": {
-    "run": true,
     "toc": true,
     "layout": "default",
-    "tasks": [
-      "readme"
-    ],
     "plugins": [
       "gulp-format-md"
     ],

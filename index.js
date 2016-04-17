@@ -8,9 +8,9 @@
 'use strict';
 
 var Base = require('base');
+var debug = require('debug')('base:templates');
 var helpers = require('./lib/helpers/');
 var plugin = require('./lib/plugins/');
-var debug = require('./lib/debug');
 var utils = require('./lib/utils');
 var lib = require('./lib/');
 
@@ -51,9 +51,6 @@ function Templates(options) {
   Base.call(this, null, options);
   this.is('templates');
   this.define('isApp', true);
-  debug(this);
-
-  this.debug('initializing');
   this.use(utils.option());
   this.use(utils.plugin());
   this.initTemplates();
@@ -88,6 +85,7 @@ plugin.errors(Templates.prototype, 'Templates');
  */
 
 Templates.prototype.initTemplates = function() {
+  debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
   Templates.emit('preInit', this);
 
   if (!this.plugins) {
@@ -276,7 +274,7 @@ Templates.prototype.collection = function(opts, created) {
  */
 
 Templates.prototype.create = function(name, opts) {
-  this.debug('creating view collection: "%s"', name);
+  debug('creating view collection: "%s"', name);
   opts = opts || {};
 
   if (!opts.isCollection) {
@@ -363,9 +361,13 @@ Templates.prototype.extendViews = function(views, options) {
 
 Templates.prototype.resolveLayout = function(view) {
   if (!utils.isPartial(view)) {
-    this.debug('resolving layout for "%s"', view.key);
+    debug('resolving layout for "%s"', view.key);
     var views = this[view.options.collection];
-    return views.resolveLayout(view) || this.option('layout');
+    var layout = views.resolveLayout(view);
+    if (typeof layout === 'undefined') {
+      layout = this.option('layout');
+    }
+    return layout;
   }
   return view.layout;
 };

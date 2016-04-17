@@ -485,7 +485,6 @@ describe('list', function() {
       list.addList(items);
 
       var res = list.groupBy('locals.foo');
-      console.log(res)
       var keys = ['zzz', 'mmm', 'xxx', 'aaa', 'ccc', 'rrr', 'ttt', 'yyy'];
       assert.deepEqual(Object.keys(res), keys);
     });
