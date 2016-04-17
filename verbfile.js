@@ -9,14 +9,9 @@ module.exports = function(app) {
   app.task('docs', function() {
     return app.toStream('pages')
       .pipe(app.renderFile('*'))
+      .pipe(app.pipeline(app.options.pipeline))
       .pipe(app.dest('docs/dist'));
   });
-
-  // app.task('docs', function() {
-  //   return app.src('docs/api/*.md', { layout: null })
-  //     .pipe(app.renderFile('*'))
-  //     .pipe(app.dest('docs/dist'));
-  // });
 
   app.task('default', ['readme', 'docs']);
 };
