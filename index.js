@@ -363,7 +363,11 @@ Templates.prototype.resolveLayout = function(view) {
   if (!utils.isPartial(view)) {
     debug('resolving layout for "%s"', view.key);
     var views = this[view.options.collection];
-    return views.resolveLayout(view) || this.option('layout');
+    var layout = views.resolveLayout(view);
+    if (typeof layout === 'undefined') {
+      layout = this.option('layout');
+    }
+    return layout;
   }
   return view.layout;
 };
