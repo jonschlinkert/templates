@@ -91,12 +91,8 @@
     "templates"
   ],
   "verb": {
-    "run": true,
     "toc": true,
     "layout": "default",
-    "tasks": [
-      "readme"
-    ],
     "plugins": [
       "gulp-format-md"
     ],
