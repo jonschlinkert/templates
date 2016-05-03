@@ -1,4 +1,4 @@
-# templates [![NPM version](https://img.shields.io/npm/v/templates.svg)](https://www.npmjs.com/package/templates) [![Build Status](https://img.shields.io/travis/jonschlinkert/templates.svg)](https://travis-ci.org/jonschlinkert/templates)
+# templates [![NPM version](https://img.shields.io/npm/v/templates.svg?style=flat)](https://www.npmjs.com/package/templates) [![NPM downloads](https://img.shields.io/npm/dm/templates.svg?style=flat)](https://npmjs.org/package/templates) [![Build Status](https://img.shields.io/travis/jonschlinkert/templates.svg?style=flat)](https://travis-ci.org/jonschlinkert/templates)
 
 > System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.
 
@@ -164,7 +164,7 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.list](index.js#L187)
+### [.list](index.js#L185)
 
 Create a new list. See the [list docs](docs/lists.md) for more information about lists.
 
@@ -184,7 +184,7 @@ app.create('pages');
 var list = app.list(app.pages);
 ```
 
-### [.collection](index.js#L226)
+### [.collection](index.js#L224)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -196,7 +196,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L278)
+### [.create](index.js#L276)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -207,7 +207,7 @@ the [create docs](docs/collections.md#create) for more details.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.setup](index.js#L402)
+### [.setup](index.js#L404)
 
 Expose static `setup` method for providing access to an instance before any other use code is run.
 
@@ -229,7 +229,7 @@ Templates.extend(App);
 
 ***
 
-### [.engine](lib/plugins/engine.js#L32)
+### [.engine](lib/plugins/engine.js#L33)
 
 Register a view engine callback `fn` as `ext`.
 
@@ -255,7 +255,7 @@ var swig = app.engine('swig');
 
 ***
 
-### [.helper](lib/plugins/helpers.js#L23)
+### [.helper](lib/plugins/helpers.js#L24)
 
 Register a template helper.
 
@@ -272,7 +272,7 @@ app.helper('upper', function(str) {
 });
 ```
 
-### [.helpers](lib/plugins/helpers.js#L44)
+### [.helpers](lib/plugins/helpers.js#L45)
 
 Register multiple template helpers.
 
@@ -290,7 +290,7 @@ app.helpers({
 });
 ```
 
-### [.getHelper](lib/plugins/helpers.js#L61)
+### [.getHelper](lib/plugins/helpers.js#L62)
 
 Get a previously registered helper.
 
@@ -305,7 +305,7 @@ Get a previously registered helper.
 var fn = app.getHelper('foo');
 ```
 
-### [.getAsyncHelper](lib/plugins/helpers.js#L78)
+### [.getAsyncHelper](lib/plugins/helpers.js#L79)
 
 Get a previously registered async helper.
 
@@ -320,7 +320,7 @@ Get a previously registered async helper.
 var fn = app.getAsyncHelper('foo');
 ```
 
-### [.hasHelper](lib/plugins/helpers.js#L97)
+### [.hasHelper](lib/plugins/helpers.js#L98)
 
 Return true if sync helper `name` is registered.
 
@@ -337,7 +337,7 @@ if (app.hasHelper('foo')) {
 }
 ```
 
-### [.hasAsyncHelper](lib/plugins/helpers.js#L115)
+### [.hasAsyncHelper](lib/plugins/helpers.js#L116)
 
 Return true if async helper `name` is registered.
 
@@ -354,7 +354,7 @@ if (app.hasAsyncHelper('foo')) {
 }
 ```
 
-### [.asyncHelper](lib/plugins/helpers.js#L133)
+### [.asyncHelper](lib/plugins/helpers.js#L134)
 
 Register an async helper.
 
@@ -371,7 +371,7 @@ app.asyncHelper('upper', function(str, next) {
 });
 ```
 
-### [.asyncHelpers](lib/plugins/helpers.js#L154)
+### [.asyncHelpers](lib/plugins/helpers.js#L155)
 
 Register multiple async template helpers.
 
@@ -389,7 +389,7 @@ app.asyncHelpers({
 });
 ```
 
-### [.helperGroup](lib/plugins/helpers.js#L178)
+### [.helperGroup](lib/plugins/helpers.js#L179)
 
 Register a namespaced helper group.
 
@@ -419,7 +419,7 @@ app.helperGroup('mdu', {
 
 API for the `View` class.
 
-### [View](lib/view.js#L28)
+### [View](lib/view.js#L27)
 
 Create an instance of `View`. Optionally pass a default object to use.
 
@@ -436,7 +436,7 @@ var view = new View({
 });
 ```
 
-### [.context](lib/view.js#L58)
+### [.context](lib/view.js#L56)
 
 Creates a context object from front-matter data, `view.locals` and the given `locals` object.
 
@@ -451,7 +451,7 @@ Creates a context object from front-matter data, `view.locals` and the given `lo
 var ctx = page.context({foo: 'bar'});
 ```
 
-### [.compile](lib/view.js#L80)
+### [.compile](lib/view.js#L78)
 
 Synchronously compile a view.
 
@@ -469,7 +469,7 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.render](lib/view.js#L98)
+### [.render](lib/view.js#L96)
 
 Asynchronously render a view.
 
@@ -486,7 +486,7 @@ view.render({title: 'Home'}, function(err, res) {
 });
 ```
 
-### [.isType](lib/view.js#L132)
+### [.isType](lib/view.js#L130)
 
 Return true if the view is the given view `type`. Since types are assigned by collections, views that are "collection-less" will not have a type, and thus will always return `false` (as expected).
 
@@ -500,7 +500,7 @@ Return true if the view is the given view `type`. Since types are assigned by co
 view.isType('partial');
 ```
 
-### [.data](lib/plugins/context.js#L32)
+### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -519,7 +519,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.context](lib/plugins/context.js#L60)
+### [.context](lib/plugins/context.js#L62)
 
 Build the context for the given `view` and `locals`.
 
@@ -529,7 +529,7 @@ Build the context for the given `view` and `locals`.
 * `locals` **{Object}**
 * `returns` **{Object}**: The object to be passed to engines/views as context.
 
-### [setHelperOptions](lib/plugins/context.js#L111)
+### [setHelperOptions](lib/plugins/context.js#L114)
 
 Update context in a helper so that `this.helper.options` is
 the options for that specific helper.
@@ -539,7 +539,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L233)
+### [.mergePartials](lib/plugins/context.js#L236)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -550,7 +550,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L273)
+### [.mergePartialsAsync](lib/plugins/context.js#L276)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -566,7 +566,7 @@ have no support for partials or only support one type of partials.
 
 API for the `Item` class.
 
-### [Item](lib/item.js#L30)
+### [Item](lib/item.js#L28)
 
 Create an instance of `Item`. Optionally pass a default object to use.
 
@@ -583,7 +583,7 @@ var item = new Item({
 });
 ```
 
-### [.clone](lib/item.js#L94)
+### [.clone](lib/item.js#L92)
 
 Re-decorate Item methods after calling vinyl's `.clone()` method.
 
@@ -598,7 +598,7 @@ Re-decorate Item methods after calling vinyl's `.clone()` method.
 item.clone({deep: true}); // false by default
 ```
 
-### [.data](lib/plugins/context.js#L32)
+### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -617,7 +617,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.context](lib/plugins/context.js#L60)
+### [.context](lib/plugins/context.js#L62)
 
 Build the context for the given `view` and `locals`.
 
@@ -627,7 +627,7 @@ Build the context for the given `view` and `locals`.
 * `locals` **{Object}**
 * `returns` **{Object}**: The object to be passed to engines/views as context.
 
-### [setHelperOptions](lib/plugins/context.js#L111)
+### [setHelperOptions](lib/plugins/context.js#L114)
 
 Update context in a helper so that `this.helper.options` is
 the options for that specific helper.
@@ -637,7 +637,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L233)
+### [.mergePartials](lib/plugins/context.js#L236)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -648,7 +648,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L273)
+### [.mergePartialsAsync](lib/plugins/context.js#L276)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -679,7 +679,7 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
-### [.setView](lib/views.js#L138)
+### [.setView](lib/views.js#L137)
 
 Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
@@ -695,7 +695,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L185)
+### [.addView](lib/views.js#L184)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -712,7 +712,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L208)
+### [.deleteView](lib/views.js#L207)
 
 Delete a view from collection `views`.
 
@@ -727,7 +727,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L232)
+### [.addViews](lib/views.js#L231)
 
 Load multiple views onto the collection.
 
@@ -746,7 +746,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L266)
+### [.addList](lib/views.js#L265)
 
 Load an array of views onto the collection.
 
@@ -765,7 +765,7 @@ collection.addList([
 ]);
 ```
 
-### [.groupBy](lib/views.js#L303)
+### [.groupBy](lib/views.js#L302)
 
 Group all collection `views` by the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -779,7 +779,7 @@ collection.addViews(...);
 var groups = collection.groupBy('data.date', 'data.slug');
 ```
 
-### [.getView](lib/views.js#L320)
+### [.getView](lib/views.js#L319)
 
 Get view `name` from `collection.views`.
 
@@ -795,7 +795,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L355)
+### [.extendView](lib/views.js#L354)
 
 Load a view from the file system.
 
@@ -810,7 +810,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L370)
+### [.isType](lib/views.js#L369)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -824,11 +824,11 @@ Return true if the collection belongs to the given view `type`.
 collection.isType('partial');
 ```
 
-### [.viewTypes](lib/views.js#L417)
+### [.viewTypes](lib/views.js#L416)
 
 Alias for `viewType`
 
-### [.data](lib/plugins/context.js#L32)
+### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -847,7 +847,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.context](lib/plugins/context.js#L60)
+### [.context](lib/plugins/context.js#L62)
 
 Build the context for the given `view` and `locals`.
 
@@ -857,7 +857,7 @@ Build the context for the given `view` and `locals`.
 * `locals` **{Object}**
 * `returns` **{Object}**: The object to be passed to engines/views as context.
 
-### [setHelperOptions](lib/plugins/context.js#L111)
+### [setHelperOptions](lib/plugins/context.js#L114)
 
 Update context in a helper so that `this.helper.options` is
 the options for that specific helper.
@@ -867,7 +867,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L233)
+### [.mergePartials](lib/plugins/context.js#L236)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -878,7 +878,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L273)
+### [.mergePartialsAsync](lib/plugins/context.js#L276)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -971,7 +971,7 @@ var collection = new Collection();
 collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/collection.js#L98)
+### [.setItem](lib/collection.js#L96)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -987,7 +987,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L121)
+### [.addItem](lib/collection.js#L119)
 
 Similar to `setItem`, adds an item to the collection but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener.  An item may be an instance of `Item`, if not, the item is converted to an instance of `Item`.
 
@@ -1003,7 +1003,7 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteItem](lib/collection.js#L145)
+### [.deleteItem](lib/collection.js#L143)
 
 Delete an item from collection `items`.
 
@@ -1018,7 +1018,7 @@ Delete an item from collection `items`.
 items.deleteItem('abc');
 ```
 
-### [.addItems](lib/collection.js#L168)
+### [.addItems](lib/collection.js#L166)
 
 Load multiple items onto the collection.
 
@@ -1037,7 +1037,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L195)
+### [.addList](lib/collection.js#L193)
 
 Load an array of items onto the collection.
 
@@ -1057,7 +1057,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L226)
+### [.getItem](lib/collection.js#L224)
 
 Get an item from the collection.
 
@@ -1072,7 +1072,7 @@ Get an item from the collection.
 collection.getItem('a.html');
 ```
 
-### [.data](lib/plugins/context.js#L32)
+### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -1091,7 +1091,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.context](lib/plugins/context.js#L60)
+### [.context](lib/plugins/context.js#L62)
 
 Build the context for the given `view` and `locals`.
 
@@ -1101,7 +1101,7 @@ Build the context for the given `view` and `locals`.
 * `locals` **{Object}**
 * `returns` **{Object}**: The object to be passed to engines/views as context.
 
-### [setHelperOptions](lib/plugins/context.js#L111)
+### [setHelperOptions](lib/plugins/context.js#L114)
 
 Update context in a helper so that `this.helper.options` is
 the options for that specific helper.
@@ -1111,7 +1111,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L233)
+### [.mergePartials](lib/plugins/context.js#L236)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1122,7 +1122,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L273)
+### [.mergePartialsAsync](lib/plugins/context.js#L276)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1153,7 +1153,7 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/list.js#L124)
+### [.setItem](lib/list.js#L123)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -1169,7 +1169,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L161)
+### [.addItem](lib/list.js#L160)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -1186,7 +1186,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L188)
+### [.addItems](lib/list.js#L187)
 
 Load multiple items onto the collection.
 
@@ -1205,7 +1205,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L217)
+### [.addList](lib/list.js#L216)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -1223,7 +1223,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L254)
+### [.hasItem](lib/list.js#L253)
 
 Return true if the list has the given item (name).
 
@@ -1240,7 +1240,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L270)
+### [.getIndex](lib/list.js#L269)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1256,7 +1256,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L314)
+### [.getItem](lib/list.js#L313)
 
 Get a specific item from the list by `key`.
 
@@ -1272,7 +1272,7 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
-### [.getView](lib/list.js#L333)
+### [.getView](lib/list.js#L332)
 
 Proxy for `getItem`
 
@@ -1288,7 +1288,7 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
-### [.deleteItem](lib/list.js#L347)
+### [.deleteItem](lib/list.js#L346)
 
 Remove an item from the list.
 
@@ -1302,7 +1302,7 @@ Remove an item from the list.
 list.deleteItem('a.html');
 ```
 
-### [.extendItem](lib/list.js#L366)
+### [.extendItem](lib/list.js#L365)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -1313,7 +1313,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L385)
+### [.groupBy](lib/list.js#L384)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -1327,7 +1327,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L411)
+### [.sortBy](lib/list.js#L410)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -1342,7 +1342,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L459)
+### [.paginate](lib/list.js#L458)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -1355,7 +1355,7 @@ var list = new List(items);
 var pages = list.paginate({limit: 5});
 ```
 
-### [.data](lib/plugins/context.js#L32)
+### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -1374,7 +1374,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.context](lib/plugins/context.js#L60)
+### [.context](lib/plugins/context.js#L62)
 
 Build the context for the given `view` and `locals`.
 
@@ -1384,7 +1384,7 @@ Build the context for the given `view` and `locals`.
 * `locals` **{Object}**
 * `returns` **{Object}**: The object to be passed to engines/views as context.
 
-### [setHelperOptions](lib/plugins/context.js#L111)
+### [setHelperOptions](lib/plugins/context.js#L114)
 
 Update context in a helper so that `this.helper.options` is
 the options for that specific helper.
@@ -1394,7 +1394,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L233)
+### [.mergePartials](lib/plugins/context.js#L236)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1405,7 +1405,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L273)
+### [.mergePartialsAsync](lib/plugins/context.js#L276)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1501,7 +1501,7 @@ var posts = app.getViews('posts');
 
 ***
 
-### [.compile](lib/plugins/render.js#L89)
+### [.compile](lib/plugins/render.js#L91)
 
 Compile `content` with the given `locals`.
 
@@ -1526,7 +1526,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.compileAsync](lib/plugins/render.js#L163)
+### [.compileAsync](lib/plugins/render.js#L165)
 
 Asynchronously compile `content` with the given `locals` and callback.
 
@@ -1546,7 +1546,7 @@ app.compileAsync(indexPage, function(err, view) {
 });
 ```
 
-### [.render](lib/plugins/render.js#L249)
+### [.render](lib/plugins/render.js#L252)
 
 Render a view with the given `locals` and `callback`.
 
@@ -1567,7 +1567,7 @@ app.render(blogPost, {title: 'Foo'}, function(err, view) {
 
 ***
 
-### [.data](lib/plugins/context.js#L32)
+### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
 
@@ -1586,7 +1586,7 @@ console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
 
-### [.context](lib/plugins/context.js#L60)
+### [.context](lib/plugins/context.js#L62)
 
 Build the context for the given `view` and `locals`.
 
@@ -1596,7 +1596,7 @@ Build the context for the given `view` and `locals`.
 * `locals` **{Object}**
 * `returns` **{Object}**: The object to be passed to engines/views as context.
 
-### [setHelperOptions](lib/plugins/context.js#L111)
+### [setHelperOptions](lib/plugins/context.js#L114)
 
 Update context in a helper so that `this.helper.options` is
 the options for that specific helper.
@@ -1606,7 +1606,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L233)
+### [.mergePartials](lib/plugins/context.js#L236)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1617,7 +1617,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L273)
+### [.mergePartialsAsync](lib/plugins/context.js#L276)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1629,7 +1629,7 @@ have no support for partials or only support one type of partials.
 
 ***
 
-### [.handle](lib/plugins/routes.js#L45)
+### [.handle](lib/plugins/routes.js#L47)
 
 Handle a middleware `method` for `view`.
 
@@ -1646,11 +1646,11 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.handleView](lib/plugins/routes.js#L110)
+### [.handleView](lib/plugins/routes.js#L112)
 
 Deprecated, use `.handleOnce`
 
-### [.route](lib/plugins/routes.js#L160)
+### [.route](lib/plugins/routes.js#L162)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -1675,7 +1675,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](lib/plugins/routes.js#L182)
+### [.all](lib/plugins/routes.js#L184)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1694,7 +1694,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](lib/plugins/routes.js#L211)
+### [.param](lib/plugins/routes.js#L213)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -1967,10 +1967,12 @@ Although 99% of users won't be effected by the changes in this release, there we
 
 ## Related projects
 
-* [assemble](https://www.npmjs.com/package/assemble): Assemble is a powerful, extendable and easy to use static site generator for node.js. Used… [more](https://www.npmjs.com/package/assemble) | [homepage](https://github.com/assemble/assemble)
+You might also be interested in these projects:
+
 * [en-route](https://www.npmjs.com/package/en-route): Routing for static site generators, build systems and task runners, heavily based on express.js routes… [more](https://www.npmjs.com/package/en-route) | [homepage](https://github.com/jonschlinkert/en-route)
 * [engine](https://www.npmjs.com/package/engine): Template engine based on Lo-Dash template, but adds features like the ability to register helpers… [more](https://www.npmjs.com/package/engine) | [homepage](https://github.com/jonschlinkert/engine)
 * [layouts](https://www.npmjs.com/package/layouts): Wraps templates with layouts. Layouts can use other layouts and be nested to any depth.… [more](https://www.npmjs.com/package/layouts) | [homepage](https://github.com/doowb/layouts)
+* [assemble](https://www.npmjs.com/package/assemble): Assemble is a powerful, extendable and easy to use static site generator for node.js. Used… [more](https://www.npmjs.com/package/assemble) | [homepage](https://github.com/assemble/assemble)
 * [verb](https://www.npmjs.com/package/verb): Documentation generator for GitHub projects. Verb is extremely powerful, easy to use, and is used… [more](https://www.npmjs.com/package/verb) | [homepage](https://github.com/verbose/verb)
 
 ## Contributing
@@ -2008,9 +2010,9 @@ $ npm install -d && npm test
 
 ## License
 
-Copyright © 2016 [Jon Schlinkert](https://github.com/jonschlinkert)
+Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
 Released under the [MIT license](https://github.com/jonschlinkert/templates/blob/master/LICENSE).
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on March 31, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on May 02, 2016._
