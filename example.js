@@ -43,7 +43,7 @@ app.use(function(app) {
  */
 
 app.engine('*', require('engine-base'));
-app.option('view engine', '*');
+app.option('engine', '*');
 
 /**
  * Collections and rendering
