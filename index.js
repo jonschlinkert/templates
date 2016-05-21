@@ -341,8 +341,9 @@ Templates.prototype.extendViews = function(views, options) {
  */
 
 Templates.prototype.resolveLayout = function(view) {
-  if (!utils.isPartial(view)) {
-    debug('resolving layout for "%s"', view.key);
+  debug('resolving layout for "%s"', view.key);
+
+  if (!utils.isPartial(view) && typeof view.layout === 'undefined') {
     var views = this[view.options.collection];
     var layout = views.resolveLayout(view);
     if (typeof layout === 'undefined') {
