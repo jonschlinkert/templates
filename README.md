@@ -1897,6 +1897,16 @@ templates.isVinyl(file);
 
 ## History
 
+### v0.17.0
+
+* Removed `debug` methods and related code
+* Improve layout handling with respect to template types (`partial`, `renderable` and `layout`)
+* Update dependencies
+
+### v0.16.0
+
+* Improved context handling
+
 ### v0.15.0
 
 * removes `.removeItem` method that was deprecated in v0.10.7 from `List`
@@ -1912,6 +1922,16 @@ Although 99% of users won't be effected by the changes in this release, there we
 * Helper context: Exposes a `this.helper` object to the context in helpers, which has the helper name and options that were set specifically for that helper
 * Helper context: Exposes a `this.view` object to the context in helpers, which is the current view being rendered. This was (and still is) always expose on `this.context.view`, but it makes sense to add this to the root of the context as a convenience. We will deprecate `this.context.view` in a future version.
 * Helper context: `.get`, `.set` and `.merge` methods on `this.options`, `this.context` and the `this` object in helpers.
+
+### v0.13.0
+
+* All template handling is async by default. Instead of adding `.compileSync`, we felt that it made more sense to add `.compileAsync`, since `.compile` is a public method and most users will expect it to be sync, and `.compile` methods with most engines are typically sync. In other words, `.compileAsync` probably won't be seen by most users, but we wanted to explain the decision to go against node.js naming conventions.
+* Improved layout detection and handling
+
+### v0.12.0
+
+* Adds helper methods, [.hasAsyncHelper](#hasasynchelper), [.hasHelper](#hashelper), [.getAsyncHelper](#getasynchelper), and [.getHelper](#gethelper)
+* Ensures that both collection and app routes are handled when both are defined for a view
 
 ### v0.11.0
 
