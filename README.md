@@ -581,7 +581,7 @@ var item = new Item({
 });
 ```
 
-### [.clone](lib/item.js#L92)
+### [.clone](lib/item.js#L91)
 
 Re-decorate Item methods after calling vinyl's `.clone()` method.
 
@@ -693,7 +693,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L161)
+### [.addView](lib/views.js#L163)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -710,7 +710,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L184)
+### [.deleteView](lib/views.js#L186)
 
 Delete a view from collection `views`.
 
@@ -725,7 +725,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L208)
+### [.addViews](lib/views.js#L210)
 
 Load multiple views onto the collection.
 
@@ -744,7 +744,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L242)
+### [.addList](lib/views.js#L244)
 
 Load an array of views onto the collection.
 
@@ -763,7 +763,7 @@ collection.addList([
 ]);
 ```
 
-### [.groupBy](lib/views.js#L279)
+### [.groupBy](lib/views.js#L281)
 
 Group all collection `views` by the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -777,7 +777,7 @@ collection.addViews(...);
 var groups = collection.groupBy('data.date', 'data.slug');
 ```
 
-### [.getView](lib/views.js#L296)
+### [.getView](lib/views.js#L298)
 
 Get view `name` from `collection.views`.
 
@@ -793,7 +793,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L331)
+### [.extendView](lib/views.js#L333)
 
 Load a view from the file system.
 
@@ -808,7 +808,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L346)
+### [.isType](lib/views.js#L348)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -822,7 +822,7 @@ Return true if the collection belongs to the given view `type`.
 collection.isType('partial');
 ```
 
-### [.viewTypes](lib/views.js#L393)
+### [.viewTypes](lib/views.js#L395)
 
 Alias for `viewType`
 
@@ -985,7 +985,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/collection.js#L119)
+### [.addItem](lib/collection.js#L121)
 
 Similar to `setItem`, adds an item to the collection but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener.  An item may be an instance of `Item`, if not, the item is converted to an instance of `Item`.
 
@@ -1001,7 +1001,7 @@ var list = new List(...);
 list.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteItem](lib/collection.js#L143)
+### [.deleteItem](lib/collection.js#L145)
 
 Delete an item from collection `items`.
 
@@ -1016,7 +1016,7 @@ Delete an item from collection `items`.
 items.deleteItem('abc');
 ```
 
-### [.addItems](lib/collection.js#L166)
+### [.addItems](lib/collection.js#L168)
 
 Load multiple items onto the collection.
 
@@ -1035,7 +1035,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/collection.js#L193)
+### [.addList](lib/collection.js#L195)
 
 Load an array of items onto the collection.
 
@@ -1055,7 +1055,7 @@ collection.addList([
 ]);
 ```
 
-### [.getItem](lib/collection.js#L224)
+### [.getItem](lib/collection.js#L226)
 
 Get an item from the collection.
 
@@ -1167,7 +1167,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L144)
+### [.addItem](lib/list.js#L146)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -1184,7 +1184,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L171)
+### [.addItems](lib/list.js#L173)
 
 Load multiple items onto the collection.
 
@@ -1203,7 +1203,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L200)
+### [.addList](lib/list.js#L202)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -1221,7 +1221,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L237)
+### [.hasItem](lib/list.js#L239)
 
 Return true if the list has the given item (name).
 
@@ -1238,7 +1238,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L253)
+### [.getIndex](lib/list.js#L255)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1254,7 +1254,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L297)
+### [.getItem](lib/list.js#L299)
 
 Get a specific item from the list by `key`.
 
@@ -1270,7 +1270,7 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
-### [.getView](lib/list.js#L316)
+### [.getView](lib/list.js#L318)
 
 Proxy for `getItem`
 
@@ -1286,7 +1286,7 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
-### [.deleteItem](lib/list.js#L330)
+### [.deleteItem](lib/list.js#L332)
 
 Remove an item from the list.
 
@@ -1300,7 +1300,7 @@ Remove an item from the list.
 list.deleteItem('a.html');
 ```
 
-### [.extendItem](lib/list.js#L349)
+### [.extendItem](lib/list.js#L351)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -1311,7 +1311,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L368)
+### [.groupBy](lib/list.js#L370)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -1325,7 +1325,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L394)
+### [.sortBy](lib/list.js#L396)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -1340,7 +1340,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L442)
+### [.paginate](lib/list.js#L444)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -1627,7 +1627,7 @@ have no support for partials or only support one type of partials.
 
 ***
 
-### [.handle](lib/plugins/routes.js#L46)
+### [.handle](lib/plugins/routes.js#L47)
 
 Handle a middleware `method` for `view`.
 
@@ -1644,11 +1644,11 @@ Handle a middleware `method` for `view`.
 app.handle('customMethod', view, callback);
 ```
 
-### [.handleView](lib/plugins/routes.js#L111)
+### [.handleView](lib/plugins/routes.js#L112)
 
 Deprecated, use `.handleOnce`
 
-### [.route](lib/plugins/routes.js#L161)
+### [.route](lib/plugins/routes.js#L172)
 
 Create a new Route for the given path. Each route contains a separate middleware stack.
 
@@ -1673,7 +1673,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.all](lib/plugins/routes.js#L183)
+### [.all](lib/plugins/routes.js#L194)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1692,7 +1692,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.param](lib/plugins/routes.js#L212)
+### [.param](lib/plugins/routes.js#L224)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
