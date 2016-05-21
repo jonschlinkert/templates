@@ -57,28 +57,10 @@ function Templates(options) {
 }
 
 /**
- * Inherit `Base`
+ * Inherit `Base` and load static plugins
  */
 
-Base.extend(Templates);
-Base.bubble(Templates, ['preInit', 'Init']);
-
-/**
- * Mixin static methods
- */
-
-plugin.is(Templates);
-
-/**
- * Mixin prototype methods
- */
-
-plugin.routes(Templates.prototype);
-plugin.engine(Templates.prototype);
-plugin.layout(Templates.prototype);
-plugin.render(Templates.prototype);
-plugin.lookup(Templates.prototype);
-plugin.errors(Templates.prototype, 'Templates');
+plugin.static(Base, Templates, 'Templates');
 
 /**
  * Initialize Templates
@@ -87,10 +69,6 @@ plugin.errors(Templates.prototype, 'Templates');
 Templates.prototype.initTemplates = function() {
   debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
   Templates.emit('preInit', this);
-
-  if (!this.plugins) {
-    this.plugins = {};
-  }
 
   this.items = {};
   this.views = {};
@@ -104,6 +82,8 @@ Templates.prototype.initTemplates = function() {
   this.use(plugin.renameKey());
   this.use(plugin.context);
   this.use(plugin.helpers);
+  this.use(plugin.lookup);
+
   this.use(plugin.item('item', 'Item'));
   this.use(plugin.item('view', 'View'));
 
@@ -286,6 +266,7 @@ Templates.prototype.create = function(name, opts) {
 
   // create the actual collection
   var collection = this.collection(opts, true);
+  utils.setInstanceNames(collection, name);
 
   // get the collection inflections, e.g. page/pages
   var single = utils.single(name);
