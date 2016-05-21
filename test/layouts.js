@@ -2,7 +2,7 @@
 
 require('mocha');
 require('should');
-var async = require('async');
+var each = require('async-each');
 var assert = require('assert');
 var support = require('./support');
 var App = support.resolve();
@@ -170,7 +170,7 @@ describe('layouts', function() {
     app.pages('y.tmpl', {path: 'y.tmpl', content: 'y inner y', data: { layout: 'a' }});
     app.pages('z.tmpl', {path: 'z.tmpl', content: 'z inner z', data: { layout: 'a' }});
 
-    async.eachSeries(['x', 'y', 'z'], function(key, next) {
+    each(['x', 'y', 'z'], function(key, next) {
       var page = app.pages.getView(key + '.tmpl');
       app.render(page, function(err, view) {
         if (err) return next(err);

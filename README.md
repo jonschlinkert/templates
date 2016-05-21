@@ -162,7 +162,7 @@ var templates = require('templates');
 var app = templates();
 ```
 
-### [.list](index.js#L185)
+### [.list](index.js#L165)
 
 Create a new list. See the [list docs](docs/lists.md) for more information about lists.
 
@@ -182,7 +182,7 @@ app.create('pages');
 var list = app.list(app.pages);
 ```
 
-### [.collection](index.js#L224)
+### [.collection](index.js#L204)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -194,7 +194,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L276)
+### [.create](index.js#L256)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -205,7 +205,7 @@ the [create docs](docs/collections.md#create) for more details.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.setup](index.js#L405)
+### [.setup](index.js#L386)
 
 Expose static `setup` method for providing access to an instance before any other use code is run.
 
@@ -449,7 +449,7 @@ Creates a context object from front-matter data, `view.locals` and the given `lo
 var ctx = page.context({foo: 'bar'});
 ```
 
-### [.compile](lib/view.js#L78)
+### [.compile](lib/view.js#L81)
 
 Synchronously compile a view.
 
@@ -467,7 +467,7 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.render](lib/view.js#L96)
+### [.render](lib/view.js#L99)
 
 Asynchronously render a view.
 
@@ -484,7 +484,7 @@ view.render({title: 'Home'}, function(err, res) {
 });
 ```
 
-### [.isType](lib/view.js#L130)
+### [.isType](lib/view.js#L133)
 
 Return true if the view is the given view `type`. Since types are assigned by collections, views that are "collection-less" will not have a type, and thus will always return `false` (as expected).
 
@@ -677,7 +677,7 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
-### [.setView](lib/views.js#L137)
+### [.setView](lib/views.js#L121)
 
 Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
@@ -693,7 +693,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L184)
+### [.addView](lib/views.js#L161)
 
 Similar to [setView](#setView), adds a view to the collection but also fires an event and iterates over the loading `queue` for loading views from the `addView` event listener. If the given view is not already an instance of `View`, it will be converted to one before being added to the `views` object.
 
@@ -710,7 +710,7 @@ var views = new Views(...);
 views.addView('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.deleteView](lib/views.js#L207)
+### [.deleteView](lib/views.js#L184)
 
 Delete a view from collection `views`.
 
@@ -725,7 +725,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L231)
+### [.addViews](lib/views.js#L208)
 
 Load multiple views onto the collection.
 
@@ -744,7 +744,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L265)
+### [.addList](lib/views.js#L242)
 
 Load an array of views onto the collection.
 
@@ -763,7 +763,7 @@ collection.addList([
 ]);
 ```
 
-### [.groupBy](lib/views.js#L302)
+### [.groupBy](lib/views.js#L279)
 
 Group all collection `views` by the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -777,7 +777,7 @@ collection.addViews(...);
 var groups = collection.groupBy('data.date', 'data.slug');
 ```
 
-### [.getView](lib/views.js#L319)
+### [.getView](lib/views.js#L296)
 
 Get view `name` from `collection.views`.
 
@@ -793,7 +793,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.extendView](lib/views.js#L354)
+### [.extendView](lib/views.js#L331)
 
 Load a view from the file system.
 
@@ -808,7 +808,7 @@ Load a view from the file system.
 collection.loadView(view);
 ```
 
-### [.isType](lib/views.js#L369)
+### [.isType](lib/views.js#L346)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -822,7 +822,7 @@ Return true if the collection belongs to the given view `type`.
 collection.isType('partial');
 ```
 
-### [.viewTypes](lib/views.js#L416)
+### [.viewTypes](lib/views.js#L393)
 
 Alias for `viewType`
 
@@ -1151,7 +1151,7 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/list.js#L123)
+### [.setItem](lib/list.js#L107)
 
 Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
 
@@ -1167,7 +1167,7 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 collection.setItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L160)
+### [.addItem](lib/list.js#L144)
 
 Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
 
@@ -1184,7 +1184,7 @@ var items = new Items(...);
 items.addItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L187)
+### [.addItems](lib/list.js#L171)
 
 Load multiple items onto the collection.
 
@@ -1203,7 +1203,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L216)
+### [.addList](lib/list.js#L200)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -1221,7 +1221,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L253)
+### [.hasItem](lib/list.js#L237)
 
 Return true if the list has the given item (name).
 
@@ -1238,7 +1238,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L269)
+### [.getIndex](lib/list.js#L253)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1254,7 +1254,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L313)
+### [.getItem](lib/list.js#L297)
 
 Get a specific item from the list by `key`.
 
@@ -1270,7 +1270,7 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
-### [.getView](lib/list.js#L332)
+### [.getView](lib/list.js#L316)
 
 Proxy for `getItem`
 
@@ -1286,7 +1286,7 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
-### [.deleteItem](lib/list.js#L346)
+### [.deleteItem](lib/list.js#L330)
 
 Remove an item from the list.
 
@@ -1300,7 +1300,7 @@ Remove an item from the list.
 list.deleteItem('a.html');
 ```
 
-### [.extendItem](lib/list.js#L365)
+### [.extendItem](lib/list.js#L349)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -1311,7 +1311,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L384)
+### [.groupBy](lib/list.js#L368)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
@@ -1325,7 +1325,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L410)
+### [.sortBy](lib/list.js#L394)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -1340,7 +1340,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L458)
+### [.paginate](lib/list.js#L442)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -1499,7 +1499,7 @@ var posts = app.getViews('posts');
 
 ***
 
-### [.compile](lib/plugins/render.js#L91)
+### [.compile](lib/plugins/render.js#L94)
 
 Compile `content` with the given `locals`.
 
@@ -1524,9 +1524,9 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.compileAsync](lib/plugins/render.js#L165)
+### [.compileAsync](lib/plugins/render.js#L169)
 
-Asynchronously compile `content` with the given `locals` and callback.
+Asynchronously compile `content` with the given `locals` and callback. _(fwiw, this method name uses the unconventional "*Async" nomenclature to allow us to preserve the synchronous behavior of the `view.compile` method as well as the name)_.
 
 **Params**
 
@@ -1544,7 +1544,7 @@ app.compileAsync(indexPage, function(err, view) {
 });
 ```
 
-### [.render](lib/plugins/render.js#L252)
+### [.render](lib/plugins/render.js#L256)
 
 Render a view with the given `locals` and `callback`.
 

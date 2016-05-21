@@ -4,7 +4,7 @@ require('mocha');
 require('should');
 var get = require('get-value');
 var assert = require('assert');
-var async = require('async');
+var each = require('async-each');
 var typeOf = require('kind-of');
 var support = require('./support/');
 var isBuffer = require('is-buffer');
@@ -580,7 +580,7 @@ describe('list', function() {
       list = new List({pager: true});
       list.engine('.md', require('engine-base'));
       list.addList(items);
-      async.eachSeries(list.items, function(item, next) {
+      each(list.items, function(item, next) {
         item.render(next);
       }, cb);
     });
