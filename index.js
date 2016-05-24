@@ -401,7 +401,6 @@ utils.define(Templates, 'meta', require('./package'));
  */
 
 utils.define(Templates, 'utils', utils);
-utils.define(Templates, 'debug', debug);
 utils.define(Templates, '_', { lib: lib, plugin: plugin });
 
 /**
