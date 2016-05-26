@@ -466,7 +466,7 @@ Creates a context object from front-matter data, `view.locals` and the given `lo
 var ctx = page.context({foo: 'bar'});
 ```
 
-### [.compile](lib/view.js#L89)
+### [.compile](lib/view.js#L87)
 
 Synchronously compile a view.
 
@@ -484,7 +484,7 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.render](lib/view.js#L107)
+### [.render](lib/view.js#L105)
 
 Asynchronously render a view.
 
@@ -501,7 +501,7 @@ view.render({title: 'Home'}, function(err, res) {
 });
 ```
 
-### [.isType](lib/view.js#L142)
+### [.isType](lib/view.js#L140)
 
 Return true if the view is the given view `type`. Since types are assigned by collections, views that are "collection-less" will not have a type, and thus will always return `false` (as expected).
 
