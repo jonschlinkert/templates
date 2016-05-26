@@ -382,13 +382,13 @@ Templates.setup = function(app, name) {
  * Expose constructors as static methods.
  */
 
-utils.define(Templates, 'Base', Base);
-utils.define(Templates, 'Item', Item);
-utils.define(Templates, 'View', View);
-utils.define(Templates, 'List', List);
-utils.define(Templates, 'Collection', Collection);
-utils.define(Templates, 'Views', Views);
-utils.define(Templates, 'Group', Group);
+Templates.Base = Base;
+Templates.Item = Item;
+Templates.View = View;
+Templates.List = List;
+Templates.Collection = Collection;
+Templates.Views = Views;
+Templates.Group = Group;
 
 /**
  * Expose properties for unit tests
