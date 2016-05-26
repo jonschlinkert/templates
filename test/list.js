@@ -2,6 +2,7 @@
 
 require('mocha');
 require('should');
+var path = require('path');
 var get = require('get-value');
 var assert = require('assert');
 var each = require('async-each');
@@ -144,6 +145,36 @@ describe('list', function() {
       list.addItem('b', {content: '...'});
       list.addItem('c', {content: '...'});
       assert(list.items.length === 3);
+    });
+  });
+
+  describe('deleteItem', function() {
+    beforeEach(function() {
+      list = new List();
+    });
+
+    it('should remove an item from `items`', function() {
+      list.addItem('a', {content: '...'});
+      list.addItem('b', {content: '...'});
+      list.addItem('c', {content: '...'});
+      assert(list.items.length === 3);
+      var a = list.getItem('a');
+      list.deleteItem(a);
+      assert(list.items.length === 2);
+      var c = list.getItem('c');
+      list.deleteItem(c);
+      assert(list.items[0].key === 'b');
+    });
+
+    it('should remove an item from `items` by key', function() {
+      list.addItem('a', {content: '...'});
+      list.addItem('b', {content: '...'});
+      list.addItem('c', {content: '...'});
+      assert(list.items.length === 3);
+      list.deleteItem('c');
+      assert(list.items.length === 2);
+      list.deleteItem('b');
+      assert(list.items[0].key === 'a');
     });
   });
 
@@ -610,6 +641,32 @@ describe('list', function() {
       list = new List(views);
       assert(isBuffer(list.items[0].contents));
       assert(isBuffer(list.items[1].contents));
+    });
+  });
+
+  describe('getIndex', function() {
+    beforeEach(function() {
+      list = new List();
+    });
+    it('should get the index of a key when key is not renamed', function() {
+      list.addItem('a/b/c/ddd.hbs', {content: 'ddd'});
+      list.addItem('a/b/c/eee.hbs', {content: 'eee'});
+      assert(list.getIndex('a/b/c/ddd.hbs') === 0);
+      assert(list.getIndex('a/b/c/eee.hbs') === 1);
+    });
+
+    it('should get the index of a key when key is renamed', function() {
+      list = new List({
+        renameKey: function(key) {
+          return path.basename(key);
+        }
+      });
+      list.addItem('a/b/c/ddd.hbs', {content: 'ddd'});
+      list.addItem('a/b/c/eee.hbs', {content: 'eee'});
+      assert(list.getIndex('a/b/c/ddd.hbs') === 0);
+      assert(list.getIndex('ddd.hbs') === 0);
+      assert(list.getIndex('a/b/c/eee.hbs') === 1);
+      assert(list.getIndex('eee.hbs') === 1);
     });
   });
 

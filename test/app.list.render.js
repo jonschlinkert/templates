@@ -7,68 +7,64 @@ var assert = require('assert');
 var support = require('./support');
 var App = support.resolve();
 var List = App.List;
-var Views = App.Views;
-var pages;
+var pages, app;
 
-describe('collection.render', function() {
+describe('app.list.render', function() {
   describe('rendering', function() {
     beforeEach(function() {
-      pages = new Views();
+      app = App();
+      pages = app.create('pages');
+      app.engine('tmpl', require('engine-base'));
       pages.engine('tmpl', require('engine-base'));
     });
 
-    it('should throw an error when no callback is given:', function(cb) {
-      try {
-        pages.render();
-        cb(new Error('expected an error'));
-      } catch (err) {
-        assert.equal(err.message, 'Views#render is async and expects a callback function');
-        cb();
-      }
+    it('should throw an error when no callback is given:', function() {
+      (function() {
+        app.pages.render({});
+      }).should.throw('Views#render is async and expects a callback function');
     });
 
     it('should throw an error when an engine is not defined:', function(cb) {
       pages.addView('foo.bar', {content: '<%= name %>'});
       var page = pages.getView('foo.bar');
 
-      pages.render(page, function(err) {
-        assert.equal(err.message, 'Views#render cannot find an engine for: .bar');
+      app.pages.render(page, function(err) {
+        assert(err.message === 'Views#render cannot find an engine for: .bar');
         cb();
       });
     });
 
-    it('should use helpers to render a view:', function(cb) {
+    it('should use helpers defined on app to render a view:', function(cb) {
       var locals = {name: 'Halle'};
-
-      pages.helper('upper', function(str) {
-        return str.toUpperCase(str);
+      app.helper('upper', function(str) {
+        return str.toUpperCase(str) + 'app';
       });
 
       pages.addView('a.tmpl', {content: 'a <%= upper(name) %> b', locals: locals});
       var page = pages.getView('a.tmpl');
 
-      pages.render(page, function(err, res) {
+      app.render(page, function(err, res) {
         if (err) return cb(err);
 
-        assert.equal(res.content, 'a HALLE b');
+        assert(res.content === 'a HALLEapp b');
         cb();
       });
     });
 
-    it('should use globally defined data to render a view', function(cb) {
-      pages.data({name: 'Halle'});
-
-      pages.helper('upper', function(str) {
-        return str.toUpperCase(str);
+    it('should use helpers defined on app to render a view with collection.render:', function(cb) {
+      var locals = {name: 'Halle'};
+      app.helper('upper', function(str) {
+        return str.toUpperCase(str) + 'app';
       });
 
-      pages.addView('a.tmpl', {content: 'a <%= upper(name) %> b'});
+      pages.addView('a.tmpl', {content: 'a <%= upper(name) %> b', locals: locals});
+      pages.helper('upper', app._.helpers.sync.upper);
       var page = pages.getView('a.tmpl');
 
       pages.render(page, function(err, res) {
         if (err) return cb(err);
 
-        assert(res.content === 'a HALLE b');
+        assert(res.content === 'a HALLEapp b');
         cb();
       });
     });
@@ -84,7 +80,7 @@ describe('collection.render', function() {
 
       pages.render(page, function(err, res) {
         if (err) return cb(err);
-        assert.equal(res.content, 'a HALLE b');
+        assert(res.content === 'a HALLE b');
         cb();
       });
     });
@@ -95,7 +91,7 @@ describe('collection.render', function() {
 
       pages.render(view, function(err, view) {
         if (err) return cb(err);
-        assert.equal(view.contents.toString(), 'b');
+        assert(view.contents.toString() === 'b');
         cb();
       });
     });
@@ -106,7 +102,7 @@ describe('collection.render', function() {
 
       pages.render(view, function(err, view) {
         if (err) return cb(err);
-        assert.equal(view.contents.toString(), 'b');
+        assert(view.contents.toString() === 'b');
         cb();
       });
     });
@@ -116,7 +112,7 @@ describe('collection.render', function() {
 
       pages.render('a.tmpl', function(err, view) {
         if (err) return cb(err);
-        assert.equal(view.content, 'b');
+        assert(view.content === 'b');
         cb();
       });
     });
@@ -141,20 +137,19 @@ describe('collection.render', function() {
       pages.use(function(collection) {
         collection.option('pager', false);
 
-        collection.renderEach = function(done) {
+        collection.renderEach = function(cb) {
           var list = new List(collection);
-
           each(list.items, function(item, next) {
             collection.render(item, next);
-          }, done);
+          }, cb);
         };
       });
 
       pages.renderEach(function(err, items) {
         if (err) return cb(err);
-        assert.equal(items[0].content, 'aaa');
-        assert.equal(items[9].content, 'jjj');
-        assert.equal(items.length, 10);
+        assert(items[0].content === 'aaa');
+        assert(items[9].content === 'jjj');
+        assert(items.length === 10);
         cb();
       });
     });

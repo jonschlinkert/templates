@@ -1,6 +1,5 @@
 'use strict';
 
-require('should');
 var path = require('path');
 var support = require('./support');
 var App = support.resolve();
@@ -376,7 +375,7 @@ describe('renameKey', function() {
             }
           }
         });
-        
+
         app.page('test/fixtures/pages/a.hbs', {
           options: {
             renameKey: function bar(key) {

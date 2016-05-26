@@ -2,6 +2,7 @@
 
 require('mocha');
 require('should');
+
 var assert = require('assert');
 var support = require('./support/');
 assert.containEql = support.containEql;
@@ -129,7 +130,7 @@ describe('group', function() {
       group = new Group();
     });
 
-    it('should use middleware on a group:', function() {
+    it('should use plugins on a group:', function() {
       group.set('one', {contents: new Buffer('aaa')});
       group.set('two', {contents: new Buffer('zzz')});
 

@@ -22,23 +22,23 @@ describe('render', function() {
       app.page('a.tmpl', view)
         .render(function(err, res) {
           if (err) return cb(err);
-          assert(res.contents.toString() === 'a Halle b');
+          assert.equal(res.contents.toString(), 'a Halle b');
           cb();
         });
     });
 
     it('should throw an error when a variable is undefined:', function(cb) {
-      delete view.locals.name;
+      view = {contents: new Buffer('a <%= foo %> b')};
 
       app.page('a.tmpl', view)
         .render(function(err) {
-          assert(err.message === 'name is not defined');
+          assert.equal(err.message, 'foo is not defined');
           cb();
         });
     });
 
     it('should re-throw an error when rethrow is true:', function(cb) {
-      delete view.locals.name;
+      view = {contents: new Buffer('a <%= foo %> b')};
 
       app = new App({rethrow: true, silent: true});
       app.engine('tmpl', require('engine-base'));
@@ -46,26 +46,26 @@ describe('render', function() {
 
       app.page('a.tmpl', view)
         .render(function(err) {
-          assert(err.message === 'name is not defined');
+          assert.equal(err.message, 'foo is not defined');
           cb();
         });
     });
 
     it('should emit a re-thrown error when rethrow is true:', function(cb) {
-      delete view.locals.name;
+      view = {contents: new Buffer('a <%= foo %> b')};
 
       app = new App({rethrow: true, silent: false});
       app.engine('tmpl', require('engine-base'));
       app.create('page');
 
       app.on('error', function(err) {
-        assert(err.message === 'name is not defined');
+        assert.equal(err.message, 'foo is not defined');
         cb();
       });
 
       app.page('a.tmpl', view)
         .render(function(err) {
-          assert(err.message === 'name is not defined');
+          assert.equal(err.message, 'foo is not defined');
         });
     });
   });

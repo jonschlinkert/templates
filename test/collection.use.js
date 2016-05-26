@@ -7,7 +7,7 @@ var support = require('./support');
 var App = support.resolve();
 var Collection = App.Collection;
 var Item = App.Item;
-var collection, app;
+var collection;
 
 describe('collection.use', function() {
   beforeEach(function() {
@@ -158,6 +158,7 @@ describe('collection.use', function() {
 });
 
 describe('app > collection .use', function() {
+  var app;
   beforeEach(function() {
     app = new App();
   });

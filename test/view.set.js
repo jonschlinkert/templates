@@ -28,7 +28,6 @@ describe('view.set', function() {
       .set('data.name', 'Brooke')
       .render(function(err, res) {
         if (err) return cb(err);
-
         assert(res.content === 'Brooke');
         cb();
       });

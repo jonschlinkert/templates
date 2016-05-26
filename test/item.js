@@ -13,7 +13,7 @@ var App = support.resolve();
 var Item = App.Item;
 var item;
 
-describe('item', function() {
+describe('Item', function() {
   describe('instance', function() {
     it('should create an instance of Item:', function() {
       item = new Item();
@@ -26,8 +26,17 @@ describe('item', function() {
     });
 
     it('inspect should not double name `Stream` when ctor is `Stream`', function(cb) {
+      var fn = console.log;
+      var count = 0;
+      console.log = function(val) {
+        console.log = fn;
+        assert.deepEqual(val.inspect(), '<Item <Stream>>');
+        count++;
+      };
       var val = new Stream();
       item = new Item({contents: val});
+      console.log(item);
+      assert.equal(count, 1);
       cb();
     });
   });

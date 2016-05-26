@@ -12,7 +12,7 @@ var App = support.resolve();
 var View = App.View;
 var view;
 
-describe('view', function() {
+describe('View', function() {
   describe('instance', function() {
     it('should create an instance of View:', function() {
       view = new View();
@@ -121,7 +121,7 @@ describe('view', function() {
       assert.equal(clone.get('foo'), view.get('foo'));
       assert.equal(clone.get('baz'), 'quux');
       assert.equal(typeof view.get('baz'), 'undefined');
-
+      // not deep cloned
       assert.equal(clone.get('options.three'), 'four');
       assert.equal(view.get('options.three'), 'four');
     });
@@ -504,21 +504,22 @@ describe('View', function() {
     });
 
     it('should copy all attributes over with Stream', function(cb) {
-      var contents = new Stream.PassThrough();
+      var stream = new Stream.PassThrough();
       var options = {
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
-        contents: contents
+        contents: stream
       };
+
       var view = new View(options);
       var view2 = view.clone();
 
-      contents.write(new Buffer('wa'));
+      stream.write(new Buffer('wa'));
 
       process.nextTick(function() {
-        contents.write(new Buffer('dup'));
-        contents.end();
+        stream.write(new Buffer('dup'));
+        stream.end();
       });
 
       view2.should.not.equal(view, 'refs should be different');
@@ -528,13 +529,16 @@ describe('View', function() {
       view2.contents.should.not.equal(view.contents, 'stream ref should not be the same');
       view.contents.pipe(es.wait(function(err, data) {
         if (err) return cb(err);
+
         view2.contents.pipe(es.wait(function(err, data2) {
           if (err) return cb(err);
+
           data2.should.not.equal(data, 'stream contents ref should not be the same');
           data2.should.eql(data, 'stream contents should be the same');
         }));
       }));
-      cb();
+
+      stream.on('end', cb);
     });
 
     it('should copy all attributes over with null', function(cb) {
@@ -569,6 +573,11 @@ describe('View', function() {
 
       assert(copy.stat.isFile());
       assert(!copy.stat.isDirectory());
+      assert(copy.stat instanceof fs.Stats);
+
+      assert(view.stat.hasOwnProperty('birthtime'));
+      assert(copy.stat.hasOwnProperty('birthtime'));
+      assert.deepEqual(view.stat, copy.stat);
       cb();
     });
 
@@ -898,7 +907,7 @@ describe('View', function() {
       var val = 'test';
       var view = new View();
       view.contents = val;
-      view.contents.should.deepEqual(new Buffer(val));
+      assert.deepEqual(view.contents, new Buffer(val));
       cb();
     });
   });
@@ -1129,7 +1138,7 @@ describe('View', function() {
 
     it('should throw when set path null in constructor', function() {
       (function() {
-        View({
+        view = new View({
           cwd: '/',
           path: null
         });
@@ -1137,7 +1146,7 @@ describe('View', function() {
     });
 
     it('should throw when set path null', function() {
-      var view = new View({
+      view = new View({
         cwd: '/',
         path: 'foo'
       });
