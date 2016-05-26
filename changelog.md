@@ -1,3 +1,26 @@
+### v0.20.0
+
+**Context**
+
+- In general, context should be merged so that the most specific context wins over less specific. This fixes one case where locals was winning over front-matter
+
+**Helpers**
+
+- Exposes `.ctx()` method on helper context, to simplify merging context in non-built-in helpers 
+
+**Engines**
+
+- Fixes bug that was using default engine on options instead of engine that matches view file extension. 
+
+### v0.19.0
+
+- Numerous [dependency updates](https://github.com/jonschlinkert/templates/commit/6f78d88aa1920b84d20177bf35942e596b8e58b5)
+
+### v0.18.0
+
+- [Fixes inheritance bug](https://github.com/jonschlinkert/templates/commit/66b0d885648600c97b4a158eaebf3e95443ec66e) that only manifests in node v0.4.0
+- Improved [error handling in routes](https://github.com/jonschlinkert/templates/commit/d7654b74502465587da1e490c09e486fbf43f6db)
+
 ### v0.17.0
 
 - Removed `debug` methods and related code
@@ -7,6 +30,7 @@
 ### v0.16.0
 
 - Improved context handling
+- Ensure collection middleware is handled [after app middleware](https://github.com/jonschlinkert/templates/commit/f47385f5172a2773c3ab2a969ebfccc533ec5e27)
 
 ### v0.15.0
 
