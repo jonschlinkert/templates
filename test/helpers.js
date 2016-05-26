@@ -1035,18 +1035,15 @@ describe('collection helpers', function() {
 
       app.bar('one', {content: '<%= view("a.tmpl", "foos", { render: true }) %>'})
         .render(function(err, res) {
-          console.log(res)
-          cb()
-          // if (err) return cb(err);
+          if (err) return cb(err);
+          assert.equal(res.content, 'foo-a');
 
-          // assert.equal(res.content, 'foo-a');
-
-          // app.bar('two', {content: '<%= view("b.tmpl", "bars", { render: true }) %>'})
-          //   .render(function(err, bar) {
-          //     if (err) return cb(err);
-          //     assert.equal(bar.content, 'bar-b');
-          //     cb();
-          //   });
+          app.bar('two', {content: '<%= view("b.tmpl", "bars", { render: true }) %>'})
+            .render(function(err, bar) {
+              if (err) return cb(err);
+              assert.equal(bar.content, 'bar-b');
+              cb();
+            });
         });
     });
 
