@@ -298,8 +298,8 @@ Templates.prototype.create = function(name, opts) {
   this[plural].__proto__ = collection;
   this[single].__proto__ = collection;
 
-  // create aliases on the collection for addView/addViews
-  // to support chaining
+  // create aliases on the collection for
+  // addView/addViews to support chaining
   collection.define(plural, this[plural]);
   collection.define(single, this[single]);
 
@@ -355,20 +355,8 @@ Templates.prototype.resolveLayout = function(view) {
 };
 
 /**
- * Expose constructors as static methods.
- */
-
-Templates.Base = Base;
-Templates.Item = Item;
-Templates.View = View;
-Templates.List = List;
-Templates.Collection = Collection;
-Templates.Views = Views;
-Templates.Group = Group;
-
-/**
  * Expose static `setup` method for providing access to an
- * instance before any other use code is run.
+ * instance before any other code is run.
  *
  * ```js
  * function App(options) {
@@ -391,10 +379,16 @@ Templates.setup = function(app, name) {
 };
 
 /**
- * Expose package metadata
+ * Expose constructors as static methods.
  */
 
-utils.define(Templates, 'meta', require('./package'));
+utils.define(Templates, 'Base', Base);
+utils.define(Templates, 'Item', Item);
+utils.define(Templates, 'View', View);
+utils.define(Templates, 'List', List);
+utils.define(Templates, 'Collection', Collection);
+utils.define(Templates, 'Views', Views);
+utils.define(Templates, 'Group', Group);
 
 /**
  * Expose properties for unit tests
