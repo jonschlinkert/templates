@@ -344,12 +344,14 @@ Templates.prototype.resolveLayout = function(view) {
   debug('resolving layout for "%s"', view.key);
 
   if (!utils.isPartial(view) && typeof view.layout === 'undefined') {
-    var views = this[view.options.collection];
-    var layout = views.resolveLayout(view);
-    if (typeof layout === 'undefined') {
-      layout = this.option('layout');
+    if (view.options && view.options.collection) {
+      var views = this[view.options.collection];
+      var layout = views.resolveLayout(view);
+      if (typeof layout === 'undefined') {
+        layout = this.option('layout');
+      }
+      return layout;
     }
-    return layout;
   }
   return view.layout;
 };
