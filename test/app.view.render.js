@@ -89,6 +89,25 @@ describe('app.view.render', function() {
           cb();
         });
     });
+
+    it('should render a view without a collection:', function(cb) {
+      app.engine('hbs', require('engine-handlebars'));
+      var locals = {name: 'Halle'};
+
+      app.helpers({
+        prepend: function(prefix, str) {
+          return prefix + str;
+        }
+      });
+
+      var buffer = new Buffer('a {{prepend "foo " name}} b');
+      var view = app.view('a.tmpl', {contents: buffer, locals: locals, options: {engine: 'hbs'}})
+      app.render(view, function(err, res) {
+          if (err) return cb(err);
+          assert(res.contents.toString() === 'a foo Halle b');
+          cb();
+        });
+    });
   });
 });
 
