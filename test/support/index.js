@@ -6,6 +6,24 @@ var assert = require('assert');
 var ignore = require('./ignore');
 var cache = {};
 
+exports.hasProperties = function(obj, keys) {
+  keys = Array.isArray(keys) ? keys : [keys];
+  var len = keys.length;
+  var idx = -1;
+  while (++idx < len) {
+    assert(obj.hasOwnProperty(keys[idx]));
+  }
+};
+
+exports.doesNotHaveProperties = function(obj, keys) {
+  keys = Array.isArray(keys) ? keys : [keys];
+  var len = keys.length;
+  var idx = -1;
+  while (++idx < len) {
+    assert(!obj.hasOwnProperty(keys[idx]));
+  }
+};
+
 exports.containEql = function containEql(actual, expected) {
   if (Array.isArray(expected)) {
     var len = expected.length;

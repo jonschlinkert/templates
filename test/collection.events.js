@@ -1,29 +1,30 @@
 'use strict';
 
-require('should');
-var support = require('./support');
-var App = support.resolve();
-var app;
+var assert = require('assert');
 
-describe('collection.events', function() {
-  beforeEach(function() {
-    app = new App();
-    app.create('page');
-  });
+module.exports = function(App, options, runner) {
+  var app;
 
-  it('should emit events:', function() {
-    app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});
-    var events = [];
-
-    app.pages.on('option', function(key) {
-      events.push(key);
+  describe('collection.events', function() {
+    beforeEach(function() {
+      app = new App();
+      app.create('page');
     });
 
-    app.pages.option('a', 'b');
-    app.pages.option('c', 'd');
-    app.pages.option('e', 'f');
-    app.pages.option({g: 'h'});
+    it('should emit events:', function() {
+      app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});
+      var events = [];
 
-    events.should.eql(['a', 'c', 'e', 'g']);
+      app.pages.on('option', function(key) {
+        events.push(key);
+      });
+
+      app.pages.option('a', 'b');
+      app.pages.option('c', 'd');
+      app.pages.option('e', 'f');
+      app.pages.option({g: 'h'});
+
+      assert.deepEqual(events, ['a', 'c', 'e', 'g']);
+    });
   });
-});
+};

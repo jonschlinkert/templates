@@ -29,4 +29,9 @@ gulp.task('unused', function() {
     .pipe(unused({keys: Object.keys(require('./lib/utils.js'))}))
 });
 
+gulp.task('fixtures', function() {
+  return gulp.src('test/fixtures/**')
+    .pipe(gulp.dest('converted/test/fixtures'));
+});
+
 gulp.task('default', ['test', 'lint']);

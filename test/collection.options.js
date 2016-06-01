@@ -1,27 +1,30 @@
 'use strict';
 
-require('should');
+var assert = require('assert');
 var support = require('./support');
-var App = support.resolve();
-var app;
+var hasProperties = support.hasProperties;
 
-describe('collection.options', function() {
-  beforeEach(function() {
-    app = new App();
-    app.create('page');
-  });
+module.exports = function(App, options, runner) {
+  var app;
 
-  it('should set an option:', function() {
-    app.pages.options.should.not.have.property('foo');
-    app.pages.option('foo', 'bar');
-    app.pages.options.should.have.property('foo');
-  });
+  describe('collection.options', function() {
+    beforeEach(function() {
+      app = new App();
+      app.create('page');
+    });
 
-  it('should extend options:', function() {
-    app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});
-    app.pages.option('a', 'b');
-    app.pages.option('c', 'd');
-    app.pages.option('e', 'f');
-    app.pages.options.should.have.properties(['a', 'c', 'e']);
+    it('should set an option:', function() {
+      assert(!app.pages.options.hasOwnProperty('foo'));
+      app.pages.option('foo', 'bar');
+      assert(app.pages.options.hasOwnProperty('foo'));
+    });
+
+    it('should extend options:', function() {
+      app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= a %>'});
+      app.pages.option('a', 'b');
+      app.pages.option('c', 'd');
+      app.pages.option('e', 'f');
+      hasProperties(app.pages.options, ['a', 'c', 'e']);
+    });
   });
-});
+};

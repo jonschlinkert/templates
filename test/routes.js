@@ -1,100 +1,100 @@
 'use strict';
 
-require('should');
 var assert = require('assert');
-var support = require('./support');
-var App = support.resolve();
-var app;
 
-function append(str) {
-  return function(view, next) {
-    var content = view.contents.toString();
-    view.contents = new Buffer(content + ' ' + str);
-    next();
-  };
-}
-function prepend(str) {
-  return function(view, next) {
-    var content = view.contents.toString();
-    view.contents = new Buffer(str + ' ' + content);
-    next();
-  };
-}
+module.exports = function(App, options, runner) {
+  var app;
 
-describe('routes', function() {
-  beforeEach(function() {
-    app = new App();
-    app.engine('tmpl', require('engine-base'));
-    app.create('page');
-  });
+  function append(str) {
+    return function(view, next) {
+      var content = view.contents.toString();
+      view.contents = new Buffer(content + ' ' + str);
+      next();
+    };
+  }
+  function prepend(str) {
+    return function(view, next) {
+      var content = view.contents.toString();
+      view.contents = new Buffer(str + ' ' + content);
+      next();
+    };
+  }
 
-  describe('params', function() {
-    it('should call param function when routing', function(cb) {
-      app.param('id', function(view, next, id) {
-        assert.equal(id, '123');
-        next();
-      });
-
-      app.all('/foo/:id/bar', function(view, next) {
-        assert.equal(view.options.params.id, '123');
-        next();
-      });
-
-      app.router.handle({ path: '/foo/123/bar' }, cb);
+  describe('routes', function() {
+    beforeEach(function() {
+      app = new App();
+      app.engine('tmpl', require('engine-base'));
+      app.create('page');
     });
-  });
 
-  describe('onLoad middleware', function() {
-    it('should run when templates are loaded:', function() {
-      app.onLoad(/\.tmpl/, prepend('onLoad'));
-      app.pages('a.tmpl', { path: 'a.tmpl', content: '<%= name %>'});
+    describe('params', function() {
+      it('should call param function when routing', function(cb) {
+        app.param('id', function(view, next, id) {
+          assert.equal(id, '123');
+          next();
+        });
 
-      var page = app.pages.getView('a.tmpl');
-      page.contents.toString().should.equal('onLoad <%= name %>');
-    });
-  });
+        app.all('/foo/:id/bar', function(view, next) {
+          assert.equal(view.options.params.id, '123');
+          next();
+        });
 
-  describe('preCompile middleware', function() {
-    it('should run before templates are compiled:', function() {
-
-    });
-  });
-
-  describe('postCompile middleware', function() {
-    it('should run after templates are compiled:', function() {
-
-    });
-  });
-
-  describe('preRender middleware', function() {
-    it('should run before templates are rendered:', function(cb) {
-      app.preRender(/\.tmpl/, prepend('preRender'));
-      app.pages('a.tmpl', { path: 'a.tmpl', content: '<%= name %>', locals: {name: 'aaa'} });
-
-      var page = app.pages.getView('a.tmpl');
-      page.contents.toString().should.equal('<%= name %>');
-
-      page.render({}, function(err, res) {
-        if (err) return cb(err);
-        res.contents.toString().should.equal('preRender aaa');
-        cb();
+        app.router.handle({ path: '/foo/123/bar' }, cb);
       });
     });
-  });
 
-  describe('postRender middleware', function() {
-    it('should run after templates are rendered:', function(cb) {
-      app.postRender(/\.tmpl/, append('postRender'));
-      app.pages('a.tmpl', { path: 'a.tmpl', content: '<%= name %>', locals: {name: 'aaa' }});
+    describe('onLoad middleware', function() {
+      it('should run when templates are loaded:', function() {
+        app.onLoad(/\.tmpl/, prepend('onLoad'));
+        app.pages('a.tmpl', { path: 'a.tmpl', content: '<%= name %>'});
 
-      var page = app.pages.getView('a.tmpl');
-      page.contents.toString().should.equal('<%= name %>');
+        var page = app.pages.getView('a.tmpl');
+        assert.equal(page.contents.toString(), 'onLoad <%= name %>');
+      });
+    });
 
-      page.render({}, function(err, res) {
-        if (err) return cb(err);
-        res.contents.toString().should.equal('aaa postRender');
-        cb();
+    describe('preCompile middleware', function() {
+      it('should run before templates are compiled:', function() {
+
+      });
+    });
+
+    describe('postCompile middleware', function() {
+      it('should run after templates are compiled:', function() {
+
+      });
+    });
+
+    describe('preRender middleware', function() {
+      it('should run before templates are rendered:', function(cb) {
+        app.preRender(/\.tmpl/, prepend('preRender'));
+        app.pages('a.tmpl', { path: 'a.tmpl', content: '<%= name %>', locals: {name: 'aaa'} });
+
+        var page = app.pages.getView('a.tmpl');
+        assert.equal(page.contents.toString(), '<%= name %>');
+
+        page.render({}, function(err, res) {
+          if (err) return cb(err);
+          assert.equal(res.contents.toString(), 'preRender aaa');
+          cb();
+        });
+      });
+    });
+
+    describe('postRender middleware', function() {
+      it('should run after templates are rendered:', function(cb) {
+        app.postRender(/\.tmpl/, append('postRender'));
+        app.pages('a.tmpl', { path: 'a.tmpl', content: '<%= name %>', locals: {name: 'aaa' }});
+
+        var page = app.pages.getView('a.tmpl');
+        assert.equal(page.contents.toString(), '<%= name %>');
+
+        page.render({}, function(err, res) {
+          if (err) return cb(err);
+          assert.equal(res.contents.toString(), 'aaa postRender');
+          cb();
+        });
       });
     });
   });
-});
+};

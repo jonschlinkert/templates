@@ -1,50 +1,49 @@
 'use strict';
 
-require('mocha');
-require('should');
 var assert = require('assert');
-var support = require('./support');
-var App = support.resolve();
-var app;
 
-describe('app.onLoad', function() {
-  beforeEach(function() {
-    app = new App();
-  });
+module.exports = function(App, options, runner) {
+  var app;
 
-  describe('app.collection', function() {
-    it('should emit an onLoad when view is created', function(cb) {
-      var collection = app.collection();
+  describe('app.onLoad', function() {
+    beforeEach(function() {
+      app = new App();
+    });
 
-      app.on('onLoad', function(view) {
-        assert(view.path === 'blog/foo.js');
-        cb();
+    describe('app.collection', function() {
+      it('should emit an onLoad when view is created', function(cb) {
+        var collection = app.collection();
+
+        app.on('onLoad', function(view) {
+          assert.equal(view.path, 'blog/foo.js');
+          cb();
+        });
+
+        app.onLoad('blog/:title', function(view, next) {
+          assert.equal(view.path, 'blog/foo.js');
+          next();
+        });
+
+        collection.addView('whatever', {path: 'blog/foo.js', content: 'bar baz'});
       });
+    });
 
-      app.onLoad('blog/:title', function(view, next) {
-        assert(view.path === 'blog/foo.js');
-        next();
+    describe('view collections', function() {
+      it('should emit an onLoad when view is created', function(cb) {
+        app.create('posts');
+
+        app.on('onLoad', function(view) {
+          assert.equal(view.path, 'blog/foo.js');
+          cb();
+        });
+
+        app.onLoad('blog/:title', function(view, next) {
+          assert.equal(view.path, 'blog/foo.js');
+          next();
+        });
+
+        app.post('whatever', {path: 'blog/foo.js', content: 'bar baz'});
       });
-
-      collection.addView('whatever', {path: 'blog/foo.js', content: 'bar baz'});
     });
   });
-
-  describe('view collections', function() {
-    it('should emit an onLoad when view is created', function(cb) {
-      app.create('posts');
-
-      app.on('onLoad', function(view) {
-        assert(view.path === 'blog/foo.js');
-        cb();
-      });
-
-      app.onLoad('blog/:title', function(view, next) {
-        assert(view.path === 'blog/foo.js');
-        next();
-      });
-
-      app.post('whatever', {path: 'blog/foo.js', content: 'bar baz'});
-    });
-  });
-});
+};
