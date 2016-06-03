@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function(app) {
-  app.extendWith('verb-readme-generator');
+  app.use(require('verb-readme-generator'));
 
   app.create('pages');
   app.pages('docs/api/*.md');
