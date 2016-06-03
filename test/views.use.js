@@ -22,9 +22,10 @@ module.exports = function(App, options, runner) {
     });
 
     it('should be chainable:', function(cb) {
-      collection.use(function(inst) {
-        assert(inst.isViews);
-      })
+      collection
+        .use(function(inst) {
+          assert(inst.isViews);
+        })
         .use(function(inst) {
           assert(inst.isViews);
         })

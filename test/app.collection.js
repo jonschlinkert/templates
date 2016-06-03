@@ -4,14 +4,13 @@ var fs = require('fs');
 var assert = require('assert');
 var path = require('path');
 var fixtures = path.resolve.bind(path, __dirname, 'fixtures');
+var define = require('define-property');
 var support = require('./support');
 var hasProperties = support.hasProperties;
 
 module.exports = function(App, options, runner) {
-  var app;
-
-  var define = require('define-property');
   var Collection = App.Collection;
+  var app;
 
   describe('app.collection', function() {
     describe('method', function() {
