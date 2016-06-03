@@ -15,20 +15,10 @@ var utils = require('./lib/utils');
 var lib = require('./lib/');
 
 /**
- * Collection constructors
+ * Expose `Templates`
  */
 
-var Collection = lib.collection;
-var Views = lib.views;
-var Group = lib.group;
-var List = lib.list;
-
-/**
- * Item constructors
- */
-
-var Item = lib.item;
-var View = lib.view;
+module.exports = exports = Templates;
 
 /**
  * This function is the main export of the templates module.
@@ -68,7 +58,7 @@ plugin.static(Base, Templates, 'Templates');
 
 Templates.prototype.initTemplates = function() {
   debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
-  Templates.emit('preInit', this);
+  Templates.emit('templates.preInit', this);
 
   this.items = {};
   this.views = {};
@@ -103,7 +93,7 @@ Templates.prototype.initTemplates = function() {
   this.expose('Views');
 
   Templates.setup(this, 'Templates');
-  Templates.emit('init', this);
+  Templates.emit('templates.postInit', this);
 };
 
 /**
@@ -115,11 +105,8 @@ Templates.prototype.expose = function(name) {
   this.define(name, {
     configurable: true,
     enumerable: true,
-    set: function(val) {
-      this.define(this, name, val);
-    },
     get: function() {
-      return this.options[name] || lib[name.toLowerCase()];
+      return this.options[name] || Templates[name];
     }
   });
 };
@@ -172,7 +159,7 @@ Templates.prototype.list = function(opts) {
   var List = opts.List || this.get('List');
   var list = {};
 
-  if (opts.isList === true) {
+  if (opts.isList === true || opts instanceof List) {
     list = opts;
   } else {
     opts.Item = opts.Item || opts.View || this.get('Item');
@@ -345,8 +332,8 @@ Templates.prototype.resolveLayout = function(view) {
 
   if (!utils.isPartial(view) && typeof view.layout === 'undefined') {
     if (view.options && view.options.collection) {
-      var views = this[view.options.collection];
-      var layout = views.resolveLayout(view);
+      var collection = this[view.options.collection];
+      var layout = collection.resolveLayout(view);
       if (typeof layout === 'undefined') {
         layout = this.option('layout');
       }
@@ -385,12 +372,12 @@ Templates.setup = function(app, name) {
  */
 
 Templates.Base = Base;
-Templates.Item = Item;
-Templates.View = View;
-Templates.List = List;
-Templates.Collection = Collection;
-Templates.Views = Views;
-Templates.Group = Group;
+Templates.Collection = lib.collection;
+Templates.List = lib.list;
+Templates.Group = lib.group;
+Templates.Views = lib.views;
+Templates.Item = require('vinyl-item');
+Templates.View = require('vinyl-view');
 
 /**
  * Expose properties for unit tests
@@ -398,9 +385,3 @@ Templates.Group = Group;
 
 utils.define(Templates, 'utils', utils);
 utils.define(Templates, '_', { lib: lib, plugin: plugin });
-
-/**
- * Expose `Templates`
- */
-
-module.exports = Templates;
