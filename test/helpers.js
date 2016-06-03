@@ -92,6 +92,31 @@ module.exports = function(App, options, runner) {
         assert.equal(typeof app._.helpers.sync.foo.y, 'function');
         assert.equal(typeof app._.helpers.sync.foo.z, 'function');
       });
+
+      it('should merge helpers onto a helper "group":', function() {
+        app.helperGroup('foo', {
+          x: function() {},
+          y: function() {},
+          z: function() {}
+        });
+
+        assert.equal(typeof app._.helpers.sync.foo.x, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.y, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.z, 'function');
+
+        app.helperGroup('foo', {
+          a: function() {},
+          b: function() {},
+          c: function() {}
+        });
+
+        assert.equal(typeof app._.helpers.sync.foo.a, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.b, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.c, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.x, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.y, 'function');
+        assert.equal(typeof app._.helpers.sync.foo.z, 'function');
+      });
     });
 
     describe('async helpers', function() {
@@ -156,6 +181,32 @@ module.exports = function(App, options, runner) {
           z: function() {}
         }, true);
 
+        assert.equal(typeof app._.helpers.async.foo.x, 'function');
+        assert.equal(typeof app._.helpers.async.foo.y, 'function');
+        assert.equal(typeof app._.helpers.async.foo.z, 'function');
+      });
+
+      it('should merge helpers onto an async helper "group":', function() {
+        app.helperGroup('foo', {
+          x: function() {},
+          y: function() {},
+          z: function() {}
+        }, true);
+
+        assert.equal(typeof app._.helpers.async.foo.x, 'function');
+        assert.equal(typeof app._.helpers.async.foo.y, 'function');
+        assert.equal(typeof app._.helpers.async.foo.z, 'function');
+
+
+        app.helperGroup('foo', {
+          a: function() {},
+          b: function() {},
+          c: function() {}
+        }, true);
+
+        assert.equal(typeof app._.helpers.async.foo.a, 'function');
+        assert.equal(typeof app._.helpers.async.foo.b, 'function');
+        assert.equal(typeof app._.helpers.async.foo.c, 'function');
         assert.equal(typeof app._.helpers.async.foo.x, 'function');
         assert.equal(typeof app._.helpers.async.foo.y, 'function');
         assert.equal(typeof app._.helpers.async.foo.z, 'function');
