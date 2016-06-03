@@ -27,8 +27,6 @@
     "base-data": "^0.5.0",
     "base-option": "^0.8.2",
     "base-plugins": "^0.4.13",
-    "clone": "^1.0.2",
-    "clone-stats": "^1.0.0",
     "debug": "^2.2.0",
     "deep-bind": "^0.3.0",
     "define-property": "^0.2.5",
