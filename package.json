@@ -26,7 +26,7 @@
     "base": "^0.8.1",
     "base-data": "^0.5.0",
     "base-option": "^0.8.2",
-    "base-plugins": "^0.4.12",
+    "base-plugins": "^0.4.13",
     "clone": "^1.0.2",
     "clone-stats": "^1.0.0",
     "debug": "^2.2.0",
@@ -34,7 +34,7 @@
     "define-property": "^0.2.5",
     "en-route": "^0.7.5",
     "engine-base": "^0.1.2",
-    "engine-cache": "^0.16.2",
+    "engine-cache": "^0.18.0",
     "export-files": "^2.1.1",
     "extend-shallow": "^2.0.1",
     "falsey": "^0.3.0",
@@ -53,30 +53,33 @@
     "pascalcase": "^0.1.1",
     "set-value": "^0.3.3",
     "template-error": "^0.1.2",
-    "vinyl": "^1.1.1"
+    "vinyl": "^1.1.1",
+    "vinyl-item": "^0.1.0",
+    "vinyl-view": "^0.1.0"
   },
   "devDependencies": {
     "ansi-red": "^0.1.1",
-    "consolidate": "^0.14.0",
+    "base-test-runner": "^0.2.0",
+    "consolidate": "^0.14.1",
     "engine-handlebars": "^0.8.0",
     "ent": "^2.2.0",
     "event-stream": "^3.3.2",
     "find-pkg": "^0.1.1",
     "gulp": "^3.9.1",
     "gulp-eslint": "^2.0.0",
-    "gulp-format-md": "^0.1.7",
+    "gulp-format-md": "^0.1.9",
     "gulp-istanbul": "^0.10.4",
     "gulp-mocha": "^2.2.0",
     "gulp-unused": "^0.1.2",
     "is-buffer": "^1.1.3",
-    "kind-of": "^3.0.2",
-    "mocha": "^2.4.5",
+    "kind-of": "^3.0.3",
     "parser-front-matter": "^1.3.0",
     "remarkable": "^1.6.2",
     "resolve-glob": "^0.1.8",
     "rimraf": "^2.5.2",
-    "should": "^8.3.1",
-    "swig": "^1.4.2"
+    "swig": "^1.4.2",
+    "verb-readme-generator": "^0.1.13",
+    "yargs-parser": "^2.4.0"
   },
   "keywords": [
     "compile",
@@ -111,10 +114,12 @@
       "array-sort",
       "assemble",
       "base",
+      "base-data",
       "group-array",
       "paginationator",
-      "base-data",
-      "verb"
+      "verb",
+      "vinyl-item",
+      "vinyl-view"
     ],
     "lint": {
       "reflinks": true
