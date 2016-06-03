@@ -1,16 +1,18 @@
+### v0.21.0
+
+**Breaking changes**
+
+- The `queue` property has been removed, as well as related code for loading views using events. This behavior can easily be added using plugins or existing emitters.
+
+**Non-breaking**
+
+- The `View` and `Item` class have been externalized to modules [vinyl-item][] and [vinyl-view][] so they can be used in other libraries.
+
 ### v0.20.0
 
-**Context**
-
-- In general, context should be merged so that the most specific context wins over less specific. This fixes one case where locals was winning over front-matter
-
-**Helpers**
-
-- Exposes `.ctx()` method on helper context, to simplify merging context in non-built-in helpers 
-
-**Engines**
-
-- Fixes bug that was using default engine on options instead of engine that matches view file extension. 
+- **Context**: In general, context should be merged so that the most specific context wins over less specific. This fixes one case where locals was winning over front-matter
+- **Helpers**: Exposes `.ctx()` method on helper context, to simplify merging context in non-built-in helpers 
+- **Engines**: Fixes bug that was using default engine on options instead of engine that matches view file extension. 
 
 ### v0.19.0
 
