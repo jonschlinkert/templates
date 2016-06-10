@@ -63,8 +63,12 @@ module.exports = function(App, options, runner) {
 
         app.page('abc', {content: '...'})
           .use(function(view) {
-            app.handleView('foo', view);
-            app.handleView('bar', view);
+            app.handleOnce('foo', view, function(err, view) {
+              if (err) throw err;
+            });
+            app.handleOnce('bar', view, function(err, view) {
+              if (err) throw err;
+            });
           });
 
         assert(app.views.pages.abc.hasOwnProperty('one', 'aaa'));

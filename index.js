@@ -71,8 +71,10 @@ Templates.prototype.initTemplates = function() {
   this.use(plugin.init);
   this.use(plugin.renameKey());
   this.use(plugin.context);
-  this.use(plugin.helpers);
   this.use(plugin.lookup);
+  this.use(utils.engines());
+  this.use(utils.helpers());
+  this.use(utils.routes())
 
   this.use(plugin.item('item', 'Item'));
   this.use(plugin.item('view', 'View'));
@@ -293,7 +295,8 @@ Templates.prototype.create = function(name, opts) {
   // run collection plugins
   this.run(collection);
 
-  // extend collection views
+  // decorate collection and views in collection
+  // (this is a prototype method to allow overriding behavior)
   this.extendViews(collection, opts);
 
   // emit create

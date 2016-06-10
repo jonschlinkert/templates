@@ -303,9 +303,11 @@ module.exports = function(App, options, runner) {
     });
 
     it('should use load a file from the file system in a helper', function(cb) {
-      app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= getPartial("test/fixtures/posts/a.txt") %>', locals: {a: 'BBB'}});
+      app.pages('a.tmpl', {path: 'a.tmpl', content: '<%= getPartial("posts/a.txt") %>', locals: {a: 'BBB'}});
+
       app.asyncHelper('getPartial', function(name, next) {
-        var view = this.app.partials.getView(name);
+        var fp = path.resolve(__dirname, 'fixtures', name);
+        var view = this.app.partials.getView(fp);
         next(null, view.content);
       });
 

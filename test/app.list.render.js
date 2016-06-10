@@ -1,11 +1,11 @@
 'use strict';
 
 var assert = require('assert');
+var each = require('async-each');
 
 module.exports = function(App, options, runner) {
   var app;
 
-  var each = require('async-each');
   var List = App.List;
   var pages, app;
 
@@ -22,10 +22,10 @@ module.exports = function(App, options, runner) {
         try {
           app.pages.render({});
           cb(new Error('expected an error'));
-      } catch (err) {
-        assert.equal(err.message, 'Views#render is async and expects a callback function');
-        cb();
-      }
+        } catch (err) {
+          assert.equal(err.message, 'Views#render is async and expects a callback function');
+          cb();
+        }
       });
 
       it('should throw an error when an engine is not defined:', function(cb) {
