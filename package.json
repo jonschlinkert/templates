@@ -119,9 +119,13 @@
       "group-array",
       "paginationator",
       "verb",
+      "verb-readme-generator",
+      "vinyl",
       "vinyl-item",
       "vinyl-view",
-      "verb-readme-generator"
+      "base-helpers",
+      "base-routes",
+      "base-engine"
     ],
     "lint": {
       "reflinks": true

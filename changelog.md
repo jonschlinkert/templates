@@ -1,3 +1,11 @@
+### v0.22.0
+
+There should be no breaking changes in this release. If you experience a regression, please [create an issue](../../issues).
+
+- Externalizes a few core plugins to: [base-helpers][], [base-routes][], and [base-engine][]. The goal is to allow you to use only the plugins you need in your builds.
+- Improvements to lookup functions: `app.getView()` and `app.find()`
+- Bumps [base][] to take advantages of code optimizations.
+
 ### v0.21.0
 
 **Breaking changes**
