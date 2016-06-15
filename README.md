@@ -216,7 +216,7 @@ the [create docs](docs/collections.md#create) for more details.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.setup](index.js#L366)
+### [.setup](index.js#L375)
 
 Expose static `setup` method for providing access to an instance before any other code is run.
 
@@ -771,7 +771,23 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
-### [.addView](lib/views.js#L125)
+### [.addView](lib/views.js#L126)
+
+Add a view to `collection.views`. This is identical to [addView](#addView) except `setView` returns the collection instance, and `addView` returns the item instance.
+
+**Params**
+
+* `key` **{String|Object}**: View key or object
+* `value` **{Object}**: If key is a string, value is the view object.
+* `returns` **{Object}**: returns the `view` instance.
+
+**Example**
+
+```js
+collection.setView('foo', {content: 'bar'});
+```
+
+### [.setView](lib/views.js#L168)
 
 Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
@@ -787,7 +803,7 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
-### [.getView](lib/views.js#L164)
+### [.getView](lib/views.js#L185)
 
 Get view `name` from `collection.views`.
 
@@ -803,7 +819,7 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
-### [.deleteView](lib/views.js#L199)
+### [.deleteView](lib/views.js#L220)
 
 Delete a view from collection `views`.
 
@@ -818,7 +834,7 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
-### [.addViews](lib/views.js#L223)
+### [.addViews](lib/views.js#L244)
 
 Load multiple views onto the collection.
 
@@ -837,7 +853,7 @@ collection.addViews({
 });
 ```
 
-### [.addList](lib/views.js#L255)
+### [.addList](lib/views.js#L276)
 
 Load an array of views onto the collection.
 
@@ -856,7 +872,7 @@ collection.addList([
 ]);
 ```
 
-### [.groupBy](lib/views.js#L292)
+### [.groupBy](lib/views.js#L313)
 
 Group all collection `views` by the given property, properties or compare functions. See [group-array][] for the full range of available features and options.
 
@@ -870,7 +886,7 @@ collection.addViews(...);
 var groups = collection.groupBy('data.date', 'data.slug');
 ```
 
-### [.isType](lib/views.js#L322)
+### [.isType](lib/views.js#L343)
 
 Return true if the collection belongs to the given view `type`.
 
@@ -884,7 +900,7 @@ Return true if the collection belongs to the given view `type`.
 collection.isType('partial');
 ```
 
-### [.viewTypes](lib/views.js#L369)
+### [.viewTypes](lib/views.js#L390)
 
 Alias for `viewType`
 
@@ -1201,9 +1217,9 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/list.js#L107)
+### [.addItem](lib/list.js#L108)
 
-Set an item on the collection. This is identical to [addItem](#addItem) except `setItem` does not emit an event for each item and does not iterate over the item `queue`.
+Add an item to `list.items`. This is identical to [setItem](#setItem) except `addItem` returns the `item`, add `setItem` returns the instance of `List`.
 
 **Params**
 
@@ -1214,27 +1230,27 @@ Set an item on the collection. This is identical to [addItem](#addItem) except `
 **Example**
 
 ```js
-collection.setItem('foo', {content: 'bar'});
+collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L146)
+### [.setItem](lib/list.js#L146)
 
-Similar to [setItem](#setItem), adds an item to the list but also fires an event and iterates over the item `queue` to load items from the `addItem` event listener. If the given item is not already an instance of `Item`, it will be converted to one before being added to the `items` object.
+Add an item to `list.items`. This is identical to [addItem](#addItem) except `addItem` returns the `item`, add `setItem` returns the instance of `List`.
 
 **Params**
 
 * `key` **{String}**
 * `value` **{Object}**
-* `returns` **{Object}**: Returns the instance of the created `Item` to allow chaining item methods.
+* `returns` **{Object}**: Returns the instance of `List` to support chaining.
 
 **Example**
 
 ```js
 var items = new Items(...);
-items.addItem('a.html', {path: 'a.html', contents: '...'});
+items.setItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L173)
+### [.addItems](lib/list.js#L166)
 
 Load multiple items onto the collection.
 
@@ -1253,7 +1269,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L202)
+### [.addList](lib/list.js#L195)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -1271,7 +1287,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L239)
+### [.hasItem](lib/list.js#L232)
 
 Return true if the list has the given item (name).
 
@@ -1288,7 +1304,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L255)
+### [.getIndex](lib/list.js#L248)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1304,7 +1320,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L299)
+### [.getItem](lib/list.js#L292)
 
 Get a specific item from the list by `key`.
 
@@ -1320,7 +1336,7 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
-### [.getView](lib/list.js#L318)
+### [.getView](lib/list.js#L311)
 
 Proxy for `getItem`
 
@@ -1336,7 +1352,7 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
-### [.deleteItem](lib/list.js#L332)
+### [.deleteItem](lib/list.js#L325)
 
 Remove an item from the list.
 
@@ -1350,7 +1366,7 @@ Remove an item from the list.
 list.deleteItem('a.html');
 ```
 
-### [.extendItem](lib/list.js#L351)
+### [.extendItem](lib/list.js#L344)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -1361,7 +1377,7 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L370)
+### [.groupBy](lib/list.js#L363)
 
 Group all list `items` using the given property, properties or compare functions. See [group-array][] for the full range of available features and options.
 
@@ -1375,7 +1391,7 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
-### [.sortBy](lib/list.js#L396)
+### [.sortBy](lib/list.js#L389)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort][] for the full range of available features and options.
 
@@ -1390,7 +1406,7 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L444)
+### [.paginate](lib/list.js#L437)
 
 Paginate all `items` in the list with the given options, See [paginationator][] for the full range of available features and options.
 
@@ -2161,8 +2177,8 @@ $ npm install -d && npm test
 ## License
 
 Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](https://github.com/jonschlinkert/templates/blob/master/LICENSE).
+Released under the [MIT license](LICENSE).
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 09, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on June 14, 2016._
