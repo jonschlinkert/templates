@@ -1,3 +1,7 @@
+### v0.22.2
+
+- fixes `List` bug that was caused collection helpers to explode
+
 ### v0.22.0
 
 There should be no breaking changes in this release. If you experience a regression, please [create an issue](../../issues).
