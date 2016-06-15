@@ -43,6 +43,7 @@
     "has-glob": "^0.1.1",
     "has-value": "^0.3.1",
     "inflection": "^1.10.0",
+    "is-valid-app": "^0.1.1",
     "layouts": "^0.11.0",
     "lazy-cache": "^2.0.1",
     "match-file": "^0.2.0",

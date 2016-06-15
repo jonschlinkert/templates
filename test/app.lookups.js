@@ -13,8 +13,8 @@ module.exports = function(App, options, runner) {
   describe('app.lookups', function() {
     beforeEach(function() {
       app = new App();
-      var files = resolve.sync(path.resolve(__dirname, 'fixtures/templates/*.tmpl'));
 
+      var files = resolve.sync(path.resolve(__dirname, 'fixtures/templates/*.tmpl'));
       app.option('renameKey', function(key) {
         return path.basename(key);
       });

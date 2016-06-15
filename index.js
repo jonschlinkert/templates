@@ -169,7 +169,7 @@ Templates.prototype.list = function(opts) {
   }
 
   // customize list items
-  this.extendViews(list, opts);
+  this.extendList(list, opts);
 
   // emit the list
   this.emit('list', list, opts);
@@ -323,6 +323,15 @@ Templates.prototype.extendView = function(view, options) {
 
 Templates.prototype.extendViews = function(views, options) {
   plugin.views(this, views, options);
+  return this;
+};
+
+/**
+ * Decorate or override methods on a view collection instance.
+ */
+
+Templates.prototype.extendList = function(views, options) {
+  plugin.list(this, views, options);
   return this;
 };
 

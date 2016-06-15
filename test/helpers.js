@@ -457,6 +457,20 @@ module.exports = function(App, options, runner) {
           cb();
         });
       });
+
+      it('should return a List when no parameters are passed', function(cb) {
+        app.partial('abc.md', {content: '---\nname: "AAA"\n---\n<%= name %>', locals: {name: 'BBB'}});
+        app.page('xyz.md', {path: 'xyz.md', content: 'foo <%= list(partials()) %> <%= partial("abc") %> bar'});
+        app.helper('list', function(list) {
+          return list.keys.join(' ');
+        });
+
+        app.render('xyz.md', {name: 'DDD'}, function(err, res) {
+          if (err) return cb(err);
+          assert.equal(res.content, 'foo abc.md AAA bar');
+          cb();
+        });
+      });
     });
 
     describe('helper context:', function() {
