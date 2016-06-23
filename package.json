@@ -14,7 +14,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.0.0"
   },
   "scripts": {
     "test": "mocha",
@@ -66,6 +66,7 @@
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-unused": "^0.1.2",
+    "mocha": "^2.5.3",
     "remarkable": "^1.6.2",
     "verb-readme-generator": "^0.1.13",
     "yargs-parser": "^2.4.0"
