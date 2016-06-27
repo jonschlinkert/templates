@@ -107,6 +107,9 @@
       "assemble",
       "base",
       "base-data",
+      "base-engine",
+      "base-helpers",
+      "base-routes",
       "group-array",
       "paginationator",
       "verb",
@@ -114,9 +117,7 @@
       "vinyl",
       "vinyl-item",
       "vinyl-view",
-      "base-helpers",
-      "base-routes",
-      "base-engine"
+      "engine-cache"
     ],
     "lint": {
       "reflinks": true

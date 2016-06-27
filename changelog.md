@@ -1,3 +1,7 @@
+### v0.23.0
+
+- Bumps [base-engine][] to fix a bug in [engine-cache][].
+
 ### v0.22.2
 
 - fixes `List` bug that was caused collection helpers to explode
@@ -23,8 +27,8 @@ There should be no breaking changes in this release. If you experience a regress
 ### v0.20.0
 
 - **Context**: In general, context should be merged so that the most specific context wins over less specific. This fixes one case where locals was winning over front-matter
-- **Helpers**: Exposes `.ctx()` method on helper context, to simplify merging context in non-built-in helpers 
-- **Engines**: Fixes bug that was using default engine on options instead of engine that matches view file extension. 
+- **Helpers**: Exposes `.ctx()` method on helper context, to simplify merging context in non-built-in helpers
+- **Engines**: Fixes bug that was using default engine on options instead of engine that matches view file extension.
 
 ### v0.19.0
 
@@ -55,12 +59,12 @@ There should be no breaking changes in this release. If you experience a regress
 
 ### v0.14.0
 
-Although 99% of users won't be effected by the changes in this release, there were some **potentially breaking changes**. 
+Although 99% of users won't be effected by the changes in this release, there were some **potentially breaking changes**.
 
 - The `render` and `compile` methods were streamlined, making it clear that `.mergePartials` should not have been renamed to `mergePartialsSync`. So that change was reverted.
 - Helper context: Exposes a `this.helper` object to the context in helpers, which has the helper name and options that were set specifically for that helper
 - Helper context: Exposes a `this.view` object to the context in helpers, which is the current view being rendered. This was (and still is) always expose on `this.context.view`, but it makes sense to add this to the root of the context as a convenience. We will deprecate `this.context.view` in a future version.
-- Helper context: `.get`, `.set` and `.merge` methods on `this.options`, `this.context` and the `this` object in helpers. 
+- Helper context: `.get`, `.set` and `.merge` methods on `this.options`, `this.context` and the `this` object in helpers.
 
 ### v0.13.0
 
