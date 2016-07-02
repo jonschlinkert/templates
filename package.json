@@ -24,7 +24,7 @@
     "array-sort": "^0.1.2",
     "async-each": "^1.0.0",
     "base": "^0.11.1",
-    "base-data": "^0.5.0",
+    "base-data": "^0.6.0",
     "base-engines": "^0.2.0",
     "base-helpers": "^0.1.1",
     "base-option": "^0.8.3",
@@ -58,16 +58,16 @@
   "devDependencies": {
     "ansi-red": "^0.1.1",
     "base-test-runner": "^0.2.0",
-    "base-test-suite": "^0.1.10",
+    "base-test-suite": "^0.1.12",
     "ent": "^2.2.0",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^2.0.0",
+    "gulp-eslint": "^2.1.0",
     "gulp-format-md": "^0.1.9",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-unused": "^0.1.2",
     "remarkable": "^1.6.2",
-    "verb-readme-generator": "^0.1.14",
+    "verb-readme-generator": "^0.1.16",
     "yargs-parser": "^2.4.0"
   },
   "keywords": [
@@ -109,14 +109,14 @@
       "base-engine",
       "base-helpers",
       "base-routes",
+      "engine-cache",
       "group-array",
       "paginationator",
       "verb",
       "verb-readme-generator",
       "vinyl",
       "vinyl-item",
-      "vinyl-view",
-      "engine-cache"
+      "vinyl-view"
     ],
     "lint": {
       "reflinks": true
