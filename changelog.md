@@ -1,3 +1,7 @@
+### v0.24.0
+
+- Bumps [base-data][] which removed `renameKey` option used when loading data. Use the `namespace` option instead.
+
 ### v0.23.0
 
 - Bumps [base-engine][] to fix a bug in [engine-cache][].
