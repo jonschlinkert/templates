@@ -4,11 +4,11 @@ var path = require('path');
 var red = require('ansi-red');
 var templates = require('./');
 
-templates.on('preInit', function(app) {
+templates.on('templates.preInit', function(app) {
   // console.log(app);
 });
 
-templates.on('init', function(app) {
+templates.on('templates.postInit', function(app) {
   // console.log(app);
 });
 
@@ -43,6 +43,7 @@ app.use(function(app) {
  */
 
 app.engine('*', require('engine-base'));
+app.engine('html', require('engine-base'));
 app.option('engine', '*');
 
 /**
@@ -50,10 +51,11 @@ app.option('engine', '*');
  */
 
 app.create('pages')
+  .engine('*', require('engine-base'))
   .addView('home', {content: 'The <%= title %> page'})
   .set('locals.title', 'HOOMMMME!')
   .render(function(err, res) {
-    if (err) return console.log(err);
+    if (err) throw err;
     console.log(res.content);
   });
 
@@ -83,13 +85,14 @@ app.section('articles')
   .foo('one.html', {content: 'The <%= title %> page'})
   .set('locals.title', 'One')
   .render(function(err, res) {
-    if (err) return console.log(err.stack);
+    if (err) throw err;
   })
+
   // this `.foo` is from a `view` instance
   .foo('two.html', {content: 'The <%= title %> page'})
   .set('locals.title', 'Two')
   .render(function(err, res) {
-    if (err) return console.log(err.stack);
+    if (err) throw err;
     console.log(res.content);
   });
 
@@ -99,12 +102,15 @@ app.section('articles')
 
 var posts = app.create('posts');
 posts.engine('html', require('engine-base'));
+posts.option('engine', 'html');
 
-posts.addView('home.html', {content: 'The <%= title %> page'})
+var view = posts.addView('home.html', {content: 'The <%= title %> page'})
   .render({title: 'Home'}, function(err, res) {
     if (err) throw err;
     console.log(res.content);
   });
+
+console.log(app)
 
 var collection = app.collection();
 collection
@@ -115,7 +121,7 @@ collection
   .addView('foo/bar/baz/b.md', {content: '...'})
   .addView('foo/bar/baz/c.md', {content: '...'});
 
-// var list = app.list(collection)
-// console.log(list)
+var list = app.list(collection)
+console.log(list)
 
 console.log(collection.views);
