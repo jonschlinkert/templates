@@ -388,8 +388,8 @@ Templates.Collection = lib.collection;
 Templates.List = lib.list;
 Templates.Group = lib.group;
 Templates.Views = lib.views;
-Templates.Item = require('vinyl-item');
-Templates.View = require('vinyl-view');
+Templates.Item = lib.item;
+Templates.View = lib.view;
 
 /**
  * Expose properties for unit tests
