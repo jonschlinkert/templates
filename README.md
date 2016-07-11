@@ -1610,7 +1610,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.compileAsync](lib/plugins/render.js#L174)
+### [.compileAsync](lib/plugins/render.js#L173)
 
 Asynchronously compile `content` with the given `locals` and callback. _(fwiw, this method name uses the unconventional "*Async" nomenclature to allow us to preserve the synchronous behavior of the `view.compile` method as well as the name)_.
 
@@ -1630,7 +1630,7 @@ app.compileAsync(indexPage, function(err, view) {
 });
 ```
 
-### [.render](lib/plugins/render.js#L261)
+### [.render](lib/plugins/render.js#L260)
 
 Render a view with the given `locals` and `callback`.
 
@@ -1755,7 +1755,7 @@ Run the given middleware handler only if the file has not already been handled b
 app.handleOnce('onLoad', file, callback);
 ```
 
-### [.route](node_modules/base-routes/index.js#L181)
+### [.route](node_modules/base-routes/index.js#L193)
 
 Create a new Route for the given path. Each route contains a separate middleware stack. See the [route API documentation][route-api] for details on adding handlers and middleware to routes.
 
@@ -1777,7 +1777,7 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
-### [.param](node_modules/base-routes/index.js#L208)
+### [.param](node_modules/base-routes/index.js#L220)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
 
@@ -1801,7 +1801,7 @@ app.onLoad('/blog/:title', function(view, next) {
 });
 ```
 
-### [.all](node_modules/base-routes/index.js#L231)
+### [.all](node_modules/base-routes/index.js#L243)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
 
@@ -1820,7 +1820,7 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
-### [.handler](node_modules/base-routes/index.js#L253)
+### [.handler](node_modules/base-routes/index.js#L265)
 
 Add a router handler method to the instance. Interchangeable with the [handlers](#handlers) method.
 
@@ -1837,7 +1837,7 @@ app.handler('onFoo');
 app.handler(['onFoo', 'onBar']);
 ```
 
-### [.handlers](node_modules/base-routes/index.js#L272)
+### [.handlers](node_modules/base-routes/index.js#L284)
 
 Add one or more router handler methods to the instance.
 
@@ -2171,7 +2171,7 @@ Although 99% of users won't be effected by the changes in this release, there we
 
 You might also be interested in these projects:
 
-* [assemble](https://www.npmjs.com/package/assemble): Assemble is a powerful, extendable and easy to use static site generator for node.js. Used… [more](https://github.com/assemble/assemble) | [homepage](https://github.com/assemble/assemble "Assemble is a powerful, extendable and easy to use static site generator for node.js. Used by thousands of projects for much more than building websites, Assemble is also used for creating themes, scaffolds, boilerplates, e-books, UI components, API docum")
+* [assemble](https://www.npmjs.com/package/assemble): Get the rocks out of your socks! Assemble makes you fast at creating web projects… [more](https://github.com/assemble/assemble) | [homepage](https://github.com/assemble/assemble "Get the rocks out of your socks! Assemble makes you fast at creating web projects. Assemble is used by thousands of projects for rapid prototyping, creating themes, scaffolds, boilerplates, e-books, UI components, API documentation, blogs, building websit")
 * [en-route](https://www.npmjs.com/package/en-route): Routing for static site generators, build systems and task runners, heavily based on express.js routes… [more](https://github.com/jonschlinkert/en-route) | [homepage](https://github.com/jonschlinkert/en-route "Routing for static site generators, build systems and task runners, heavily based on express.js routes but works with file objects. Used by Assemble, Verb, and Template.")
 * [engine](https://www.npmjs.com/package/engine): Template engine based on Lo-Dash template, but adds features like the ability to register helpers… [more](https://github.com/jonschlinkert/engine) | [homepage](https://github.com/jonschlinkert/engine "Template engine based on Lo-Dash template, but adds features like the ability to register helpers and more easily set data to be used as context in templates.")
 * [layouts](https://www.npmjs.com/package/layouts): Wraps templates with layouts. Layouts can use other layouts and be nested to any depth… [more](https://github.com/doowb/layouts) | [homepage](https://github.com/doowb/layouts "Wraps templates with layouts. Layouts can use other layouts and be nested to any depth. This can be used 100% standalone to wrap any kind of file with banners, headers or footer content. Use for markdown, HTML, handlebars views, lo-dash templates, etc. La")
