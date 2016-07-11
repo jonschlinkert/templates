@@ -151,8 +151,8 @@ collection.use(function(items) {
 
 The `Templates` class is the main export of the `templates` library. All of the other classes are exposed as static properties on `Templates`:
 
-* [Item](#Item): Collection item, powered by [vinyl-item][].
-* [View](#View): Collection item, powered by [vinyl-view][].
+* [Item](#Item): Collection item, powered by [vinyl-item](https://github.com/jonschlinkert/vinyl-item).
+* [View](#View): Collection item, powered by [vinyl-view](https://github.com/jonschlinkert/vinyl-view).
 * [List](#List)
 * [Views](#Views):
 * [Collection](#Collection): Base collections class. Use this if you need to customize the render cycle, middleware stages, and so on.
@@ -651,7 +651,7 @@ API for the `Item` class.
 
 ### [Item](node_modules/vinyl-item/index.js#L28)
 
-Create an instance of `Item`. Optionally pass a default object to use. See [vinyl][] docs for API details and additional documentation.
+Create an instance of `Item`. Optionally pass a default object to use. See [vinyl](http://github.com/gulpjs/vinyl) docs for API details and additional documentation.
 
 **Params**
 
@@ -874,7 +874,7 @@ collection.addList([
 
 ### [.groupBy](lib/views.js#L313)
 
-Group all collection `views` by the given property, properties or compare functions. See [group-array][] for the full range of available features and options.
+Group all collection `views` by the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
 * `returns` **{Object}**: Returns an object of grouped views.
 
@@ -1399,7 +1399,7 @@ defaults.
 
 ### [.groupBy](lib/list.js#L363)
 
-Group all list `items` using the given property, properties or compare functions. See [group-array][] for the full range of available features and options.
+Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
 * `returns` **{Object}**: Returns the grouped items.
 
@@ -1413,7 +1413,7 @@ var groups = list.groupBy('data.date', 'data.slug');
 
 ### [.sortBy](lib/list.js#L389)
 
-Sort all list `items` using the given property, properties or compare functions. See [array-sort][] for the full range of available features and options.
+Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
 * `returns` **{Object}**: Returns a new `List` instance with sorted items.
 
@@ -1428,7 +1428,7 @@ var result = list.sortBy('data.date');
 
 ### [.paginate](lib/list.js#L437)
 
-Paginate all `items` in the list with the given options, See [paginationator][] for the full range of available features and options.
+Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
 * `returns` **{Object}**: Returns the paginated items.
 
@@ -1610,7 +1610,7 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.compileAsync](lib/plugins/render.js#L173)
+### [.compileAsync](lib/plugins/render.js#L174)
 
 Asynchronously compile `content` with the given `locals` and callback. _(fwiw, this method name uses the unconventional "*Async" nomenclature to allow us to preserve the synchronous behavior of the `view.compile` method as well as the name)_.
 
@@ -1630,7 +1630,7 @@ app.compileAsync(indexPage, function(err, view) {
 });
 ```
 
-### [.render](lib/plugins/render.js#L260)
+### [.render](lib/plugins/render.js#L261)
 
 Render a view with the given `locals` and `callback`.
 
@@ -2037,11 +2037,11 @@ templates.isVinyl(file);
 
 ### v0.24.0
 
-* Bumps [base-data][] which removed `renameKey` option used when loading data. Use the `namespace` option instead.
+* Bumps [base-data](https://github.com/node-base/base-data) which removed `renameKey` option used when loading data. Use the `namespace` option instead.
 
 ### v0.23.0
 
-* Bumps [base-engine][] to fix a bug in [engine-cache][].
+* Bumps [base-engine][] to fix a bug in [engine-cache](https://github.com/jonschlinkert/engine-cache).
 
 ### v0.22.2
 
@@ -2051,9 +2051,9 @@ templates.isVinyl(file);
 
 There should be no breaking changes in this release. If you experience a regression, please [create an issue](../../issues).
 
-* Externalizes a few core plugins to: [base-helpers][], [base-routes][], and [base-engine][]. The goal is to allow you to use only the plugins you need in your builds.
+* Externalizes a few core plugins to: [base-helpers](https://github.com/node-base/base-helpers), [base-routes](https://github.com/node-base/base-routes), and [base-engine][]. The goal is to allow you to use only the plugins you need in your builds.
 * Improvements to lookup functions: `app.getView()` and `app.find()`
-* Bumps [base][] to take advantages of code optimizations.
+* Bumps [base](https://github.com/node-base/base) to take advantages of code optimizations.
 
 ### v0.21.0
 
@@ -2063,7 +2063,7 @@ There should be no breaking changes in this release. If you experience a regress
 
 **Non-breaking**
 
-* The `View` and `Item` class have been externalized to modules [vinyl-item][] and [vinyl-view][] so they can be used in other libraries.
+* The `View` and `Item` class have been externalized to modules [vinyl-item](https://github.com/jonschlinkert/vinyl-item) and [vinyl-view](https://github.com/jonschlinkert/vinyl-view) so they can be used in other libraries.
 
 ### v0.20.0
 
@@ -2096,7 +2096,7 @@ There should be no breaking changes in this release. If you experience a regress
 * removes `.removeItem` method that was deprecated in v0.10.7 from `List`
 * `.handleView` is deprecated in favor of `.handleOnce` and will be removed in a future version. Start using `.handleOnce` now.
 * adds a static `Templates.setup()` method for initializing any setup code that should have access to the instance before any other use code is run.
-* upgrade to [base-data][] v0.4.0, which adds `app.option.set`, `app.option.get` and `app.option.merge`
+* upgrade to [base-data](https://github.com/node-base/base-data) v0.4.0, which adds `app.option.set`, `app.option.get` and `app.option.merge`
 
 ### v0.14.0
 
@@ -2129,7 +2129,7 @@ Although 99% of users won't be effected by the changes in this release, there we
 
 ### v0.10.7
 
-* Force-update [base][] to v0.6.4 to take advantage of `isRegistered` feature.
+* Force-update [base](https://github.com/node-base/base) to v0.6.4 to take advantage of `isRegistered` feature.
 
 ### v0.10.6
 
@@ -2179,17 +2179,17 @@ You might also be interested in these projects:
 
 ## Contributing
 
-This document was generated by [verb-readme-generator][] (a [verb][] generator), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
+This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit directly. Any changes to the readme must be made in [.verb.md](.verb.md). See [Building Docs](#building-docs).
 
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
 
-Or visit the [verb-readme-generator][] project to submit bug reports or pull requests for the readme layout template.
+Or visit the [verb-readme-generator](https://github.com/verbose/verb-readme-generator) project to submit bug reports or pull requests for the readme layout template.
 
 ## Building docs
 
-_(This document was generated by [verb-readme-generator][] (a [verb][] generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
+_(This document was generated by [verb-readme-generator](https://github.com/verbose/verb-readme-generator) (a [verb](https://github.com/verbose/verb) generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
 
-Generate readme and API documentation with [verb][]:
+Generate readme and API documentation with [verb](https://github.com/verbose/verb):
 
 ```sh
 $ npm install -g verb verb-readme-generator && verb
@@ -2217,4 +2217,4 @@ Released under the [MIT license](https://github.com/jonschlinkert/templates/blob
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on July 02, 2016._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on July 11, 2016._
