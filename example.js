@@ -12,6 +12,7 @@ templates.on('templates.postInit', function(app) {
   // console.log(app);
 });
 
+
 /**
  * Create our `app`
  */
@@ -50,6 +51,12 @@ app.option('engine', '*');
  * Collections and rendering
  */
 
+app.preRender(/./, function(file, next) {
+  file.data.title = 'foo';
+  next();
+});
+
+app.data({title: 'Home'});
 app.create('pages')
   .engine('*', require('engine-base'))
   .addView('home', {content: 'The <%= title %> page'})
@@ -93,7 +100,7 @@ app.section('articles')
   .set('locals.title', 'Two')
   .render(function(err, res) {
     if (err) throw err;
-    console.log(res.content);
+    // console.log(res.content);
   });
 
 /**
@@ -107,10 +114,9 @@ posts.option('engine', 'html');
 var view = posts.addView('home.html', {content: 'The <%= title %> page'})
   .render({title: 'Home'}, function(err, res) {
     if (err) throw err;
-    console.log(res.content);
+    // console.log(res.content);
   });
 
-console.log(app)
 
 var collection = app.collection();
 collection
@@ -122,6 +128,6 @@ collection
   .addView('foo/bar/baz/c.md', {content: '...'});
 
 var list = app.list(collection)
-console.log(list)
+// console.log(list)
 
-console.log(collection.views);
+// console.log(collection.views);

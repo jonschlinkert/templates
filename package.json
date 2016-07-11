@@ -11,8 +11,11 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "lib"
+    "lib",
+    "LICENSE",
+    "README.md"
   ],
+  "main": "index.js",
   "engines": {
     "node": ">=4.0.0"
   },
@@ -61,13 +64,13 @@
     "base-test-suite": "^0.1.12",
     "ent": "^2.2.0",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^2.1.0",
+    "gulp-eslint": "^3.0.0",
     "gulp-format-md": "^0.1.9",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-unused": "^0.1.2",
     "remarkable": "^1.6.2",
-    "verb-readme-generator": "^0.1.16",
+    "verb-generate-readme": "^0.1.21",
     "yargs-parser": "^2.4.0"
   },
   "keywords": [
@@ -84,11 +87,17 @@
     "template",
     "templates"
   ],
+  "lintDeps": {
+    "ignore": [
+      "coverage"
+    ]
+  },
   "verb": {
-    "toc": {
-      "render": true
-    },
+    "toc": true,
     "layout": "default",
+    "tasks": [
+      "readme"
+    ],
     "plugins": [
       "gulp-format-md"
     ],
@@ -112,6 +121,7 @@
       "engine-cache",
       "group-array",
       "paginationator",
+      "route-api",
       "verb",
       "verb-readme-generator",
       "vinyl",
@@ -119,12 +129,7 @@
       "vinyl-view"
     ],
     "lint": {
-      "reflinks": true
+      "reflinks": false
     }
-  },
-  "lintDeps": {
-    "ignore": [
-      "coverage"
-    ]
   }
 }
