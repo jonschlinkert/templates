@@ -190,12 +190,12 @@ Templates.prototype.list = function(opts) {
  */
 
 Templates.prototype.group = function(name, views, listViews) {
-  var Groups = this.Groups || require('./lib/groupViews3');
-  var groups = new Groups(views, listViews);
-  this.groups[name] = groups;
-  this.run(groups);
-  this.extendGroups(groups);
-  return groups;
+  var Group = this.get('Group');
+  var group = new Group(views, listViews);
+  this.groups[name] = group;
+  this.run(group);
+  this.extendGroup(group);
+  return group;
 };
 
 /**
@@ -361,8 +361,8 @@ Templates.prototype.extendList = function(views, options) {
  * Decorate or override methods on a group collection instance.
  */
 
-Templates.prototype.extendGroups = function(groups, options) {
-  plugin.groups(this, groups, options);
+Templates.prototype.extendGroup = function(group, options) {
+  plugin.group(this, group, options);
   return this;
 };
 
@@ -417,7 +417,7 @@ Templates.setup = function(app, name) {
 Templates.Base = Base;
 Templates.Collection = lib.collection;
 Templates.List = lib.list;
-Templates.Group = lib.group;
+Templates.Group = lib.groupViews3;
 Templates.Views = lib.views;
 Templates.Item = lib.item;
 Templates.View = lib.view;
