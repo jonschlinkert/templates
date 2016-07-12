@@ -191,21 +191,11 @@ Templates.prototype.list = function(opts) {
 
 Templates.prototype.group = function(name, views, listViews) {
   var Groups = this.Groups || require('./lib/groupViews3');
-  var group = new Groups(views, listViews);
-  this.groups[name] = group;
-  this.run(group);
-
-  var self = this;
-  var create = group.create;
-  group.define('create', function(name) {
-    var collection = create.apply(this, arguments);
-    var views = self.create(name);
-    group.run(views);
-    views.addViews(collection.items);
-    return collection;
-  });
-
-  return group;
+  var groups = new Groups(views, listViews);
+  this.groups[name] = groups;
+  this.run(groups);
+  this.extendGroups(groups);
+  return groups;
 };
 
 /**
@@ -364,6 +354,15 @@ Templates.prototype.extendViews = function(views, options) {
 
 Templates.prototype.extendList = function(views, options) {
   plugin.list(this, views, options);
+  return this;
+};
+
+/**
+ * Decorate or override methods on a group collection instance.
+ */
+
+Templates.prototype.extendGroups = function(groups, options) {
+  plugin.groups(this, groups, options);
   return this;
 };
 
