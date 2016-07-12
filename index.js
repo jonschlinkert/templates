@@ -62,6 +62,7 @@ Templates.prototype.initTemplates = function() {
 
   this.items = {};
   this.views = {};
+  this.groups = {};
   this.inflections = {};
 
   // listen for options events
@@ -174,6 +175,37 @@ Templates.prototype.list = function(opts) {
   // emit the list
   this.emit('list', list, opts);
   return list;
+};
+
+/**
+ * Create a new group. Groups are decorated with
+ * special methods for creating and getting collections from the
+ * group.
+ *
+ * @param  {String} `name` Name of the group to create.
+ * @param  {Object} `views` Instance of a view collection to group.
+ * @param  {Object} `listViews` Instance of a view collection that contains index and list views to use when creating group collections.
+ * @return {Object} Returns the `collection` instance for chaining.
+ * @api public
+ */
+
+Templates.prototype.group = function(name, views, listViews) {
+  var Groups = this.Groups || require('./lib/groupViews3');
+  var group = new Groups(views, listViews);
+  this.groups[name] = group;
+  this.run(group);
+
+  var self = this;
+  var create = group.create;
+  group.define('create', function(name) {
+    var collection = create.apply(this, arguments);
+    var views = self.create(name);
+    group.run(views);
+    views.addViews(collection.items);
+    return collection;
+  });
+
+  return group;
 };
 
 /**
