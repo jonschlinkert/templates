@@ -93,7 +93,6 @@ Templates.prototype.initTemplates = function() {
   this.expose('List');
   this.expose('Collection');
   this.expose('Group');
-  this.expose('GroupViews3');
   this.expose('Views');
 
   Templates.setup(this, 'Templates');
@@ -191,7 +190,7 @@ Templates.prototype.list = function(opts) {
  */
 
 Templates.prototype.group = function(name, views, listViews) {
-  var Group = this.get('GroupViews3');
+  var Group = this.get('Group');
   var group = new Group(views, listViews);
   this.groups[name] = group;
   this.run(group);
@@ -419,7 +418,6 @@ Templates.Base = Base;
 Templates.Collection = lib.collection;
 Templates.List = lib.list;
 Templates.Group = lib.group;
-Templates.GroupViews3 = lib.groupViews3;
 Templates.Views = lib.views;
 Templates.Item = lib.item;
 Templates.View = lib.view;
