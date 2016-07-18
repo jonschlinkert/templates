@@ -93,6 +93,7 @@ Templates.prototype.initTemplates = function() {
   this.expose('List');
   this.expose('Collection');
   this.expose('Group');
+  this.expose('Groups');
   this.expose('Views');
 
   Templates.setup(this, 'Templates');
@@ -418,6 +419,7 @@ Templates.Base = Base;
 Templates.Collection = lib.collection;
 Templates.List = lib.list;
 Templates.Group = lib.group;
+Templates.Groups = lib.groups;
 Templates.Views = lib.views;
 Templates.Item = lib.item;
 Templates.View = lib.view;
