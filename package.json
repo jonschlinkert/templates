@@ -56,20 +56,18 @@
     "set-value": "^0.3.3",
     "template-error": "^0.1.2",
     "vinyl-item": "^0.1.0",
-    "vinyl-view": "^0.1.0"
+    "vinyl-view": "^0.1.2"
   },
   "devDependencies": {
     "ansi-red": "^0.1.1",
     "base-test-runner": "^0.2.0",
     "base-test-suite": "^0.1.12",
-    "ent": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.0",
     "gulp-format-md": "^0.1.9",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-unused": "^0.1.2",
-    "remarkable": "^1.6.2",
     "verb-generate-readme": "^0.1.21",
     "yargs-parser": "^2.4.0"
   },
@@ -89,7 +87,8 @@
   ],
   "lintDeps": {
     "ignore": [
-      "coverage"
+      "coverage",
+      "examples/*"
     ]
   },
   "verb": {
@@ -112,18 +111,20 @@
     },
     "reflinks": [
       "array-sort",
-      "assemble",
       "base",
       "base-data",
       "base-engine",
       "base-helpers",
       "base-routes",
+      "engine-handlebars",
+      "engine-lodash",
+      "engine-nunjucks",
+      "assemble-permalinks",
       "engine-cache",
       "group-array",
       "paginationator",
-      "route-api",
       "verb",
-      "verb-readme-generator",
+      "verb-generate-readme",
       "vinyl",
       "vinyl-item",
       "vinyl-view"
