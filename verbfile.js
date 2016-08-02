@@ -3,6 +3,7 @@
 module.exports = function(app) {
   app.use(require('verb-generate-readme'));
 
+  app.helper('changelog', require('helper-changelog'));
   app.create('pages');
   app.pages('docs/api/*.md');
 
