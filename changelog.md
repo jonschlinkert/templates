@@ -8,6 +8,18 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 - `removed`: for deprecated features removed in this release
 - `fixed`: for any bug fixes
 
+### [0.25.2]
+
+**Fixed**
+
+- Correctly handles arguments for the built-in singular helper when used with Handlebars.
+
+### [0.25.1]
+
+**Fixed**
+
+- Ensures the template rendering engine's context is preserved.
+
 ### [0.25.0]
 
 **Added**

@@ -1,6 +1,6 @@
 # templates [![NPM version](https://img.shields.io/npm/v/templates.svg?style=flat)](https://www.npmjs.com/package/templates) [![NPM downloads](https://img.shields.io/npm/dm/templates.svg?style=flat)](https://npmjs.org/package/templates) [![Build Status](https://img.shields.io/travis/jonschlinkert/templates.svg?style=flat)](https://travis-ci.org/jonschlinkert/templates)
 
-System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.
+> System for creating and managing template collections, and rendering templates with any node.js template engine. Can be used as the basis for creating a static site generator or blog framework.
 
 ## Table of Contents
 
@@ -53,7 +53,7 @@ $ npm install --save templates
 
 ## Features
 
-* templates are [vinyl](http://github.com/gulpjs/vinyl) files
+* templates are [vinyl](https://github.com/gulpjs/vinyl) files
 * rich plugin support, use any [base](https://github.com/node-base/base) plugin!
 * render templates with any [template engine](#engine), including [nunjucks](https://github.com/jonschlinkert/engine-nunjucks), [handlebars](https://github.com/jonschlinkert/engine-handlebars), [lodash](https://github.com/jonschlinkert/engine-lodash) and any consolidate engine!
 * [helpers](#helpers): support for sync and async
@@ -170,10 +170,6 @@ The `Templates` class is the main export of the `templates` library. All of the 
 
 This function is the main export of the templates module. Initialize an instance of `templates` to create your application.
 
-**Params**
-
-* `options` **{Object}**
-
 **Example**
 
 ```js
@@ -181,14 +177,13 @@ var templates = require('templates');
 var app = templates();
 ```
 
+**Params**
+
+* `options` **{Object}**
+
 ### [.list](index.js#L154)
 
 Create a new list. See the [list docs](docs/lists.md) for more information about lists.
-
-**Params**
-
-* `opts` **{Object}**: List options
-* `returns` **{Object}**: Returns the `list` instance for chaining.
 
 **Example**
 
@@ -200,6 +195,11 @@ list.addItem('abc', {content: '...'});
 app.create('pages');
 var list = app.list(app.pages);
 ```
+
+**Params**
+
+* `opts` **{Object}**: List options
+* `returns` **{Object}**: Returns the `list` instance for chaining.
 
 ### [.collection](index.js#L193)
 
@@ -228,12 +228,6 @@ the [create docs](docs/collections.md#create) for more details.
 
 Expose static `setup` method for providing access to an instance before any other code is run.
 
-**Params**
-
-* `app` **{Object}**: Application instance
-* `name` **{String}**: Optionally pass the constructor name to use.
-* `returns` **{undefined}**
-
 **Example**
 
 ```js
@@ -244,17 +238,17 @@ function App(options) {
 Templates.extend(App);
 ```
 
+**Params**
+
+* `app` **{Object}**: Application instance
+* `name` **{String}**: Optionally pass the constructor name to use.
+* `returns` **{undefined}**
+
 ***
 
 ### [.engine](node_modules/base-engines/index.js#L45)
 
 Register a view engine callback `fn` as `ext`. Calls `.setEngine` and `.getEngine` internally.
-
-**Params**
-
-* `exts` **{String|Array}**: String or array of file extensions.
-* `fn` **{Function|Object}**: or `settings`
-* `settings` **{Object}**: Optionally pass engine options as the last argument.
 
 **Example**
 
@@ -270,13 +264,15 @@ app.engine('swig', engine.swig);
 var swig = app.engine('swig');
 ```
 
+**Params**
+
+* `exts` **{String|Array}**: String or array of file extensions.
+* `fn` **{Function|Object}**: or `settings`
+* `settings` **{Object}**: Optionally pass engine options as the last argument.
+
 ### [.setEngine](node_modules/base-engines/index.js#L74)
 
 Register engine `ext` with the given render `fn` and/or `settings`.
-
-**Params**
-
-* `ext` **{String}**: The engine to set.
 
 **Example**
 
@@ -286,13 +282,13 @@ app.setEngine('hbs', require('engine-handlebars'), {
 });
 ```
 
+**Params**
+
+* `ext` **{String}**: The engine to set.
+
 ### [.getEngine](node_modules/base-engines/index.js#L97)
 
 Get registered engine `ext`.
-
-**Params**
-
-* `ext` **{String}**: The engine to get.
 
 **Example**
 
@@ -301,16 +297,15 @@ app.engine('hbs', require('engine-handlebars'));
 var engine = app.getEngine('hbs');
 ```
 
+**Params**
+
+* `ext` **{String}**: The engine to get.
+
 ***
 
 ### [.helper](node_modules/base-helpers/index.js#L46)
 
 Register a template helper.
-
-**Params**
-
-* `name` **{String}**: Helper name
-* `fn` **{Function}**: Helper function.
 
 **Example**
 
@@ -320,13 +315,14 @@ app.helper('upper', function(str) {
 });
 ```
 
+**Params**
+
+* `name` **{String}**: Helper name
+* `fn` **{Function}**: Helper function.
+
 ### [.helpers](node_modules/base-helpers/index.js#L67)
 
 Register multiple template helpers.
-
-**Params**
-
-* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
 
 **Example**
 
@@ -338,14 +334,13 @@ app.helpers({
 });
 ```
 
+**Params**
+
+* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
+
 ### [.asyncHelper](node_modules/base-helpers/index.js#L86)
 
 Register an async helper.
-
-**Params**
-
-* `name` **{String}**: Helper name.
-* `fn` **{Function}**: Helper function
 
 **Example**
 
@@ -355,13 +350,14 @@ app.asyncHelper('upper', function(str, next) {
 });
 ```
 
+**Params**
+
+* `name` **{String}**: Helper name.
+* `fn` **{Function}**: Helper function
+
 ### [.asyncHelpers](node_modules/base-helpers/index.js#L107)
 
 Register multiple async template helpers.
-
-**Params**
-
-* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
 
 **Example**
 
@@ -373,14 +369,13 @@ app.asyncHelpers({
 });
 ```
 
+**Params**
+
+* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
+
 ### [.getHelper](node_modules/base-helpers/index.js#L124)
 
 Get a previously registered helper.
-
-**Params**
-
-* `name` **{String}**: Helper name
-* `returns` **{Function}**: Returns the registered helper function.
 
 **Example**
 
@@ -388,14 +383,14 @@ Get a previously registered helper.
 var fn = app.getHelper('foo');
 ```
 
-### [.getAsyncHelper](node_modules/base-helpers/index.js#L141)
-
-Get a previously registered async helper.
-
 **Params**
 
 * `name` **{String}**: Helper name
 * `returns` **{Function}**: Returns the registered helper function.
+
+### [.getAsyncHelper](node_modules/base-helpers/index.js#L141)
+
+Get a previously registered async helper.
 
 **Example**
 
@@ -403,14 +398,14 @@ Get a previously registered async helper.
 var fn = app.getAsyncHelper('foo');
 ```
 
+**Params**
+
+* `name` **{String}**: Helper name
+* `returns` **{Function}**: Returns the registered helper function.
+
 ### [.hasHelper](node_modules/base-helpers/index.js#L160)
 
 Return true if sync helper `name` is registered.
-
-**Params**
-
-* `name` **{String}**: sync helper name
-* `returns` **{Boolean}**: Returns true if the sync helper is registered
 
 **Example**
 
@@ -420,14 +415,14 @@ if (app.hasHelper('foo')) {
 }
 ```
 
+**Params**
+
+* `name` **{String}**: sync helper name
+* `returns` **{Boolean}**: Returns true if the sync helper is registered
+
 ### [.hasAsyncHelper](node_modules/base-helpers/index.js#L178)
 
 Return true if async helper `name` is registered.
-
-**Params**
-
-* `name` **{String}**: Async helper name
-* `returns` **{Boolean}**: Returns true if the async helper is registered
 
 **Example**
 
@@ -437,13 +432,14 @@ if (app.hasAsyncHelper('foo')) {
 }
 ```
 
+**Params**
+
+* `name` **{String}**: Async helper name
+* `returns` **{Boolean}**: Returns true if the async helper is registered
+
 ### [.helperGroup](node_modules/base-helpers/index.js#L201)
 
 Register a namespaced helper group.
-
-**Params**
-
-* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
 
 **Example**
 
@@ -459,6 +455,10 @@ app.helperGroup('mdu', {
 // <%= mdu.bar() %>
 ```
 
+**Params**
+
+* `helpers` **{Object|Array}**: Object, array of objects, or glob patterns.
+
 ### Built-in helpers
 
 ***
@@ -471,10 +471,6 @@ API for the `View` class.
 
 Create an instance of `View`. Optionally pass a default object to use.
 
-**Params**
-
-* `view` **{Object}**
-
 **Example**
 
 ```js
@@ -484,14 +480,13 @@ var view = new View({
 });
 ```
 
+**Params**
+
+* `view` **{Object}**
+
 ### [.compile](node_modules/vinyl-view/index.js#L57)
 
 Synchronously compile a view.
-
-**Params**
-
-* `locals` **{Object}**: Optionally pass locals to the engine.
-* `returns` **{Object}** `View`: instance, for chaining.
 
 **Example**
 
@@ -502,14 +497,14 @@ view.fn({title: 'B'});
 view.fn({title: 'C'});
 ```
 
-### [.renderSync](node_modules/vinyl-view/index.js#L75)
-
-Synchronously render templates in `view.content`.
-
 **Params**
 
 * `locals` **{Object}**: Optionally pass locals to the engine.
 * `returns` **{Object}** `View`: instance, for chaining.
+
+### [.renderSync](node_modules/vinyl-view/index.js#L75)
+
+Synchronously render templates in `view.content`.
 
 **Example**
 
@@ -519,13 +514,14 @@ view.renderSync({title: 'Home'});
 console.log(view.content);
 ```
 
+**Params**
+
+* `locals` **{Object}**: Optionally pass locals to the engine.
+* `returns` **{Object}** `View`: instance, for chaining.
+
 ### [.render](node_modules/vinyl-view/index.js#L101)
 
 Asynchronously render templates in `view.content`.
-
-**Params**
-
-* `locals` **{Object}**: Context to use for rendering templates.
 
 **Example**
 
@@ -535,6 +531,10 @@ view.render({title: 'Home'}, function(err, res) {
 });
 ```
 
+**Params**
+
+* `locals` **{Object}**: Context to use for rendering templates.
+
 ### [.context](node_modules/vinyl-view/index.js#L132)
 
 Create a context object from `locals` and the `view.data` and `view.locals` objects. The `view.data` property is typically created from front-matter, and `view.locals` is used when a `new View()` is created.
@@ -542,11 +542,6 @@ Create a context object from `locals` and the `view.data` and `view.locals` obje
 This method be overridden either by defining a custom `view.options.context` function
 to customize context for a view instance, or static [View.context](#view-context) function to customize
 context for all view instances.
-
-**Params**
-
-* `locals` **{Object}**: Optionally pass a locals object to merge onto the context.
-* `returns` **{Object}**: Returns the context object.
 
 **Example**
 
@@ -557,13 +552,14 @@ console.log(ctx);
 //=> {a: 'z', c: 'd'}
 ```
 
+**Params**
+
+* `locals` **{Object}**: Optionally pass a locals object to merge onto the context.
+* `returns` **{Object}**: Returns the context object.
+
 ### [.isType](node_modules/vinyl-view/index.js#L148)
 
 Returns true if the view is the given `viewType`. Returns `false` if no type is assigned. When used with vinyl-collections, types are assigned by their respective collections.
-
-**Params**
-
-* `type` **{String}**: (`renderable`, `partial`, `layout`)
 
 **Example**
 
@@ -572,14 +568,13 @@ var view = new View({path: 'a/b/c.txt', viewType: 'partial'})
 view.isType('partial');
 ```
 
+**Params**
+
+* `type` **{String}**: (`renderable`, `partial`, `layout`)
+
 ### [.View.context](node_modules/vinyl-view/index.js#L248)
 
 Define a custom static `View.context` function to override default `.context` behavior. See the [context](#context) docs for more info.
-
-**Params**
-
-* `locals` **{Object}**
-* `returns` **{Object}**
 
 **Example**
 
@@ -591,15 +586,14 @@ View.context = function(locals) {
 };
 ```
 
+**Params**
+
+* `locals` **{Object}**
+* `returns` **{Object}**
+
 ### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 **Example**
 
@@ -609,6 +603,12 @@ app.data({c: 'd'});
 console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 ### [.context](lib/plugins/context.js#L62)
 
@@ -659,11 +659,7 @@ API for the `Item` class.
 
 ### [Item](node_modules/vinyl-item/index.js#L28)
 
-Create an instance of `Item`. Optionally pass a default object to use. See [vinyl](http://github.com/gulpjs/vinyl) docs for API details and additional documentation.
-
-**Params**
-
-* `item` **{Object}**
+Create an instance of `Item`. Optionally pass a default object to use. See [vinyl](https://github.com/gulpjs/vinyl) docs for API details and additional documentation.
 
 **Example**
 
@@ -673,6 +669,10 @@ var item = new Item({
   contents: new Buffer('...')
 });
 ```
+
+**Params**
+
+* `item` **{Object}**
 
 ### [.content](node_modules/vinyl-item/index.js#L184)
 
@@ -702,12 +702,6 @@ console.log(item.engine);
 
 Set, get and load data to be passed to templates as context at render-time.
 
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
 **Example**
 
 ```js
@@ -716,6 +710,12 @@ app.data({c: 'd'});
 console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 ### [.context](lib/plugins/context.js#L62)
 
@@ -768,10 +768,6 @@ API for the `Views` class.
 
 Create an instance of `Views` with the given `options`.
 
-**Params**
-
-* `options` **{Object}**
-
 **Example**
 
 ```js
@@ -779,16 +775,13 @@ var collection = new Views();
 collection.addView('foo', {content: 'bar'});
 ```
 
+**Params**
+
+* `options` **{Object}**
+
 ### [.addView](lib/views.js#L132)
 
 Add a view to `collection.views`. This is identical to [addView](#addView) except `setView` returns the collection instance, and `addView` returns the item instance.
-
-**Params**
-
-* `key` **{String|Object}**: View key or object
-* `value` **{Object}**: If key is a string, value is the view object.
-* `next` **{Function}**: Optionally pass a callback function as the last argument to load the view asynchronously. This will also ensure that `.onLoad` middleware is executed asynchronously.
-* `returns` **{Object}**: returns the `view` instance.
 
 **Example**
 
@@ -802,15 +795,16 @@ collection.setView('foo', {content: 'bar'}, function(err, view) {
 });
 ```
 
-### [.setView](lib/views.js#L174)
-
-Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
-
 **Params**
 
 * `key` **{String|Object}**: View key or object
 * `value` **{Object}**: If key is a string, value is the view object.
+* `next` **{Function}**: Optionally pass a callback function as the last argument to load the view asynchronously. This will also ensure that `.onLoad` middleware is executed asynchronously.
 * `returns` **{Object}**: returns the `view` instance.
+
+### [.setView](lib/views.js#L174)
+
+Set a view on the collection. This is identical to [addView](#addView) except `setView` does not emit an event for each view.
 
 **Example**
 
@@ -818,15 +812,15 @@ Set a view on the collection. This is identical to [addView](#addView) except `s
 collection.setView('foo', {content: 'bar'});
 ```
 
+**Params**
+
+* `key` **{String|Object}**: View key or object
+* `value` **{Object}**: If key is a string, value is the view object.
+* `returns` **{Object}**: returns the `view` instance.
+
 ### [.getView](lib/views.js#L191)
 
 Get view `name` from `collection.views`.
-
-**Params**
-
-* `key` **{String}**: Key of the view to get.
-* `fn` **{Function}**: Optionally pass a function to modify the key.
-* `returns` **{Object}**
 
 **Example**
 
@@ -834,14 +828,15 @@ Get view `name` from `collection.views`.
 collection.getView('a.html');
 ```
 
+**Params**
+
+* `key` **{String}**: Key of the view to get.
+* `fn` **{Function}**: Optionally pass a function to modify the key.
+* `returns` **{Object}**
+
 ### [.deleteView](lib/views.js#L226)
 
 Delete a view from collection `views`.
-
-**Params**
-
-* `key` **{String}**
-* `returns` **{Object}**: Returns the instance for chaining
 
 **Example**
 
@@ -849,14 +844,14 @@ Delete a view from collection `views`.
 views.deleteView('foo.html');
 ```
 
+**Params**
+
+* `key` **{String}**
+* `returns` **{Object}**: Returns the instance for chaining
+
 ### [.addViews](lib/views.js#L250)
 
 Load multiple views onto the collection.
-
-**Params**
-
-* `views` **{Object|Array}**
-* `returns` **{Object}**: returns the `collection` object
 
 **Example**
 
@@ -868,14 +863,14 @@ collection.addViews({
 });
 ```
 
+**Params**
+
+* `views` **{Object|Array}**
+* `returns` **{Object}**: returns the `collection` object
+
 ### [.addList](lib/views.js#L282)
 
 Load an array of views onto the collection.
-
-**Params**
-
-* `list` **{Array}**
-* `returns` **{Object}**: returns the `views` instance
 
 **Example**
 
@@ -887,11 +882,14 @@ collection.addList([
 ]);
 ```
 
+**Params**
+
+* `list` **{Array}**
+* `returns` **{Object}**: returns the `views` instance
+
 ### [.groupBy](lib/views.js#L319)
 
 Group all collection `views` by the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
-
-* `returns` **{Object}**: Returns an object of grouped views.
 
 **Example**
 
@@ -901,19 +899,21 @@ collection.addViews(...);
 var groups = collection.groupBy('data.date', 'data.slug');
 ```
 
+* `returns` **{Object}**: Returns an object of grouped views.
+
 ### [.isType](lib/views.js#L349)
 
 Return true if the collection belongs to the given view `type`.
-
-**Params**
-
-* `type` **{String}**: (`renderable`, `partial`, `layout`)
 
 **Example**
 
 ```js
 collection.isType('partial');
 ```
+
+**Params**
+
+* `type` **{String}**: (`renderable`, `partial`, `layout`)
 
 ### [.viewTypes](lib/views.js#L396)
 
@@ -923,12 +923,6 @@ Alias for `viewType`
 
 Set, get and load data to be passed to templates as context at render-time.
 
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
-
 **Example**
 
 ```js
@@ -937,6 +931,12 @@ app.data({c: 'd'});
 console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 ### [.context](lib/plugins/context.js#L62)
 
@@ -985,12 +985,6 @@ have no support for partials or only support one type of partials.
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
 
-**Params**
-
-* `name` **{String}**: The name/key of the view to find
-* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
-* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
-
 **Example**
 
 ```js
@@ -1000,16 +994,15 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
+**Params**
+
+* `name` **{String}**: The name/key of the view to find
+* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
+* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
+
 ### [.getView](lib/plugins/lookup.js#L64)
 
 Get view `key` from the specified `collection`.
-
-**Params**
-
-* `collection` **{String}**: Collection name, e.g. `pages`
-* `key` **{String}**: Template name
-* `fn` **{Function}**: Optionally pass a `renameKey` function
-* `returns` **{Object}**
 
 **Example**
 
@@ -1022,14 +1015,16 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
+**Params**
+
+* `collection` **{String}**: Collection name, e.g. `pages`
+* `key` **{String}**: Template name
+* `fn` **{Function}**: Optionally pass a `renameKey` function
+* `returns` **{Object}**
+
 ### [.getViews](lib/plugins/lookup.js#L103)
 
 Get all views from a `collection` using the collection's singular or plural name.
-
-**Params**
-
-* `name` **{String}**: The collection name, e.g. `pages` or `page`
-* `returns` **{Object}**
 
 **Example**
 
@@ -1041,6 +1036,11 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
+**Params**
+
+* `name` **{String}**: The collection name, e.g. `pages` or `page`
+* `returns` **{Object}**
+
 ***
 
 ### Collections
@@ -1051,10 +1051,6 @@ API for the `Collections` class.
 
 Create an instance of `Collection` with the given `options`.
 
-**Params**
-
-* `options` **{Object}**
-
 **Example**
 
 ```js
@@ -1062,9 +1058,19 @@ var collection = new Collection();
 collection.addItem('foo', {content: 'bar'});
 ```
 
+**Params**
+
+* `options` **{Object}**
+
 ### [.addItem](lib/collection.js#L93)
 
 Add an item to the collection.
+
+**Example**
+
+```js
+collection.addItem('foo', {content: 'bar'});
+```
 
 **Params**
 
@@ -1076,15 +1082,15 @@ Add an item to the collection.
 
 * `emits`: `item` With the created `item` and `collection` instance as arguments.
 
-**Example**
-
-```js
-collection.addItem('foo', {content: 'bar'});
-```
-
 ### [.setItem](lib/collection.js#L118)
 
 Identical to `.addItem`, except the collection instance is returned instead of the item, to allow chaining.
+
+**Example**
+
+```js
+collection.setItem('foo', {content: 'bar'});
+```
 
 **Params**
 
@@ -1096,20 +1102,9 @@ Identical to `.addItem`, except the collection instance is returned instead of t
 
 * `emits`: `item` With the created `item` and `collection` instance as arguments.
 
-**Example**
-
-```js
-collection.setItem('foo', {content: 'bar'});
-```
-
 ### [.getItem](lib/collection.js#L134)
 
 Get an item from `collection.items`.
-
-**Params**
-
-* `key` **{String}**: Key of the item to get.
-* `returns` **{Object}**
 
 **Example**
 
@@ -1117,14 +1112,14 @@ Get an item from `collection.items`.
 collection.getItem('a.html');
 ```
 
+**Params**
+
+* `key` **{String}**: Key of the item to get.
+* `returns` **{Object}**
+
 ### [.deleteItem](lib/collection.js#L149)
 
 Remove an item from `collection.items`.
-
-**Params**
-
-* `key` **{String}**
-* `returns` **{Object}**: Returns the instance for chaining
 
 **Example**
 
@@ -1132,14 +1127,14 @@ Remove an item from `collection.items`.
 items.deleteItem('abc');
 ```
 
+**Params**
+
+* `key` **{String}**
+* `returns` **{Object}**: Returns the instance for chaining
+
 ### [.addItems](lib/collection.js#L172)
 
 Load multiple items onto the collection.
-
-**Params**
-
-* `items` **{Object|Array}**
-* `returns` **{Object}**: returns the instance for chaining
 
 **Example**
 
@@ -1151,15 +1146,14 @@ collection.addItems({
 });
 ```
 
+**Params**
+
+* `items` **{Object|Array}**
+* `returns` **{Object}**: returns the instance for chaining
+
 ### [.addList](lib/collection.js#L196)
 
 Load an array of items onto the collection.
-
-**Params**
-
-* `items` **{Array}**: or an instance of `List`
-* `fn` **{Function}**: Optional sync callback function that is called on each item.
-* `returns` **{Object}**: returns the Collection instance for chaining
 
 **Example**
 
@@ -1171,15 +1165,15 @@ collection.addList([
 ]);
 ```
 
+**Params**
+
+* `items` **{Array}**: or an instance of `List`
+* `fn` **{Function}**: Optional sync callback function that is called on each item.
+* `returns` **{Object}**: returns the Collection instance for chaining
+
 ### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 **Example**
 
@@ -1189,6 +1183,12 @@ app.data({c: 'd'});
 console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 ### [.context](lib/plugins/context.js#L62)
 
@@ -1241,10 +1241,6 @@ API for the `List` class.
 
 Create an instance of `List` with the given `options`. Lists differ from collections in that items are stored as an array, allowing items to be paginated, sorted, and grouped.
 
-**Params**
-
-* `options` **{Object}**
-
 **Example**
 
 ```js
@@ -1252,15 +1248,13 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
+**Params**
+
+* `options` **{Object}**
+
 ### [.addItem](lib/list.js#L108)
 
 Add an item to `list.items`. This is identical to [setItem](#setItem) except `addItem` returns the `item`, add `setItem` returns the instance of `List`.
-
-**Params**
-
-* `key` **{String|Object}**: Item key or object
-* `value` **{Object}**: If key is a string, value is the item object.
-* `returns` **{Object}**: returns the `item` instance.
 
 **Example**
 
@@ -1268,15 +1262,15 @@ Add an item to `list.items`. This is identical to [setItem](#setItem) except `ad
 collection.addItem('foo', {content: 'bar'});
 ```
 
+**Params**
+
+* `key` **{String|Object}**: Item key or object
+* `value` **{Object}**: If key is a string, value is the item object.
+* `returns` **{Object}**: returns the `item` instance.
+
 ### [.setItem](lib/list.js#L146)
 
 Add an item to `list.items`. This is identical to [addItem](#addItem) except `addItem` returns the `item`, add `setItem` returns the instance of `List`.
-
-**Params**
-
-* `key` **{String}**
-* `value` **{Object}**
-* `returns` **{Object}**: Returns the instance of `List` to support chaining.
 
 **Example**
 
@@ -1285,14 +1279,15 @@ var items = new Items(...);
 items.setItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
+**Params**
+
+* `key` **{String}**
+* `value` **{Object}**
+* `returns` **{Object}**: Returns the instance of `List` to support chaining.
+
 ### [.addItems](lib/list.js#L166)
 
 Load multiple items onto the collection.
-
-**Params**
-
-* `items` **{Object|Array}**
-* `returns` **{Object}**: returns the instance for chaining
 
 **Example**
 
@@ -1304,15 +1299,14 @@ collection.addItems({
 });
 ```
 
+**Params**
+
+* `items` **{Object|Array}**
+* `returns` **{Object}**: returns the instance for chaining
+
 ### [.addList](lib/list.js#L195)
 
 Load an array of items or the items from another instance of `List`.
-
-**Params**
-
-* `items` **{Array}**: or an instance of `List`
-* `fn` **{Function}**: Optional sync callback function that is called on each item.
-* `returns` **{Object}**: returns the List instance for chaining
 
 **Example**
 
@@ -1322,14 +1316,15 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
+**Params**
+
+* `items` **{Array}**: or an instance of `List`
+* `fn` **{Function}**: Optional sync callback function that is called on each item.
+* `returns` **{Object}**: returns the List instance for chaining
+
 ### [.hasItem](lib/list.js#L232)
 
 Return true if the list has the given item (name).
-
-**Params**
-
-* `key` **{String}**
-* `returns` **{Object}**
 
 **Example**
 
@@ -1339,14 +1334,14 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L248)
-
-Get a the index of a specific item from the list by `key`.
-
 **Params**
 
 * `key` **{String}**
 * `returns` **{Object}**
+
+### [.getIndex](lib/list.js#L248)
+
+Get a the index of a specific item from the list by `key`.
 
 **Example**
 
@@ -1355,14 +1350,14 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
+**Params**
+
+* `key` **{String}**
+* `returns` **{Object}**
+
 ### [.getItem](lib/list.js#L292)
 
 Get a specific item from the list by `key`.
-
-**Params**
-
-* `key` **{String}**: The item name/key.
-* `returns` **{Object}**
 
 **Example**
 
@@ -1371,14 +1366,14 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
+**Params**
+
+* `key` **{String}**: The item name/key.
+* `returns` **{Object}**
+
 ### [.getView](lib/list.js#L311)
 
 Proxy for `getItem`
-
-**Params**
-
-* `key` **{String}**: Pass the key of the `item` to get.
-* `returns` **{Object}**
 
 **Example**
 
@@ -1387,19 +1382,24 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
+**Params**
+
+* `key` **{String}**: Pass the key of the `item` to get.
+* `returns` **{Object}**
+
 ### [.deleteItem](lib/list.js#L325)
 
 Remove an item from the list.
-
-**Params**
-
-* `key` **{Object|String}**: Pass an `item` instance (object) or `item.key` (string).
 
 **Example**
 
 ```js
 list.deleteItem('a.html');
 ```
+
+**Params**
+
+* `key` **{Object|String}**: Pass an `item` instance (object) or `item.key` (string).
 
 ### [.extendItem](lib/list.js#L344)
 
@@ -1416,8 +1416,6 @@ defaults.
 
 Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
 
-* `returns` **{Object}**: Returns the grouped items.
-
 **Example**
 
 ```js
@@ -1426,11 +1424,11 @@ list.addItems(...);
 var groups = list.groupBy('data.date', 'data.slug');
 ```
 
+* `returns` **{Object}**: Returns the grouped items.
+
 ### [.sortBy](lib/list.js#L389)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
-
-* `returns` **{Object}**: Returns a new `List` instance with sorted items.
 
 **Example**
 
@@ -1441,11 +1439,11 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
+* `returns` **{Object}**: Returns a new `List` instance with sorted items.
+
 ### [.paginate](lib/list.js#L437)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
-
-* `returns` **{Object}**: Returns the paginated items.
 
 **Example**
 
@@ -1454,15 +1452,11 @@ var list = new List(items);
 var pages = list.paginate({limit: 5});
 ```
 
+* `returns` **{Object}**: Returns the paginated items.
+
 ### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 **Example**
 
@@ -1472,6 +1466,12 @@ app.data({c: 'd'});
 console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 ### [.context](lib/plugins/context.js#L62)
 
@@ -1524,10 +1524,6 @@ API for the `Group` class.
 
 Create an instance of `Group` with the given `options`.
 
-**Params**
-
-* `options` **{Object}**
-
 **Example**
 
 ```js
@@ -1536,17 +1532,15 @@ var group = new Group({
 });
 ```
 
+**Params**
+
+* `options` **{Object}**
+
 ***
 
 ### [.find](lib/plugins/lookup.js#L25)
 
 Find a view by `name`, optionally passing a `collection` to limit the search. If no collection is passed all `renderable` collections will be searched.
-
-**Params**
-
-* `name` **{String}**: The name/key of the view to find
-* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
-* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
 
 **Example**
 
@@ -1557,16 +1551,15 @@ var page = app.find('my-page.hbs');
 var page = app.find('my-page.hbs', 'pages');
 ```
 
+**Params**
+
+* `name` **{String}**: The name/key of the view to find
+* `colleciton` **{String}**: Optionally pass a collection name (e.g. pages)
+* `returns` **{Object|undefined}**: Returns the view if found, or `undefined` if not.
+
 ### [.getView](lib/plugins/lookup.js#L64)
 
 Get view `key` from the specified `collection`.
-
-**Params**
-
-* `collection` **{String}**: Collection name, e.g. `pages`
-* `key` **{String}**: Template name
-* `fn` **{Function}**: Optionally pass a `renameKey` function
-* `returns` **{Object}**
 
 **Example**
 
@@ -1579,14 +1572,16 @@ var view = app.getView('pages', 'a/b/c.hbs', function(fp) {
 });
 ```
 
+**Params**
+
+* `collection` **{String}**: Collection name, e.g. `pages`
+* `key` **{String}**: Template name
+* `fn` **{Function}**: Optionally pass a `renameKey` function
+* `returns` **{Object}**
+
 ### [.getViews](lib/plugins/lookup.js#L103)
 
 Get all views from a `collection` using the collection's singular or plural name.
-
-**Params**
-
-* `name` **{String}**: The collection name, e.g. `pages` or `page`
-* `returns` **{Object}**
 
 **Example**
 
@@ -1598,18 +1593,16 @@ var posts = app.getViews('posts');
 //=> { posts: {'2015-10-10.md': { ... }}
 ```
 
+**Params**
+
+* `name` **{String}**: The collection name, e.g. `pages` or `page`
+* `returns` **{Object}**
+
 ***
 
 ### [.compile](lib/plugins/render.js#L98)
 
 Compile `content` with the given `locals`.
-
-**Params**
-
-* `view` **{Object|String}**: View object.
-* `locals` **{Object}**
-* `isAsync` **{Boolean}**: Load async helpers
-* `returns` **{Object}**: View object with compiled `view.fn` property.
 
 **Example**
 
@@ -1625,16 +1618,16 @@ view.fn({title: 'Bar'});
 view.fn({title: 'Baz'});
 ```
 
-### [.compileAsync](lib/plugins/render.js#L173)
-
-Asynchronously compile `content` with the given `locals` and callback. _(fwiw, this method name uses the unconventional "*Async" nomenclature to allow us to preserve the synchronous behavior of the `view.compile` method as well as the name)_.
-
 **Params**
 
 * `view` **{Object|String}**: View object.
 * `locals` **{Object}**
-* `isAsync` **{Boolean}**: Pass true to load helpers as async (mostly used internally)
-* `callback` **{Function}**: function that exposes `err` and the `view` object with compiled `view.fn` property
+* `isAsync` **{Boolean}**: Load async helpers
+* `returns` **{Object}**: View object with compiled `view.fn` property.
+
+### [.compileAsync](lib/plugins/render.js#L173)
+
+Asynchronously compile `content` with the given `locals` and callback. _(fwiw, this method name uses the unconventional "*Async" nomenclature to allow us to preserve the synchronous behavior of the `view.compile` method as well as the name)_.
 
 **Example**
 
@@ -1645,15 +1638,16 @@ app.compileAsync(indexPage, function(err, view) {
 });
 ```
 
+**Params**
+
+* `view` **{Object|String}**: View object.
+* `locals` **{Object}**
+* `isAsync` **{Boolean}**: Pass true to load helpers as async (mostly used internally)
+* `callback` **{Function}**: function that exposes `err` and the `view` object with compiled `view.fn` property
+
 ### [.render](lib/plugins/render.js#L264)
 
 Render a view with the given `locals` and `callback`.
-
-**Params**
-
-* `view` **{Object|String}**: Instance of `View`
-* `locals` **{Object}**: Locals to pass to template engine.
-* `callback` **{Function}**
 
 **Example**
 
@@ -1664,17 +1658,17 @@ app.render(blogPost, {title: 'Foo'}, function(err, view) {
 });
 ```
 
+**Params**
+
+* `view` **{Object|String}**: Instance of `View`
+* `locals` **{Object}**: Locals to pass to template engine.
+* `callback` **{Function}**
+
 ***
 
 ### [.data](lib/plugins/context.js#L42)
 
 Set, get and load data to be passed to templates as context at render-time.
-
-**Params**
-
-* `key` **{String|Object}**: Pass a key-value pair or an object to set.
-* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
-* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 **Example**
 
@@ -1684,6 +1678,12 @@ app.data({c: 'd'});
 console.log(app.cache.data);
 //=> {a: 'b', c: 'd'}
 ```
+
+**Params**
+
+* `key` **{String|Object}**: Pass a key-value pair or an object to set.
+* `val` **{any}**: Any value when a key-value pair is passed. This can also be options if a glob pattern is passed as the first value.
+* `returns` **{Object}**: Returns an instance of `Templates` for chaining.
 
 ### [.context](lib/plugins/context.js#L62)
 
@@ -1743,6 +1743,12 @@ var route = new app.Route();
 
 Handle a middleware `method` for `file`.
 
+**Example**
+
+```js
+app.handle('customMethod', file, callback);
+```
+
 **Params**
 
 * `method` **{String}**: Name of the router method to handle. See [router methods](./docs/router.md)
@@ -1750,21 +1756,9 @@ Handle a middleware `method` for `file`.
 * `callback` **{Function}**: Callback function
 * `returns` **{undefined}**
 
-**Example**
-
-```js
-app.handle('customMethod', file, callback);
-```
-
 ### [.handleOnce](node_modules/base-routes/index.js#L109)
 
 Run the given middleware handler only if the file has not already been handled by `method`.
-
-**Params**
-
-* `method` **{Object}**: The name of the handler method to call.
-* `file` **{Object}**
-* `returns` **{undefined}**
 
 **Example**
 
@@ -1772,14 +1766,15 @@ Run the given middleware handler only if the file has not already been handled b
 app.handleOnce('onLoad', file, callback);
 ```
 
+**Params**
+
+* `method` **{Object}**: The name of the handler method to call.
+* `file` **{Object}**
+* `returns` **{undefined}**
+
 ### [.route](node_modules/base-routes/index.js#L193)
 
 Create a new Route for the given path. Each route contains a separate middleware stack. See the [route API documentation][route-api] for details on adding handlers and middleware to routes.
-
-**Params**
-
-* `path` **{String}**
-* `returns` **{Object}**: Returns the instance for chaining.
 
 **Example**
 
@@ -1794,15 +1789,14 @@ app.route(/blog/)
 app.post('whatever', {path: 'blog/foo.bar', content: 'bar baz'});
 ```
 
+**Params**
+
+* `path` **{String}**
+* `returns` **{Object}**: Returns the instance for chaining.
+
 ### [.param](node_modules/base-routes/index.js#L220)
 
 Add callback triggers to route parameters, where `name` is the name of the parameter and `fn` is the callback function.
-
-**Params**
-
-* `name` **{String}**
-* `fn` **{Function}**
-* `returns` **{Object}**: Returns the instance for chaining.
 
 **Example**
 
@@ -1818,15 +1812,15 @@ app.onLoad('/blog/:title', function(view, next) {
 });
 ```
 
+**Params**
+
+* `name` **{String}**
+* `fn` **{Function}**
+* `returns` **{Object}**: Returns the instance for chaining.
+
 ### [.all](node_modules/base-routes/index.js#L243)
 
 Special route method that works just like the `router.METHOD()` methods, except that it matches all verbs.
-
-**Params**
-
-* `path` **{String}**
-* `callback` **{Function}**
-* `returns` **{Object}** `this`: for chaining
 
 **Example**
 
@@ -1837,14 +1831,15 @@ app.all(/\.hbs$/, function(view, next) {
 });
 ```
 
+**Params**
+
+* `path` **{String}**
+* `callback` **{Function}**
+* `returns` **{Object}** `this`: for chaining
+
 ### [.handler](node_modules/base-routes/index.js#L265)
 
 Add a router handler method to the instance. Interchangeable with the [handlers](#handlers) method.
-
-**Params**
-
-* `method` **{String}**: Name of the handler method to define.
-* `returns` **{Object}**: Returns the instance for chaining
 
 **Example**
 
@@ -1854,14 +1849,14 @@ app.handler('onFoo');
 app.handler(['onFoo', 'onBar']);
 ```
 
+**Params**
+
+* `method` **{String}**: Name of the handler method to define.
+* `returns` **{Object}**: Returns the instance for chaining
+
 ### [.handlers](node_modules/base-routes/index.js#L284)
 
 Add one or more router handler methods to the instance.
-
-**Params**
-
-* `methods` **{Array|String}**: One or more method names to define.
-* `returns` **{Object}**: Returns the instance for chaining
 
 **Example**
 
@@ -1871,16 +1866,16 @@ app.handlers(['onFoo', 'onBar', 'onBaz']);
 app.handlers('onFoo');
 ```
 
+**Params**
+
+* `methods` **{Array|String}**: One or more method names to define.
+* `returns` **{Object}**: Returns the instance for chaining
+
 ***
 
 ### [.isApp](lib/plugins/is.js#L33)
 
 Static method that returns true if the given value is a `templates` instance (`App`).
-
-**Params**
-
-* `val` **{Object}**: The value to test.
-* `returns` **{Boolean}**
 
 **Example**
 
@@ -1895,14 +1890,14 @@ templates.isApp(app);
 //=> true
 ```
 
-### [.isCollection](lib/plugins/is.js#L55)
-
-Static method that returns true if the given value is a templates `Collection` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isCollection](lib/plugins/is.js#L55)
+
+Static method that returns true if the given value is a templates `Collection` instance.
 
 **Example**
 
@@ -1915,14 +1910,14 @@ templates.isCollection(app.pages);
 //=> true
 ```
 
-### [.isViews](lib/plugins/is.js#L77)
-
-Static method that returns true if the given value is a templates `Views` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isViews](lib/plugins/is.js#L77)
+
+Static method that returns true if the given value is a templates `Views` instance.
 
 **Example**
 
@@ -1935,14 +1930,14 @@ templates.isViews(app.pages);
 //=> true
 ```
 
-### [.isList](lib/plugins/is.js#L100)
-
-Static method that returns true if the given value is a templates `List` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isList](lib/plugins/is.js#L100)
+
+Static method that returns true if the given value is a templates `List` instance.
 
 **Example**
 
@@ -1956,14 +1951,14 @@ templates.isList(list);
 //=> true
 ```
 
-### [.isGroup](lib/plugins/is.js#L123)
-
-Static method that returns true if the given value is a templates `Group` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isGroup](lib/plugins/is.js#L123)
+
+Static method that returns true if the given value is a templates `Group` instance.
 
 **Example**
 
@@ -1977,14 +1972,14 @@ templates.isGroup(group);
 //=> true
 ```
 
-### [.isView](lib/plugins/is.js#L148)
-
-Static method that returns true if the given value is a templates `View` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isView](lib/plugins/is.js#L148)
+
+Static method that returns true if the given value is a templates `View` instance.
 
 **Example**
 
@@ -2000,14 +1995,14 @@ templates.isView(view);
 //=> true
 ```
 
-### [.isItem](lib/plugins/is.js#L173)
-
-Static method that returns true if the given value is a templates `Item` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isItem](lib/plugins/is.js#L173)
+
+Static method that returns true if the given value is a templates `Item` instance.
 
 **Example**
 
@@ -2023,14 +2018,14 @@ templates.isItem(view);
 //=> true
 ```
 
-### [.isVinyl](lib/plugins/is.js#L200)
-
-Static method that returns true if the given value is a vinyl `File` instance.
-
 **Params**
 
 * `val` **{Object}**: The value to test.
 * `returns` **{Boolean}**
+
+### [.isVinyl](lib/plugins/is.js#L200)
+
+Static method that returns true if the given value is a vinyl `File` instance.
 
 **Example**
 
@@ -2047,6 +2042,11 @@ var file = new File({path: 'foo', contents: new Buffer('...')});
 templates.isVinyl(file);
 //=> true
 ```
+
+**Params**
+
+* `val` **{Object}**: The value to test.
+* `returns` **{Boolean}**
 
 ***
 
@@ -2083,6 +2083,18 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 * `deprecated`: for once-stable features removed in upcoming releases
 * `removed`: for deprecated features removed in this release
 * `fixed`: for any bug fixes
+
+### [0.25.2](https://github.com/jonschlinkert/templates/compare/0.25.1...0.25.2)
+
+**Fixed**
+
+* Correctly handles arguments for the built-in singular helper when used with Handlebars.
+
+### [0.25.1](https://github.com/jonschlinkert/templates/compare/0.25.0...0.25.1)
+
+**Fixed**
+
+* Ensures the template rendering engine's context is preserved.
 
 ### [0.25.0](https://github.com/jonschlinkert/templates/compare/0.24.3...0.25.0)
 
@@ -2270,8 +2282,8 @@ $ npm install -d && npm test
 ### License
 
 Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](https://github.com/jonschlinkert/templates/blob/master/LICENSE).
+Released under the [MIT license](LICENSE).
 
 ***
 
-_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on August 17, 2016._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.1.31, on October 10, 2016._
