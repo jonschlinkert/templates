@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 'use strict';
 
 var path = require('path');
@@ -11,7 +12,6 @@ templates.on('templates.preInit', function(app) {
 templates.on('templates.postInit', function(app) {
   // console.log(app);
 });
-
 
 /**
  * Create our `app`
@@ -117,7 +117,6 @@ var view = posts.addView('home.html', {content: 'The <%= title %> page'})
     // console.log(res.content);
   });
 
-
 var collection = app.collection();
 collection
   .option('renameKey', function(key) {
@@ -127,7 +126,7 @@ collection
   .addView('foo/bar/baz/b.md', {content: '...'})
   .addView('foo/bar/baz/c.md', {content: '...'});
 
-var list = app.list(collection)
+var list = app.list(collection);
 // console.log(list)
 
 // console.log(collection.views);

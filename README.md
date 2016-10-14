@@ -305,7 +305,7 @@ var engine = app.getEngine('hbs');
 
 ### [.helper](node_modules/base-helpers/index.js#L46)
 
-Register a template helper.
+Register a template helper. 
 
 **Example**
 
@@ -314,6 +314,9 @@ app.helper('upper', function(str) {
   return str.toUpperCase();
 });
 ```
+
+**Note:** Most languages will `upper` will be available globally, and in some languages it will be available under `helpers.upper`
+
 
 **Params**
 

@@ -74,7 +74,7 @@ Templates.prototype.initTemplates = function() {
   this.use(plugin.lookup);
   this.use(utils.engines());
   this.use(utils.helpers());
-  this.use(utils.routes())
+  this.use(utils.routes());
 
   this.use(plugin.item('item', 'Item'));
   this.use(plugin.item('view', 'View'));
