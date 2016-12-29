@@ -69,9 +69,9 @@
     "gulp-mocha": "^3.0.1",
     "gulp-unused": "^0.2.0",
     "helper-changelog": "^0.3.0",
+    "mocha": "^3.2.0",
     "parser-front-matter": "^1.6.2",
     "remarkable": "^1.7.1",
-    "verb-generate-readme": "^0.2.0",
     "yargs-parser": "^4.2.0"
   },
   "keywords": [
@@ -103,6 +103,9 @@
     "plugins": [
       "gulp-format-md"
     ],
+    "helpers": [
+      "helper-changelog"
+    ],
     "related": {
       "list": [
         "assemble",
@@ -113,18 +116,23 @@
       ]
     },
     "lint": {
-      "reflinks": false
+      "reflinks": true
     },
     "reflinks": [
       "array-sort",
+      "assemble-permalinks",
       "base",
       "base-data",
       "base-engine",
       "base-helpers",
       "base-routes",
       "engine-cache",
+      "engine-handlebars",
+      "engine-lodash",
+      "engine-nunjucks",
       "group-array",
       "paginationator",
+      "route-api",
       "verb",
       "verb-generate-readme",
       "vinyl",
