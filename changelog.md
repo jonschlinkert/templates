@@ -8,6 +8,13 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 - `removed`: for deprecated features removed in this release
 - `fixed`: for any bug fixes
 
+### [1.0.0]
+
+**Added**
+
+- Templates now uses [dry] for handling layouts
+- Advanced template-inheritance features, like `extends` and blocks! See [dry] documentation for details.
+
 ### [0.25.2]
 
 **Fixed**
