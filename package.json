@@ -11,9 +11,7 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "lib",
-    "LICENSE",
-    "README.md"
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -25,52 +23,54 @@
   },
   "dependencies": {
     "array-sort": "^0.1.2",
-    "async-each": "^1.0.0",
+    "async-each": "^1.0.1",
     "base": "^0.11.1",
     "base-data": "^0.6.0",
     "base-engines": "^0.2.0",
     "base-helpers": "^0.1.1",
-    "base-option": "^0.8.3",
+    "base-option": "^0.8.4",
     "base-plugins": "^0.4.13",
-    "base-routes": "^0.2.1",
-    "debug": "^2.2.0",
+    "base-routes": "^0.2.2",
+    "debug": "^2.5.2",
     "deep-bind": "^0.3.0",
     "define-property": "^0.2.5",
+    "dry": "^1.0.0",
     "engine-base": "^0.1.2",
     "export-files": "^2.1.1",
     "extend-shallow": "^2.0.1",
     "falsey": "^0.3.0",
     "get-value": "^2.0.6",
-    "get-view": "^0.1.1",
-    "group-array": "^0.3.0",
-    "has-glob": "^0.1.1",
+    "get-view": "^0.1.2",
+    "group-array": "^0.3.1",
+    "has-glob": "^1.0.0",
     "has-value": "^0.3.1",
     "inflection": "^1.10.0",
-    "is-valid-app": "^0.2.0",
-    "layouts": "^0.11.0",
-    "lazy-cache": "^2.0.1",
+    "is-valid-app": "^0.2.1",
+    "lazy-cache": "^2.0.2",
     "match-file": "^0.2.0",
     "mixin-deep": "^1.1.3",
-    "paginationator": "^0.1.3",
+    "paginationator": "^0.1.4",
     "pascalcase": "^0.1.1",
-    "set-value": "^0.3.3",
+    "set-value": "^0.4.0",
     "template-error": "^0.1.2",
-    "vinyl-item": "^0.1.0",
-    "vinyl-view": "^0.1.2"
+    "vinyl-item": "^1.0.0",
+    "vinyl-view": "^1.0.0"
   },
   "devDependencies": {
     "ansi-red": "^0.1.1",
     "base-test-runner": "^0.2.0",
-    "base-test-suite": "^0.1.12",
+    "base-test-suite": "^0.3.0",
+    "ent": "^2.2.0",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.0",
-    "gulp-format-md": "^0.1.9",
-    "gulp-istanbul": "^1.0.0",
-    "gulp-mocha": "^2.2.0",
-    "gulp-unused": "^0.1.2",
+    "gulp-eslint": "^3.0.1",
+    "gulp-format-md": "^0.1.11",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-unused": "^0.2.0",
     "helper-changelog": "^0.3.0",
-    "verb-generate-readme": "^0.1.21",
-    "yargs-parser": "^2.4.0"
+    "remarkable": "^1.7.1",
+    "verb-generate-readme": "^0.2.0",
+    "yargs-parser": "^4.2.0"
   },
   "keywords": [
     "compile",
@@ -110,18 +110,17 @@
         "verb"
       ]
     },
+    "lint": {
+      "reflinks": false
+    },
     "reflinks": [
       "array-sort",
-      "assemble-permalinks",
       "base",
       "base-data",
       "base-engine",
       "base-helpers",
       "base-routes",
       "engine-cache",
-      "engine-handlebars",
-      "engine-lodash",
-      "engine-nunjucks",
       "group-array",
       "paginationator",
       "verb",
@@ -129,9 +128,6 @@
       "vinyl",
       "vinyl-item",
       "vinyl-view"
-    ],
-    "lint": {
-      "reflinks": false
-    }
+    ]
   }
 }
