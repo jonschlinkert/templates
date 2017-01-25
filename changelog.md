@@ -8,6 +8,16 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 - `removed`: for deprecated features removed in this release
 - `fixed`: for any bug fixes
 
+### [1.1.0]
+
+**fixed**
+
+Reverts layout changes from 1.0 to fix block-layout-nesting bug. 
+
+There is a bug causing child blocks to be promoted up to ancestors when a nested layout/block is defined. It's not a common scenario, and probably hasn't been encountered in the wild yet since blocks were just introduced and haven't been documented yet. However, it's a bad bug, and would cause major problems if it surfaced.
+
+The good news is that I know how to fix it. Bad news is that it will be time consuming and I need to make other changes before I get to that fix. Thus, in the meantime the best course of action is removing the blocks code.
+
 ### [1.0.0]
 
 **Added**
