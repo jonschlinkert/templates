@@ -1,6 +1,5 @@
----
-layout: section
----
+{% layout "section" %}
+
 # Test post
 
 > This is a blockquote

@@ -1,7 +1,7 @@
 /*!
  * templates <https://github.com/jonschlinkert/templates>
  *
- * Copyright (c) 2015, Jon Schlinkert.
+ * Copyright (c) 2015-2017, Jon Schlinkert.
  * Licensed under the MIT License.
  */
 

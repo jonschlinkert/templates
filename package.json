@@ -58,9 +58,15 @@
   },
   "devDependencies": {
     "ansi-red": "^0.1.1",
+    "assemble-fs": "^0.8.0",
     "assemble-loader": "^0.6.1",
+    "assemble-render-file": "^0.7.2",
+    "assemble-streams": "^0.7.0",
+    "base-runtimes": "^0.2.0",
+    "base-tasks": "^0.4.0",
     "base-test-runner": "^0.2.0",
     "base-test-suite": "^0.3.0",
+    "engine-handlebars": "^0.8.0",
     "ent": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
@@ -72,6 +78,7 @@
     "mocha": "^3.2.0",
     "parser-front-matter": "^1.6.2",
     "remarkable": "^1.7.1",
+    "through2": "^2.0.3",
     "yargs-parser": "^4.2.0"
   },
   "keywords": [
