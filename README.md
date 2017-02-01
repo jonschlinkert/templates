@@ -195,7 +195,7 @@ app.create('pages');
 var list = app.list(app.pages);
 ```
 
-### [.collection](index.js#L193)
+### [.collection](index.js#L200)
 
 Create a new collection. Collections are decorated with special methods for getting and setting items from the collection. Note that, unlike the [create](#create) method, collections created with `.collection()` are not cached.
 
@@ -207,7 +207,7 @@ information about collections.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.create](index.js#L245)
+### [.create](index.js#L240)
 
 Create a new view collection to be stored on the `app.views` object. See
 the [create docs](docs/collections.md#create) for more details.
@@ -218,7 +218,7 @@ the [create docs](docs/collections.md#create) for more details.
 * `opts` **{Object}**: Collection options
 * `returns` **{Object}**: Returns the `collection` instance for chaining.
 
-### [.setup](index.js#L375)
+### [.setup](index.js#L372)
 
 Expose static `setup` method for providing access to an instance before any other code is run.
 
@@ -624,7 +624,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L310)
+### [.mergePartials](lib/plugins/context.js#L321)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -635,7 +635,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L351)
+### [.mergePartialsAsync](lib/plugins/context.js#L362)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -731,7 +731,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L310)
+### [.mergePartials](lib/plugins/context.js#L321)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -742,7 +742,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L351)
+### [.mergePartialsAsync](lib/plugins/context.js#L362)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -952,7 +952,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L310)
+### [.mergePartials](lib/plugins/context.js#L321)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -963,7 +963,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L351)
+### [.mergePartialsAsync](lib/plugins/context.js#L362)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1204,7 +1204,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L310)
+### [.mergePartials](lib/plugins/context.js#L321)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1215,7 +1215,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L351)
+### [.mergePartialsAsync](lib/plugins/context.js#L362)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1246,7 +1246,7 @@ var list = new List();
 list.addItem('foo', {content: 'bar'});
 ```
 
-### [.addItem](lib/list.js#L108)
+### [.addItem](lib/list.js#L118)
 
 Add an item to `list.items`. This is identical to [setItem](#setItem) except `addItem` returns the `item`, add `setItem` returns the instance of `List`.
 
@@ -1262,7 +1262,7 @@ Add an item to `list.items`. This is identical to [setItem](#setItem) except `ad
 collection.addItem('foo', {content: 'bar'});
 ```
 
-### [.setItem](lib/list.js#L146)
+### [.setItem](lib/list.js#L156)
 
 Add an item to `list.items`. This is identical to [addItem](#addItem) except `addItem` returns the `item`, add `setItem` returns the instance of `List`.
 
@@ -1279,7 +1279,7 @@ var items = new Items(...);
 items.setItem('a.html', {path: 'a.html', contents: '...'});
 ```
 
-### [.addItems](lib/list.js#L166)
+### [.addItems](lib/list.js#L176)
 
 Load multiple items onto the collection.
 
@@ -1298,7 +1298,7 @@ collection.addItems({
 });
 ```
 
-### [.addList](lib/list.js#L195)
+### [.addList](lib/list.js#L205)
 
 Load an array of items or the items from another instance of `List`.
 
@@ -1316,7 +1316,7 @@ var bar = new List(...);
 bar.addList(foo);
 ```
 
-### [.hasItem](lib/list.js#L232)
+### [.hasItem](lib/list.js#L240)
 
 Return true if the list has the given item (name).
 
@@ -1333,7 +1333,7 @@ list.hasItem('foo.html');
 //=> true
 ```
 
-### [.getIndex](lib/list.js#L248)
+### [.getIndex](lib/list.js#L256)
 
 Get a the index of a specific item from the list by `key`.
 
@@ -1349,7 +1349,7 @@ list.getIndex('foo.html');
 //=> 1
 ```
 
-### [.getItem](lib/list.js#L292)
+### [.getItem](lib/list.js#L300)
 
 Get a specific item from the list by `key`.
 
@@ -1365,7 +1365,7 @@ list.getItem('foo.html');
 //=> '<Item <foo.html>>'
 ```
 
-### [.getView](lib/list.js#L311)
+### [.getView](lib/list.js#L319)
 
 Proxy for `getItem`
 
@@ -1381,7 +1381,7 @@ list.getItem('foo.html');
 //=> '<Item "foo.html" <buffer e2 e2 e2>>'
 ```
 
-### [.deleteItem](lib/list.js#L325)
+### [.deleteItem](lib/list.js#L333)
 
 Remove an item from the list.
 
@@ -1395,7 +1395,21 @@ Remove an item from the list.
 list.deleteItem('a.html');
 ```
 
-### [.extendItem](lib/list.js#L344)
+### [.deleteItems](lib/list.js#L352)
+
+Remove one or more items from the list.
+
+**Params**
+
+* `items` **{Object|String|Array}**: List of items to remove.
+
+**Example**
+
+```js
+list.deleteItems(['a.html', 'b.html']);
+```
+
+### [.extendItem](lib/list.js#L372)
 
 Decorate each item on the list with additional methods
 and properties. This provides a way of easily overriding
@@ -1406,21 +1420,21 @@ defaults.
 * `item` **{Object}**
 * `returns` **{Object}**: Instance of item for chaining
 
-### [.groupBy](lib/list.js#L363)
+### [.filter](lib/list.js#L390)
 
-Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
+Filters list `items` using the given `fn` and returns a new array.
 
-* `returns` **{Object}**: Returns the grouped items.
+* `returns` **{Object}**: Returns a filtered array of items.
 
 **Example**
 
 ```js
-var list = new List();
-list.addItems(...);
-var groups = list.groupBy('data.date', 'data.slug');
+var items = list.filter(function(item) {
+  return item.data.title.toLowerCase() !== 'home';
+});
 ```
 
-### [.sortBy](lib/list.js#L389)
+### [.sortBy](lib/list.js#L411)
 
 Sort all list `items` using the given property, properties or compare functions. See [array-sort](https://github.com/jonschlinkert/array-sort) for the full range of available features and options.
 
@@ -1435,7 +1449,21 @@ var result = list.sortBy('data.date');
 //=> new sorted list
 ```
 
-### [.paginate](lib/list.js#L437)
+### [.groupBy](lib/list.js#L449)
+
+Group all list `items` using the given property, properties or compare functions. See [group-array](https://github.com/doowb/group-array) for the full range of available features and options.
+
+* `returns` **{Object}**: Returns the grouped items.
+
+**Example**
+
+```js
+var list = new List();
+list.addItems(...);
+var groups = list.groupBy('data.date', 'data.slug');
+```
+
+### [.paginate](lib/list.js#L476)
 
 Paginate all `items` in the list with the given options, See [paginationator](https://github.com/doowb/paginationator) for the full range of available features and options.
 
@@ -1487,7 +1515,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L310)
+### [.mergePartials](lib/plugins/context.js#L321)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1498,7 +1526,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L351)
+### [.mergePartialsAsync](lib/plugins/context.js#L362)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1699,7 +1727,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L310)
+### [.mergePartials](lib/plugins/context.js#L321)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1710,7 +1738,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L351)
+### [.mergePartialsAsync](lib/plugins/context.js#L362)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -2269,7 +2297,7 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 | **Commits** | **Contributor** | 
 | --- | --- |
-| 715 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 722 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 105 | [doowb](https://github.com/doowb) |
 | 1 | [chronzerg](https://github.com/chronzerg) |
 
@@ -2285,7 +2313,7 @@ $ npm install -g verbose/verb#dev verb-generate-readme && verb
 
 ### Running tests
 
-Install dev dependencies:
+Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
 
 ```sh
 $ npm install && npm test
@@ -2301,8 +2329,8 @@ $ npm install && npm test
 ### License
 
 Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](LICENSE).
+MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.1, on January 25, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 01, 2017._
