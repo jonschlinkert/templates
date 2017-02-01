@@ -2,7 +2,7 @@
  * templates <https://github.com/jonschlinkert/templates>
  *
  * Copyright (c) 2015-2017, Jon Schlinkert.
- * Licensed under the MIT License.
+ * Released under the MIT License.
  */
 
 'use strict';
@@ -74,7 +74,7 @@ Templates.prototype.initTemplates = function() {
   this.use(plugin.lookup);
   this.use(utils.engines());
   this.use(utils.helpers());
-  this.use(utils.routes())
+  this.use(utils.routes());
 
   this.use(plugin.item('item', 'Item'));
   this.use(plugin.item('view', 'View'));
@@ -151,21 +151,28 @@ Templates.prototype.listen = function(app) {
  * @api public
  */
 
-Templates.prototype.list = function(opts) {
-  opts = opts || {};
+Templates.prototype.list = function(options) {
+  options = options || {};
+  var opts = {};
 
-  if (!opts.isList) {
-    utils.defaults(opts, this.options);
+  if (options.isList || options.isViews) {
+    opts = utils.merge({}, this.options, options.options);
+  } else {
+    opts = utils.merge({}, this.options, options);
   }
 
   var List = opts.List || this.get('List');
   var list = {};
 
-  if (opts.isList === true || opts instanceof List) {
-    list = opts;
-  } else {
-    opts.Item = opts.Item || opts.View || this.get('Item');
+  if (!options.isList) {
+    opts.Item = opts.Item || this.get('Item');
     list = new List(opts);
+
+    if (options.isViews) {
+      list.addItems(options.views);
+    }
+  } else {
+    list = options;
   }
 
   // customize list items
@@ -190,44 +197,32 @@ Templates.prototype.list = function(opts) {
  * @api public
  */
 
-Templates.prototype.collection = function(opts, created) {
-  opts = opts || {};
+Templates.prototype.collection = function(options, created) {
+  options = options || {};
+  var opts = {};
 
-  if (!opts.isCollection) {
-    utils.defaults(opts, this.options);
+  if (options.isList || options.isCollection) {
+    opts = utils.merge({}, this.options, options.options);
+  } else {
+    opts = utils.merge({}, this.options, options);
   }
 
   var Collection = opts.Collection || opts.Views || this.get('Views');
   var collection = {};
 
-  if (opts.isCollection === true) {
-    collection = opts;
+  if (options.isCollection) {
+    collection = options;
+
   } else {
-    opts.Item = opts.Item || opts.View || this.get('View');
+    opts.Item = opts.Item || this.get('Item');
     collection = new Collection(opts);
   }
 
-  if (created !== true) {
-    // if it's a view collection, prime the viewType(s)
-    if (collection.isViews) {
-      collection.viewType();
-    }
-
-    // run collection plugins
-    this.run(collection);
-
-    // emit the collection
-    this.emit('collection', collection, opts);
+  if (!options.isCollection) {
     this.extendViews(collection, opts);
-
-    // add collection and view helpers
-    helpers.singular(this, collection);
-    helpers.plural(this, collection);
-  } else {
-
-    // emit the collection
-    this.emit('collection', collection, opts);
   }
+
+  this.emit('collection', collection, opts);
   return collection;
 };
 
@@ -242,19 +237,22 @@ Templates.prototype.collection = function(opts, created) {
  * @api public
  */
 
-Templates.prototype.create = function(name, opts) {
+Templates.prototype.create = function(name, options) {
   debug('creating view collection: "%s"', name);
-  opts = opts || {};
+  options = options || {};
+  var opts = {};
 
-  if (!opts.isCollection) {
-    opts = utils.merge({}, this.options, opts);
+  if (!options.isCollection && !options.isViews) {
+    opts = utils.merge({}, this.options, options);
+  } else {
+    opts = utils.merge({}, this.options, options.options);
   }
 
   // emit the collection name and options
-  this.emit('create', name, opts);
+  this.emit('create', name, options);
 
   // create the actual collection
-  var collection = this.collection(opts, true);
+  var collection = this.collection(options, true);
   utils.setInstanceNames(collection, name);
 
   // get the collection inflections, e.g. page/pages
@@ -271,40 +269,39 @@ Templates.prototype.create = function(name, opts) {
   // prime the viewType(s) for the collection
   this.viewType(plural, collection.viewType());
 
-  // add the collection to `app.views`
-  this.views[plural] = collection.items || collection.views;
+  // add a reference the collection's views on `app.views[plural]`
+  this.views[plural] = collection.views;
 
-  // create loader functions for adding views to this collection
+  // create loader functions for adding views to the collection
+  var parent = Object.create(collection);
   this.define(plural, function() {
-    return collection.addViews.apply(collection, arguments);
+    return parent.addViews.apply(parent, arguments);
   });
   this.define(single, function() {
-    return collection.addView.apply(collection, arguments);
+    return parent.addView.apply(parent, arguments);
   });
 
-  /* eslint-disable no-proto */
-  // decorate loader methods with collection methods
-  this[plural].__proto__ = collection;
-  this[single].__proto__ = collection;
+  Object.setPrototypeOf(this[plural], parent);
+  Object.setPrototypeOf(this[single], parent);
 
-  // create aliases on the collection for
-  // addView/addViews to support chaining
+  // create references to the app methods on the collection
+  // itself, so that chaining will work seamlessly
   collection.define(plural, this[plural]);
   collection.define(single, this[single]);
+
+  // decorate collection and views in collection
+  // (this is a prototype method to allow overriding behavior)
+  this.extendViews(collection, options);
 
   // run collection plugins
   this.run(collection);
 
-  // decorate collection and views in collection
-  // (this is a prototype method to allow overriding behavior)
-  this.extendViews(collection, opts);
-
-  // emit create
-  this.emit('postCreate', collection, opts);
-
   // add collection and view helpers
   helpers.singular(this, collection);
   helpers.plural(this, collection);
+
+  // emit create
+  this.emit('postCreate', collection, options);
   return collection;
 };
 
