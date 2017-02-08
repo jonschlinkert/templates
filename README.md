@@ -624,7 +624,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L321)
+### [.mergePartials](lib/plugins/context.js#L322)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -635,7 +635,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L362)
+### [.mergePartialsAsync](lib/plugins/context.js#L363)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -731,7 +731,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L321)
+### [.mergePartials](lib/plugins/context.js#L322)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -742,7 +742,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L362)
+### [.mergePartialsAsync](lib/plugins/context.js#L363)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -952,7 +952,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L321)
+### [.mergePartials](lib/plugins/context.js#L322)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -963,7 +963,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L362)
+### [.mergePartialsAsync](lib/plugins/context.js#L363)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1204,7 +1204,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L321)
+### [.mergePartials](lib/plugins/context.js#L322)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1215,7 +1215,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L362)
+### [.mergePartialsAsync](lib/plugins/context.js#L363)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1515,7 +1515,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L321)
+### [.mergePartials](lib/plugins/context.js#L322)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1526,7 +1526,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L362)
+### [.mergePartialsAsync](lib/plugins/context.js#L363)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -1727,7 +1727,7 @@ the options for that specific helper.
 * `context` **{Object}**
 * `key` **{String}**
 
-### [.mergePartials](lib/plugins/context.js#L321)
+### [.mergePartials](lib/plugins/context.js#L322)
 
 Merge "partials" view types. This is necessary for template
 engines have no support for partials or only support one
@@ -1738,7 +1738,7 @@ type of partials.
 * `options` **{Object}**: Optionally pass an array of `viewTypes` to include on `options.viewTypes`
 * `returns` **{Object}**: Merged partials
 
-### [.mergePartialsAsync](lib/plugins/context.js#L362)
+### [.mergePartialsAsync](lib/plugins/context.js#L363)
 
 Merge "partials" view types. This is necessary for template engines
 have no support for partials or only support one type of partials.
@@ -2297,7 +2297,7 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 | **Commits** | **Contributor** | 
 | --- | --- |
-| 722 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 732 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 105 | [doowb](https://github.com/doowb) |
 | 1 | [chronzerg](https://github.com/chronzerg) |
 
@@ -2333,4 +2333,4 @@ MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 01, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 08, 2017._
