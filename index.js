@@ -128,7 +128,7 @@ Templates.prototype.listen = function(app) {
     if (!fn) return;
     for (var key in app.views) {
       if (app.views.hasOwnProperty(key)) {
-        app[key].use(fn);
+        app[key].__proto__.use(fn);
       }
     }
   });
