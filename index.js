@@ -240,13 +240,6 @@ Templates.prototype.collection = function(options, created) {
 Templates.prototype.create = function(name, options) {
   debug('creating view collection: "%s"', name);
   options = options || {};
-  var opts = {};
-
-  if (!options.isCollection && !options.isViews) {
-    opts = utils.merge({}, this.options, options);
-  } else {
-    opts = utils.merge({}, this.options, options.options);
-  }
 
   // emit the collection name and options
   this.emit('create', name, options);
@@ -336,15 +329,16 @@ Templates.prototype.extendList = function(views, options) {
  * Resolve the name of the layout to use for `view`
  */
 
-Templates.prototype.resolveLayout = function(view) {
+Templates.prototype.resolveLayout = function(view, options) {
   debug('resolving layout for "%s"', view.key);
+  var opts = Object.assign({}, options);
 
   if (!utils.isPartial(view) && typeof view.layout === 'undefined') {
     if (view.options && view.options.collection) {
       var collection = this[view.options.collection];
       var layout = collection.resolveLayout(view);
       if (typeof layout === 'undefined') {
-        layout = this.option('layout');
+        layout = opts.layout || this.option('layout');
       }
       return layout;
     }
