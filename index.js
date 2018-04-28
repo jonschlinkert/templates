@@ -1,7 +1,7 @@
 'use strict';
 
-const Common = require('./lib/common');
 const Collection = require('./lib/collection');
+const Common = require('./lib/common');
 const View = require('./lib/view');
 
 /**
@@ -19,9 +19,15 @@ const View = require('./lib/view');
 class Templates extends Common {
   constructor(options) {
     super(options);
+    this.type = 'app';
+    this.collections = new Map();
     this.viewCache = new Map();
-    this.collections = {};
-    this.types = {};
+    this.views = new Map();
+    this.kinds = {};
+  }
+
+  kind(name) {
+    return this.kinds[name] || (this.kinds[name] = new Map());
   }
 
   /**
@@ -82,7 +88,9 @@ class Templates extends Common {
   }
 
   /**
-   * Create a cached view collection.
+   * Create a cached view collection. When the collection emits a `view`, the view
+   * is also cached on `app` to make lookups more performant.
+   *
    * @param {String} `name` (required) Collection name
    * @param {Object} `options`
    * @return {Object} Returns the collection.
@@ -92,15 +100,14 @@ class Templates extends Common {
   create(name, options) {
     const opts = { ...this.options, ...options };
     const collection = this.collection(name, opts);
-    this.collections[name] = collection;
+    this.run(collection);
 
-    collection.on('error', this.emit.bind(this, 'error'));
-    collection.on('view', view => {
-      this.types[view.type] = this.types[view.type] || {};
-      this.types[view.type][view.key] = view;
-      this.viewCache.set(view.path, view);
-      this.emit('view', view);
-    });
+    this.collections.set(name, collection);
+    this.views.set(name, new Map());
+
+    collection.once('error', this.emit.bind(this, 'error'));
+    collection.on('delete', view => this.deleteView(name, view));
+    collection.on('view', view => this.setView(name, view));
 
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
@@ -108,11 +115,41 @@ class Templates extends Common {
     };
 
     if (opts.collectionMethod !== false) {
-      this[name] = collection.set;
+      this[name] = collection.set.bind(collection);
+      Object.setPrototypeOf(this[name], collection);
     }
 
-    this.emit('collection', name, collection);
+    this.emit('collection', collection);
     return collection;
+  }
+
+  setView(name, view) {
+    this.views.get(name).set(view.key, view);
+    this.kind(view.kind).set(view.key, view);
+    this.viewCache.set(view.path, view);
+    this.emitState('view', 'added', { kind: view.kind });
+    this.emit('view', view);
+  }
+
+  deleteView(name, view) {
+    this.views.get(name).delete(view.key);
+    this.viewCache.set(view.path, view);
+    if (this.kinds[view.kind] && this.kinds[view.kind].has(view.key)) {
+      this.kinds[view.kind].delete(view);
+    }
+    this.emitState('view', 'deleted');
+    this.emit('delete', view);
+  }
+
+  /**
+   *  Ensure `view` is emitted and plugins are run on collection-less views.
+   */
+
+  view(...args) {
+    const view = super.view(...args);
+    this.run(view);
+    this.emit('view', view);
+    return view;
   }
 
   /**

@@ -8,7 +8,7 @@ let app;
 describe('app.renderLayout', function() {
   beforeEach(function() {
     app = new App();
-    app.create('layouts', { type: 'layout' });
+    app.create('layouts', { kind: 'layout' });
     app.create('pages');
     app.engine('hbs', engines.handlebars(require('handlebars')));
   });

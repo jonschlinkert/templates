@@ -45,7 +45,7 @@ describe('View', function() {
 
   describe('constructor()', function() {
     it('should throw an error if value is a string', function() {
-      assert.throws(() => new View('foo'), /expected an object/);
+      assert.throws(() => new View('foo'), /expected/);
     });
 
     it('should default cwd to process.cwd', function() {
@@ -103,9 +103,9 @@ describe('View', function() {
       assert.deepEqual(view.history, [val]);
     });
 
-    it('should set history to given value', function() {
+    it('should set given value to history', function() {
       const val = '/test.coffee';
-      const view = new View({ history: [val] });
+      const view = new View({ path: val });
       assert.equal(view.path, val);
       assert.deepEqual(view.history, [val]);
     });
@@ -281,9 +281,9 @@ describe('View', function() {
       assert.equal(view.contents, null);
     });
 
-    it('should throw when user attempts to set a string on contents', function() {
+    it('should not throw when user attempts to set a string on contents', function() {
       const view = new View();
-      assert.throws(() => {
+      assert.doesNotThrow(() => {
         view.contents = 'test';
       });
     });
@@ -295,8 +295,8 @@ describe('View', function() {
       assert.equal(view.layout, 'default');
     });
 
-    it('should make view.layout undefined when view.type is partial', function() {
-      view = new View({ path: 'test/fixture', layout: 'default', type: 'partial' });
+    it('should make view.layout undefined when view.kind is partial', function() {
+      view = new View({ path: 'test/fixture', layout: 'default', kind: 'partial' });
       assert.equal(view.layout, undefined);
     });
   });

@@ -10,14 +10,14 @@ describe('collection', function() {
     assert.doesNotThrow(() => new Collection(), /expected/);
   });
 
-  it('should set the collection.type to renderable by default', function() {
+  it('should set the collection.kind to renderable by default', function() {
     const pages = new Collection('pages');
-    assert.equal(pages.type, 'renderable');
+    assert.equal(pages.kind, 'renderable');
   });
 
-  it('should allow collection.type to be set', function() {
+  it('should allow collection.kind to be set', function() {
     const pages = new Collection('pages');
-    pages.type = 'layout';
-    assert.equal(pages.type, 'layout');
+    pages.kind = 'layout';
+    assert.equal(pages.kind, 'layout');
   });
 });

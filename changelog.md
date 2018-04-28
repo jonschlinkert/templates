@@ -8,6 +8,12 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 - `removed`: for deprecated features removed in this release
 - `fixed`: for any bug fixes
 
+### [2.0.0]
+
+**MAJOR BREAKING CHANGES**
+
+- Converted to es6 class, you must now always call `new` to instantiate. 
+
 ### [1.1.0]
 
 **fixed**

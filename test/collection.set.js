@@ -9,7 +9,7 @@ describe('collection.set', function() {
   it('should set a view on collection.views', function() {
     const pages = new Collection('pages');
     pages.set('foo.hbs', {});
-    assert(pages.views.hasOwnProperty('foo.hbs'));
+    assert(pages.views.has('foo.hbs'));
   });
 
   it('should set contents when second argument is a string', async function() {
