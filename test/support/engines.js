@@ -40,15 +40,13 @@ exports.handlebars = handlebars => {
   };
 };
 
-exports.lodash = lodash => {
-  const _ = lodash.runInContext();
-
+exports.base = base => {
   return {
-    name: 'lodash',
-    instance: _,
+    name: 'base',
+    instance: base,
     compile: function(view, options) {
       const opts = Object.assign({ imports: this.helpers }, options);
-      if (!view.fn) view.fn = _.template(view.contents.toString(), opts);
+      if (!view.fn) view.fn = base.compile(view.contents.toString(), opts);
     },
     render: async function render(view, locals) {
       const res = await resolve(this, await view.fn(locals));

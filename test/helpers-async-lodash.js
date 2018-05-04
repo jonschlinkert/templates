@@ -3,20 +3,20 @@
 require('mocha');
 const util = require('util');
 const assert = require('assert');
-const lodash = require('lodash');
+const Engine = require('engine');
 const Collection = require('../lib/collection');
 const engines = require('./support/engines');
 const helpers = require('./support/helpers');
 const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
 let pages, render, other, tmpl, locals;
 
-describe('async helpers - lodash', function() {
+describe('async helpers - base', function() {
   beforeEach(function() {
-    const engine = engines.lodash(lodash);
+    const base = engines.base(new Engine());
     pages = new Collection('pages', { asyncHelpers: true });
-    pages.engine('tmpl', engine);
+    pages.engine('tmpl', base);
 
-    pages.helper(helpers.lodash);
+    pages.helper(helpers.base);
     pages.helper(helpers.commonAsync);
 
     pages.set('a.tmpl', { contents: Buffer.from('a <%= upper(name) %> b'), data: { name: 'Brian' } });

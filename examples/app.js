@@ -1,7 +1,7 @@
 'use strict';
 (async function() {
 
-const lodash = require('lodash');
+const Engine = require('engine');
 const engines = require('../test/support/engines');
 const path = require('path');
 const red = require('ansi-red');
@@ -18,8 +18,9 @@ app.on('error', console.log);
  * Engine
  */
 
-app.engine('*', engines.lodash(lodash));
-app.engine('html', engines.lodash(lodash));
+const base = new Engine();
+app.engine('*', engines.base(base));
+app.engine('html', engines.base(base));
 app.option('engine', '*');
 
 /**
@@ -41,7 +42,7 @@ app.create('articles')
 
 
 const posts = app.create('posts')
-  .engine('*', engines.lodash(lodash))
+  .engine('*', engines.base(base))
   .data('title', 'HOOMMMME!');
 
 await posts.set('home', 'The <%= title %> page');

@@ -123,6 +123,22 @@ class Templates extends Common {
     return collection;
   }
 
+  /**
+   *  Create a new `View`. Ensures `view` is emitted and plugins
+   *  are run on the view.
+   */
+
+  view(...args) {
+    const view = super.view(...args);
+    this.run(view);
+    this.emit('view', view);
+    return view;
+  }
+
+  /**
+   *  Add a view to collection `name`.
+   */
+
   setView(name, view) {
     this.views.get(name).set(view.key, view);
     this.kind(view.kind).set(view.key, view);
@@ -130,6 +146,10 @@ class Templates extends Common {
     this.emitState('view', 'added', { kind: view.kind });
     this.emit('view', view);
   }
+
+  /**
+   *  Delete a view from collection `name`.
+   */
 
   deleteView(name, view) {
     this.views.get(name).delete(view.key);
@@ -139,17 +159,6 @@ class Templates extends Common {
     }
     this.emitState('view', 'deleted');
     this.emit('delete', view);
-  }
-
-  /**
-   *  Ensure `view` is emitted and plugins are run on collection-less views.
-   */
-
-  view(...args) {
-    const view = super.view(...args);
-    this.run(view);
-    this.emit('view', view);
-    return view;
   }
 
   /**

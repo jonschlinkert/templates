@@ -1,0 +1,1 @@
+const Templates = require('..');

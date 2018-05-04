@@ -106,7 +106,7 @@ exports.commonSync = {
   }
 };
 
-exports.lodash = {
+exports.base = {
   spacer: function(str, delim) {
     return wait(() => str.split('').join(delim || ' '));
   },
