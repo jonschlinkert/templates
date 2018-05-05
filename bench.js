@@ -3,7 +3,7 @@
 const handlebars = require('handlebars');
 const engine = require('./examples/support/engine');
 const Templates = require('./');
-const app = new Templates();
+const app = new Templates({ asyncHelpers: false });
 app.engine('hbs', engine(handlebars));
 
 const pages = app.create('pages');
@@ -24,7 +24,10 @@ console.time('layout');
 
 while (count--) {
   await app.render(view, { description: 'This is page: ' + count });
+  // console.log(view.contents.toString());
 }
 
-console.timeEnd('layout')
+console.timeEnd('layout');
+// async helpers: 10685.452ms
+// sync helpers: 6109.198ms
 })();
