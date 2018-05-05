@@ -20,7 +20,7 @@ describe('app.renderLayout', function() {
     });
   });
 
-  it('should render get layouts from render locals', async () => {
+  it('should get layouts from render locals', async () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
@@ -28,7 +28,7 @@ describe('app.renderLayout', function() {
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should render get layouts from render options', async () => {
+  it('should get layouts from render options', async () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
@@ -37,6 +37,14 @@ describe('app.renderLayout', function() {
   });
 
   it('should get layouts from app.types.layouts', async () => {
+    app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
+    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+
+    await app.renderLayout(view);
+    assert.equal(view.contents.toString(), 'before This is content after');
+  });
+
+  it('should render a layout multiple times', async () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
