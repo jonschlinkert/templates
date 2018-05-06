@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const handlebars = require('./support/handlebars');
 const Collection = require('../lib/collection');
 const engines = require('./support/engines');
 let pages, layouts;
@@ -9,7 +10,7 @@ describe('collection.render', function() {
   beforeEach(function() {
     layouts = new Collection('layouts');
     pages = new Collection('pages', { asyncHelpers: true });
-    pages.engine('hbs', engines.handlebars(require('handlebars')));
+    pages.engine('hbs', handlebars(require('handlebars')));
   });
 
   describe('rendering', function() {
@@ -26,6 +27,8 @@ describe('collection.render', function() {
 
     it('should throw an error when an engine is not defined:', function() {
       pages.set('foo.bar', { contents: Buffer.from('<%= name %>') });
+      pages.engines.delete('.hbs');
+
       const page = pages.get('foo.bar');
 
       return pages.render(page)

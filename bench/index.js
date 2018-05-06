@@ -122,28 +122,24 @@ bench('engines')
  * Layouts
  */
 
-(async function() {
+let initialized = false;
 
-const app = new Templates();
+app = new Templates({ asyncHelpers: false });
 app.engine('hbs', engine(handlebars));
 
-const pages = app.create('pages');
-const layouts = app.create('layouts', { kind: 'layout' });
-// const view = pages.view('templates/foo.hbs', {
-//   contents: Buffer.from('Name: {{name}}'),
-//   data: { name: 'Brian' },
-//   layout: 'default'
-// });
+app.create('pages');
+app.create('layouts', { kind: 'layout' });
+app.layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
+app.layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
+app.layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
 
-const view = await pages.set('templates/foo.hbs', {
+const view = app.pages.set('foo', {
   contents: Buffer.from('Name: {{name}}, {{description}}'),
-  data: { name: 'Brian', description: 'This is a page' },
+  data: { name: 'Brian' },
   layout: 'default'
 });
 
-await layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after') });
-await layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
-let n = 0;
+// console.log(app)
 
 bench('layouts')
   // .add('collection.renderLayout()', () => {
@@ -151,25 +147,14 @@ bench('layouts')
   //   collection.set({ path: 'default', contents: 'before {{name}} after' });
   //   const view = new View({ path: 'foo/bar', contents: 'before {{name}} after' });
   // })
-  .add('collection.renderLayout()', () => {
+  .add('collection.renderLayout()', async() => {
 
-    try {
-      const contents = view.contents;
-      await app.render(view);
-      // console.log(view.contents.toString());
-      // view.contents = contents;
-      delete view.layoutStack;
-    } catch (err) {
-      // console.log(err);
-    }
-
-    // if (n >= 3) process.exit();
-    // n++;
+    // await app.render(view, { description: 'This is a page' });
+    // console.log(view.contents.toString())
 
   })
   .run({ async: true });
 
-})();
 
 // bench('rendering')
 //   .add('app.render()', () => {

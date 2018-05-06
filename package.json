@@ -27,19 +27,19 @@
     "ci": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "dependencies": {
-    "en-route": "^2.0.0",
+    "en-route": "^3.0.0",
     "kind-of": "^6.0.2",
     "layouts": "^3.0.1",
     "path-ends-with": "^2.0.0",
     "use": "^3.1.0"
   },
   "devDependencies": {
-    "ansi-red": "^0.1.1",
-    "engine": "^0.1.12",
-    "gulp-format-md": "^1.0.0",
     "handlebars": "^4.0.11",
-    "helper-changelog": "^0.3.0",
-    "mocha": "^3.5.3"
+    "engine": "^0.1.12",
+    "ansi-red": "^0.1.1",
+    "mocha": "^3.5.3",
+    "gulp-format-md": "^1.0.0",
+    "helper-changelog": "^0.3.0"
   },
   "keywords": [
     "compile",

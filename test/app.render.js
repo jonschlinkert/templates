@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const handlebars = require('./support/handlebars');
 const engines = require('./support/engines');
 const App = require('..');
 let app;
@@ -10,7 +11,7 @@ describe('app.render', function() {
     app = new App({ asyncHelpers: true });
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
-    app.engine('hbs', engines.handlebars(require('handlebars')));
+    app.engine('hbs', handlebars(require('handlebars')));
   });
 
   describe('rendering', function() {
@@ -27,6 +28,7 @@ describe('app.render', function() {
 
     it('should throw an error when an engine is not defined:', async() => {
       const page = await app.pages.set('foo.bar', { contents: Buffer.from('<%= name %>') });
+      app.engines.delete('.hbs');
 
       return app.render(page)
         .then(() => {

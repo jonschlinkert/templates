@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const handlebars = require('./support/handlebars');
 const engines = require('./support/engines');
 const App = require('..');
 let app;
@@ -10,7 +11,7 @@ describe('app.renderLayout', function() {
     app = new App();
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
-    app.engine('hbs', engines.handlebars(require('handlebars')));
+    app.engine('hbs', handlebars(require('handlebars')));
   });
 
   it('should throw an error when a layout cannot be found', async () => {

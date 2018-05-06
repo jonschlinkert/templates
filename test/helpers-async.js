@@ -3,7 +3,9 @@
 require('mocha');
 const assert = require('assert');
 const Collection = require('../lib/collection');
+const handlebars = require('./support/handlebars');
 const engines = require('./support/engines');
+const helpers = require('./support/helpers');
 const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
 let pages;
 let other;
@@ -13,8 +15,8 @@ describe('async-helpers', () => {
     pages = new Collection('pages', { asyncHelpers: true });
     other = new Collection('other', { asyncHelpers: true });
 
-    pages.engine('hbs', engines.handlebars(require('handlebars')));
-    other.engine('hbs', engines.handlebars(require('handlebars')));
+    pages.engine('hbs', handlebars(require('handlebars')));
+    other.engine('hbs', handlebars(require('handlebars')));
 
     pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
     other.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
@@ -27,11 +29,11 @@ describe('async-helpers', () => {
       assert(pages.helpers.upper);
     });
 
-    it('should set the original helper function on .fn', async () => {
+    it('should set the original helper function on .helper', async () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
       assert(pages.helpers.upper);
-      assert.deepEqual(pages.helpers.upper.fn.toString(), upper.toString());
+      assert.deepEqual(pages.helpers.upper.helper.toString(), upper.toString());
     });
   });
 
@@ -39,7 +41,7 @@ describe('async-helpers', () => {
     it('should get a helper', async () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
-      assert.deepEqual(pages.helper('upper').fn.toString(), upper.toString());
+      assert.deepEqual(pages.helper('upper').helper.toString(), upper.toString());
     });
 
     it('should get a wrapped helper', async () => {
@@ -82,11 +84,11 @@ describe('async-helpers', () => {
 
     it('should support sync helpers by default', async () => {
       pages.options.asyncHelpers = false;
+
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
 
-      assert.equal(pages.helper('upper').toString(), upper.toString());
-
+      assert.equal(pages.helper('upper').helper.toString(), upper.toString());
       const page = pages.get('a.hbs');
       await pages.render(page);
 
@@ -134,22 +136,21 @@ describe('async-helpers', () => {
   });
 
   // describe('errors', () => {
-  //   it('should handle errors in sync helpers', async() => {
-  //     const asyncHelpers3 = new AsyncHelpers();
-  //     const upper = function(str) {
-  //       throw new Error('UPPER Error');
+  //   it('should handle errors in sync helpers', () => {
+  //     const upper = str => {
+  //       throw new Error('broken');
   //     };
-  //     asyncHelpers3.set('upper', upper);
-  //     const helper = asyncHelpers3.get('upper', {wrap: true});
-  //     const id = helper('doowb');
-  //     return await asyncHelpers3.resolveId(id)
-  //       .then(function(val) {
-  //         return Promise.reject(new Error('expected an error'));
-  //       })
-  //       .catch(function(err) {
-  //         assert(err.hasOwnProperty('helper'), 'Expected a `helper` property on `err`');
-  //       });
+
+  //     pages.helper('upper', upper);
+  //     try {
+  //       pages.renderSync('a.hbs')
+  //       throw new Error('expected an error');
+  //     } catch (err) {
+  //       console.log(err);
+  //       assert.equal(err.message, 'broken');
+  //     }
   //   });
+  // });
 
   //   it('should handle errors in async helpers', async() => {
   //     const asyncHelpers3 = new AsyncHelpers();

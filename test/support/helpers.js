@@ -71,9 +71,7 @@ exports.commonAsync = {
     return await wait(() => str.toLowerCase());
   },
   upper: async function(str) {
-    return await wait(() => {
-      return str.toUpperCase();
-    });
+    return await wait(() => str.toUpperCase());
   },
   is: async function(val) {
     return await wait(async() => await val === true);
@@ -92,7 +90,10 @@ exports.commonSync = {
   getUser: function(obj, prop) {
     return obj[prop].toString();
   },
-  lower: function(str) {
+  prefix: function(prefix, str) {
+    return prefix + str;
+  },
+  lower: function(str, options) {
     return str.toLowerCase();
   },
   upper: function(str) {
@@ -120,5 +121,5 @@ exports.base = {
       }
     }
     return total;
-  },
+  }
 };

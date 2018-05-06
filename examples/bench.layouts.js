@@ -1,12 +1,13 @@
 (async function() {
 
 const handlebars = require('handlebars');
-const engine = require('./examples/support/engine');
-const Templates = require('./');
-const app = new Templates({ asyncHelpers: false });
+const engine = require('../lib/engine');
+const Templates = require('../');
+const app = new Templates();
 app.engine('hbs', engine(handlebars));
 
 const pages = app.create('pages');
+const partials = app.create('partials', { kind: 'partial' });
 const layouts = app.create('layouts', { kind: 'layout' });
 
 const view = await pages.set('templates/foo.hbs', {
@@ -15,19 +16,24 @@ const view = await pages.set('templates/foo.hbs', {
   layout: 'default'
 });
 
+// await partials.set({ path: 'button', contents: Buffer.from('<button>Click me</button>') });
 await layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
 await layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
 await layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
 
-let count = 1000000;
 console.time('layout');
+let max = 1000000;
+let i = 0;
 
-while (count--) {
-  await app.render(view, { description: 'This is page: ' + count });
-  // console.log(view.contents.toString());
+while (i++ < max) {
+  try {
+    await app.render(view, { description: 'This is page: ' + i });
+    // console.log(view.contents.toString());
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
 }
 
 console.timeEnd('layout');
-// async helpers: 10685.452ms
-// sync helpers: 6109.198ms
 })();

@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const util = require('util');
 const assert = require('assert');
 const Stream = require('stream');
 const View = require('../lib/view');
@@ -207,13 +208,13 @@ describe('View', function() {
   describe('inspect()', function() {
     it('should return correct format when no contents and no path', function() {
       const view = new View();
-      assert.equal(view.inspect(), '<View >');
+      assert.equal(view[util.inspect.custom](), '<View >');
     });
 
     it('should return correct format when Buffer and no path', function() {
       const val = Buffer.from('test');
       const view = new View({ contents: val });
-      assert.equal(view.inspect(), '<View <Buffer 74 65 73 74>>');
+      assert.equal(view[util.inspect.custom](), '<View <Buffer 74 65 73 74>>');
     });
 
     it('should return correct format when Buffer and relative path', function() {
@@ -224,7 +225,7 @@ describe('View', function() {
         path: '/test/test.coffee',
         contents: val
       });
-      assert.equal(view.inspect(), '<View "test.coffee" <Buffer 74 65 73 74>>');
+      assert.equal(view[util.inspect.custom](), '<View "test.coffee" <Buffer 74 65 73 74>>');
     });
 
     it('should return correct format when Buffer and only path and no base', function() {
@@ -235,7 +236,7 @@ describe('View', function() {
         contents: val
       });
       delete view.base;
-      assert.equal(view.inspect(), '<View "test/test.coffee" <Buffer 74 65 73 74>>');
+      assert.equal(view[util.inspect.custom](), '<View "test/test.coffee" <Buffer 74 65 73 74>>');
     });
 
     it('should return correct format when Stream and relative path', function() {
@@ -245,7 +246,7 @@ describe('View', function() {
         path: '/test/test.coffee',
         contents: new Stream.PassThrough()
       });
-      assert.equal(view.inspect(), '<View "test.coffee" <PassThroughStream>>');
+      assert.equal(view[util.inspect.custom](), '<View "test.coffee" <PassThroughStream>>');
     });
 
     it('should return correct format when null and relative path', function() {
@@ -255,7 +256,7 @@ describe('View', function() {
         path: '/test/test.coffee',
         contents: null
       });
-      assert.equal(view.inspect(), '<View "test.coffee">');
+      assert.equal(view[util.inspect.custom](), '<View "test.coffee">');
     });
   });
 

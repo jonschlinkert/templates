@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const handlebars = require('./support/handlebars');
 const Collection = require('../lib/collection');
 const engines = require('./support/engines');
 let pages, layouts;
@@ -8,7 +9,7 @@ let pages, layouts;
 describe('collection.handle', function() {
   beforeEach(function() {
     pages = new Collection('pages', { handlers: ['before', 'after', 'onLoad'] });
-    pages.engine('hbs', engines.handlebars(require('handlebars')));
+    pages.engine('hbs', handlebars(require('handlebars')));
   });
 
   it('should handle the specified middleware method', async() => {
@@ -29,33 +30,18 @@ describe('collection.handle', function() {
 
   it('should run middleware in series by default', async() => {
     const actual = [];
-
-    pages.onLoad('a.hbs', file => {
+    function fn(name, n) {
       return new Promise(resolve => {
         setTimeout(function() {
-          actual.push('onLoad');
+          actual.push(name);
           resolve();
-        }, 10);
+        }, n);
       });
-    });
+    }
 
-    pages.before('a.hbs', file => {
-      return new Promise(resolve => {
-        setTimeout(function() {
-          actual.push('before');
-          resolve();
-        }, 5);
-      });
-    });
-
-    pages.after('a.hbs', file => {
-      return new Promise(resolve => {
-        setTimeout(function() {
-          actual.push('after');
-          resolve();
-        }, 1);
-      });
-    });
+    pages.onLoad('a.hbs', file => fn('onLoad', 10));
+    pages.before('a.hbs', file => fn('before', 5));
+    pages.after('a.hbs', file => fn('after', 1));
 
     const page = await pages.set('a.hbs', {});
     await pages.handle('before', page);

@@ -20,6 +20,7 @@ class Templates extends Common {
   constructor(options) {
     super(options);
     this.type = 'app';
+    this.cache.partials = {};
     this.collections = new Map();
     this.viewCache = new Map();
     this.views = new Map();
@@ -145,6 +146,10 @@ class Templates extends Common {
     this.viewCache.set(view.path, view);
     this.emitState('view', 'added', { kind: view.kind });
     this.emit('view', view);
+
+    if (view.kind === 'partial') {
+      define(this.cache.partials, view);
+    }
   }
 
   /**
@@ -154,7 +159,7 @@ class Templates extends Common {
   deleteView(name, view) {
     this.views.get(name).delete(view.key);
     this.viewCache.set(view.path, view);
-    if (this.kinds[view.kind] && this.kinds[view.kind].has(view.key)) {
+    if (this.kinds[view.kind]) {
       this.kinds[view.kind].delete(view);
     }
     this.emitState('view', 'deleted');
@@ -182,6 +187,17 @@ class Templates extends Common {
   static get View() {
     return View;
   }
+}
+
+function define(cache, view) {
+  Reflect.defineProperty(cache, view.key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      // console.log(view.fn)
+      return view.fn || view.contents.toString();
+    }
+  });
 }
 
 /**

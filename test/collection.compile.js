@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const Collection = require('../lib/collection');
+const handlebars = require('./support/handlebars');
 const engines = require('./support/engines');
 let pages, layouts;
 
@@ -9,7 +10,7 @@ describe('collection.render', function() {
   beforeEach(function() {
     layouts = new Collection('layouts');
     pages = new Collection('pages');
-    pages.engine('hbs', engines.handlebars(require('handlebars')));
+    pages.engine('hbs', handlebars(require('handlebars')));
   });
 
   it('should throw an error when view is not an object', function() {
