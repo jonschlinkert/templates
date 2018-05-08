@@ -194,7 +194,6 @@ function define(cache, view) {
     enumerable: true,
     configurable: true,
     get() {
-      // console.log(view.fn)
       return view.fn || view.contents.toString();
     }
   });

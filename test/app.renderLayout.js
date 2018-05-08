@@ -33,7 +33,7 @@ describe('app.renderLayout', function() {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view, null, { layouts: app.layouts.views });
+    await app.renderLayout(view, { layouts: app.layouts.views });
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
@@ -57,8 +57,9 @@ describe('app.renderLayout', function() {
     app.layouts.set('fsjfsjslkjf.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    return app.renderLayout(view).catch(err => {
-      assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
-    });
+    return app.renderLayout(view)
+      .catch(err => {
+        assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
+      });
   });
 });

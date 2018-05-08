@@ -10,13 +10,13 @@ const helpers = require('./support/helpers');
 const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
 let pages, render, other, tmpl, locals;
 
-describe('async helpers - base', function() {
+describe('engine helpers - async', function() {
   beforeEach(function() {
     const base = engines.base(new Engine());
     pages = new Collection('pages', { asyncHelpers: true });
     pages.engine('tmpl', base);
 
-    pages.helper(helpers.base);
+    pages.helper(helpers.common);
     pages.helper(helpers.commonAsync);
 
     pages.set('a.tmpl', { contents: Buffer.from('a <%= upper(name) %> b'), data: { name: 'Brian' } });

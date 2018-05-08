@@ -19,15 +19,13 @@ describe('handlebars helpers - sync', function() {
     pages = new Collection('pages', { sync: true });
     pages.engine('hbs', engine);
 
+    pages.helper(helpers.common);
     pages.helper(helpers.hbs);
-    pages.helper(helpers.hbsSync);
-    pages.helper(helpers.commonSync);
-    pages.helper(hbs.helpers);
     pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
 
     render = (str, locals) => {
       const page = pages.set('foo.hbs', { contents: Buffer.from(str) });
-      pages.renderSync(page, locals);
+      pages.render(page, locals);
       return page.contents.toString();
     };
 
@@ -105,7 +103,7 @@ describe('handlebars helpers - sync', function() {
       });
 
       try {
-        pages.renderSync('a.hbs')
+        pages.render('a.hbs')
         throw new Error('expected an error');
       } catch (err) {
         assert.equal(err.message, 'broken');

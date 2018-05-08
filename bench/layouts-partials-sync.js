@@ -1,12 +1,12 @@
 const handlebars = require('handlebars');
 const engine = require('../lib/engine');
 const Templates = require('../');
-const app = new Templates({ sync: true, handlers: ['onLoad'] });
+const app = new Templates({ sync: true, handlers: ['onLoad', 'preRender'] });
 const hbs = engine(handlebars);
-app.engine('hbs', hbs, { main: true });
-app.onLoad(/./, function(view) {
-  view.fn = view.fn || hbs.instance.compile(view.contents.toString());
-});
+
+app.engine('hbs', hbs);
+// app.preRender(/./, app.compile.bind(app));
+// app.onLoad(/./, hbs.compile.bind(hbs));
 
 const pages = app.create('pages');
 const partials = app.create('partials', { kind: 'partial' });
@@ -26,12 +26,12 @@ layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), la
 layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
 
 console.time('layout');
-let max = 1000000;
+let max = 10000;
 let i = 0;
 
 while (i++ < max) {
   try {
-    app.renderSync(view, { description: 'This is page: ' + i });
+    app.render(view, { description: 'This is page: ' + i });
     // console.log(view.contents.toString());
   } catch (err) {
     console.log(err);

@@ -14,9 +14,9 @@ describe('async-helpers', () => {
   beforeEach(function() {
     pages = new Collection('pages', { asyncHelpers: true });
     other = new Collection('other', { asyncHelpers: true });
-
-    pages.engine('hbs', handlebars(require('handlebars')));
-    other.engine('hbs', handlebars(require('handlebars')));
+    const engine = handlebars(require('handlebars'));
+    pages.engine('hbs', engine);
+    other.engine('hbs', engine);
 
     pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
     other.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });

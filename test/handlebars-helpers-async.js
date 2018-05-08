@@ -22,9 +22,10 @@ describe('handlebars helpers - async', function() {
     pages.engine('hbs', engine);
 
     pages.helper(hbs.helpers);
+    pages.helper(helpers.common);
+    pages.helper(helpers.commonAsync);
     pages.helper(helpers.hbs);
     pages.helper(helpers.hbsAsync);
-    pages.helper(helpers.commonAsync);
 
     render = async(str, locals) => {
       const page = await pages.set('foo.hbs', { contents: Buffer.from(str) });

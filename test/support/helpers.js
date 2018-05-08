@@ -6,21 +6,6 @@ exports.hbs = {
   partialName: function(options) {
     return options && options.hash.name ? options.hash.name : this.customName;
   },
-  sum: function sum(...args) {
-    const opts = args.pop();
-    let total = 0;
-    for (const arg of args) {
-      if (Array.isArray(arg)) {
-        total += sum.apply(this, arg.concat(opts));
-      } else {
-        total += arg;
-      }
-    }
-    return total;
-  }
-};
-
-exports.hbsSync = {
   getPartial: function(str) {
     return str;
   },
@@ -36,6 +21,55 @@ exports.hbsSync = {
       delim = ' ';
     }
     return str.split('').join(delim);
+  },
+  sum: function sum(...args) {
+    const opts = args.pop();
+    let total = 0;
+    for (const arg of args) {
+      if (Array.isArray(arg)) {
+        total += sum.apply(this, arg.concat(opts));
+      } else {
+        total += arg;
+      }
+    }
+    return total;
+  }
+};
+
+exports.common = {
+  print: function(str) {
+    /* eslint-disable no-console */
+    console.log(str);
+    return '';
+  },
+  getUser: function(obj, prop) {
+    return obj[prop].toString();
+  },
+  prefix: function(prefix, str) {
+    return prefix + str;
+  },
+  lower: function(str, options) {
+    return str.toLowerCase();
+  },
+  upper: function(str) {
+    return str.toUpperCase();
+  },
+  is: function(val) {
+    return val === true;
+  },
+  equals: (a, b) => {
+    return a === b;
+  },
+  sum: function sum(...args) {
+    let total = 0;
+    for (const arg of args) {
+      if (Array.isArray(arg)) {
+        total += sum.apply(this, args);
+      } else {
+        total += arg;
+      }
+    }
+    return total;
   }
 };
 
@@ -78,48 +112,8 @@ exports.commonAsync = {
   },
   equals: async(a, b) => {
     return await wait(async() => await a === await b);
-  }
-};
-
-exports.commonSync = {
-  print: function(str) {
-    /* eslint-disable no-console */
-    console.log(str);
-    return '';
   },
-  getUser: function(obj, prop) {
-    return obj[prop].toString();
-  },
-  prefix: function(prefix, str) {
-    return prefix + str;
-  },
-  lower: function(str, options) {
-    return str.toLowerCase();
-  },
-  upper: function(str) {
-    return str.toUpperCase();
-  },
-  is: function(val) {
-    return val === true;
-  },
-  equals: (a, b) => {
-    return a === b;
-  }
-};
-
-exports.base = {
   spacer: function(str, delim) {
     return wait(() => str.split('').join(delim || ' '));
   },
-  sum: function sum(...args) {
-    let total = 0;
-    for (const arg of args) {
-      if (Array.isArray(arg)) {
-        total += sum.apply(this, arg);
-      } else {
-        total += arg;
-      }
-    }
-    return total;
-  }
 };

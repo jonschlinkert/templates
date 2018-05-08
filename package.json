@@ -29,9 +29,10 @@
   "dependencies": {
     "en-route": "^3.0.0",
     "kind-of": "^6.0.2",
-    "layouts": "^3.0.1",
     "path-ends-with": "^2.0.0",
-    "use": "^3.1.0"
+    "time-require": "github:jonschlinkert/time-require",
+    "use": "^3.1.0",
+    "vinyl-fs": "^3.0.2"
   },
   "devDependencies": {
     "handlebars": "^4.0.11",
