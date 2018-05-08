@@ -8,7 +8,7 @@ let app;
 
 describe('app.layouts', function() {
   beforeEach(function() {
-    app = new App({ asyncHelpers: true });
+    app = new App();
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
     app.engine('hbs', handlebars(require('handlebars')));

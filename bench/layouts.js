@@ -1,7 +1,7 @@
 (async function() {
 
 const handlebars = require('handlebars');
-const engine = require('../lib/engine');
+const engine = require('../lib/engines');
 const Templates = require('../');
 const app = new Templates();
 app.engine('hbs', engine(handlebars));

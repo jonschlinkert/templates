@@ -37,7 +37,7 @@ describe('collection.render', function() {
         })
         .catch(err => {
           assert(err);
-          assert(/engine "\.bar" is not registered/.test(err.message));
+          assert(/engine "bar" is not registered/.test(err.message));
         });
     });
 

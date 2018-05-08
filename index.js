@@ -28,7 +28,7 @@ class Templates extends Common {
   }
 
   kind(name) {
-    return this.kinds[name] || (this.kinds[name] = new Map());
+    return this.kinds[name] || (this.kinds[name] = {});
   }
 
   /**
@@ -112,7 +112,11 @@ class Templates extends Common {
 
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
-      return super.handle(method, view).then(() => handle(method, view));
+      const val = super.handle(method, view);
+      if (this.options.sync) {
+        return handle(method, view);
+      }
+      return val.then(() => view);
     };
 
     if (opts.collectionMethod !== false) {
@@ -141,14 +145,16 @@ class Templates extends Common {
    */
 
   setView(name, view) {
+    const kind = this.kind(view.kind);
+    kind[view.key] = view;
+
     this.views.get(name).set(view.key, view);
-    this.kind(view.kind).set(view.key, view);
     this.viewCache.set(view.path, view);
     this.emitState('view', 'added', { kind: view.kind });
     this.emit('view', view);
 
     if (view.kind === 'partial') {
-      define(this.cache.partials, view);
+      define(this.cache.partials, view, view.key);
     }
   }
 
@@ -157,11 +163,10 @@ class Templates extends Common {
    */
 
   deleteView(name, view) {
+    const kind = this.kind(view.kind);
+    delete kind[view.key];
     this.views.get(name).delete(view.key);
     this.viewCache.set(view.path, view);
-    if (this.kinds[view.kind]) {
-      this.kinds[view.kind].delete(view);
-    }
     this.emitState('view', 'deleted');
     this.emit('delete', view);
   }
@@ -189,8 +194,8 @@ class Templates extends Common {
   }
 }
 
-function define(cache, view) {
-  Reflect.defineProperty(cache, view.key, {
+function define(cache, view, key) {
+  Reflect.defineProperty(cache, key, {
     enumerable: true,
     configurable: true,
     get() {

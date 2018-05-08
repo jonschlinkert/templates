@@ -1,5 +1,5 @@
 const handlebars = require('handlebars');
-const engine = require('../lib/engine');
+const engine = require('../lib/engines');
 const Templates = require('../');
 const app = new Templates({ sync: true, handlers: ['onLoad'] });
 const hbs = engine(handlebars);

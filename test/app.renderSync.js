@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const engine = require('../lib/engine');
+const engine = require('../lib/engines');
 const App = require('..');
 let app;
 

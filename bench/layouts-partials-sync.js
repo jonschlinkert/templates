@@ -1,41 +1,89 @@
+const argv = require('minimist')(process.argv.slice(2));
 const handlebars = require('handlebars');
-const engine = require('../lib/engine');
+const engine = require('../lib/engines');
+const timer = require('./timer');
 const Templates = require('../');
-const app = new Templates({ sync: true, handlers: ['onLoad', 'preRender'] });
+const app = new Templates({
+  handlers: ['onLoad', 'preRender', 'postRender'],
+  preserveWhitespace: true,
+  sync: true
+});
+
 const hbs = engine(handlebars);
-
-app.engine('hbs', hbs);
-// app.preRender(/./, app.compile.bind(app));
-// app.onLoad(/./, hbs.compile.bind(hbs));
-
 const pages = app.create('pages');
 const partials = app.create('partials', { kind: 'partial' });
 const layouts = app.create('layouts', { kind: 'layout' });
+const orig = Symbol('contents');
+
+app.engine('hbs', hbs);
+// app.partials.onLoad(/./, view => {
+//   // app.options.registerPartials = false;
+//   // hbs.compile(view);
+//   // hbs.instance.registerPartial(view.stem, view.fn);
+//   // app.compile(view);
+// });
+
+app.preRender(/./, file => {
+  file[orig] = file[orig] || file.contents;
+  file.count = file.count ? file.count + 1 : 1;
+});
+
+app.postRender(/./, file => {
+  if (argv.v) console.log(file.contents.toString());
+  file.contents = file[orig];
+});
 
 const view = pages.set('templates/foo.hbs', {
-  contents: Buffer.from('Name: {{name}}, {{description}} {{> button text="Click me!" }} {{> button2 text="Click me too!" }} {{> button3 text="Click me three!" }}'),
+  contents: Buffer.from('Name: {{name}}, {{description}} {{> button text="Click me!" }} {{> nav id="navigation" }} {{> section text="Blog Posts" }}'),
   data: { name: 'Brian' },
   layout: 'default'
 });
 
+// partials
 partials.set({ path: 'button', contents: Buffer.from('<button>{{text}}</button>') });
-partials.set({ path: 'button2', contents: Buffer.from('<button>{{text}}</button>') });
-partials.set({ path: 'button3', contents: Buffer.from('<button>{{text}}</button>') });
-layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
-layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
-layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
+partials.set({ path: 'nav', contents: Buffer.from('<div id="{{id}}"></div>') });
+partials.set({ path: 'section', contents: Buffer.from('<section>{{text}}</section>') });
 
-console.time('layout');
-let max = 10000;
-let i = 0;
+// layouts
+layouts.set({
+  path: 'body',
+  contents: Buffer.from(`
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    {% body %}
+  </body>
+</html>`)
+});
+layouts.set({
+  path: 'base',
+  contents: Buffer.from('before\n{% body %}\nafter'),
+  layout: 'body'
+});
+layouts.set({
+  path: 'default',
+  contents: Buffer.from('before\n{% body %}\nafter'),
+  layout: 'base'
+});
 
-while (i++ < max) {
-  try {
-    app.render(view, { description: 'This is page: ' + i });
-    // console.log(view.contents.toString());
-  } catch (err) {
-    console.log(err);
-    process.exit(1);
-  }
-}
-console.timeEnd('layout');
+const run = timer(app, view, layouts.views);
+// const arr = [1, 10, 100, 1000, 10000, 100000, 1000000];
+// const arr = [1, 10, 100, 1000, 10000, 100000];
+
+// for (const n of arr) {
+//   // if (argv.)
+//   run(arr[n]);
+// }
+
+run(1);
+run(10);
+run(100);
+run(1000);
+run(10000);
+run(100000);
+// run(1000000);
+// run(10000000);

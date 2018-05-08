@@ -20,46 +20,15 @@ function sec(n) {
   return ms(n) / 1e3;
 }
 
-const cache = {};
-const renameKey = name => {
-  return name[0] !== '/' ? path.join(process.cwd(), name + '.hbs') : name;
-};
-
-const resolveLayout = (layouts, name) => {
-  const basename = name + '.hbs';
-
-  if (layouts instanceof Map) {
-    if (layouts.has(name)) {
-      return layouts.get(name);
-    }
-    if (layouts.has(basename)) {
-      return layouts.get(basename);
-    }
-    return;
-  }
-
-  let layout;
-  if (cache[name]) return cache[name];
-  if (layouts[name]) return layouts[name];
-  if (layouts[basename]) {
-    layout = layouts[basename];
-    cache[name] = layout;
-    return layout;
-  }
-  let key = renameKey(name);
-  layout = layouts[key];
-  if (!layout) layout = layouts[path.basename(name, path.extname(name))];
-  if (layout) cache[name] = layout;
-  return layout;
-};
-
 module.exports = function(app, view, layouts) {
   const buf = view.contents;
   const reset = () => (view.contents = buf);
 
   return function(max) {
+    setTimeout(function() {
+
     const time = timer();
-    const num = max || 1000000;
+    const num = max || 1000;
     let i = 0;
 
     while (i++ < num) {
@@ -76,9 +45,12 @@ module.exports = function(app, view, layouts) {
     const len = size(layouts);
     const actual = num * len; // size of the layout stack
 
-    console.log('processed %s layouts in %s', actual.toLocaleString(), elapsed);
-    console.log('1 layout per %s', (mµ(total) / actual).toFixed(4) + 'mµ');
+    console.log('processed %s pages with %s layouts each in %s:', num.toLocaleString(), len.toLocaleString(), elapsed);
+    console.log(' ~%s per layout', (mµ(total) / actual).toFixed(4) + 'mµ');
+    console.log(' ~%s per page', (mµ(total) / num).toFixed(4) + 'mµ');
     console.log();
+    }, 100);
+
   };
 };
 

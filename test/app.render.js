@@ -28,7 +28,7 @@ describe('app.render', function() {
 
     it('should throw an error when an engine is not defined:', async() => {
       const page = await app.pages.set('foo.bar', { contents: Buffer.from('<%= name %>') });
-      app.engines.delete('.hbs');
+      app.engines = new Map();
 
       return app.render(page)
         .then(() => {
@@ -36,7 +36,7 @@ describe('app.render', function() {
         })
         .catch(err => {
           assert(err);
-          assert(/engine "\.bar" is not registered/.test(err.message));
+          assert(/engine "bar" is not registered/.test(err.message));
         });
     });
 
