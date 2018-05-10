@@ -9,6 +9,11 @@ const app = new Templates({
   sync: true
 });
 
+app.options.transform = (str, file, layout) => {
+  file.data = { ...layout.data, ...file.data };
+  return str;
+};
+
 const hbs = engine(handlebars);
 const pages = app.create('pages');
 const partials = app.create('partials', { kind: 'partial' });
@@ -23,6 +28,10 @@ app.engine('hbs', hbs);
 //   // app.compile(view);
 // });
 
+app.helper('upper', function(str, options) {
+  return str ? str.toUpperCase() : '';
+});
+
 app.preRender(/./, file => {
   file[orig] = file[orig] || file.contents;
   file.count = file.count ? file.count + 1 : 1;
@@ -34,56 +43,50 @@ app.postRender(/./, file => {
 });
 
 const view = pages.set('templates/foo.hbs', {
-  contents: Buffer.from('Name: {{name}}, {{description}} {{> button text="Click me!" }} {{> nav id="navigation" }} {{> section text="Blog Posts" }}'),
+  contents: Buffer.from('Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}'),
   data: { name: 'Brian' },
   layout: 'default'
 });
 
 // partials
-partials.set({ path: 'button', contents: Buffer.from('<button>{{text}}</button>') });
+partials.set({ path: 'button', contents: Buffer.from('<button>{{upper text}}</button>') });
 partials.set({ path: 'nav', contents: Buffer.from('<div id="{{id}}"></div>') });
-partials.set({ path: 'section', contents: Buffer.from('<section>{{text}}</section>') });
+partials.set({ path: 'section', contents: Buffer.from('<section>{{upper text}}</section>') });
 
 // layouts
 layouts.set({
   path: 'body',
+  data: { title: 'Blog' },
   contents: Buffer.from(`
-<!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-  </head>
-  <body>
-    {% body %}
-  </body>
-</html>`)
+    <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>{{upper title}}</title>
+      </head>
+      <body>
+        {% body %}
+      </body>
+    </html>`)
 });
 layouts.set({
   path: 'base',
-  contents: Buffer.from('before\n{% body %}\nafter'),
-  layout: 'body'
+  layout: 'body',
+  contents: Buffer.from('before\n{% body %}\nafter')
 });
 layouts.set({
   path: 'default',
-  contents: Buffer.from('before\n{% body %}\nafter'),
-  layout: 'base'
+  layout: 'base',
+  contents: Buffer.from('before\n{% body %}\nafter')
 });
 
-const run = timer(app, view, layouts.views);
-// const arr = [1, 10, 100, 1000, 10000, 100000, 1000000];
-// const arr = [1, 10, 100, 1000, 10000, 100000];
-
-// for (const n of arr) {
-//   // if (argv.)
-//   run(arr[n]);
-// }
+const run = timer.sync(app, view, layouts.views);
 
 run(1);
 run(10);
-run(100);
-run(1000);
-run(10000);
-run(100000);
+// run(100);
+// run(1000);
+// run(10000);
+// run(100000);
 // run(1000000);
 // run(10000000);

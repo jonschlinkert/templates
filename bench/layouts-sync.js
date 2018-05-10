@@ -8,36 +8,63 @@ const hbs = engine(handlebars);
 app.engine('hbs', hbs);
 
 app.preRender(/./, file => {
-  file._orig = file._orig || file.contents;
+  file.data.title = file.data.title || file.stem;
+  if (view.kind === 'renderable' && !/{{/.test(view.contents.toString())) {
+    view.engine = 'noop';
+  }
+  file.orig = file.orig || file.contents;
   file.count = file.count ? file.count + 1 : 1;
 });
 
 app.postRender(/./, file => {
-  // console.log(file.contents.toString());
-  file.contents = file._orig;
+  console.log(file.contents.toString());
+  file.contents = file.orig;
 });
 
 const pages = app.create('pages');
 const layouts = app.create('layouts', { kind: 'layout' });
 
 const view = pages.set('templates/foo.hbs', {
-  contents: Buffer.from('Name: {{name}}, {{description}}'),
+  contents: Buffer.from('Name: '),
+  // contents: Buffer.from('Name: {{name}}, {{description}}'),
   data: { name: 'Brian' },
-  render: false,
   layout: 'default'
 });
 
-layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
-layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
-layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
+// layouts
+layouts.set({
+  path: 'body',
+  data: { title: 'Blog' },
+  contents: Buffer.from(`
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+  </head>
+  <body>
+    {% body %}
+  </body>
+</html>`)
+});
+layouts.set({
+  path: 'base',
+  layout: 'body',
+  contents: Buffer.from('before\n{% body %}\nafter')
+});
+layouts.set({
+  path: 'default',
+  layout: 'base',
+  contents: Buffer.from('before\n{% body %}\nafter')
+});
 
-const run = timer(app, view, layouts.views);
+const run = timer.sync(app, view, layouts.views);
 
 run(1)
 run(10);
-run(100);
-run(1000);
-run(10000);
-run(100000);
-run(1000000);
-run(10000000);
+// run(100);
+// run(1000);
+// run(10000);
+// run(100000);
+// run(1000000);
+// run(10000000);

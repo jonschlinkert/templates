@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('assert');
 const Collection = require('./lib/collection');
 const Common = require('./lib/common');
 const View = require('./lib/view');
@@ -23,12 +24,7 @@ class Templates extends Common {
     this.cache.partials = {};
     this.collections = new Map();
     this.viewCache = new Map();
-    this.views = new Map();
     this.kinds = {};
-  }
-
-  kind(name) {
-    return this.kinds[name] || (this.kinds[name] = {});
   }
 
   /**
@@ -85,7 +81,9 @@ class Templates extends Common {
    */
 
   collection(name, options) {
-    return new Collection(name, options);
+    const collection = new Collection(name, options);
+    this.run(collection);
+    return collection;
   }
 
   /**
@@ -101,7 +99,6 @@ class Templates extends Common {
   create(name, options) {
     const opts = { ...this.options, ...options };
     const collection = this.collection(name, opts);
-    this.run(collection);
 
     this.collections.set(name, collection);
     this.views.set(name, new Map());
@@ -112,11 +109,9 @@ class Templates extends Common {
 
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
-      const val = super.handle(method, view);
-      if (this.options.sync) {
-        return handle(method, view);
-      }
-      return val.then(() => view);
+      const res = super.handle(method, view);
+      if (this.options.sync === true) return handle(method, view);
+      return res.then(() => handle(method, view)).then(() => view);
     };
 
     if (opts.collectionMethod !== false) {
@@ -150,11 +145,14 @@ class Templates extends Common {
 
     this.views.get(name).set(view.key, view);
     this.viewCache.set(view.path, view);
-    this.emitState('view', 'added', { kind: view.kind });
     this.emit('view', view);
 
     if (view.kind === 'partial') {
-      define(this.cache.partials, view, view.key);
+      const partials = this.cache.partials;
+      if (this.options.enforceUniqueNames === true) {
+        assert(!partials[view.key], new Error(`partial "${view.key}" already exists`));
+      }
+      define(partials, view.key, view);
     }
   }
 
@@ -167,13 +165,27 @@ class Templates extends Common {
     delete kind[view.key];
     this.views.get(name).delete(view.key);
     this.viewCache.set(view.path, view);
-    this.emitState('view', 'deleted');
     this.emit('delete', view);
   }
 
   /**
-   * Handle middleware
+   * Get the object for a template "kind". Creates the object if it
+   * doesn't already exist.
+   *
+   * @name .kind
+   * @param {string} `name`
+   * @return {object}
+   * @api public
    */
+
+  kind(name) {
+    return this.kinds[name] || (this.kinds[name] = {});
+  }
+
+  /**
+   * Handle middleware. This method is documented in the "Common" class.
+   */
+
 
   handle(method, view) {
     if (view.collection) {
@@ -194,7 +206,7 @@ class Templates extends Common {
   }
 }
 
-function define(cache, view, key) {
+function define(cache, key, view) {
   Reflect.defineProperty(cache, key, {
     enumerable: true,
     configurable: true,

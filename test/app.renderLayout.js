@@ -45,12 +45,14 @@ describe('app.renderLayout', function() {
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should render a layout multiple times', async () => {
-    app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+  it('should render a layout multiple times when history is reset', async () => {
+    app.layouts.set('default.hbs', { contents: Buffer.from('A{% body %}B') });
+    const view = await app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
 
-    await app.renderLayout(view);
-    assert.equal(view.contents.toString(), 'before This is content after');
+    await app.renderLayout(view, { history: [] });
+    await app.renderLayout(view, { history: [] });
+    await app.renderLayout(view, { history: [] });
+    assert.equal(view.contents.toString(), 'AAA This is content BBB');
   });
 
   it('should throw an error when a layout cannot be found on app.types.layout', async () => {

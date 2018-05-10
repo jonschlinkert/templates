@@ -11,7 +11,7 @@ const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n
 let pages, render, other, tmpl, locals;
 
 describe('engine helpers - async', function() {
-  beforeEach(function() {
+  beforeEach(async function() {
     const base = engines.base(new Engine());
     pages = new Collection('pages', { asyncHelpers: true });
     pages.engine('tmpl', base);
@@ -19,7 +19,10 @@ describe('engine helpers - async', function() {
     pages.helper(helpers.common);
     pages.helper(helpers.commonAsync);
 
-    pages.set('a.tmpl', { contents: Buffer.from('a <%= upper(name) %> b'), data: { name: 'Brian' } });
+    await pages.set('a.tmpl', {
+      contents: Buffer.from('a <%= upper(name) %> b'),
+      data: { name: 'Brian' }
+    });
 
     render = async(str, locals) => {
       const page = await pages.set('foo.tmpl', { contents: Buffer.from(str) });
@@ -57,6 +60,6 @@ describe('engine helpers - async', function() {
 
   it('should work with nested functions', async() => {
     assert.equal(await render('<%= upper(lower(upper(name))) %>', { name: 'Brian' }), 'BRIAN');
-    assert.equal(await render('<%= spacer(upper(name), lower ("X")) %>', { name: 'Brian' }), 'BxRxIxAxN');
+    assert.equal(await render('<%= spacer(upper(name), lower("X")) %>', { name: 'Brian' }), 'BxRxIxAxN');
   });
 });

@@ -3,16 +3,16 @@
 require('mocha');
 const util = require('util');
 const assert = require('assert');
-const handlebars = require('./support/handlebars');
+const engines = require('../lib/engines');
 const Collection = require('../lib/collection');
-const engines = require('./support/engines');
+const handlebars = require('./support/handlebars');
 const helpers = require('./support/helpers');
 const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
 let pages, render, other, hbs, locals;
 
 describe('handlebars helpers - async', function() {
   beforeEach(function() {
-    const engine = handlebars(require('handlebars'));
+    const engine = engines(require('handlebars'));
     hbs = engine.instance;
 
     hbs.registerPartial('custom', 'a partial');

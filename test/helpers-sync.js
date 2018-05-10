@@ -2,18 +2,16 @@
 
 require('mocha');
 const assert = require('assert');
-const engines = require('../lib/engines');
+const engine = require('../lib/engines');
 const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
-const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
-let pages;
-let other;
+let pages, other;
 
-describe('helpers - async', () => {
+describe('helpers - sync', () => {
   beforeEach(function() {
-    pages = new Collection('pages', { asyncHelpers: true });
-    other = new Collection('other', { asyncHelpers: true });
-    const hbs = engines(require('handlebars'));
+    pages = new Collection('pages', { sync: true });
+    other = new Collection('other', { sync: true });
+    const hbs = engine(require('handlebars'));
 
     // engines
     pages.engine('hbs', hbs);
@@ -24,6 +22,7 @@ describe('helpers - async', () => {
       contents: Buffer.from('a {{upper name}} b'),
       data: { name: 'Brian' }
     });
+
     other.set('a.hbs', {
       contents: Buffer.from('a {{upper name}} b'),
       data: { name: 'Brian' }
@@ -31,28 +30,36 @@ describe('helpers - async', () => {
   });
 
   describe('set', () => {
-    it('should set a sync helper', async () => {
+    it('should set a sync helper', () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
       assert(pages.helpers.upper);
     });
 
-    it('should set the original helper function on .helper', async () => {
+    it('should set the original helper function on .helper', () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
       assert(pages.helpers.upper);
-      assert.deepEqual(pages.helpers.upper.helper.toString(), upper.toString());
+      assert.deepEqual(pages.helpers.upper.helper, upper);
+    });
+
+    it('should return the helper when given the helper name', () => {
+      const upper = str => str.toUpperCase();
+      pages.helper('upper', upper);
+      const fn = pages.helper('upper');
+      assert.equal(fn.helper, upper);
+      assert.deepEqual(fn('doowb'), 'DOOWB');
     });
   });
 
   describe('get', () => {
-    it('should get a helper', async () => {
+    it('should get a helper', () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
       assert.deepEqual(pages.helper('upper').helper.toString(), upper.toString());
     });
 
-    it('should get a wrapped helper', async () => {
+    it('should get a wrapped helper', () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
       assert.notEqual(pages.helper('upper').toString(), upper.toString());
@@ -66,50 +73,23 @@ describe('helpers - async', () => {
       assert.deepEqual(pages.helper('upper')('doowb'), 'DOOWB');
     });
 
-    it('should create a new app.ids Map for each instance', async () => {
-      const upper = str => str.toUpperCase();
-      pages.helper('upper', upper);
-      other.helper('upper', upper);
-
-      await pages.render('a.hbs');
-      await other.render('a.hbs');
-
-      assert.equal(pages.ids.size, 1);
-      assert.equal(other.ids.size, 1);
-    });
-
-    it('should add an id to the Map for each helper invocation', async () => {
-      const upper = str => str.toUpperCase();
-      pages.helper('upper', upper);
-
-      await pages.render('a.hbs');
-      await pages.render('a.hbs');
-      await pages.render('a.hbs');
-      await pages.render('a.hbs');
-
-      assert.equal(pages.ids.size, 4);
-    });
-
-    it('should support sync helpers by default', async () => {
-      pages.options.asyncHelpers = false;
-
+    it('should support sync helpers by default', () => {
       const upper = str => str.toUpperCase();
       pages.helper('upper', upper);
 
       assert.equal(pages.helper('upper').helper.toString(), upper.toString());
       const page = pages.get('a.hbs');
-      await pages.render(page);
+      pages.render(page);
 
       assert.equal(page.contents.toString(), 'a BRIAN b');
-      assert.equal(pages.ids.size, 0);
     });
 
-    it('should support async helpers that take arrays as arguments', async () => {
-      pages.cache.data.upper = async str => await wait(() => str.toUpperCase(), 10);
+    it('should support sync helpers that take arrays as arguments', () => {
+      pages.cache.data.upper = str => str.toUpperCase();
 
-      pages.helper('map', async (arr, fn) => {
+      pages.helper('map', (arr, fn) => {
         for (let i = 0; i < arr.length; i++) {
-          arr[i] = await fn(arr[i]);
+          arr[i] = fn(arr[i]);
         }
         return arr.join(',');
       });
@@ -117,11 +97,11 @@ describe('helpers - async', () => {
       pages.set({ path: 'foo.hbs', contents: Buffer.from('{{#map names upper}}{{.}}{{/map}}') });
       const view = pages.get('foo.hbs');
 
-      await pages.render(view, { names: ['doowb', 'jonschlinkert'] });
+      pages.render(view, { names: ['doowb', 'jonschlinkert'] });
       assert.equal(view.contents.toString(), 'DOOWB,JONSCHLINKERT');
     });
 
-    it('should support helpers used as arguments that return objects', async () => {
+    it('should support helpers used as arguments that return objects', () => {
       const user = function(name) {
         return { name };
       };
@@ -133,24 +113,24 @@ describe('helpers - async', () => {
       pages.helper('profile', profile);
       pages.helper('user', user);
 
-      const page = await pages.set({
+      const page = pages.set({
         path: 'foo.hbs',
         contents: Buffer.from('Name: {{profile (user name)}}')
       });
 
-      await pages.render(page, { name: 'doowb' });
+      pages.render(page, { name: 'doowb' });
       assert.equal(page.contents.toString(), 'Name: doowb');
     });
   });
 
   describe('errors', () => {
-    it('should handle errors in async helpers', async() => {
+    it('should handle errors in sync helpers', () => {
       pages.helper('upper', str => {
         throw new Error('broken');
       });
 
       try {
-        await pages.render('a.hbs');
+        pages.render('a.hbs');
       } catch (err) {
         assert.equal(err.message, 'broken');
       }

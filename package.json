@@ -27,12 +27,10 @@
     "ci": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "dependencies": {
-    "en-route": "^3.0.0",
+    "en-route": "file:/Users/jonschlinkert/dev/routes/en-route/",
     "kind-of": "^6.0.2",
     "path-ends-with": "^2.0.0",
-    "time-require": "github:jonschlinkert/time-require",
-    "use": "^3.1.0",
-    "vinyl-fs": "^3.0.2"
+    "use": "^3.1.0"
   },
   "devDependencies": {
     "handlebars": "^4.0.11",
