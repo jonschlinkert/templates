@@ -14,14 +14,14 @@ describe('app.renderLayout', function() {
     app.engine('hbs', handlebars(require('handlebars')));
   });
 
-  it('should throw an error when a layout cannot be found', async () => {
+  it('should throw an error when a layout cannot be found', async() => {
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
     return app.renderLayout(view).catch(err => {
       assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
     });
   });
 
-  it('should get layouts from render locals', async () => {
+  it('should get layouts from render locals', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
@@ -29,7 +29,7 @@ describe('app.renderLayout', function() {
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should get layouts from render options', async () => {
+  it('should get layouts from render options', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
@@ -37,7 +37,7 @@ describe('app.renderLayout', function() {
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should get layouts from app.types.layouts', async () => {
+  it('should get layouts from app.types.layouts', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
@@ -45,7 +45,7 @@ describe('app.renderLayout', function() {
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should render a layout multiple times when history is reset', async () => {
+  it('should render a layout multiple times when history is reset', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('A{% body %}B') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
 
@@ -55,7 +55,7 @@ describe('app.renderLayout', function() {
     assert.equal(view.contents.toString(), 'AAA This is content BBB');
   });
 
-  it('should throw an error when a layout cannot be found on app.types.layout', async () => {
+  it('should throw an error when a layout cannot be found on app.types.layout', async() => {
     app.layouts.set('fsjfsjslkjf.hbs', { contents: Buffer.from('before {% body %} after') });
     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 

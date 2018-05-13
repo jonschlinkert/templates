@@ -1,7 +1,7 @@
 console.time('grand total');
 const pretty = require('pretty-time');
 const colors = require('ansi-colors');
-const cyan = (...args) => colors.cyan(pretty(...args));
+const cyan = (...args) => colors.cyan(pretty(...args.concat(2)));
 
 const timer = () => {
   const start = process.hrtime();
@@ -13,11 +13,11 @@ const timer = () => {
 function ns(n) {
   return n[0] * 1e9 + n[1];
 }
-function mµ(n) {
+function µs(n) {
   return ns(n) / 1e3;
 }
 function ms(n) {
-  return mµ(n) / 1e3;
+  return µs(n) / 1e3;
 }
 function sec(n) {
   return ms(n) / 1e3;
@@ -38,7 +38,7 @@ module.exports = function(app, view, layouts) {
       let init;
       let i = 0;
 
-      app.router.once('postRender', function() {
+      app.once('postRender', function() {
         init = time();
         time = timer();
       });
@@ -55,7 +55,7 @@ module.exports = function(app, view, layouts) {
 
       console.log('processed %s pages with %s layouts each in %s:', num.toLocaleString(), len.toLocaleString(), elapsed);
 
-      console.log(' ~%s init', pretty(init));
+      console.log(' ~%s first render', pretty(init));
       console.log(' ~%s per layout', pretty(ns(total) / actual));
       console.log(' ~%s per page', pretty(ns(total) / num));
       console.log();
@@ -71,7 +71,7 @@ module.exports.sync = function(app, view, layouts) {
     let time = timer();
     let init = time();
 
-    app.router.once('postRender', function() {
+    app.once('postRender', function() {
       init = time();
       time = timer();
     });
@@ -87,7 +87,7 @@ module.exports.sync = function(app, view, layouts) {
 
     console.log('processed %s pages with %s layouts each:', num.toLocaleString(), len.toLocaleString());
 
-    console.log(' ~%s init', cyan(init));
+    console.log(' ~%s first render', cyan(init));
     console.log(' ~%s per layout', cyan(ns(total) / actual));
     console.log(' ~%s per page', cyan(ns(total) / num));
     console.log(' ~%s total', cyan(total));

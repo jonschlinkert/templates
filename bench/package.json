@@ -15,10 +15,13 @@
     "ansi-colors": "^2.0.1",
     "benchmark": "^2.1.4",
     "handlebars": "^4.0.11",
-    "minimist": "^1.2.0"
+    "lorem-ipsum": "^1.0.4",
+    "minimist": "^1.2.0",
+    "rimraf": "^2.6.2",
+    "write": "^1.0.3"
   },
   "devDependencies": {
     "pretty-time": "^1.0.0",
-    "time-require": "^0.1.2"
+    "time-require": "github:jonschlinkert/time-require"
   }
 }

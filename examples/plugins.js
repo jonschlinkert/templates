@@ -1,5 +1,5 @@
 console.time('use');
-const use = require('./lib/use');
+const use = require('../lib/use');
 
 class App {
   constructor() {
@@ -14,6 +14,7 @@ class App {
     this.run(collection);
     return collection;
   }
+
   create(name, options) {
     const collection = this.collection(name, options);
     this[name] = collection.set.bind(collection);
@@ -75,22 +76,27 @@ function after(app) {
 
 const app = new App();
 app.use(before);
-// app.use(before);
-// app.use(before);
-// app.use(before);
-// app.use(before);
-// app.use(before);
+app.use(before);
+app.use(before);
+app.use(before);
+app.use(before);
+app.use(before);
 
 app.create('pages');
 app.pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
+app.pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
+app.pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
+app.pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
+app.pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
+app.pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
 
 app.use(after);
-// app.use(after);
-// app.use(after);
-// app.use(after);
-// app.use(after);
-// app.use(after);
+app.use(after);
+app.use(after);
+app.use(after);
+app.use(after);
+app.use(after);
 
 // console.log(app);
-// console.log(types);
+// console.log(types, types.length);
 console.timeEnd('use');

@@ -5,7 +5,6 @@ const timer = require('./timer');
 const Templates = require('../');
 const app = new Templates({
   handlers: ['onLoad', 'preRender', 'postRender'],
-  preserveWhitespace: true,
   sync: true
 });
 
@@ -37,21 +36,24 @@ app.preRender(/./, file => {
   file.count = file.count ? file.count + 1 : 1;
 });
 
-app.postRender(/./, file => {
-  if (argv.v) console.log(file.contents.toString());
+app.postRender(/./, (file, params) => {
+  // if (argv.v) console.log(file.contents.toString());
   file.contents = file[orig];
 });
 
 const view = pages.set('templates/foo.hbs', {
-  contents: Buffer.from('Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}'),
+  contents: Buffer.from(`{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n`),
+  // contents: Buffer.from(`{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n`),
   data: { name: 'Brian' },
   layout: 'default'
 });
 
 // partials
-partials.set({ path: 'button', contents: Buffer.from('<button>{{upper text}}</button>') });
-partials.set({ path: 'nav', contents: Buffer.from('<div id="{{id}}"></div>') });
-partials.set({ path: 'section', contents: Buffer.from('<section>{{upper text}}</section>') });
+partials.set({ path: 'button', contents: Buffer.from('\n<button>{{upper text}}</button>') });
+partials.set({ path: 'nav', contents: Buffer.from('\n<div id="{{id}}"></div>') });
+partials.set({ path: 'section', contents: Buffer.from('\n<section>{{upper text}}</section>') });
+partials.set({ path: 'above', contents: Buffer.from('\n<section>ABOVE</section>') });
+partials.set({ path: 'below', contents: Buffer.from('PARTIAL BELOW') });
 
 // layouts
 layouts.set({
@@ -65,7 +67,9 @@ layouts.set({
         <title>{{upper title}}</title>
       </head>
       <body>
+        {{#> above . }} Default "above" content {{/above}}
         {% body %}
+        {{#> below}} Default "below" content {{/below}}
       </body>
     </html>`)
 });
@@ -84,9 +88,9 @@ const run = timer.sync(app, view, layouts.views);
 
 run(1);
 run(10);
-// run(100);
-// run(1000);
-// run(10000);
+run(100);
+run(1000);
+run(10000);
 // run(100000);
 // run(1000000);
 // run(10000000);

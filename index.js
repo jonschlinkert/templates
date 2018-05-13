@@ -119,6 +119,7 @@ class Templates extends Common {
       Object.setPrototypeOf(this[name], collection);
     }
 
+    this.helper(name, view => this.get(view));
     this.emit('collection', collection);
     return collection;
   }

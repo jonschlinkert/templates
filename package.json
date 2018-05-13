@@ -27,10 +27,9 @@
     "ci": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "dependencies": {
-    "en-route": "file:/Users/jonschlinkert/dev/routes/en-route/",
+    "en-route": "^3.1.0",
     "kind-of": "^6.0.2",
-    "path-ends-with": "^2.0.0",
-    "use": "^3.1.0"
+    "path-ends-with": "^2.0.0"
   },
   "devDependencies": {
     "handlebars": "^4.0.11",
