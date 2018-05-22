@@ -1,4 +1,5 @@
-console.time('grand total');
+'use strict';
+
 const pretty = require('pretty-time');
 const colors = require('ansi-colors');
 const cyan = (...args) => colors.cyan(pretty(...args.concat(2)));
@@ -68,6 +69,9 @@ module.exports.sync = function(app, view, layouts) {
   const reset = () => (view.contents = buf);
 
   return function(num = 1000) {
+    let n = Math.round(num / 10);
+    let inc = n;
+    let grandTotal = timer();
     let time = timer();
     let init = time();
 
@@ -79,12 +83,18 @@ module.exports.sync = function(app, view, layouts) {
     for (let i = 0; i < num; i++) {
       app.render(view, { description: 'This is page: ' + i });
       reset();
+
+      if (i === inc) {
+        process.stdout.write('\r' + ((inc / num) * 100) + '%');
+        inc += n;
+      }
     }
 
     const total = time();
     const len = size(layouts);
     const actual = num * len; // size of the layout stack
 
+    process.stdout.write('\r');
     console.log('processed %s pages with %s layouts each:', num.toLocaleString(), len.toLocaleString());
 
     console.log(' ~%s first render', cyan(init));
@@ -92,8 +102,6 @@ module.exports.sync = function(app, view, layouts) {
     console.log(' ~%s per page', cyan(ns(total) / num));
     console.log(' ~%s total', cyan(total));
     console.log();
-    console.timeEnd('grand total');
-    console.time('grand total');
   };
 };
 

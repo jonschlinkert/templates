@@ -1,16 +1,15 @@
 'use strict';
 
 const assert = require('assert');
-const handlebars = require('./support/handlebars');
 const Collection = require('../lib/collection');
-const engines = require('./support/engines');
+const engines = require('../lib/engines');
 let pages, layouts;
 
 describe('collection.render', function() {
   beforeEach(function() {
     layouts = new Collection('layouts');
     pages = new Collection('pages', { asyncHelpers: true });
-    pages.engine('hbs', handlebars(require('handlebars')));
+    pages.engine('hbs', engines(require('handlebars')));
   });
 
   describe('rendering', function() {

@@ -24,7 +24,33 @@ class Templates extends Common {
     this.cache.partials = {};
     this.collections = new Map();
     this.viewCache = new Map();
+    this.lists = {};
     this.kinds = {};
+    this.fns = new Set();
+  }
+
+  use(plugin) {
+    const fn = this.invokeOnce(plugin).call(this, this);
+    if (typeof fn === 'function') {
+      fn.memo = fn.memo || new Set();
+      for (const [key, collection] of this.collections) {
+        if (fn.memo.has(collection)) continue;
+        fn.memo.add(collection);
+        collection.use(fn);
+      }
+      this.fns.add(fn);
+    }
+    return this;
+  }
+
+  run(obj, options) {
+    for (const fn of this.fns) {
+      if (obj.use) {
+        obj.use(fn, options); // collection
+      } else {
+        fn.call(obj, obj, options); // view
+      }
+    }
   }
 
   /**
@@ -110,16 +136,16 @@ class Templates extends Common {
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
       const res = super.handle(method, view);
-      if (this.options.sync === true) return handle(method, view);
+      if (this.options.sync === true) {
+        return handle(method, view);
+      }
       return res.then(() => handle(method, view)).then(() => view);
     };
 
     if (opts.collectionMethod !== false) {
-      this[name] = collection.set.bind(collection);
-      Object.setPrototypeOf(this[name], collection);
+      this[name] = collection;
     }
 
-    this.helper(name, view => this.get(view));
     this.emit('collection', collection);
     return collection;
   }
@@ -137,7 +163,8 @@ class Templates extends Common {
   }
 
   /**
-   *  Add a view to collection `name`.
+   *  Cache views when created by a collection. This makes lookups
+   *  much faster, and allows us avoid costly merging at render time.
    */
 
   setView(name, view) {
@@ -155,6 +182,11 @@ class Templates extends Common {
       }
       define(partials, view.key, view);
     }
+
+    if (view.kind === 'renderable') {
+      this.lists[name] = this.lists[name] || [];
+      this.lists[name].push(view);
+    }
   }
 
   /**
@@ -166,12 +198,13 @@ class Templates extends Common {
     delete kind[view.key];
     this.views.get(name).delete(view.key);
     this.viewCache.set(view.path, view);
+    this.lists[name] = this.lists[name].filter(v => v !== view);
     this.emit('delete', view);
   }
 
   /**
-   * Get the object for a template "kind". Creates the object if it
-   * doesn't already exist.
+   * Get a "kind" of template. If the _kind_ doesn't already exist, it
+   * will be created and an empty object will be returned.
    *
    * @name .kind
    * @param {string} `name`

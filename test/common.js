@@ -15,11 +15,11 @@ describe('Common', function() {
     assert(app instanceof Common);
   });
 
-  it('should decorate a .use method', function() {
-    assert.equal(typeof app.use, 'function');
-  });
+  // it('should decorate a .use method', function() {
+  //   assert.equal(typeof app.use, 'function');
+  // });
 
-  it('should decorate a .run method', function() {
-    assert.equal(typeof app.run, 'function');
-  });
+  // it('should decorate a .run method', function() {
+  //   assert.equal(typeof app.run, 'function');
+  // });
 });

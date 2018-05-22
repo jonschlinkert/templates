@@ -15,6 +15,18 @@ describe('collection.set', function() {
   it('should set contents when second argument is a string', async function() {
     const pages = new Collection('pages');
     const page = await pages.set('foo.hbs', 'bar');
-    assert(page.contents.toString(), 'bar');
+    assert.equal(page.contents.toString(), 'bar');
+  });
+
+  it('should run plugins on views', async function() {
+    const pages = new Collection('pages');
+    pages.use(function fn() {
+      this.foo = 'bar';
+      return fn;
+    });
+
+    const page = await pages.set('foo.hbs', 'bar');
+    assert.equal(pages.foo, 'bar');
+    assert.equal(page.foo, 'bar');
   });
 });
