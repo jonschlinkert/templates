@@ -12,7 +12,7 @@ describe('collection.handle', function() {
     pages.engine('hbs', handlebars(require('handlebars')));
   });
 
-  it('should handle the specified middleware method', async() => {
+  it('should handle the specified middleware method', () => {
     pages.before(/\.hbs/, file => {
       file.contents = Buffer.from(file.contents.toString() + 'bar');
     });
@@ -20,7 +20,7 @@ describe('collection.handle', function() {
       file.contents = Buffer.from(file.contents.toString() + 'baz');
     });
 
-    const page = await pages.set('a.hbs', { contents: Buffer.from('foo') });
+    const page = pages.set('a.hbs', { contents: Buffer.from('foo') });
     assert.equal(page.contents.toString(), 'foo');
     pages.handle('before', page);
     assert.equal(page.contents.toString(), 'foobar');
@@ -28,26 +28,20 @@ describe('collection.handle', function() {
     assert.equal(page.contents.toString(), 'foobarbaz');
   });
 
-  it('should run middleware in series by default', async() => {
+  it('should run middleware in series', () => {
     const actual = [];
     function fn(name, n) {
-      return new Promise(resolve => {
-        setTimeout(function() {
-          actual.push(name);
-          resolve();
-        }, n);
-      });
+      actual.push(name);
     }
 
-    pages.onLoad('a.hbs', file => fn('onLoad', 10));
-    pages.before('a.hbs', file => fn('before', 5));
-    pages.after('a.hbs', file => fn('after', 1));
+    pages.onLoad('a.hbs', file => fn('onLoad'));
+    pages.before('a.hbs', file => fn('before'));
+    pages.after('a.hbs', file => fn('after'));
 
-    const page = await pages.set('a.hbs', {});
-    await pages.handle('before', page);
-    await pages.handle('after', page);
+    const page = pages.set('a.hbs', {});
+    pages.handle('before', page);
+    pages.handle('after', page);
 
     assert.deepEqual(actual, ['onLoad', 'before', 'after']);
-    return page;
   });
 });

@@ -5,7 +5,7 @@ const Collection = require('../lib/collection');
 const engines = require('../lib/engines');
 let posts, other;
 
-describe.skip('collection.pager', function() {
+describe.only('collection.pager', function() {
   beforeEach(function() {
     posts = new Collection('posts', { sync: true });
     other = new Collection('other', { sync: true });
@@ -19,40 +19,39 @@ describe.skip('collection.pager', function() {
       posts.set('bbb.hbs', { contents: Buffer.from('') });
       posts.set('ccc.hbs', { contents: Buffer.from('') });
 
-      const pages = await posts.pager();
+      const pages = posts.pager();
       console.log(pages)
       assert(Array.isArray(pages));
       assert.equal(pages.length, 3);
     });
 
-//     it('should render pagination pages', async() => {
-    // posts.handler('onPager');
-//
-//       const buf = Buffer.from(`{{#with pagination.pages}}
-//   <a href="{{lookup (first) "path"}}">First</a>
-//   <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
-//   <span>{{lookup (lookup this ../pager.index) "path"}}</span>
-//   <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>
-//   <a href="{{lookup (last) "path"}}">Last</a>
-// {{/with}}`);
+    it('should render pagination pages', async() => {
+    posts.handler('onPager');
 
-//       posts.onPager(/\.hbs$/, view => {
-//         view.path = `/site/posts/${view.stem}/index.html`;
-//       });
+      const buf = Buffer.from(`{{#with pagination.pages}}
+  <a href="{{lookup (first) "path"}}">First</a>
+  <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
+  <span>{{lookup (lookup this ../pager.index) "path"}}</span>
+  <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>
+  <a href="{{lookup (last) "path"}}">Last</a>
+{{/with}}`);
 
-//       posts.option('engine', 'hbs');
-//       posts.set('aaa.hbs', { contents: buf });
-//       posts.set('bbb.hbs', { contents: buf });
-//       posts.set('ccc.hbs', { contents: buf });
+      posts.onPager(/\.hbs$/, view => {
+        view.path = `/site/posts/${view.stem}/index.html`;
+      });
 
-//       const pages = await posts.pager();
+      posts.option('engine', 'hbs');
+      posts.set('aaa.hbs', { contents: buf });
+      posts.set('bbb.hbs', { contents: buf });
+      posts.set('ccc.hbs', { contents: buf });
 
-//       const data = { pagination: { pages } };
-//       for (const page of pages) {
-//         await posts.render(page, data);
-//         console.log(page.contents.toString());
-//       }
+      const pages = posts.pager();
 
-//     });
+      const data = { pagination: { pages } };
+      for (const page of pages) {
+        posts.render(page, data);
+        console.log(page.contents.toString());
+      }
+    });
   });
 });

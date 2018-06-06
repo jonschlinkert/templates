@@ -69,7 +69,7 @@ module.exports.sync = function(app, view, layouts) {
   const reset = () => (view.contents = buf);
 
   return function(num = 1000) {
-    let n = Math.round(num / 10);
+    let n = Math.round(num / 20);
     let inc = n;
     let grandTotal = timer();
     let time = timer();
@@ -82,6 +82,7 @@ module.exports.sync = function(app, view, layouts) {
 
     for (let i = 0; i < num; i++) {
       app.render(view, { description: 'This is page: ' + i });
+      view.fn = null;
       reset();
 
       if (i === inc) {

@@ -14,22 +14,13 @@ describe('collection.render', function() {
   });
 
   it('should throw an error when view is not an object', function() {
-    return pages.compile()
-      .then(() => {
-        throw new Error('expected an error');
-      })
-      .catch(err => {
-        assert(err);
-        assert(/view/.test(err.message));
-      });
+    assert.throws(() => pages.compile());
   });
 
-  it('should add a view.fn function', async function() {
-    const page = await pages.set('about.hbs', { contents: Buffer.from('...') });
-    return pages.compile(page)
-      .then(view => {
-        assert.equal(typeof view.fn, 'function');
-        assert.equal(view.fn(), '...');
-      });
+  it('should add a view.fn function', function() {
+    const page = pages.set('about.hbs', { contents: Buffer.from('...') });
+    pages.compile(page)
+    assert.equal(typeof page.fn, 'function');
+    assert.equal(page.fn(), '...');
   });
 });

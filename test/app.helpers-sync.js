@@ -10,7 +10,7 @@ let app, render, other, hbs, locals;
 
 describe('app helpers - sync', function() {
   beforeEach(function() {
-    app = new Templates({ sync: true });
+    app = new Templates();
     app.engine('hbs', handlebars(require('handlebars')));
 
     const pages = app.create('pages');
@@ -19,7 +19,6 @@ describe('app helpers - sync', function() {
     partials.set('button.hbs', { contents: Buffer.from('<button>{{text}}</button>') });
     partials.set('button2.hbs', { contents: Buffer.from('<button>Click me!</button>') });
 
-    // this.helper(name, async(val, locals) => await render(this.get(val), locals));
     app.helper('partial', function(val, locals = {}, options = {}) {
       if (locals.hash) {
         options = locals;

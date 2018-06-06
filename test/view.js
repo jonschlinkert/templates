@@ -225,7 +225,7 @@ describe('View', function() {
         path: '/test/test.coffee',
         contents: val
       });
-      assert.equal(view[util.inspect.custom](), '<View "test.coffee" <Buffer 74 65 73 74>>');
+      assert.equal(view[util.inspect.custom](), '<View "/test/test.coffee" <Buffer 74 65 73 74>>');
     });
 
     it('should return correct format when Buffer and only path and no base', function() {
@@ -236,7 +236,7 @@ describe('View', function() {
         contents: val
       });
       delete view.base;
-      assert.equal(view[util.inspect.custom](), '<View "test/test.coffee" <Buffer 74 65 73 74>>');
+      assert.equal(view[util.inspect.custom](), '<View "/test/test.coffee" <Buffer 74 65 73 74>>');
     });
 
     it('should return correct format when Stream and relative path', function() {
@@ -246,7 +246,7 @@ describe('View', function() {
         path: '/test/test.coffee',
         contents: new Stream.PassThrough()
       });
-      assert.equal(view[util.inspect.custom](), '<View "test.coffee" <PassThroughStream>>');
+      assert.equal(view[util.inspect.custom](), '<View "/test/test.coffee" <PassThroughStream>>');
     });
 
     it('should return correct format when null and relative path', function() {
@@ -256,7 +256,7 @@ describe('View', function() {
         path: '/test/test.coffee',
         contents: null
       });
-      assert.equal(view[util.inspect.custom](), '<View "test.coffee">');
+      assert.equal(view[util.inspect.custom](), '<View "/test/test.coffee">');
     });
   });
 

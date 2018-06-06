@@ -19,7 +19,6 @@ describe('app.engine', function() {
     assert.equal(typeof app.engine().instance, 'object');
     assert.equal(typeof app.engine().compile, 'function');
     assert.equal(typeof app.engine().render, 'function');
-    assert.equal(typeof app.engine().renderSync, 'function');
   });
 
   it('should allow a registered engine to be set on options', function() {

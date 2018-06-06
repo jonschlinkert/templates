@@ -22,6 +22,7 @@ class Templates extends Common {
     super(options);
     this.type = 'app';
     this.cache.partials = {};
+    this.Collection = this.options.Collection || Collection;
     this.collections = new Map();
     this.viewCache = new Map();
     this.lists = {};
@@ -30,7 +31,7 @@ class Templates extends Common {
   }
 
   use(plugin) {
-    const fn = this.invokeOnce(plugin).call(this, this);
+    const fn = this.invoke(plugin).call(this, this);
     if (typeof fn === 'function') {
       fn.memo = fn.memo || new Set();
       for (const [key, collection] of this.collections) {
@@ -107,7 +108,7 @@ class Templates extends Common {
    */
 
   collection(name, options) {
-    const collection = new Collection(name, options);
+    const collection = new this.Collection(name, options);
     this.run(collection);
     return collection;
   }

@@ -8,7 +8,7 @@ let app;
 
 describe('app.render', function() {
   beforeEach(function() {
-    app = new App({ asyncHelpers: true });
+    app = new App();
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
     app.engine('hbs', handlebars(require('handlebars')));
@@ -16,72 +16,41 @@ describe('app.render', function() {
 
   describe('rendering', function() {
     it('should throw an error when view is not an object', function() {
-      return app.render()
-        .then(() => {
-          throw new Error('expected an error');
-        })
-        .catch(err => {
-          assert(err);
-          assert(/view/.test(err.message));
-        });
+      assert.throws(() => app.render());
     });
 
-    it('should throw an error when an engine is not defined:', async() => {
-      const page = await app.pages.set('foo.bar', { contents: Buffer.from('<%= name %>') });
+    it('should throw an error when an engine is not registered', () => {
+      const page = app.pages.set('foo.bar', { contents: Buffer.from('<%= name %>') });
       app.engines = new Map();
-
-      return app.render(page)
-        .then(() => {
-          throw new Error('expected an error');
-        })
-        .catch(err => {
-          assert(err);
-          assert(/engine "bar" is not registered/.test(err.message));
-        });
+      assert.throws(() => app.render(page), /engine "bar"/);
     });
 
-    it('should support using helpers to render a view:', async () => {
+    it('should support using helpers to render a view:',  () => {
       app.helper('upper', str => str.toUpperCase(str));
 
-      const page = await app.pages.set('a.hbs', {
+      const page = app.pages.set('a.hbs', {
         contents: Buffer.from('a {{upper name}} b'),
         data: { name: 'Brian' }
       });
 
-      await app.render(page);
+      app.render(page);
       assert.equal(page.contents.toString(), 'a BRIAN b');
     });
 
-    it('should support using async helpers to render a view:', async () => {
-      app.helper('upper', function(str) {
-        return new Promise(resolve => {
-          setTimeout(() => resolve(str.toUpperCase(str)), 10);
-        });
-      });
-
-      const page = await app.pages.set('a.hbs', {
-        contents: Buffer.from('a {{upper name}} b'),
-        data: { name: 'Brian' }
-      });
-
-      await app.render(page);
-      assert.equal(page.contents.toString(), 'a BRIAN b');
-    });
-
-    it('should use globally defined data to render a view', async() => {
+    it('should use globally defined data to render a view', () => {
       app.cache.data.name = 'Brian';
       app.helper('upper', str => str.toUpperCase(str));
 
-      const page = await app.pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b') });
-      await app.render(page);
+      const page = app.pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b') });
+      app.render(page);
       assert.equal(page.contents.toString(), 'a BRIAN b');
     });
 
-    it('should render a view from its path:', async() => {
+    it('should render a view from its path:', () => {
       app.helper('upper', str => str.toUpperCase(str));
-      const page = await app.pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
+      const page = app.pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
 
-      await app.render('a.hbs');
+      app.render('a.hbs');
       assert.equal(page.contents.toString(), 'a BRIAN b');
     });
   });

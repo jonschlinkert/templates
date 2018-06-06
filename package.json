@@ -32,12 +32,12 @@
     "path-ends-with": "^2.0.0"
   },
   "devDependencies": {
-    "handlebars": "^4.0.11",
-    "engine": "^0.1.12",
     "ansi-red": "^0.1.1",
-    "mocha": "^3.5.3",
+    "engine": "^0.1.12",
     "gulp-format-md": "^1.0.0",
-    "helper-changelog": "^0.3.0"
+    "handlebars": "^4.0.11",
+    "helper-changelog": "^0.3.0",
+    "mocha": "^3.5.3"
   },
   "keywords": [
     "compile",

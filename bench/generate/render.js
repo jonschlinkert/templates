@@ -1,64 +1,94 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const mkdir = require('mkdirp');
 const rimraf = require('rimraf');
-const mkdir = require('./mkdir');
+const pretty = require('pretty-time');
+const colors = require('ansi-colors');
+const write = require('write');
 const Collection = require('../../lib/collection');
-const write = util.promisify(fs.writeFile);
 const cwd = path.join.bind(path, __dirname, 'blog');
 const dirs = new Set();
 
-async function render(destDir) {
-  console.time('  deleted existing files');
+const time = function() {
+  let start = process.hrtime();
+  return () => {
+    let diff = process.hrtime(start);
+    start = process.hrtime();
+    return colors.magenta(pretty(diff, 'μs'));
+  };
+}
+
+function ns(n) {
+  return n[0] * 1e9 + n[1];
+}
+
+const starting = (name, ...rest) => {
+  console.log('starting:', colors.cyan(name), ...rest);
+};
+const finished = (name, ...rest) => {
+  console.log('finished:', colors.cyan(name), ...rest);
+};
+
+function render(destDir) {
+  // delete existing files
+  starting('delete existing files');
   rimraf.sync(path.join(__dirname, destDir || 'dist'));
-  console.timeEnd('  deleted existing files');
-  console.log();
-  console.time('  generated 5,000 blog posts in');
-  console.time('  read files');
+  finished('delete existing files');
+
+  let grand = process.hrtime();
+  let total = time();
+  let diff = time();
+  starting('total build');
+
+  // read posts
+  starting('read blog posts');
   const files = fs.readdirSync(cwd());
-  console.timeEnd('  read files');
+  finished('read blog posts', diff());
+
+  // start build
+  starting('assemble - build');
+  let assembled = time();
 
   // collection
-  console.time('  assemble');
-  console.time('  create collection');
+  starting('assemble - create collection');
   const collection = new Collection('pages', { sync: true });
   collection.option('engine', 'noop');
-  const views = new Set();
-  console.timeEnd('  create collection');
+  finished('assemble - create collection', diff());
 
-  // parse
-  console.time('  parse front-matter');
+  // parse front matter and add views
+  starting('assemble - add views and parse front-matter', diff());
   for (const filename of files) {
     if (/\.md$/.test(filename)) {
-      views.add(parse({ path: cwd(filename), cwd: cwd() }));
+      collection.set(parse({ path: cwd(filename), cwd: cwd() }));
     }
   }
-  console.timeEnd('  parse front-matter');
-
-  // add views
-  console.time('  add views');
-  for (const view of views) collection.set(view);
-  console.timeEnd('  add views');
+  finished('assemble - add views and parse front-matter', diff());
 
   // render views
-  console.time('  render content');
+  starting('assemble - render views');
   for (const [key, view] of collection.views) {
     collection.render(view);
   }
-  console.timeEnd('  render content');
-  console.timeEnd('  assemble');
+  finished('assemble - render views', diff());
 
   // write files
-  console.time('  write files');
+  starting('assemble - write rendered views to fs');
   for (const [key, view] of collection.views) {
     if (!dirs.has(view.dirname)) {
       dirs.add(view.dirname);
-      await mkdir(view.dirname);
+      mkdir(view.dirname);
     }
-    await write(view.path, view.contents);
+    rename(view);
+    write.sync(view.path, view.contents);
   }
-  console.timeEnd('  write files');
-  console.timeEnd('  generated 5,000 blog posts in');
+
+  finished('assemble - write rendered views to fs', diff());
+  finished('assemble - build', assembled());
+  finished('total build (generated 5,000 blog posts)', total());
+  console.log('per view:', colors.green(pretty(ns(process.hrtime(grand)) / 5000)));
 }
 
 function parse(file) {
@@ -69,20 +99,28 @@ function parse(file) {
     file.matter = Buffer.from(matter);
     file.data = JSON.parse(matter);
     file.contents = Buffer.from(str.slice(idx + 4));
+  } else {
+    file.data = {};
+    file.contents = Buffer.from(str);
   }
-  file.extname = path.extname(file.path);
-  file.stem = path.basename(file.path, file.extname);
-  file.basename = file.stem + '.html';
-  file.path = path.join(__dirname, 'dist', file.basename);
-  file.dirname = path.dirname(file.path);
   return file;
 }
 
+function rename(view) {
+  view.extname = path.extname(view.path);
+  view.stem = path.basename(view.path, view.extname);
+  view.basename = view.stem + '.html';
+  view.path = path.join(__dirname, 'dist', view.basename);
+  // view.path = path.join(__dirname, 'dist', dest(view));
+  view.dirname = path.dirname(view.path);
+}
+
 function dest(file) {
-  const regex = /^(\d{4})-(\d{1,2})-(\d{1,2})-(.*?)\.md/;
+  const pad = str => str.padStart(2, '0');
+  const regex = /^(\d{4})-(\d{1,2})-(\d{1,2})-(.*?)\.(md|html)/;
   const match = regex.exec(file.basename) || [];
-  const [ year, month, day, slug ] = match.slice(1);
-  return `${year}/${month}/${day}/${slug}.html`;
+  const [ year, month, day, slug, ext ] = match.slice(1);
+  return `${year}/${pad(month)}/${pad(day)}/${slug}.html`;
 }
 
 render();

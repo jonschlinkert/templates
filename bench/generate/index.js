@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const mkdir = require('./mkdir');
+const mkdir = require('mkdirp');
 const write = util.promisify(fs.writeFile);
 const loremipsum = require('lorem-ipsum');
 const defaults = {
@@ -14,23 +14,23 @@ const defaults = {
   pages: 2500
 };
 
-async function generate(options = {}) {
+function generate(options = {}) {
   const opts = Object.assign({}, defaults, options);
   const contents = loremipsum(opts);
   const date = formatDate(opts.startDate);
   const dest = (...args) => path.join(__dirname, opts.dest, ...args);
   const time = `${opts.pages} pages`;
-
   console.time(time);
+
   if (!fs.existsSync(dest())) {
-    await mkdir(dest());
+    mkdir(dest());
   }
 
   for (let i = 0; i < opts.pages; i++) {
     const file1 = page(date(i), contents, i, 1);
     const file2 = page(date(i), contents, i, 2);
-    await write(dest(file1.path), file1.contents);
-    await write(dest(file2.path), file2.contents);
+    write(dest(file1.path), file1.contents);
+    write(dest(file2.path), file2.contents);
   }
 
   console.timeEnd(time);
@@ -73,6 +73,5 @@ function datestamp(date = new Date()) {
   const day = date.getUTCDate();
   return `${year}-${month}-${day}`;
 }
-
 
 generate();

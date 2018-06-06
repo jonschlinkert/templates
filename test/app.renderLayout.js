@@ -14,54 +14,49 @@ describe('app.renderLayout', function() {
     app.engine('hbs', handlebars(require('handlebars')));
   });
 
-  it('should throw an error when a layout cannot be found', async() => {
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
-    return app.renderLayout(view).catch(err => {
-      assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
-    });
+  it('should throw an error when a layout cannot be found', () => {
+    const view = app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    assert.throws(() => app.renderLayout(view), /layout "default" is defined on "a\.hbs" but cannot be found/);
   });
 
-  it('should get layouts from render locals', async() => {
+  it('should get layouts from render locals', () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const view = app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view, { layouts: app.layouts.views });
+    app.renderLayout(view, { layouts: app.layouts.views });
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should get layouts from render options', async() => {
+  it('should get layouts from render options', () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const view = app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view, { layouts: app.layouts.views });
+    app.renderLayout(view, { layouts: app.layouts.views });
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should get layouts from app.types.layouts', async() => {
+  it('should get layouts from app.types.layouts', () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const view = app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view);
+    app.renderLayout(view);
     assert.equal(view.contents.toString(), 'before This is content after');
   });
 
-  it('should render a layout multiple times when history is reset', async() => {
+  it('should render a layout multiple times when history is reset', () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('A{% body %}B') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
+    const view = app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
 
-    await app.renderLayout(view, { history: [] });
-    await app.renderLayout(view, { history: [] });
-    await app.renderLayout(view, { history: [] });
+    app.renderLayout(view, { history: [] });
+    app.renderLayout(view, { history: [] });
+    app.renderLayout(view, { history: [] });
     assert.equal(view.contents.toString(), 'AAA This is content BBB');
   });
 
-  it('should throw an error when a layout cannot be found on app.types.layout', async() => {
+  it('should throw an error when a layout cannot be found on app.types.layout', () => {
     app.layouts.set('fsjfsjslkjf.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const view = app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    return app.renderLayout(view)
-      .catch(err => {
-        assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
-      });
+    assert.throws(() => app.renderLayout(view), /layout "default" is defined on "a.hbs" but cannot be found/);
   });
 });
