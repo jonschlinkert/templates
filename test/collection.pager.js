@@ -5,7 +5,7 @@ const Collection = require('../lib/collection');
 const engines = require('../lib/engines');
 let posts, other;
 
-describe.only('collection.pager', function() {
+describe('collection.pager', function() {
   beforeEach(function() {
     posts = new Collection('posts', { sync: true });
     other = new Collection('other', { sync: true });
@@ -20,7 +20,6 @@ describe.only('collection.pager', function() {
       posts.set('ccc.hbs', { contents: Buffer.from('') });
 
       const pages = posts.pager();
-      console.log(pages)
       assert(Array.isArray(pages));
       assert.equal(pages.length, 3);
     });

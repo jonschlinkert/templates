@@ -4,27 +4,50 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const mkdir = require('mkdirp');
+const rimraf = require('rimraf');
 const write = util.promisify(fs.writeFile);
 const loremipsum = require('lorem-ipsum');
 const defaults = {
   startDate: 'December 17, 2010',
-  dest: 'blog',
+  dest: 'content',
   count: 1600,
   units: 'words',
-  pages: 2500
+  pages: 100
 };
 
 function generate(options = {}) {
   const opts = Object.assign({}, defaults, options);
-  const contents = loremipsum(opts);
+  let contents = loremipsum(opts);
   const date = formatDate(opts.startDate);
   const dest = (...args) => path.join(__dirname, opts.dest, ...args);
   const time = `${opts.pages} pages`;
   console.time(time);
 
+  rimraf.sync(dest());
+
   if (!fs.existsSync(dest())) {
     mkdir(dest());
   }
+
+  contents = `<a href="{{site.paths.root}}/index.html">Home</a>
+<br>
+<h1>{{title}}</h1>\n<h2>Article</h2>
+{{#each (filter site.tags.tags tags) as |tag|}}
+<a href="{{path}}">{{items.length}}</a>
+{{/each}}
+`
++ contents + `
+<h2>Pages</h2>
+<a href="{{pagerFirst pager "path"}}">First</a>
+<a href="{{pagerPrev pager "path"}}">Prev</a>
+<a>{{pager.number}}</a>
+<a href="{{pagerNext pager "path"}}">Next</a>
+<a href="{{pagerLast pager "path"}}">Last</a>
+<hr>
+{{#each site.tags.paths as |tag path|}}
+<a href="{{tag}}">{{path}}</a>
+{{/each}}
+`;
 
   for (let i = 0; i < opts.pages; i++) {
     const file1 = page(date(i), contents, i, 1);
@@ -41,7 +64,7 @@ function page(date, contents, i, n) {
     data: {
       title: 'Blog post - ' + i,
       description: 'This is a description',
-      categories: [],
+      tags: tags(),
       date: date,
       slug: 'foo-bar-baz-' + n
     }
@@ -72,6 +95,32 @@ function datestamp(date = new Date()) {
   const month = date.getUTCMonth() + 1;
   const day = date.getUTCDate();
   return `${year}-${month}-${day}`;
+}
+
+function tags() {
+  const arr = [];
+  switch (Math.floor(Math.random() * 50)) {
+    case 3:
+    case 9:
+    case 10:
+    case 12:
+    case 22:
+    case 38:
+      arr.push('css');
+      break;
+    case 7:
+    case 19:
+    case 42:
+    case 47:
+    case 50:
+      arr.push('js');
+      break;
+    case 25:
+    case 41:
+      arr.push('css', 'js');
+      break;
+  }
+  return arr;
 }
 
 generate();
