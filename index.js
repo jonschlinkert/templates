@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const Collection = require('./lib/collection');
+const streams = require('./lib/streams');
 const Common = require('./lib/common');
 const View = require('./lib/view');
 
@@ -20,38 +21,13 @@ const View = require('./lib/view');
 class Templates extends Common {
   constructor(options) {
     super(options);
-    this.type = 'app';
-    this.cache.partials = {};
     this.Collection = this.options.Collection || Collection;
     this.collections = new Map();
     this.viewCache = new Map();
+    this.cache.partials = {};
     this.lists = {};
     this.kinds = {};
-    this.fns = new Set();
-  }
-
-  use(plugin) {
-    const fn = this.invoke(plugin).call(this, this);
-    if (typeof fn === 'function') {
-      fn.memo = fn.memo || new Set();
-      for (const [key, collection] of this.collections) {
-        if (fn.memo.has(collection)) continue;
-        fn.memo.add(collection);
-        collection.use(fn);
-      }
-      this.fns.add(fn);
-    }
-    return this;
-  }
-
-  run(obj, options) {
-    for (const fn of this.fns) {
-      if (obj.use) {
-        obj.use(fn, options); // collection
-      } else {
-        fn.call(obj, obj, options); // view
-      }
-    }
+    this.use(streams(options));
   }
 
   /**
@@ -137,9 +113,7 @@ class Templates extends Common {
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
       const res = super.handle(method, view);
-      if (this.options.sync === true) {
-        return handle(method, view);
-      }
+      if (this.options.sync === true) return handle(method, view);
       return res.then(() => handle(method, view)).then(() => view);
     };
 
@@ -220,7 +194,6 @@ class Templates extends Common {
   /**
    * Handle middleware. This method is documented in the "Common" class.
    */
-
 
   handle(method, view) {
     if (view.collection) {

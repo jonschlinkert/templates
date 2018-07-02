@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "en-route": "^3.1.0",
-    "kind-of": "^6.0.2",
     "path-ends-with": "^2.0.0"
   },
   "devDependencies": {
@@ -37,7 +36,9 @@
     "gulp-format-md": "^1.0.0",
     "handlebars": "^4.0.11",
     "helper-changelog": "^0.3.0",
-    "mocha": "^3.5.3"
+    "istanbul": "^0.4.5",
+    "mocha": "^3.5.3",
+    "nyc": "^12.0.2"
   },
   "keywords": [
     "compile",

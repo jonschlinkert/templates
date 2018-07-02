@@ -45,7 +45,7 @@ describe('collection.pager', function() {
       assert.equal(pages[2].path, '/site/posts/ccc/index.html');
     });
 
-    it.only('should render pagination pages', () => {
+    it('should render pagination pages', () => {
       const buf = Buffer.from(`{{#with pagination.pages}}
   <a href="{{lookup (first) "path"}}">First</a>
   <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
