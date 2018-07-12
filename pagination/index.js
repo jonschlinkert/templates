@@ -1,7 +1,7 @@
 const Collection = require('../lib/collection');
 const View = require('../lib/view');
-const posts = new Collection({ sync: true });
-posts.use(require('./pagination'));
+const posts = new Collection();
+// posts.use(require('./pagination'));
 
 posts.set('aaa.hbs', { data: { tags: ['a', 'b'] } });
 posts.set('bbb.hbs', { data: { tags: ['c'] } });
@@ -14,12 +14,22 @@ posts.set('hhh.hbs', { data: { tags: ['e', 'a', 'b'] } });
 posts.set('iii.hbs', { data: { tags: ['g', 'a', 'b'] } });
 posts.set('jjj.hbs', { data: { tags: ['h', 'b', 'f'] } });
 posts.set('lll.hbs', { data: { tags: ['i', 'b', 'c', 'd'] } });
+posts.set('mmm.hbs');
 
-const tags = posts.collect('tags');
+
+// console.log(posts.groupBy('data.tags'));
+// console.log(posts.groupBy('extname'));
+// console.log(posts.groupBy('stem'));
+// console.log(posts.groupBy(view => view.data.tags));
+
+const tags = posts.collect('data.tags', { singular: 'data.tag' }, page => {
+  page.path = '/blog/' + page.path;
+  return page;
+});
 console.log(tags);
 
-const pages1 = posts.paginate({ perPage: 2 }, page => posts.view(page));
-console.log(pages1);
+// const pages1 = posts.paginate({ perPage: 2 }, page => posts.view(page));
+// console.log(pages1);
 
 // const pages2 = posts.paginate(page => posts.view(page));
 // console.log(pages2);

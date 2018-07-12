@@ -3,7 +3,6 @@
 const path = require('path');
 const assert = require('assert');
 const Collection = require('../lib/collection');
-let pages;
 
 describe('collection.delete', function() {
   it('should delete a view', function() {

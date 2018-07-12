@@ -45,7 +45,7 @@ module.exports = handlebars => {
       }
       register.call(this, options);
       for (const key of Object.keys(views)) {
-        engine.render(view, locals, options);
+        engine.render(views[key], locals, options);
       }
     }
   };

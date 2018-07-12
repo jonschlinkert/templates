@@ -1,10 +1,12 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const assert = require('assert');
 const Stream = require('stream');
 const View = require('../lib/view');
+const fixture = name => path.join(__dirname, 'fixtures', name);
 let view;
 
 describe('View', function() {
@@ -31,7 +33,7 @@ describe('View', function() {
     });
   });
 
-  describe('isView()', function() {
+  describe('file.isView()', function() {
     it('should return true on a vinyl object', function() {
       const view = new View();
       assert.equal(View.isView(view), true);
@@ -44,7 +46,7 @@ describe('View', function() {
     });
   });
 
-  describe('constructor()', function() {
+  describe('file.constructor()', function() {
     it('should throw an error if value is a string', function() {
       assert.throws(() => new View('foo'), /expected/);
     });
@@ -118,7 +120,42 @@ describe('View', function() {
     });
   });
 
-  describe('isBuffer()', function() {
+  describe('file.isBinary()', function() {
+    it('should return false when the contents are a utf8 Buffer', function() {
+      const val = Buffer.from('test');
+      const view = new View({ contents: val });
+      assert.equal(view.isBinary(), false);
+    });
+
+    it('should return false when the contents are a Stream', function() {
+      const val = new Stream();
+      const view = new View({ contents: val });
+      assert(!view.isBinary());
+    });
+
+    it('should return false when file.contents are null', function() {
+      const view = new View({ contents: null });
+      assert(!view.isBinary());
+    });
+
+    it('should return true file.extname is a binary extension', function() {
+      assert(new View({ path: 'foo.jpg' }).isBinary());
+      assert(new View({ path: 'foo.png' }).isBinary());
+      assert(new View({ path: 'foo.pdf' }).isBinary());
+    });
+
+    it('should return true when file.contents is binary', function() {
+      const view = new View({ contents: null });
+      assert(!view.isBinary());
+    });
+
+    it('should return true when file.contents is binary', function() {
+      new View({ contents: fs.readFileSync(fixture('octdrey-catburn.jpg')) });
+      new View({ contents: fs.readFileSync(fixture('octocat.png')) });
+    });
+  });
+
+  describe('file.isBuffer()', function() {
     it('should return true when the contents are a Buffer', function() {
       const val = Buffer.from('test');
       const view = new View({ contents: val });
@@ -131,7 +168,7 @@ describe('View', function() {
       assert(!view.isBuffer());
     });
 
-    it('should return false when the contents are a null', function() {
+    it('should return false when the contents are null', function() {
       const view = new View({ contents: null });
       assert(!view.isBuffer());
     });
@@ -150,7 +187,7 @@ describe('View', function() {
       assert.equal(view.isStream(), true);
     });
 
-    it('should return false when the contents are a null', function() {
+    it('should return false when the contents are null', function() {
       const view = new View({ contents: null });
       assert(!view.isStream());
     });
@@ -169,7 +206,7 @@ describe('View', function() {
       assert(!view.isNull());
     });
 
-    it('should return true when the contents are a null', function() {
+    it('should return true when the contents are null', function() {
       const view = new View({ contents: null });
       assert.equal(view.isNull(), true);
     });
@@ -199,7 +236,7 @@ describe('View', function() {
       assert(!view.isDirectory());
     });
 
-    it('should return true when the contents are a null', function() {
+    it('should return true when the contents are null', function() {
       const view = new View({ contents: null, stat: fakeStat });
       assert.equal(view.isDirectory(), true);
     });
@@ -260,7 +297,7 @@ describe('View', function() {
     });
   });
 
-  describe('contents get/set', function() {
+  describe('file.contents get/set', function() {
     it('should work with Buffer', function() {
       const val = Buffer.from('test');
       const view = new View();
@@ -290,7 +327,16 @@ describe('View', function() {
     });
   });
 
-  describe('layout', function() {
+  describe('file.size', function() {
+    it('should work with Buffer', function() {
+      const val = Buffer.from('test');
+      const view = new View();
+      view.contents = val;
+      assert.equal(view.contents, val);
+    });
+  });
+
+  describe('file.layout', function() {
     it('should set the layout on view.layout', function() {
       view = new View({ path: 'test/fixture', layout: 'default' });
       assert.equal(view.layout, 'default');
@@ -302,7 +348,7 @@ describe('View', function() {
     });
   });
 
-  describe('engine', function() {
+  describe('file.engine', function() {
     it('should set the engine on view.engine', function() {
       view = new View({ path: 'test/fixture', engine: '.hbs' });
       assert.equal(view.engine, '.hbs');
@@ -314,7 +360,7 @@ describe('View', function() {
     });
   });
 
-  describe('hasPath', function() {
+  describe('file.hasPath', function() {
     it('should return false when view.path is undefined', function() {
       view = new View();
       assert(!view.hasPath());
@@ -347,14 +393,14 @@ describe('View', function() {
     });
   });
 
-  describe('cwd', function() {
+  describe('file.cwd', function() {
     it('should get properties from the object', function() {
       view = new View({ cwd: 'test/fixtures' });
       assert.equal(view.cwd, path.resolve(__dirname, 'fixtures'));
     });
   });
 
-  describe('absolute get/set', function() {
+  describe('file.absolute get/set', function() {
     it('should throw an error when user attempts to set on view.absolute', function() {
       const view = new View();
       assert.throws(() => {
@@ -368,7 +414,7 @@ describe('View', function() {
     });
   });
 
-  describe('relative get/set', function() {
+  describe('file.relative get/set', function() {
     it('should throw an error when user attempts to set on view.relative', function() {
       const view = new View();
       assert.throws(() => {
@@ -405,7 +451,7 @@ describe('View', function() {
     });
   });
 
-  describe('dirname get/set', function() {
+  describe('file.dirname get/set', function() {
     it('should error on get when no path', function() {
       const view = new View();
       assert.throws(() => view.dirname);
@@ -440,7 +486,7 @@ describe('View', function() {
     });
   });
 
-  describe('stem get/set', function() {
+  describe('file.stem get/set', function() {
     it('should get view.stem', function() {
       const view = new View({ path: path.resolve('test.js') });
       assert.equal(view.stem, 'test');
@@ -453,7 +499,7 @@ describe('View', function() {
     });
   });
 
-  describe('basename get/set', function() {
+  describe('file.basename get/set', function() {
     it('should error on get when no path', function() {
       const view = new View();
       try {
@@ -492,7 +538,7 @@ describe('View', function() {
     });
   });
 
-  describe('extname get/set', function() {
+  describe('file.extname get/set', function() {
     it('should error on get when no path', function() {
       const view = new View();
       assert.throws(() => view.extname);
@@ -523,7 +569,7 @@ describe('View', function() {
     });
   });
 
-  describe('path get/set', function() {
+  describe('file.path get/set', function() {
     it('should record history when instantiation', function() {
       const view = new View({
         cwd: '/',

@@ -3,16 +3,13 @@
 require('mocha');
 const path = require('path');
 const assert = require('assert');
-const { through } = require('../lib/utils');
-const toStream = require('../lib/streams');
+const vfs = require('vinyl-fs');
 const Templates = require('..');
 let app;
 
 describe('streams', () => {
   beforeEach(() => {
     app = new Templates();
-    // app.use(toStream(app.options));
-    // app.defaults();
 
     app.create('pages');
     app.create('posts');
@@ -52,8 +49,7 @@ describe('streams', () => {
       });
   });
 
-  it.skip('should throw an error if collection name does not exist', cb => {
-    const files = [];
+  it('should throw an error if collection name does not exist', cb => {
     app.toStream('lslslslsllslsllsl')
       .on('error', err => {
         assert(/invalid collection name/.test(err.message));
@@ -74,12 +70,12 @@ describe('streams', () => {
       });
   });
 
-  it.skip('should work with `.src`', cb => {
+  it('should work with `.src`', cb => {
     const files = [];
-    app.src(__dirname + '/fixtures/*.txt')
+    vfs.src('fixtures/*.txt', { cwd: __dirname })
       .pipe(app.toStream('posts'))
-      .on('error', cb)
       .on('data', file => files.push(file.path))
+      .on('error', cb)
       .on('end', () => {
         assert.equal(files.length, 6);
         assert.equal(files[0], 'x.html');
@@ -252,8 +248,8 @@ describe('streams', () => {
   it('should support an optional filter function as the second argument', cb => {
     const files = [];
     app.toStream('pages', function(key, view) {
-        return key !== 'a.html';
-      })
+      return key !== 'a.html';
+    })
       .on('error', cb)
       .on('data', file => files.push(file.path))
       .on('end', () => {

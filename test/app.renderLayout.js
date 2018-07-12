@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const handlebars = require('./support/handlebars');
-const engines = require('./support/engines');
 const App = require('..');
 let app;
 

@@ -1,9 +1,7 @@
 'use strict';
 
-const path = require('path');
 const assert = require('assert');
 const Collection = require('../lib/collection');
-let pages;
 
 describe('collection.set', function() {
   it('should set a view on collection.views', function() {

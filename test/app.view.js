@@ -1,6 +1,5 @@
 'use strict';
 
-const path = require('path');
 const assert = require('assert');
 const App = require('..');
 let app;
@@ -8,7 +7,7 @@ let app;
 describe('app.view', function() {
   beforeEach(function() {
     app = new App();
-  })
+  });
 
   it('should create a view', async function() {
     const view = app.view('foo.hbs');

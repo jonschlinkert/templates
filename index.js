@@ -34,6 +34,31 @@ class Templates extends Common {
    * Get a cached view.
    *
    * ```js
+   * // specify a collection name
+   * app.get('foo/bar.html', 'pages');
+   * app.get('foo.html', 'pages');
+   *
+   * // or get the first matching view from the viewCache
+   * app.get('foo/bar.html');
+   * app.get('foo.html');
+   * ```
+   * @name .get
+   * @param {String|RegExp|Function} `key`
+   * @return {Object} Returns the view if found.
+   * @api public
+   */
+
+  get(key, collectionName) {
+    if (View.isView(key)) return key;
+    if (collectionName) return this[collectionName].get(key);
+    if (this.viewCache.has(key)) return this.viewCache.get(key);
+    return this.find(view => view.hasPath(key));
+  }
+
+  /**
+   * Get a cached view.
+   *
+   * ```js
    * // iterates over all collections
    * app.get('foo/bar.html');
    * app.get('foo.html');
@@ -48,11 +73,8 @@ class Templates extends Common {
    * @api public
    */
 
-  get(key, collectionName) {
-    if (View.isView(key)) return key;
-    if (collectionName) return this[collectionName].get(key);
-    if (this.viewCache.has(key)) return this.viewCache.get(key);
-    return this.find(view => view.hasPath(key));
+  has(key, collectionName) {
+    return !!this.get(key, collectionName);
   }
 
   /**
@@ -113,7 +135,7 @@ class Templates extends Common {
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
       const res = super.handle(method, view);
-      if (this.options.sync === true) return handle(method, view);
+      if (this.options.sync !== false) return handle(method, view);
       return res.then(() => handle(method, view)).then(() => view);
     };
 

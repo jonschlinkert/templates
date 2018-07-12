@@ -1,9 +1,7 @@
 'use strict';
 
-const path = require('path');
 const assert = require('assert');
 const Collection = require('../lib/collection');
-let pages;
 
 describe('collection', function() {
   it('should not throw an error when name is not a string', function() {

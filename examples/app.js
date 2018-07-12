@@ -4,7 +4,6 @@
 const Engine = require('engine');
 const engines = require('../test/support/engines');
 const path = require('path');
-const red = require('ansi-red');
 const App = require('..');
 const app = new App();
 

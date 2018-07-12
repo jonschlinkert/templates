@@ -4,7 +4,6 @@ require('mocha');
 const assert = require('assert');
 const engine = require('../lib/engines');
 const Collection = require('../lib/collection');
-const helpers = require('./support/helpers');
 let pages, other;
 
 describe('helpers - sync', () => {

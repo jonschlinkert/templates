@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const handlebars = require('./support/handlebars');
-const engines = require('./support/engines');
 const App = require('..');
 let app;
 
@@ -25,7 +24,7 @@ describe('app.render', function() {
       assert.throws(() => app.render(page), /engine "bar"/);
     });
 
-    it('should support using helpers to render a view:',  () => {
+    it('should support using helpers to render a view:', () => {
       app.helper('upper', str => str.toUpperCase(str));
 
       const page = app.pages.set('a.hbs', {

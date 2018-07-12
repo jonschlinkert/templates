@@ -69,7 +69,7 @@ describe('collection.pager', function() {
 
       for (const post of posts.list) {
         posts.render(post, data);
-        console.log(post.contents.toString())
+        console.log(post.contents.toString());
       }
 
       // console.log(posts);
@@ -87,11 +87,11 @@ describe('collection.pager', function() {
       posts.set('hhh.hbs', { contents: Buffer.from('') });
 
       for (const view of posts.paginate()) {
-        // console.log(view.data);
+        console.log(view.data);
       }
     });
 
-    it.skip('should render pagination pages', () => {
+    it('should render pagination pages', () => {
       const buf = Buffer.from(`{{#with pagination.pages}}
   <a href="{{lookup (first) "path"}}">First</a>
   <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
@@ -107,6 +107,7 @@ describe('collection.pager', function() {
       const index = other.set('index.hbs', {
         contents: Buffer.from(`{{#with pagination.pages}}
   <a href="{{lookup (first) "path"}}">First</a>
+  {{log this}}
   <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
   <span>{{lookup (lookup this ../pager.index) "path"}}</span>
   <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>

@@ -24,6 +24,8 @@ function bench(name) {
 
   console.log(`\n# ${name}`);
   const suite = new Suite();
+  suite.on('complete', () => fastest(suite));
+
   const res = {
     run: suite.run.bind(suite),
     add: (key, fn) => {
@@ -36,6 +38,22 @@ function bench(name) {
     }
   };
   return res;
+}
+
+function fastest(suite) {
+  suite.on('complete', () => {
+    const fastest = suite.filter('fastest').map('name').toString();
+    const times = [];
+
+    suite.forEach(ele => times.push(+ele.hz));
+    times.sort();
+
+    const best = times.pop();
+    const avgTime = times.reduce((acc, n) => acc + n, 0) / times.length;
+    const avg = ((best - avgTime) / avgTime) * 100;
+    console.log(`fastest is '${color.italic(fastest)}' (by ${avg.toFixed()} % avg)`);
+    console.log();
+  });
 }
 
 /**

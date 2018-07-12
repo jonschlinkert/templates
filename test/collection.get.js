@@ -3,7 +3,6 @@
 const path = require('path');
 const assert = require('assert');
 const Collection = require('../lib/collection');
-let pages;
 
 describe('collection.get', function() {
   it('should get a view from collection.views', function() {

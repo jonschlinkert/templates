@@ -1,12 +1,11 @@
 'use strict';
 
 require('mocha');
-const util = require('util');
 const assert = require('assert');
 const handlebars = require('../lib/engines');
 const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
-let pages, render, other, hbs, locals;
+let pages, render, hbs, locals;
 
 describe('handlebars helpers - sync', function() {
   beforeEach(function() {
@@ -103,7 +102,7 @@ describe('handlebars helpers - sync', function() {
       });
 
       try {
-        pages.render('a.hbs')
+        pages.render('a.hbs');
         throw new Error('expected an error');
       } catch (err) {
         assert.equal(err.message, 'broken');

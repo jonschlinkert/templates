@@ -1,12 +1,10 @@
 'use strict';
 
 require('mocha');
-const util = require('util');
 const assert = require('assert');
 const Templates = require('..');
 const handlebars = require('../lib/engines');
-const helpers = require('./support/helpers');
-let app, render, other, hbs, locals;
+let app, render;
 
 describe('app helpers - sync', function() {
   beforeEach(function() {

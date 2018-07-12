@@ -3,12 +3,10 @@
 const assert = require('assert');
 const Collection = require('../lib/collection');
 const handlebars = require('./support/handlebars');
-const engines = require('./support/engines');
-let pages, layouts;
+let pages;
 
 describe('collection.render', function() {
   beforeEach(function() {
-    layouts = new Collection('layouts');
     pages = new Collection('pages');
     pages.engine('hbs', handlebars(require('handlebars')));
   });
@@ -19,7 +17,7 @@ describe('collection.render', function() {
 
   it('should add a view.fn function', function() {
     const page = pages.set('about.hbs', { contents: Buffer.from('...') });
-    pages.compile(page)
+    pages.compile(page);
     assert.equal(typeof page.fn, 'function');
     assert.equal(page.fn(), '...');
   });

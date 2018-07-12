@@ -61,7 +61,7 @@ exports.common = {
   equals(a, b) {
     return a === b;
   },
-  sum(...args) {
+  sum: function sum(...args) {
     let total = 0;
     for (const arg of args) {
       if (Array.isArray(arg)) {

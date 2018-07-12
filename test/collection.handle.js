@@ -3,8 +3,7 @@
 const assert = require('assert');
 const handlebars = require('./support/handlebars');
 const Collection = require('../lib/collection');
-const engines = require('./support/engines');
-let pages, layouts;
+let pages;
 
 describe('collection.handle', function() {
   beforeEach(function() {

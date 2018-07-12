@@ -25,7 +25,7 @@ describe('collection.pager', function() {
     });
 
     it('should render pagination pages', async() => {
-    posts.handler('onPager');
+      posts.handler('onPager');
 
       const buf = Buffer.from(`{{#with pagination.pages}}
   <a href="{{lookup (first) "path"}}">First</a>

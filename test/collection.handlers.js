@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const Collection = require('../lib/collection');
-let pages;
 
 describe('collection.handlers', function() {
   it('should add handler methods after instantiation', function() {

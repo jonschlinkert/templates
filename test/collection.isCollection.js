@@ -1,9 +1,7 @@
 'use strict';
 
-const path = require('path');
 const assert = require('assert');
 const Collection = require('../lib/collection');
-let pages;
 
 describe('collection.isCollection', function() {
   it('should be true if the value is a collection instance', function() {
