@@ -5,7 +5,7 @@ const handlebars = require('./support/handlebars');
 const Collection = require('../lib/collection');
 let pages;
 
-describe('collection.handle', function() {
+describe('collection.handle', () => {
   beforeEach(function() {
     pages = new Collection('pages', { handlers: ['before', 'after', 'onLoad'] });
     pages.engine('hbs', handlebars(require('handlebars')));

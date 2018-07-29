@@ -5,12 +5,12 @@ const Collection = require('../lib/collection');
 const App = require('..');
 let app;
 
-describe('app.create', function() {
+describe('app.create', () => {
   beforeEach(function() {
     app = new App();
   });
 
-  it('should return a new collection', function() {
+  it('should return a new collection', () => {
     const pages = app.create('pages');
     assert(pages instanceof Collection);
   });

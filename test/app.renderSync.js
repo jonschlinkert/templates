@@ -5,7 +5,7 @@ const engine = require('../lib/engines');
 const App = require('..');
 let app;
 
-describe('app.renderSync', function() {
+describe('app.renderSync', () => {
   beforeEach(function() {
     app = new App({ sync: true });
     app.engine('hbs', engine(require('handlebars')));
@@ -13,8 +13,8 @@ describe('app.renderSync', function() {
     app.create('pages');
   });
 
-  // describe('rendering', function() {
-  //   it('should throw an error when view is not an object', function() {
+  // describe('rendering', () => {
+  //   it('should throw an error when view is not an object', () => {
   //     return app.render()
   //       .then(() => {
   //         throw new Error('expected an error');
@@ -85,7 +85,7 @@ describe('app.renderSync', function() {
   //   });
   // });
 
-  // describe('layouts', function() {
+  // describe('layouts', () => {
   //   it('should throw an error when a layout cannot be found', async() => {
   //     const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 

@@ -42,9 +42,9 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 3);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'b.html');
-        assert.equal(files[2], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('b.html'));
+        assert.equal(files[2], path.resolve('c.html'));
         cb();
       });
   });
@@ -78,9 +78,9 @@ describe('streams', () => {
       .on('error', cb)
       .on('end', () => {
         assert.equal(files.length, 6);
-        assert.equal(files[0], 'x.html');
-        assert.equal(files[1], 'y.html');
-        assert.equal(files[2], 'z.html');
+        assert.equal(files[0], path.resolve('x.html'));
+        assert.equal(files[1], path.resolve('y.html'));
+        assert.equal(files[2], path.resolve('z.html'));
 
         assert.equal(path.basename(files[3]), 'a.txt');
         assert.equal(path.basename(files[4]), 'b.txt');
@@ -100,9 +100,9 @@ describe('streams', () => {
       .on('data', () => {})
       .on('end', () => {
         assert.equal(files.length, 3);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'b.html');
-        assert.equal(files[2], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('b.html'));
+        assert.equal(files[2], path.resolve('c.html'));
         cb();
       });
   });
@@ -123,14 +123,14 @@ describe('streams', () => {
       .on('data', () => {})
       .on('end', () => {
         assert.equal(files.length, 3);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'b.html');
-        assert.equal(files[2], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('b.html'));
+        assert.equal(files[2], path.resolve('c.html'));
 
         assert.equal(pages.length, 3);
-        assert.equal(pages[0], 'a.html');
-        assert.equal(pages[1], 'b.html');
-        assert.equal(pages[2], 'c.html');
+        assert.equal(pages[0], path.resolve('a.html'));
+        assert.equal(pages[1], path.resolve('b.html'));
+        assert.equal(pages[2], path.resolve('c.html'));
         cb();
       });
   });
@@ -151,14 +151,14 @@ describe('streams', () => {
       .on('data', () => {})
       .on('end', () => {
         assert.equal(files.length, 3);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'b.html');
-        assert.equal(files[2], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('b.html'));
+        assert.equal(files[2], path.resolve('c.html'));
 
         assert.equal(pages.length, 3);
-        assert.equal(pages[0], 'a.html');
-        assert.equal(pages[1], 'b.html');
-        assert.equal(pages[2], 'c.html');
+        assert.equal(pages[0], path.resolve('a.html'));
+        assert.equal(pages[1], path.resolve('b.html'));
+        assert.equal(pages[2], path.resolve('c.html'));
         cb();
       });
   });
@@ -170,9 +170,9 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 3);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'b.html');
-        assert.equal(files[2], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('b.html'));
+        assert.equal(files[2], path.resolve('c.html'));
         cb();
       });
   });
@@ -188,7 +188,7 @@ describe('streams', () => {
       })
       .on('end', () => {
         assert.equal(files.length, 1);
-        assert.equal(files[0].path, 'foo.bar');
+        assert.equal(files[0].path, path.resolve('foo.bar'));
         cb();
       });
   });
@@ -208,8 +208,8 @@ describe('streams', () => {
       })
       .on('end', () => {
         assert.equal(files.length, 2);
-        assert.equal(files[0].path, 'foo.bar');
-        assert.equal(files[1].path, 'foo.bar');
+        assert.equal(files[0].path, path.resolve('foo.bar'));
+        assert.equal(files[1].path, path.resolve('foo.bar'));
         cb();
       });
   });
@@ -226,9 +226,9 @@ describe('streams', () => {
       .on('data', () => {})
       .on('end', () => {
         assert.equal(files.length, 3);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'b.html');
-        assert.equal(files[2], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('b.html'));
+        assert.equal(files[2], path.resolve('c.html'));
         cb();
       });
   });
@@ -254,8 +254,8 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 2);
-        assert.equal(files[0], 'b.html');
-        assert.equal(files[1], 'c.html');
+        assert.equal(files[0], path.resolve('b.html'));
+        assert.equal(files[1], path.resolve('c.html'));
         cb();
       });
   });
@@ -267,8 +267,8 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 2);
-        assert.equal(files[0], 'a.html');
-        assert.equal(files[1], 'c.html');
+        assert.equal(files[0], path.resolve('a.html'));
+        assert.equal(files[1], path.resolve('c.html'));
         cb();
       });
   });
@@ -280,7 +280,7 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 1);
-        assert.equal(files[0], 'c.html');
+        assert.equal(files[0], path.resolve('c.html'));
         cb();
       });
   });
@@ -293,7 +293,7 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 1);
-        assert.equal(files[0], 'c.html');
+        assert.equal(files[0], path.resolve('c.html'));
         cb();
       });
   });
@@ -305,8 +305,8 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 2);
-        assert.equal(files[0], 'b.html');
-        assert.equal(files[1], 'y.html');
+        assert.equal(files[0], path.resolve('b.html'));
+        assert.equal(files[1], path.resolve('y.html'));
         cb();
       });
   });
@@ -319,7 +319,7 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 1);
-        assert.equal(files[0], 'b.html');
+        assert.equal(files[0], path.resolve('b.html'));
         cb();
       });
   });
@@ -332,8 +332,8 @@ describe('streams', () => {
       .on('data', file => files.push(file.path))
       .on('end', () => {
         assert.equal(files.length, 2);
-        assert.equal(files[0], 'b.html');
-        assert.equal(files[1], 'y.html');
+        assert.equal(files[0], path.resolve('b.html'));
+        assert.equal(files[1], path.resolve('y.html'));
         cb();
       });
   });
@@ -349,7 +349,7 @@ describe('streams', () => {
       .on('data', () => {})
       .on('end', () => {
         assert.equal(files.length, 1);
-        assert.equal(files[0], 'b.html');
+        assert.equal(files[0], path.resolve('b.html'));
         cb();
       });
   });

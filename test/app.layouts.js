@@ -5,7 +5,7 @@ const handlebars = require('./support/handlebars');
 const App = require('..');
 let app;
 
-describe('app.layouts', function() {
+describe('app.layouts', () => {
   beforeEach(function() {
     app = new App();
     app.create('layouts', { kind: 'layout' });
@@ -13,7 +13,7 @@ describe('app.layouts', function() {
     app.engine('hbs', handlebars(require('handlebars')));
   });
 
-  describe('layouts', function() {
+  describe('layouts', () => {
     it('should throw an error when a layout cannot be found', () => {
       const view = app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 

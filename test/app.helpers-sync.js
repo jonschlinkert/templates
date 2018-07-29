@@ -6,7 +6,7 @@ const Templates = require('..');
 const handlebars = require('../lib/engines');
 let app, render;
 
-describe('app helpers - sync', function() {
+describe('app helpers - sync', () => {
   beforeEach(function() {
     app = new Templates();
     app.engine('hbs', handlebars(require('handlebars')));

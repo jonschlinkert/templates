@@ -15,7 +15,7 @@ module.exports = handlebars => {
   const engine = {
     name: 'handlebars',
     instance,
-    compile(view, options = {}) {
+    compileSync(view, options = {}) {
       if (typeof view.fn !== 'function' || options.recompile === true) {
         view.fn = instance.compile(view.contents.toString(), options);
       }
@@ -25,9 +25,9 @@ module.exports = handlebars => {
      * Render
      */
 
-    render(view, locals, options = {}) {
+    renderSync(view, locals, options = {}) {
       if (options.asyncHelpers === true) {
-        return engine.renderAsync.apply(this, arguments);
+        return engine.render.apply(this, arguments);
       }
       register.call(this, options);
       const data = Object.assign({}, locals, view.data);
@@ -39,9 +39,9 @@ module.exports = handlebars => {
      * Render each
      */
 
-    renderEach(views, locals, options = {}) {
+    renderEachSync(views, locals, options = {}) {
       if (options.asyncHelpers === true) {
-        return engine.renderEachAsync.apply(this, arguments);
+        return engine.renderEach.apply(this, arguments);
       }
       register.call(this, options);
       for (const key of Object.keys(views)) {

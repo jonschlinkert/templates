@@ -12,10 +12,11 @@
     "mkdirp": "^0.5.1",
     "pretty-time": "^1.0.0",
     "rimraf": "^2.6.2",
-    "time-require": "^0.1.2",
     "write": "^1.0.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "time-require": "github:jonschlinkert/time-require"
+  },
   "lintDeps": {
     "dependencies": {
       "files": {

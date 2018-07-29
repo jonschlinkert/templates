@@ -5,7 +5,7 @@ const handlebars = require('./support/handlebars');
 const App = require('..');
 let app;
 
-describe('app.renderLayout', function() {
+describe('app.renderLayout', () => {
   beforeEach(function() {
     app = new App();
     app.create('layouts', { kind: 'layout' });

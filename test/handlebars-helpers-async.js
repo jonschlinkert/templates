@@ -7,7 +7,7 @@ const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
 let pages, render, hbs, locals;
 
-describe('handlebars helpers - async', function() {
+describe('handlebars helpers - async', () => {
   beforeEach(function() {
     const engine = engines(require('handlebars'));
     hbs = engine.instance;

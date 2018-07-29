@@ -6,7 +6,7 @@ const Templates = require('..');
 const handlebars = require('../lib/engines');
 let app, render, hbs;
 
-describe('handlebars - partials', function() {
+describe('handlebars - partials', () => {
   beforeEach(function() {
     const engine = handlebars(require('handlebars'));
     hbs = engine.instance;

@@ -7,7 +7,7 @@ const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
 let pages, render, hbs, locals;
 
-describe('handlebars helpers - sync', function() {
+describe('handlebars helpers - sync', () => {
   beforeEach(function() {
     const engine = handlebars(require('handlebars'));
     hbs = engine.instance;
@@ -39,7 +39,7 @@ describe('handlebars helpers - sync', function() {
     };
   });
 
-  describe('rendering', function() {
+  describe('rendering', () => {
     it('should work with variables', () => {
       assert.equal(render('{{name}}', { name: 'Brian' }), 'Brian');
     });
@@ -95,7 +95,7 @@ describe('handlebars helpers - sync', function() {
     });
   });
 
-  describe('errors', function() {
+  describe('errors', () => {
     it('should handle errors in sync helpers', () => {
       pages.helper('upper', function(str) {
         throw new Error('broken');

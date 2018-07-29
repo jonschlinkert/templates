@@ -5,7 +5,7 @@ const handlebars = require('./support/handlebars');
 const App = require('..');
 let app;
 
-describe('app.render', function() {
+describe('app.render', () => {
   beforeEach(function() {
     app = new App();
     app.create('layouts', { kind: 'layout' });
@@ -13,8 +13,8 @@ describe('app.render', function() {
     app.engine('hbs', handlebars(require('handlebars')));
   });
 
-  describe('rendering', function() {
-    it('should throw an error when view is not an object', function() {
+  describe('rendering', () => {
+    it('should throw an error when view is not an object', () => {
       assert.throws(() => app.render());
     });
 

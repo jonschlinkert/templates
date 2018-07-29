@@ -8,7 +8,7 @@ const engines = require('./support/engines');
 const helpers = require('./support/helpers');
 let pages, render, locals;
 
-describe('engine helpers - ', function() {
+describe('engine helpers - ', () => {
   beforeEach(function() {
     const base = engines.base(new Engine());
     pages = new Collection('pages', { asyncHelpers: true });

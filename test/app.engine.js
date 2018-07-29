@@ -4,22 +4,22 @@ const assert = require('assert');
 const App = require('..');
 let app;
 
-describe('app.engine', function() {
+describe('app.engine', () => {
   beforeEach(function() {
     app = new App();
   });
 
-  it('should allow the noop engine to be set on options', function() {
+  it('should allow the noop engine to be set on options', () => {
     app.option('engine', 'noop');
     assert(app.engine());
     assert.equal(app.engine().name, 'noop');
     assert.equal(typeof app.engine(), 'object');
     assert.equal(typeof app.engine().instance, 'object');
-    assert.equal(typeof app.engine().compile, 'function');
-    assert.equal(typeof app.engine().render, 'function');
+    assert.equal(typeof app.engine().compileSync, 'function');
+    assert.equal(typeof app.engine().renderSync, 'function');
   });
 
-  it('should allow a registered engine to be set on options', function() {
+  it('should allow a registered engine to be set on options', () => {
     app.engine('foo', {
       instance: {},
       compile() {},
