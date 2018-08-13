@@ -7,8 +7,8 @@ const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
 let pages, render, hbs, locals;
 
-describe('handlebars helpers - async', function() {
-  beforeEach(function() {
+describe('handlebars helpers - async', () => {
+  beforeEach(() => {
     const engine = engines(require('handlebars'));
     hbs = engine.instance;
 
@@ -32,7 +32,7 @@ describe('handlebars helpers - async', function() {
       person: {
         first: 'Brian',
         last: 'Woodward',
-        toString: function() {
+        toString() {
           return this.first + ' ' + this.last;
         }
       }

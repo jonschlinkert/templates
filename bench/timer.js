@@ -6,23 +6,13 @@ const cyan = (...args) => colors.cyan(pretty(...args.concat(2)));
 
 const timer = () => {
   const start = process.hrtime();
-  return () => {
-    return process.hrtime(start);
-  };
+  return () => process.hrtime(start);
 };
 
-function ns(n) {
-  return n[0] * 1e9 + n[1];
-}
-function µs(n) {
-  return ns(n) / 1e3;
-}
-function ms(n) {
-  return µs(n) / 1e3;
-}
-function sec(n) {
-  return ms(n) / 1e3;
-}
+const ns = n => n[0] * 1e9 + n[1];
+const µs = n => ns(n) / 1e3;
+const ms = n => ns(n) / 1e6;
+const sec = n => ns(n) / 1e9;
 
 function size(obj) {
   return obj instanceof Map ? obj.size : Object.keys(obj).length;

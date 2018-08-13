@@ -5,8 +5,8 @@ const assert = require('assert');
 const App = require('..');
 let app;
 
-describe('app.get', function() {
-  beforeEach(function() {
+describe('app.get', () => {
+  beforeEach(() => {
     app = new App();
     app.create('pages');
   });

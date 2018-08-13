@@ -34,13 +34,13 @@ class Templates extends Common {
    * Get a cached view.
    *
    * ```js
-   * // specify a collection name
-   * app.get('foo/bar.html', 'pages');
-   * app.get('foo.html', 'pages');
+   * // get a view from the collection passed as the last argument
+   * console.log(app.get('foo/bar.html', 'pages'));
+   * console.log(app.get('foo.html', 'pages'));
    *
-   * // or get the first matching view from the viewCache
-   * app.get('foo/bar.html');
-   * app.get('foo.html');
+   * // or get the first matching view from all registered collections
+   * console.log(app.get('foo/bar.html'));
+   * console.log(app.get('foo.html'));
    * ```
    * @name .get
    * @param {String|RegExp|Function} `key`

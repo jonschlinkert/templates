@@ -5,8 +5,8 @@ const handlebars = require('./support/handlebars');
 const App = require('..');
 let app;
 
-describe('app.renderLayout', function() {
-  beforeEach(function() {
+describe('app.renderLayout', () => {
+  beforeEach(() => {
     app = new App();
     app.create('layouts', { kind: 'layout' });
     app.create('pages');

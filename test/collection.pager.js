@@ -5,15 +5,15 @@ const Collection = require('../lib/collection');
 const engines = require('../lib/engines');
 let posts, other;
 
-describe('collection.pager', function() {
-  beforeEach(function() {
+describe('collection.pager', () => {
+  beforeEach(() => {
     posts = new Collection('posts', { sync: true });
     other = new Collection('other', { sync: true });
     posts.engine('hbs', engines(require('handlebars')));
     other.engine('hbs', engines(require('handlebars')));
   });
 
-  describe('pages', function() {
+  describe('pages', () => {
     it('should create paging for views in a collection', async() => {
       posts.set('aaa.hbs', { contents: Buffer.from('') });
       posts.set('bbb.hbs', { contents: Buffer.from('') });

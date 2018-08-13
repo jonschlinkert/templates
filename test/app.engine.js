@@ -4,12 +4,12 @@ const assert = require('assert');
 const App = require('..');
 let app;
 
-describe('app.engine', function() {
-  beforeEach(function() {
+describe('app.engine', () => {
+  beforeEach(() => {
     app = new App();
   });
 
-  it('should allow the noop engine to be set on options', function() {
+  it('should allow the noop engine to be set on options', () => {
     app.option('engine', 'noop');
     assert(app.engine());
     assert.equal(app.engine().name, 'noop');
@@ -19,7 +19,7 @@ describe('app.engine', function() {
     assert.equal(typeof app.engine().render, 'function');
   });
 
-  it('should allow a registered engine to be set on options', function() {
+  it('should allow a registered engine to be set on options', () => {
     app.engine('foo', {
       instance: {},
       compile() {},

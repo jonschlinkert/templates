@@ -5,8 +5,8 @@ const Collection = require('../lib/collection');
 const engines = require('../lib/engines');
 let posts, other;
 
-describe('collection.pager', function() {
-  beforeEach(function() {
+describe('collection.pager', () => {
+  beforeEach(() => {
     posts = new Collection('posts', { sync: true });
     other = new Collection('other', { sync: true });
     posts.engine('hbs', engines(require('handlebars')));
@@ -15,7 +15,7 @@ describe('collection.pager', function() {
     posts.handler('onPager');
   });
 
-  describe('pages', function() {
+  describe('pages', () => {
     it('should create a list of pagination pages', () => {
       posts.set('aaa.hbs', { contents: Buffer.from('') });
       posts.set('bbb.hbs', { contents: Buffer.from('') });

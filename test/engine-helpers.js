@@ -8,8 +8,8 @@ const engines = require('./support/engines');
 const helpers = require('./support/helpers');
 let pages, render, locals;
 
-describe('engine helpers - ', function() {
-  beforeEach(function() {
+describe('engine helpers - ', () => {
+  beforeEach(() => {
     const base = engines.base(new Engine());
     pages = new Collection('pages', { asyncHelpers: true });
     pages.engine('tmpl', base);
@@ -32,7 +32,7 @@ describe('engine helpers - ', function() {
       person: {
         first: 'Brian',
         last: 'Woodward',
-        toString: function() {
+        toString() {
           return this.first + ' ' + this.last;
         }
       }

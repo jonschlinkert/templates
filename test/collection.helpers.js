@@ -7,7 +7,7 @@ const Collection = require('../lib/collection');
 let pages, other;
 
 describe('helpers - sync', () => {
-  beforeEach(function() {
+  beforeEach(() => {
     pages = new Collection('pages', { sync: true });
     other = new Collection('other', { sync: true });
     const hbs = engine(require('handlebars'));

@@ -5,19 +5,19 @@ const Collection = require('../lib/collection');
 const engines = require('../lib/engines');
 let pages, layouts;
 
-describe('collection.render', function() {
-  beforeEach(function() {
+describe('collection.render', () => {
+  beforeEach(() => {
     layouts = new Collection('layouts');
     pages = new Collection('pages');
     pages.engine('hbs', engines(require('handlebars')));
   });
 
-  describe('rendering', function() {
-    it('should throw an error when view is not an object', function() {
+  describe('rendering', () => {
+    it('should throw an error when view is not an object', () => {
       assert.throws(() => pages.render());
     });
 
-    it('should throw an error when an engine is not defined:', function() {
+    it('should throw an error when an engine is not defined:', () => {
       pages.set('foo.bar', { contents: Buffer.from('<%= name %>') });
       pages.engines.delete('.hbs');
 
@@ -52,7 +52,7 @@ describe('collection.render', function() {
     });
   });
 
-  describe('layouts', function() {
+  describe('layouts', () => {
     it('should throw an error when a layout cannot be found', () => {
       const view = pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
