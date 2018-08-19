@@ -3,21 +3,21 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const mkdir = require('mkdirp');
+const mkdir = require('@folder/mkdir');
 const rimraf = require('rimraf');
 const write = util.promisify(fs.writeFile);
 const loremipsum = require('lorem-ipsum');
 const defaults = {
   startDate: 'December 17, 2010',
-  dest: 'content',
+  dest: 'blog',
   count: 1600,
   units: 'words',
-  pages: 100
+  pages: 10
 };
 
-function generate(options = {}) {
+async function generate(options = {}) {
   const opts = Object.assign({}, defaults, options);
-  let contents = loremipsum(opts);
+  const contents = loremipsum(opts);
   const date = formatDate(opts.startDate);
   const dest = (...args) => path.join(__dirname, opts.dest, ...args);
   const time = `${opts.pages} pages`;
@@ -26,7 +26,7 @@ function generate(options = {}) {
   rimraf.sync(dest());
 
   if (!fs.existsSync(dest())) {
-    mkdir(dest());
+    await mkdir(dest());
   }
 
   contents = `<a href="{{site.paths.root}}/index.html">Home</a>
@@ -52,8 +52,8 @@ function generate(options = {}) {
   for (let i = 0; i < opts.pages; i++) {
     const file1 = page(date(i), contents, i, 1);
     const file2 = page(date(i), contents, i, 2);
-    write(dest(file1.path), file1.contents);
-    write(dest(file2.path), file2.contents);
+    await write(dest(file1.path), file1.contents);
+    await write(dest(file2.path), file2.contents);
   }
 
   console.timeEnd(time);

@@ -14,6 +14,7 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 
 - Converted to es6 class, you must now always call `new` to instantiate. 
 - Removed `bower.json` file, as it's really not used or necessary with this library.
+- Renamed `type` to `kind`
 
 ### [1.1.0]
 

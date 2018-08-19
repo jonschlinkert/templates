@@ -6,7 +6,7 @@ const App = require('..');
 let app;
 
 describe('app.create', () => {
-  beforeEach(function() {
+  beforeEach(() => {
     app = new App();
   });
 
@@ -15,7 +15,7 @@ describe('app.create', () => {
     assert(pages instanceof Collection);
   });
 
-  it('should emit "collection"', function(cb) {
+  it('should emit "collection"', cb => {
     app.on('collection', () => cb());
     app.create('pages');
   });

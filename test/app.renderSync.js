@@ -1,14 +1,15 @@
 'use strict';
 
 const assert = require('assert');
-const engine = require('../lib/engines');
+const handlebars = require('handlebars');
+const engines = require('../lib/engines');
 const App = require('..');
 let app;
 
 describe('app.renderSync', () => {
   beforeEach(function() {
     app = new App({ sync: true });
-    app.engine('hbs', engine(require('handlebars')));
+    app.engine('hbs', engines(handlebars.create()));
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
   });

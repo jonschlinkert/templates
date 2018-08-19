@@ -1,14 +1,17 @@
 'use strict';
 
 require('mocha');
+const util = require('util');
 const assert = require('assert');
 const Templates = require('..');
-const handlebars = require('../lib/engines');
-let app, render, hbs;
+const handlebars = require('handlebars');
+const engines = require('../lib/engines');
+const helpers = require('./support/helpers');
+let app, render, other, hbs, locals;
 
 describe('handlebars - partials', () => {
   beforeEach(function() {
-    const engine = handlebars(require('handlebars'));
+    const engine = engines(handlebars.create());
     hbs = engine.instance;
 
     hbs.registerPartial('custom', 'a partial');

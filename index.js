@@ -1,8 +1,8 @@
 'use strict';
 
 const assert = require('assert');
-const Collection = require('./lib/collection');
 const streams = require('./lib/streams');
+const Collection = require('./lib/collection');
 const Common = require('./lib/common');
 const View = require('./lib/view');
 
@@ -27,20 +27,75 @@ class Templates extends Common {
     this.cache.partials = {};
     this.lists = {};
     this.kinds = {};
-    this.use(streams(options));
+    this.fns = new Set();
+
+    if (this.options.streams === true) {
+      this.use(streams(options));
+    }
+  }
+
+  use(plugin) {
+    const fn = this.invokeOnce(plugin).call(this, this);
+    if (typeof fn === 'function') {
+      fn.memo = fn.memo || new Set();
+      for (const [key, collection] of this.collections) {
+        if (fn.memo.has(collection)) continue;
+        fn.memo.add(collection);
+        collection.use(fn);
+      }
+      this.fns.add(fn);
+    }
+    return this;
+  }
+
+  run(obj, options) {
+    for (const fn of this.fns) {
+      if (obj.use) {
+        obj.use(fn, options); // collection
+      } else {
+        fn.call(obj, obj, options); // view
+      }
+    }
+  }
+
+  /**
+   *  Cache views when created by a collection. This makes lookups
+   *  much faster, and allows us avoid costly merging at render time.
+   */
+
+  set(collectionName, view) {
+    const kind = this.kind(view.kind);
+    kind[view.key] = view;
+
+    this.views.get(collectionName).set(view.key, view);
+    this.viewCache.set(view.path, view);
+    this.emit('view', view);
+
+    if (view.kind === 'partial') {
+      const partials = this.cache.partials;
+      if (this.options.enforceUniqueNames === true) {
+        assert(!partials[view.key], new Error(`partial "${view.key}" already exists`));
+      }
+      define(partials, view.key, view);
+    }
+
+    if (view.kind === 'renderable') {
+      this.lists[collectionName] = this.lists[collectionName] || [];
+      this.lists[collectionName].push(view);
+    }
   }
 
   /**
    * Get a cached view.
    *
    * ```js
-   * // specify a collection name
-   * app.get('foo/bar.html', 'pages');
-   * app.get('foo.html', 'pages');
+   * // get a view from the collection passed as the last argument
+   * console.log(app.get('foo/bar.html', 'pages'));
+   * console.log(app.get('foo.html', 'pages'));
    *
-   * // or get the first matching view from the viewCache
-   * app.get('foo/bar.html');
-   * app.get('foo.html');
+   * // or get the first matching view from any registered collection
+   * console.log(app.get('foo/bar.html'));
+   * console.log(app.get('foo.html'));
    * ```
    * @name .get
    * @param {String|RegExp|Function} `key`
@@ -53,6 +108,19 @@ class Templates extends Common {
     if (collectionName) return this[collectionName].get(key);
     if (this.viewCache.has(key)) return this.viewCache.get(key);
     return this.find(view => view.hasPath(key));
+  }
+
+  /**
+   *  Delete a view from collection `name`.
+   */
+
+  delete(collectionName, view) {
+    const kind = this.kind(view.kind);
+    delete kind[view.key];
+    this.views.get(collectionName).delete(view.key);
+    this.viewCache.delete(view.path);
+    this.lists[collectionName] = this.lists[collectionName].filter(v => v !== view);
+    this.emit('delete', view);
   }
 
   /**
@@ -98,7 +166,7 @@ class Templates extends Common {
   }
 
   /**
-   * Create an un-cached view collection.
+   * Create an un-cached collection.
    * @param {String} `name` (required) Collection name
    * @param {Object} `options`
    * @return {Object} Returns the collection.
@@ -107,6 +175,7 @@ class Templates extends Common {
 
   collection(name, options) {
     const collection = new this.Collection(name, options);
+    this.emit('collection', collection);
     this.run(collection);
     return collection;
   }
@@ -128,22 +197,26 @@ class Templates extends Common {
     this.collections.set(name, collection);
     this.views.set(name, new Map());
 
-    collection.once('error', this.emit.bind(this, 'error'));
-    collection.on('delete', view => this.deleteView(name, view));
-    collection.on('view', view => this.setView(name, view));
+    collection.once('error', err => this.emit('error', err));
+    collection.on('delete', view => this.delete(name, view));
+    collection.on('view', view => this.set(name, view));
 
     const handle = collection.handle.bind(collection);
     collection.handle = (method, view) => {
-      const res = super.handle(method, view);
-      if (this.options.sync !== false) return handle(method, view);
-      return res.then(() => handle(method, view)).then(() => view);
+      if (this.options.sync === true) {
+        super.handle(method, view);
+        handle(method, view);
+        return view;
+      }
+      return super.handle(method, view)
+        .then(() => handle(method, view))
+        .then(() => view);
     };
 
     if (opts.collectionMethod !== false) {
       this[name] = collection;
     }
 
-    this.emit('collection', collection);
     return collection;
   }
 
@@ -157,46 +230,6 @@ class Templates extends Common {
     this.run(view);
     this.emit('view', view);
     return view;
-  }
-
-  /**
-   *  Cache views when created by a collection. This makes lookups
-   *  much faster, and allows us avoid costly merging at render time.
-   */
-
-  setView(name, view) {
-    const kind = this.kind(view.kind);
-    kind[view.key] = view;
-
-    this.views.get(name).set(view.key, view);
-    this.viewCache.set(view.path, view);
-    this.emit('view', view);
-
-    if (view.kind === 'partial') {
-      const partials = this.cache.partials;
-      if (this.options.enforceUniqueNames === true) {
-        assert(!partials[view.key], new Error(`partial "${view.key}" already exists`));
-      }
-      define(partials, view.key, view);
-    }
-
-    if (view.kind === 'renderable') {
-      this.lists[name] = this.lists[name] || [];
-      this.lists[name].push(view);
-    }
-  }
-
-  /**
-   *  Delete a view from collection `name`.
-   */
-
-  deleteView(name, view) {
-    const kind = this.kind(view.kind);
-    delete kind[view.key];
-    this.views.get(name).delete(view.key);
-    this.viewCache.set(view.path, view);
-    this.lists[name] = this.lists[name].filter(v => v !== view);
-    this.emit('delete', view);
   }
 
   /**

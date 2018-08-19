@@ -8,13 +8,20 @@ let pages, layouts;
 describe('collection.render', () => {
   beforeEach(function() {
     layouts = new Collection('layouts');
-    pages = new Collection('pages');
+    pages = new Collection('pages', { asyncHelpers: true });
     pages.engine('hbs', engines(require('handlebars')));
   });
 
   describe('rendering', () => {
     it('should throw an error when view is not an object', () => {
-      assert.throws(() => pages.render());
+      return pages.render()
+        .then(() => {
+          throw new Error('expected an error');
+        })
+        .catch(err => {
+          assert(err);
+          assert(/view/.test(err.message));
+        });
     });
 
     it('should throw an error when an engine is not defined:', () => {
@@ -22,48 +29,72 @@ describe('collection.render', () => {
       pages.engines.delete('.hbs');
 
       const page = pages.get('foo.bar');
-      assert.throws(() => pages.render(page));
+
+      return pages.render(page)
+        .then(() => {
+          throw new Error('expected an error');
+        })
+        .catch(err => {
+          assert(err);
+          assert(/engine "bar" is not registered/.test(err.message));
+        });
     });
 
-    it('should support using helpers to render a view:', () => {
+    it('should support using helpers to render a view:', async() => {
       pages.helper('upper', str => str.toUpperCase(str));
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
       const page = pages.get('a.hbs');
-      const view = pages.render(page);
+      const view = await pages.render(page);
       assert.equal(view.contents.toString(), 'a BRIAN b');
     });
 
-    it('should use globally defined data to render a view', () => {
+    it('should support using async helpers to render a view:', async() => {
+      pages.helper('upper', function(str) {
+        return new Promise(resolve => {
+          setTimeout(() => resolve(str.toUpperCase(str)), 10);
+        });
+      });
+
+      pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
+      const page = pages.get('a.hbs');
+      const view = await pages.render(page);
+      assert.equal(view.contents.toString(), 'a BRIAN b');
+    });
+
+    it('should use globally defined data to render a view', async() => {
       pages.cache.data.name = 'Brian';
       pages.helper('upper', str => str.toUpperCase(str));
 
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b') });
       const page = pages.get('a.hbs');
-      const view = pages.render(page);
+      const view = await pages.render(page);
       assert.equal(view.contents.toString(), 'a BRIAN b');
     });
 
-    it('should render a view from its path:', () => {
+    it('should render a view from its path:', async() => {
       pages.helper('upper', str => str.toUpperCase(str));
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
 
-      const view = pages.render('a.hbs');
+      const view = await pages.render('a.hbs');
       assert.equal(view.contents.toString(), 'a BRIAN b');
     });
   });
 
   describe('layouts', () => {
-    it('should throw an error when a layout cannot be found', () => {
-      const view = pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    it('should throw an error when a layout cannot be found', async() => {
+      const view = await pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-      assert.throws(() => pages.render(view), /layout "default" is defined on "a.hbs" but cannot be found/);
+      return pages.render(view)
+        .catch(err => {
+          assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
+        });
     });
 
-    it('should render a view with a layout defined', () => {
+    it('should render a view with a layout defined', async() => {
       layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-      const view = pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+      const view = await pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-      pages.render(view, { layouts: layouts.views });
+      await pages.render(view, { layouts: layouts.views });
       assert.equal(view.contents.toString(), 'before This is content after');
     });
   });

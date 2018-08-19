@@ -1,7 +1,7 @@
 const Collection = require('../lib/collection');
 
 /**
- * Stub
+ * TODO
  */
 
 (async function() {

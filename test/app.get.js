@@ -6,20 +6,26 @@ const App = require('..');
 let app;
 
 describe('app.get', () => {
-  beforeEach(function() {
+  beforeEach(() => {
     app = new App();
     app.create('pages');
   });
 
-  it('should get a view from collection.views', () => {
-    app.pages.set('foo.hbs', {});
+  it('should get a view from collection.views', async () => {
+    await app.pages.set('foo.hbs', {});
     const page = app.get('foo.hbs');
     assert.equal(page.path, path.resolve('foo.hbs'));
   });
 
-  it('should get a view from collection.views', () => {
+  it('should get a view from pages.views', async () => {
+    await app.pages.set('foo.hbs', {});
+    const page = app.get('foo.hbs', 'pages');
+    assert.equal(page.path, path.resolve('foo.hbs'));
+  });
+
+  it('should get a view from collection.views', async () => {
     const filepath = path.resolve(__dirname, 'foo.hbs');
-    app.pages.set(filepath, {});
+    await app.pages.set(filepath, {});
     const page = app.get(filepath);
     assert.equal(page.path, filepath);
   });

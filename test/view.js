@@ -305,6 +305,13 @@ describe('View', () => {
       assert.equal(view.contents, val);
     });
 
+    it.skip('should work with Stream', () => {
+      const val = new Stream.PassThrough();
+      const view = new View();
+      view.contents = val;
+      assert.equal(view.contents, val);
+    });
+
     it('should work with null', () => {
       const val = null;
       const view = new View();

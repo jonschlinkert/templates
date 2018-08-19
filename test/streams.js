@@ -9,7 +9,7 @@ let app;
 
 describe('streams', () => {
   beforeEach(() => {
-    app = new Templates();
+    app = new Templates({ streams: true });
 
     app.create('pages');
     app.create('posts');
@@ -107,9 +107,11 @@ describe('streams', () => {
       });
   });
 
-  it('should run `app.onStream` and `app.pages.onStream` when using `app.toStream`', cb => {
+  it('should run `app.onStream` and `app.pages.onStream` middleware', cb => {
     const files = [];
     const pages = [];
+    const actual = [];
+
     app.onStream(/\.html/, file => {
       files.push(file.path);
     });
@@ -132,6 +134,23 @@ describe('streams', () => {
         assert.equal(pages[1], path.resolve('b.html'));
         assert.equal(pages[2], path.resolve('c.html'));
         cb();
+      });
+  });
+
+  it('should run app middleware before collection middleware', () => {
+    const middleware = [];
+
+    app.onStream(/\.html/, file => {
+      middleware.push('app');
+    });
+
+    app.pages.onStream(/\.html/, file => {
+      middleware.push('collection');
+    });
+
+    return app.toStream('pages')
+      .on('end', () => {
+        assert.deepEqual(middleware, ['app', 'collection', 'app', 'collection', 'app', 'collection']);
       });
   });
 

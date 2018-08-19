@@ -6,7 +6,7 @@ const App = require('..');
 let app;
 
 describe('app.view', () => {
-  beforeEach(function() {
+  beforeEach(() => {
     app = new App();
   });
 

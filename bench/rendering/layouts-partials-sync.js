@@ -1,8 +1,8 @@
 const argv = require('minimist')(process.argv.slice(2));
 const handlebars = require('handlebars');
-const engine = require('../lib/engines');
+const engine = require('templates/lib/engines');
 const timer = require('./timer');
-const Templates = require('../');
+const Templates = require('templates');
 const app = new Templates({
   handlers: ['onLoad', 'preRender', 'postRender'],
   sync: true
@@ -42,7 +42,7 @@ app.postRender(/./, (file, params) => {
 });
 
 const view = pages.set('templates/foo.hbs', {
-  contents: Buffer.from(`{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n`),
+  contents: Buffer.from('{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n'),
   // contents: Buffer.from(`{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n`),
   data: { name: 'Brian' },
   layout: 'default'
@@ -84,13 +84,13 @@ layouts.set({
   contents: Buffer.from('before\n{% body %}\nafter')
 });
 
-const run = timer.sync(app, view, layouts.views);
+const run = timer.sync(app, view, layouts);
 
 run(1);
 run(10);
 run(100);
-run(1000);
-run(10000);
-run(100000);
-// run(1000000);
-// run(10000000);
+run(1e3); // 1k
+run(1e4); // 10k
+run(1e5); // 100k
+run(1e6); // 1m
+

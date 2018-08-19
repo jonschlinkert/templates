@@ -5,8 +5,16 @@ const Collection = require('../lib/collection');
 const engines = require('../lib/engines');
 let posts, other;
 
-describe('collection.pager', () => {
-  beforeEach(function() {
+const template = `
+{{#with pagination.pages}}
+  <a href="{{lookup (first) "stem"}}">First</a>
+  <a href="{{lookup (prev ../view) "stem"}}">Prev</a>
+  <a href="{{lookup (next ../view) "stem"}}">Next</a>
+  <a href="{{lookup (last) "stem"}}">Last</a>
+{{/with}}`;
+
+describe('collection.paginate', () => {
+  beforeEach(() => {
     posts = new Collection('posts', { sync: true });
     other = new Collection('other', { sync: true });
     posts.engine('hbs', engines(require('handlebars')));
@@ -16,12 +24,12 @@ describe('collection.pager', () => {
   });
 
   describe('pages', () => {
-    it('should create a list of pagination pages', () => {
+    it('should create a list of pagination pages', async() => {
       posts.set('aaa.hbs', { contents: Buffer.from('') });
       posts.set('bbb.hbs', { contents: Buffer.from('') });
       posts.set('ccc.hbs', { contents: Buffer.from('') });
 
-      const pages = posts.pager();
+      const pages = await posts.pager();
       assert(Array.isArray(pages));
       assert.equal(pages.length, 3);
     });
@@ -45,17 +53,11 @@ describe('collection.pager', () => {
       assert.equal(pages[2].path, '/site/posts/ccc/index.html');
     });
 
-    it('should render pagination pages', () => {
-      const buf = Buffer.from(`{{#with pagination.pages}}
-  <a href="{{lookup (first) "path"}}">First</a>
-  <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
-  <span>{{lookup (lookup this ../pager.index) "path"}}</span>
-  <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>
-  <a href="{{lookup (last) "path"}}">Last</a>
-{{/with}}`);
+    it('should render pagination pages', async () => {
+      const buf = Buffer.from(template);
 
-      posts.onPaginate(/./, view => {
-        view.path = `/site/posts/${view.stem}/index.html`;
+      posts.onPager(/\.hbs$/, view => {
+        view.path = `/site/posts/${view.stem}.html`;
       });
 
       posts.option('engine', 'hbs');
@@ -63,19 +65,24 @@ describe('collection.pager', () => {
       posts.set('bbb.hbs', { contents: buf });
       posts.set('ccc.hbs', { contents: buf });
 
-      const pages = posts.paginate();
+      const pages = await posts.pager();
 
       const data = { pagination: { pages } };
+      const actual = [];
 
       for (const post of posts.list) {
-        posts.render(post, data);
-        console.log(post.contents.toString());
+        await posts.render(post, data);
+        actual.push(post.contents.toString());
       }
 
-      // console.log(posts);
+      assert.deepEqual(actual, [
+        '\n  <a href="aaa">First</a>\n  <a href="">Prev</a>\n  <a href="bbb">Next</a>\n  <a href="ccc">Last</a>\n',
+        '\n  <a href="aaa">First</a>\n  <a href="aaa">Prev</a>\n  <a href="ccc">Next</a>\n  <a href="ccc">Last</a>\n',
+        '\n  <a href="aaa">First</a>\n  <a href="bbb">Prev</a>\n  <a href="">Next</a>\n  <a href="ccc">Last</a>\n'
+      ]);
     });
 
-    it('should render pagination pages2', () => {
+    it('should add pagination.items to page.data', async() => {
       posts.option('engine', 'hbs');
       posts.set('aaa.hbs', { contents: Buffer.from('') });
       posts.set('bbb.hbs', { contents: Buffer.from('') });
@@ -86,37 +93,23 @@ describe('collection.pager', () => {
       posts.set('ggg.hbs', { contents: Buffer.from('') });
       posts.set('hhh.hbs', { contents: Buffer.from('') });
 
-      for (const view of posts.paginate()) {
-        console.log(view.data);
+      for (let page of await posts.paginate()) {
+        assert(page.data.pagination);
+        assert(Array.isArray(page.data.pagination.items));
+        assert.equal(page.data.pagination.items.length, 8);
       }
     });
 
     it('should render pagination pages', () => {
-      const buf = Buffer.from(`{{#with pagination.pages}}
-  <a href="{{lookup (first) "path"}}">First</a>
-  <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
-  <span>{{lookup (lookup this ../pager.index) "path"}}</span>
-  <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>
-  <a href="{{lookup (last) "path"}}">Last</a>
-{{/with}}`);
+      posts.set('aaa.hbs', { contents: Buffer.from(template) });
+      posts.set('bbb.hbs', { contents: Buffer.from(template) });
+      posts.set('ccc.hbs', { contents: Buffer.from(template) });
 
-      posts.set('aaa.hbs', { contents: buf });
-      posts.set('bbb.hbs', { contents: buf });
-      posts.set('ccc.hbs', { contents: buf });
-
-      const index = other.set('index.hbs', {
-        contents: Buffer.from(`{{#with pagination.pages}}
-  <a href="{{lookup (first) "path"}}">First</a>
-  {{log this}}
-  <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
-  <span>{{lookup (lookup this ../pager.index) "path"}}</span>
-  <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>
-  <a href="{{lookup (last) "path"}}">Last</a>
-{{/with}}`)
-      });
+      const index = other.set('index.hbs', { contents: Buffer.from(template) });
 
       other.render(index, { pagination: { pages: posts.pager() }});
-      console.log(index.contents.toString());
+      assert(/aaa">First/.test(index.contents.toString()));
+      assert(/ccc">Last/.test(index.contents.toString()));
     });
   });
 });

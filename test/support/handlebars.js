@@ -1,5 +1,7 @@
 'use strict';
 
+const resolve = require('../../lib/resolve');
+
 module.exports = handlebars => {
   const instance = handlebars.create();
 
@@ -9,6 +11,22 @@ module.exports = handlebars => {
     }
     if (options && options.partials) {
       instance.registerPartial(options.partials);
+    }
+
+    if (options && options.asyncHelpers === true) {
+      const resolvePartial = instance.VM.resolvePartial.bind(instance.VM);
+      instance.VM.resolvePartial = (name, context, options) => {
+        const tok = this.ids.get(name);
+        if (tok) {
+          const opts = tok.options || {};
+          const args = tok.args.concat(tok.options);
+          const res = tok.fn(...args);
+          if (typeof res === 'string') {
+            name = res;
+          }
+        }
+        return resolvePartial(name, context, options);
+      };
     }
   };
 
@@ -32,6 +50,13 @@ module.exports = handlebars => {
       register.call(this, options);
       const data = Object.assign({}, locals, view.data);
       const str = view.fn(data);
+      view.contents = Buffer.from(str);
+    },
+    async renderAsync(view, locals, options) {
+      register.call(this, options);
+      const data = Object.assign({}, locals, view.data);
+      const res = await view.fn(data);
+      const str = await resolve(this, res);
       view.contents = Buffer.from(str);
     },
 

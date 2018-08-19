@@ -1,8 +1,8 @@
 (async function() {
 
 const handlebars = require('handlebars');
-const engine = require('../lib/engines');
-const Templates = require('../');
+const engine = require('templates/lib/engines');
+const Templates = require('templates');
 const app = new Templates();
 app.engine('hbs', engine(handlebars));
 
@@ -11,7 +11,7 @@ const partials = app.create('partials', { kind: 'partial' });
 const layouts = app.create('layouts', { kind: 'layout' });
 
 const view = await pages.set('templates/foo.hbs', {
-  contents: Buffer.from('Name: {{name}}, {{description}}'),
+  contents: Buffer.from('This is page: {{num}}'),
   data: { name: 'Brian' },
   layout: 'default'
 });
@@ -21,19 +21,20 @@ await layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after'
 await layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
 await layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
 
-console.time('layout');
-let max = 1000000;
+let max = 1e4;
 let i = 0;
+console.time(`processed ${max.toLocaleString()} layouts in`);
 
-while (i++ < max) {
+while (++i <= max) {
   try {
-    await app.render(view, { description: 'This is page: ' + i });
+    await app.render(view, { num: i, layouts });
     // console.log(view.contents.toString());
+    // view.reset();
   } catch (err) {
     console.log(err);
     process.exit(1);
   }
 }
 
-console.timeEnd('layout');
+console.timeEnd(`processed ${max.toLocaleString()} layouts in`);
 })();

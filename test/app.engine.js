@@ -5,7 +5,7 @@ const App = require('..');
 let app;
 
 describe('app.engine', () => {
-  beforeEach(function() {
+  beforeEach(() => {
     app = new App();
   });
 
@@ -15,7 +15,9 @@ describe('app.engine', () => {
     assert.equal(app.engine().name, 'noop');
     assert.equal(typeof app.engine(), 'object');
     assert.equal(typeof app.engine().instance, 'object');
-    assert.equal(typeof app.engine().compileSync, 'function');
+    assert.equal(typeof app.engine().compile, 'function');
+    assert.equal(typeof app.engine().render, 'function');
+    // assert.equal(typeof app.engine().compileSync, 'function');
     assert.equal(typeof app.engine().renderSync, 'function');
   });
 

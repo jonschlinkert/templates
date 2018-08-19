@@ -3,13 +3,14 @@
 require('mocha');
 const assert = require('assert');
 const Templates = require('..');
-const handlebars = require('../lib/engines');
-let app, render;
+const handlebars = require('handlebars');
+const engines = require('../lib/engines');
+let app, render, other, hbs, locals;
 
 describe('app helpers - sync', () => {
-  beforeEach(function() {
-    app = new Templates();
-    app.engine('hbs', handlebars(require('handlebars')));
+  beforeEach(() => {
+    app = new Templates({ sync: true });
+    app.engine('hbs', engines(handlebars.create()));
 
     const pages = app.create('pages');
     const partials = app.create('partials', { kind: 'partial' });
@@ -43,6 +44,5 @@ describe('app helpers - sync', () => {
 
   it('should precompile partials', () => {
     assert.equal(render('Partial: {{{partial "button" text="Click me!!!"}}}'), 'Partial: <button>Click me!!!</button>');
-
   });
 });
