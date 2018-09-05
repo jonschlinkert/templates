@@ -25,8 +25,8 @@ describe('app.engine', () => {
     app.engine('foo', {
       instance: {},
       compile() {},
-      async render(view) {},
-      renderSync(view) {}
+      async render(file) {},
+      renderSync(file) {}
     });
     app.option('engine', 'foo');
     assert(app.engine());

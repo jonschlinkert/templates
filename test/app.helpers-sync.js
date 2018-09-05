@@ -25,20 +25,20 @@ describe('app helpers - sync', () => {
       }
 
       const hbs = this.engine.instance;
-      const view = partials.get(val);
-      if (!view) return '';
-      view.fn = hbs.compile(view.contents.toString());
+      const file = partials.get(val);
+      if (!file) return '';
+      file.fn = hbs.compile(file.contents.toString());
 
-      if (view.fn) return view.fn(Object.assign({}, locals, options.hash));
+      if (file.fn) return file.fn(Object.assign({}, locals, options.hash));
 
-      app.render(view, locals);
-      return view.contents.toString();
+      app.render(file, locals);
+      return file.contents.toString();
     });
 
     render = (str, locals) => {
-      const view = pages.set('fixture.hbs', { contents: Buffer.from(str) });
-      app.render(view, locals);
-      return view.contents.toString();
+      const file = pages.set('fixture.hbs', { contents: Buffer.from(str) });
+      app.render(file, locals);
+      return file.contents.toString();
     };
   });
 

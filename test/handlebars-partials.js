@@ -28,9 +28,9 @@ describe('handlebars - partials', () => {
     app.partials.set('button.hbs', { contents: Buffer.from('<button>Click me!</button>') });
 
     render = (str, locals) => {
-      const view = app.pages.set('fixture.hbs', { contents: Buffer.from(str) });
-      app.render(view, locals);
-      return view.contents.toString();
+      const file = app.pages.set('fixture.hbs', { contents: Buffer.from(str) });
+      app.render(file, locals);
+      return file.contents.toString();
     };
   });
 

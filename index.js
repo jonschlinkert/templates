@@ -4,7 +4,7 @@ const assert = require('assert');
 const streams = require('./lib/streams');
 const Collection = require('./lib/collection');
 const Common = require('./lib/common');
-const View = require('./lib/view');
+const File = require('./lib/file');
 
 /**
  * Create an instance of `Templates` with the given [options](#options).
@@ -23,7 +23,7 @@ class Templates extends Common {
     super(options);
     this.Collection = this.options.Collection || Collection;
     this.collections = new Map();
-    this.viewCache = new Map();
+    this.fileCache = new Map();
     this.cache.partials = {};
     this.lists = {};
     this.kinds = {};
@@ -53,78 +53,78 @@ class Templates extends Common {
       if (obj.use) {
         obj.use(fn, options); // collection
       } else {
-        fn.call(obj, obj, options); // view
+        fn.call(obj, obj, options); // file
       }
     }
   }
 
   /**
-   *  Cache views when created by a collection. This makes lookups
+   *  Cache files when created by a collection. This makes lookups
    *  much faster, and allows us avoid costly merging at render time.
    */
 
-  set(collectionName, view) {
-    const kind = this.kind(view.kind);
-    kind[view.key] = view;
+  set(collectionName, file) {
+    const kind = this.kind(file.kind);
+    kind[file.key] = file;
 
-    this.views.get(collectionName).set(view.key, view);
-    this.viewCache.set(view.path, view);
-    this.emit('view', view);
+    this.files.get(collectionName).set(file.key, file);
+    this.fileCache.set(file.path, file);
+    this.emit('file', file);
 
-    if (view.kind === 'partial') {
+    if (file.kind === 'partial') {
       const partials = this.cache.partials;
       if (this.options.enforceUniqueNames === true) {
-        assert(!partials[view.key], new Error(`partial "${view.key}" already exists`));
+        assert(!partials[file.key], new Error(`partial "${file.key}" already exists`));
       }
-      define(partials, view.key, view);
+      define(partials, file.key, file);
     }
 
-    if (view.kind === 'renderable') {
+    if (file.kind === 'renderable') {
       this.lists[collectionName] = this.lists[collectionName] || [];
-      this.lists[collectionName].push(view);
+      this.lists[collectionName].push(file);
     }
   }
 
   /**
-   * Get a cached view.
+   * Get a cached file.
    *
    * ```js
-   * // get a view from the collection passed as the last argument
+   * // get a file from the collection passed as the last argument
    * console.log(app.get('foo/bar.html', 'pages'));
    * console.log(app.get('foo.html', 'pages'));
    *
-   * // or get the first matching view from any registered collection
+   * // or get the first matching file from any registered collection
    * console.log(app.get('foo/bar.html'));
    * console.log(app.get('foo.html'));
    * ```
    * @name .get
    * @param {String|RegExp|Function} `key`
-   * @return {Object} Returns the view if found.
+   * @return {Object} Returns the file if found.
    * @api public
    */
 
   get(key, collectionName) {
-    if (View.isView(key)) return key;
+    if (File.isFile(key)) return key;
     if (collectionName) return this[collectionName].get(key);
-    if (this.viewCache.has(key)) return this.viewCache.get(key);
-    return this.find(view => view.hasPath(key));
+    if (this.fileCache.has(key)) return this.fileCache.get(key);
+    return this.find(file => file.hasPath(key));
   }
 
   /**
-   *  Delete a view from collection `name`.
+   *  Delete a file from collection `name`.
    */
 
-  delete(collectionName, view) {
-    const kind = this.kind(view.kind);
-    delete kind[view.key];
-    this.views.get(collectionName).delete(view.key);
-    this.viewCache.delete(view.path);
-    this.lists[collectionName] = this.lists[collectionName].filter(v => v !== view);
-    this.emit('delete', view);
+  delete(collectionName, file) {
+    const kind = this.kind(file.kind);
+    delete kind[file.key];
+    this.files.get(collectionName).delete(file.key);
+    this.fileCache.delete(file.path);
+    this.lists[collectionName] = this.lists[collectionName].filter(v => v !== file);
+    this.emit('delete', file);
   }
 
   /**
-   * Get a cached view.
+   * Get a cached file.
    *
    * ```js
    * // iterates over all collections
@@ -137,7 +137,7 @@ class Templates extends Common {
    * ```
    * @name .get
    * @param {String|RegExp|Function} `key`
-   * @return {Object} Returns the view if found.
+   * @return {Object} Returns the file if found.
    * @api public
    */
 
@@ -146,21 +146,21 @@ class Templates extends Common {
   }
 
   /**
-   * Find a cached view with the given `fn`.
+   * Find a cached file with the given `fn`.
    *
    * ```js
-   * const view = app.find(view => view.basename === 'foo.hbs');
+   * const file = app.find(file => file.basename === 'foo.hbs');
    * ```
    * @name .find
-   * @param {Object} `view`
-   * @return {Object} Returns the view, if found.
+   * @param {Object} `file`
+   * @return {Object} Returns the file, if found.
    * @api public
    */
 
   find(fn) {
-    for (const [key, view] of this.viewCache) {
-      if (fn(view, key) === true) {
-        return view;
+    for (const [key, file] of this.fileCache) {
+      if (fn(file, key) === true) {
+        return file;
       }
     }
   }
@@ -181,7 +181,7 @@ class Templates extends Common {
   }
 
   /**
-   * Create a cached view collection. When the collection emits a `view`, the view
+   * Create a cached file collection. When the collection emits a `file`, the file
    * is also cached on `app` to make lookups more performant.
    *
    * @param {String} `name` (required) Collection name
@@ -195,22 +195,22 @@ class Templates extends Common {
     const collection = this.collection(name, opts);
 
     this.collections.set(name, collection);
-    this.views.set(name, new Map());
+    this.files.set(name, new Map());
 
     collection.once('error', err => this.emit('error', err));
-    collection.on('delete', view => this.delete(name, view));
-    collection.on('view', view => this.set(name, view));
+    collection.on('delete', file => this.delete(name, file));
+    collection.on('file', file => this.set(name, file));
 
     const handle = collection.handle.bind(collection);
-    collection.handle = (method, view) => {
+    collection.handle = (method, file) => {
       if (this.options.sync === true) {
-        super.handle(method, view);
-        handle(method, view);
-        return view;
+        super.handle(method, file);
+        handle(method, file);
+        return file;
       }
-      return super.handle(method, view)
-        .then(() => handle(method, view))
-        .then(() => view);
+      return super.handle(method, file)
+        .then(() => handle(method, file))
+        .then(() => file);
     };
 
     if (opts.collectionMethod !== false) {
@@ -221,15 +221,15 @@ class Templates extends Common {
   }
 
   /**
-   *  Create a new `View`. Ensures `view` is emitted and plugins
-   *  are run on the view.
+   *  Create a new `File`. Ensures `file` is emitted and plugins
+   *  are run on the file.
    */
 
-  view(...args) {
-    const view = super.view(...args);
-    this.run(view);
-    this.emit('view', view);
-    return view;
+  file(...args) {
+    const file = super.file(...args);
+    this.run(file);
+    this.emit('file', file);
+    return file;
   }
 
   /**
@@ -250,11 +250,11 @@ class Templates extends Common {
    * Handle middleware. This method is documented in the "Common" class.
    */
 
-  handle(method, view) {
-    if (view.collection) {
-      return view.collection.handle(method, view);
+  handle(method, file) {
+    if (file.collection) {
+      return file.collection.handle(method, file);
     }
-    return super.handle(method, view);
+    return super.handle(method, file);
   }
 
   /**
@@ -264,17 +264,17 @@ class Templates extends Common {
   static get Collection() {
     return Collection;
   }
-  static get View() {
-    return View;
+  static get File() {
+    return File;
   }
 }
 
-function define(cache, key, view) {
+function define(cache, key, file) {
   Reflect.defineProperty(cache, key, {
     enumerable: true,
     configurable: true,
     get() {
-      return view.fn || view.contents.toString();
+      return file.fn || file.contents.toString();
     }
   });
 }

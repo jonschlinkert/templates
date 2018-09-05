@@ -20,7 +20,7 @@ describe('helpers - async', () => {
     pages.engine('hbs', hbs);
     other.engine('hbs', hbs);
 
-    // views
+    // files
     pages.set('a.hbs', {
       contents: Buffer.from('a {{upper name}} b'),
       data: { name: 'Brian' }
@@ -116,10 +116,10 @@ describe('helpers - async', () => {
       });
 
       pages.set({ path: 'foo.hbs', contents: Buffer.from('{{#map names upper}}{{.}}{{/map}}') });
-      const view = pages.get('foo.hbs');
+      const file = pages.get('foo.hbs');
 
-      await pages.render(view, { names: ['doowb', 'jonschlinkert'] });
-      assert.equal(view.contents.toString(), 'DOOWB,JONSCHLINKERT');
+      await pages.render(file, { names: ['doowb', 'jonschlinkert'] });
+      assert.equal(file.contents.toString(), 'DOOWB,JONSCHLINKERT');
     });
 
     it('should support helpers used as arguments that return objects', async () => {

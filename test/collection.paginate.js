@@ -8,8 +8,8 @@ let posts, other;
 const template = `
 {{#with pagination.pages}}
   <a href="{{lookup (first) "stem"}}">First</a>
-  <a href="{{lookup (prev ../view) "stem"}}">Prev</a>
-  <a href="{{lookup (next ../view) "stem"}}">Next</a>
+  <a href="{{lookup (prev ../file) "stem"}}">Prev</a>
+  <a href="{{lookup (next ../file) "stem"}}">Next</a>
   <a href="{{lookup (last) "stem"}}">Last</a>
 {{/with}}`;
 
@@ -36,8 +36,8 @@ describe('collection.paginate', () => {
 
     it('should handle onPager middleware', () => {
       let count = 0;
-      posts.onPager(/\.hbs$/, view => {
-        view.path = `/site/posts/${view.stem}/index.html`;
+      posts.onPager(/\.hbs$/, file => {
+        file.path = `/site/posts/${file.stem}/index.html`;
         count++;
       });
 
@@ -56,8 +56,8 @@ describe('collection.paginate', () => {
     it('should render pagination pages', async () => {
       const buf = Buffer.from(template);
 
-      posts.onPager(/\.hbs$/, view => {
-        view.path = `/site/posts/${view.stem}.html`;
+      posts.onPager(/\.hbs$/, file => {
+        file.path = `/site/posts/${file.stem}.html`;
       });
 
       posts.option('engine', 'hbs');

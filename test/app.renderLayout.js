@@ -15,51 +15,51 @@ describe('app.renderLayout', () => {
   });
 
   it('should throw an error when a layout cannot be found', async() => {
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
-    return app.renderLayout(view).catch(err => {
+    const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    return app.renderLayout(file).catch(err => {
       assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
     });
   });
 
   it('should get layouts from render locals', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view, { layouts: app.layouts.views });
-    assert.equal(view.contents.toString(), 'before This is content after');
+    await app.renderLayout(file, { layouts: app.layouts.files });
+    assert.equal(file.contents.toString(), 'before This is content after');
   });
 
   it('should get layouts from render options', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view, { layouts: app.layouts.views });
-    assert.equal(view.contents.toString(), 'before This is content after');
+    await app.renderLayout(file, { layouts: app.layouts.files });
+    assert.equal(file.contents.toString(), 'before This is content after');
   });
 
   it('should get layouts from app.types.layouts', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    await app.renderLayout(view);
-    assert.equal(view.contents.toString(), 'before This is content after');
+    await app.renderLayout(file);
+    assert.equal(file.contents.toString(), 'before This is content after');
   });
 
   it('should render a layout multiple times when history is reset', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('A{% body %}B') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
+    const file = await app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
 
-    await app.renderLayout(view, { history: [] });
-    await app.renderLayout(view, { history: [] });
-    await app.renderLayout(view, { history: [] });
-    assert.equal(view.contents.toString(), 'AAA This is content BBB');
+    await app.renderLayout(file, { history: [] });
+    await app.renderLayout(file, { history: [] });
+    await app.renderLayout(file, { history: [] });
+    assert.equal(file.contents.toString(), 'AAA This is content BBB');
   });
 
   it('should throw an error when a layout cannot be found on app.types.layout', async() => {
     app.layouts.set('fsjfsjslkjf.hbs', { contents: Buffer.from('before {% body %} after') });
-    const view = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+    const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-    return app.renderLayout(view)
+    return app.renderLayout(file)
       .catch(err => {
         assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
       });

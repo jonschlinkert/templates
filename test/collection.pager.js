@@ -16,7 +16,7 @@ describe('collection.pager', () => {
   });
 
   describe('pages', () => {
-    it('should create paging for views in a collection', async() => {
+    it('should create paging for files in a collection', async() => {
       await posts.set('aaa.hbs', { contents: Buffer.from('') });
       await posts.set('bbb.hbs', { contents: Buffer.from('') });
       await posts.set('ccc.hbs', { contents: Buffer.from('') });
@@ -35,13 +35,13 @@ describe('collection.pager', () => {
       const buf = Buffer.from(`
 {{#with pagination.pages}}
   <a href="{{lookup (first) "path"}}">First</a>
-  <a href="{{lookup (prev ../view) "path"}}">Prev</a>
-  <a href="{{lookup (next ../view) "path"}}">Next</a>
+  <a href="{{lookup (prev ../file) "path"}}">Prev</a>
+  <a href="{{lookup (next ../file) "path"}}">Next</a>
   <a href="{{lookup (last) "path"}}">Last</a>
 {{/with}}`);
 
-      posts.onPager(/\.(hbs|html)$/, view => {
-        view.path = `/site/posts/${view.stem}/index.html`;
+      posts.onPager(/\.(hbs|html)$/, file => {
+        file.path = `/site/posts/${file.stem}/index.html`;
       });
 
       await posts.set('aaa.hbs', { contents: buf });

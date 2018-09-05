@@ -13,14 +13,14 @@ describe('collection.render', () => {
   });
 
   describe('rendering', () => {
-    it('should throw an error when view is not an object', () => {
+    it('should throw an error when file is not an object', () => {
       return pages.render()
         .then(() => {
           throw new Error('expected an error');
         })
         .catch(err => {
           assert(err);
-          assert(/view/.test(err.message));
+          assert(/file/.test(err.message));
         });
     });
 
@@ -40,15 +40,15 @@ describe('collection.render', () => {
         });
     });
 
-    it('should support using helpers to render a view:', async() => {
+    it('should support using helpers to render a file:', async() => {
       pages.helper('upper', str => str.toUpperCase(str));
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
       const page = pages.get('a.hbs');
-      const view = await pages.render(page);
-      assert.equal(view.contents.toString(), 'a BRIAN b');
+      const file = await pages.render(page);
+      assert.equal(file.contents.toString(), 'a BRIAN b');
     });
 
-    it('should support using async helpers to render a view:', async() => {
+    it('should support using async helpers to render a file:', async() => {
       pages.helper('upper', function(str) {
         return new Promise(resolve => {
           setTimeout(() => resolve(str.toUpperCase(str)), 10);
@@ -57,45 +57,45 @@ describe('collection.render', () => {
 
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
       const page = pages.get('a.hbs');
-      const view = await pages.render(page);
-      assert.equal(view.contents.toString(), 'a BRIAN b');
+      const file = await pages.render(page);
+      assert.equal(file.contents.toString(), 'a BRIAN b');
     });
 
-    it('should use globally defined data to render a view', async() => {
+    it('should use globally defined data to render a file', async() => {
       pages.cache.data.name = 'Brian';
       pages.helper('upper', str => str.toUpperCase(str));
 
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b') });
       const page = pages.get('a.hbs');
-      const view = await pages.render(page);
-      assert.equal(view.contents.toString(), 'a BRIAN b');
+      const file = await pages.render(page);
+      assert.equal(file.contents.toString(), 'a BRIAN b');
     });
 
-    it('should render a view from its path:', async() => {
+    it('should render a file from its path:', async() => {
       pages.helper('upper', str => str.toUpperCase(str));
       pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
 
-      const view = await pages.render('a.hbs');
-      assert.equal(view.contents.toString(), 'a BRIAN b');
+      const file = await pages.render('a.hbs');
+      assert.equal(file.contents.toString(), 'a BRIAN b');
     });
   });
 
   describe('layouts', () => {
     it('should throw an error when a layout cannot be found', async() => {
-      const view = await pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+      const file = await pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-      return pages.render(view)
+      return pages.render(file)
         .catch(err => {
           assert.equal(err.message, 'layout "default" is defined on "a.hbs" but cannot be found');
         });
     });
 
-    it('should render a view with a layout defined', async() => {
+    it('should render a file with a layout defined', async() => {
       layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
-      const view = await pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
+      const file = await pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
-      await pages.render(view, { layouts: layouts.views });
-      assert.equal(view.contents.toString(), 'before This is content after');
+      await pages.render(file, { layouts: layouts.files });
+      assert.equal(file.contents.toString(), 'before This is content after');
     });
   });
 });

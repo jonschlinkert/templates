@@ -15,14 +15,14 @@ describe('app.render', () => {
   });
 
   describe('rendering', () => {
-    it('should throw an error when view is not an object', () => {
+    it('should throw an error when file is not an object', () => {
       return app.render()
         .then(() => {
           throw new Error('expected an error');
         })
         .catch(err => {
           assert(err);
-          assert(/view/.test(err.message));
+          assert(/file/.test(err.message));
         });
     });
 
@@ -40,7 +40,7 @@ describe('app.render', () => {
         });
     });
 
-    it('should support using helpers to render a view:', async() => {
+    it('should support using helpers to render a file:', async() => {
       app.helper('upper', str => str.toUpperCase(str));
 
       const page = await app.pages.set('a.hbs', {
@@ -52,7 +52,7 @@ describe('app.render', () => {
       assert.equal(page.contents.toString(), 'a BRIAN b');
     });
 
-    it('should support using async helpers to render a view:', async() => {
+    it('should support using async helpers to render a file:', async() => {
       app.helper('upper', function(str) {
         return new Promise(resolve => {
           setTimeout(() => resolve(str.toUpperCase(str)), 10);
@@ -68,7 +68,7 @@ describe('app.render', () => {
       assert.equal(page.contents.toString(), 'a BRIAN b');
     });
 
-    it('should use globally defined data to render a view', async() => {
+    it('should use globally defined data to render a file', async() => {
       app.cache.data.name = 'Brian';
       app.helper('upper', str => str.toUpperCase(str));
 
@@ -77,7 +77,7 @@ describe('app.render', () => {
       assert.equal(page.contents.toString(), 'a BRIAN b');
     });
 
-    it('should render a view from its path:', async() => {
+    it('should render a file from its path:', async() => {
       app.helper('upper', str => str.toUpperCase(str));
       const page = await app.pages.set('a.hbs', { contents: Buffer.from('a {{upper name}} b'), data: { name: 'Brian' } });
 

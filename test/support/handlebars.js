@@ -33,9 +33,9 @@ module.exports = handlebars => {
   const engine = {
     name: 'handlebars',
     instance,
-    compileSync(view, options = {}) {
-      if (typeof view.fn !== 'function' || options.recompile === true) {
-        view.fn = instance.compile(view.contents.toString(), options);
+    compileSync(file, options = {}) {
+      if (typeof file.fn !== 'function' || options.recompile === true) {
+        file.fn = instance.compile(file.contents.toString(), options);
       }
     },
 
@@ -43,34 +43,34 @@ module.exports = handlebars => {
      * Render
      */
 
-    renderSync(view, locals, options = {}) {
+    renderSync(file, locals, options = {}) {
       if (options.asyncHelpers === true) {
         return engine.render.apply(this, arguments);
       }
       register.call(this, options);
-      const data = Object.assign({}, locals, view.data);
-      const str = view.fn(data);
-      view.contents = Buffer.from(str);
+      const data = Object.assign({}, locals, file.data);
+      const str = file.fn(data);
+      file.contents = Buffer.from(str);
     },
-    async renderAsync(view, locals, options) {
+    async renderAsync(file, locals, options) {
       register.call(this, options);
-      const data = Object.assign({}, locals, view.data);
-      const res = await view.fn(data);
+      const data = Object.assign({}, locals, file.data);
+      const res = await file.fn(data);
       const str = await resolve(this, res);
-      view.contents = Buffer.from(str);
+      file.contents = Buffer.from(str);
     },
 
     /**
      * Render each
      */
 
-    renderEachSync(views, locals, options = {}) {
+    renderEachSync(files, locals, options = {}) {
       if (options.asyncHelpers === true) {
         return engine.renderEach.apply(this, arguments);
       }
       register.call(this, options);
-      for (const key of Object.keys(views)) {
-        engine.render(views[key], locals, options);
+      for (const key of Object.keys(files)) {
+        engine.render(files[key], locals, options);
       }
     }
   };

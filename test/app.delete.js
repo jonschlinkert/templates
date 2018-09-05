@@ -5,7 +5,7 @@ const assert = require('assert');
 const Collection = require('../lib/collection');
 
 describe('collection.delete', () => {
-  it('should delete a view', () => {
+  it('should delete a file', () => {
     const pages = new Collection('pages');
     const fp = path.resolve(__dirname, 'foo.hbs');
     pages.set(fp, {});
@@ -15,7 +15,7 @@ describe('collection.delete', () => {
     assert.equal(pages.get('test/foo.hbs'), undefined);
   });
 
-  it('should ignore views that do not exist on the collection', () => {
+  it('should ignore files that do not exist on the collection', () => {
     const pages = new Collection('pages');
     assert.doesNotThrow(() => pages.delete('flsjfklsfklsfsj'));
   });

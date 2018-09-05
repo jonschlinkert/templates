@@ -13,23 +13,23 @@ describe('collection.render', () => {
     pages.engine('hbs', engines(handlebars.create()));
   });
 
-  it('should throw an error when view is not an object', () => {
+  it('should throw an error when file is not an object', () => {
     return pages.compile()
       .then(() => {
         throw new Error('expected an error');
       })
       .catch(err => {
         assert(err);
-        assert(/view/.test(err.message));
+        assert(/file/.test(err.message));
       });
   });
 
-  it('should add a view.fn function', async () => {
+  it('should add a file.fn function', async () => {
     const page = await pages.set('about.hbs', { contents: Buffer.from('...') });
     return pages.compile(page)
-      .then(view => {
-        assert.equal(typeof view.fn, 'function');
-        assert.equal(view.fn(), '...');
+      .then(file => {
+        assert.equal(typeof file.fn, 'function');
+        assert.equal(file.fn(), '...');
       });
   });
 });

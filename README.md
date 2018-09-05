@@ -30,7 +30,7 @@ const app = new Templates();
 
 ## API
 
-### [Templates](index.js#L19)
+### [Templates](index.js#L21)
 
 Create an instance of `Templates` with the given [options](#options).
 
@@ -44,14 +44,35 @@ Create an instance of `Templates` with the given [options](#options).
 const app = new Templates(options);
 ```
 
-### [.get](index.js#L45)
+### [.get](index.js#L106)
 
-Get a cached view.
+Get a cached file.
 
 **Params**
 
 * `key` **{String|RegExp|Function}**
-* `returns` **{Object}**: Returns the view if found.
+* `returns` **{Object}**: Returns the file if found.
+
+**Example**
+
+```js
+// get a file from the collection passed as the last argument
+console.log(app.get('foo/bar.html', 'pages'));
+console.log(app.get('foo.html', 'pages'));
+
+// or get the first matching file from any registered collection
+console.log(app.get('foo/bar.html'));
+console.log(app.get('foo.html'));
+```
+
+### [.get](index.js#L144)
+
+Get a cached file.
+
+**Params**
+
+* `key` **{String|RegExp|Function}**
+* `returns` **{Object}**: Returns the file if found.
 
 **Example**
 
@@ -65,22 +86,22 @@ app.get('foo/bar.html', 'pages');
 app.get('foo.html', 'pages');
 ```
 
-### [.find](index.js#L64)
+### [.find](index.js#L160)
 
-Find a cached view with the given `fn`.
+Find a cached file with the given `fn`.
 
 **Params**
 
-* `view` **{Object}**
-* `returns` **{Object}**: Returns the view, if found.
+* `file` **{Object}**
+* `returns` **{Object}**: Returns the file, if found.
 
 **Example**
 
 ```js
-const view = app.find(view => view.basename === 'foo.hbs');
+const file = app.find(file => file.basename === 'foo.hbs');
 ```
 
-Create an un-cached view collection.
+Create an un-cached collection.
 
 **Params**
 
@@ -88,7 +109,8 @@ Create an un-cached view collection.
 * `options` **{Object}**
 * `returns` **{Object}**: Returns the collection.
 
-Create a cached view collection.
+Create a cached file collection. When the collection emits a `file`, the file
+is also cached on `app` to make lookups more performant.
 
 **Params**
 
@@ -96,15 +118,25 @@ Create a cached view collection.
 * `options` **{Object}**
 * `returns` **{Object}**: Returns the collection.
 
-### [.option](lib/common.js#L55)
+### [.kind](index.js#L245)
+
+Get a "kind" of template. If the _kind_ doesn't already exist, it
+will be created and an empty object will be returned.
+
+**Params**
+
+* `name` **{string}**
+* `returns` **{object}**
+
+### [.option](lib/common.js#L88)
 
 Get or set options on `app.options`.
 
 **Params**
 
-* `key` **{string|object}**
-* `val` **{object}**
-* `returns` **{object}**: Returns the instance when setting, or the value when getting.
+* `key` **{String|object}**
+* `val` **{Object}**
+* `returns` **{Object}**: Returns the instance when setting, or the value when getting.
 
 **Example**
 
@@ -116,15 +148,15 @@ app.option({ foo: 'bar' });
 console.log(app.option('foo')); //=> 'bar'
 ```
 
-### [.data](lib/common.js#L90)
+### [.data](lib/common.js#L127)
 
 Get or set data on `app.cache.data`.
 
 **Params**
 
-* `key` **{string|object}**
-* `val` **{object}**
-* `returns` **{object}**: Returns the instance when setting, or the value when getting.
+* `key` **{String|object}**
+* `val` **{Object}**
+* `returns` **{Object}**: Returns the instance when setting, or the value when getting.
 
 **Example**
 
@@ -136,32 +168,33 @@ app.data({ foo: 'bar' });
 console.log(app.data('foo')); //=> 'bar'
 ```
 
-### [.view](lib/common.js#L122)
+### [.file](lib/common.js#L159)
 
-Create a new view.
+Create a new file.
 
 **Params**
 
-* `key` **{string|object}**: The view path, or object.
-* `val` **{object}**: View object, when `key` is a path string.
-* `returns` **{object}**: Returns the view.
+* `key` **{String|object}**: The file path, or object.
+* `val` **{Object}**: File object, when `key` is a path string.
+* `returns` **{Object}**: Returns the file.
 
 **Example**
 
 ```js
-app.view('/some/template.hbs', {});
-app.view({ path: '/some/template.hbs', contents: Buffer.from('...') });
+app.file('/some/template.hbs', {});
+app.file({ path: '/some/template.hbs', contents: Buffer.from('...') });
 ```
 
-### [.engine](lib/common.js#L154)
+### [.engine](lib/common.js#L196)
 
-Register a view engine callback `fn` as `name`.
+Register a file engine callback `fn` as `name`.
 
 **Params**
 
-* `exts` **{String|Array}**: String or array of file extensions.
-* `fn` **{Function|Object}**: or `settings`
+* `exts` **{String|array}**: String or array of file extensions.
+* `engine` **{Object|function}**: Engine object or function.
 * `settings` **{Object}**: Optionally pass engine options as the last argument.
+* `returns` **{Object}**: Returns the given or cached engine.
 
 **Example**
 
@@ -169,78 +202,91 @@ Register a view engine callback `fn` as `name`.
 app.engine('hbs', require('engine-handlebars'));
 ```
 
-### [.helper](lib/common.js#L179)
+### [.helper](lib/common.js#L241)
 
-Register a helper function as `name`.
+Register a helper function as `name`, or get helper `name` if only one argument is passed.
 
 **Params**
 
-* `name` **{string|object}**: Helper name or object of helpers.
-* `helper` **{function}**: helper function, if name is not an object
+* `name` **{String|object}**: Helper name or object of helpers.
+* `helper` **{Function}**: helper function, if name is not an object
 
 **Example**
 
 ```js
 app.helper('lowercase', str => str.toLowerCase());
+console.log(app.helper('lowercase')) //=> [function lowercase]
 ```
 
-### [.renderLayout](lib/common.js#L205)
+### [.renderLayout](lib/common.js#L278)
 
-Recursively renders layouts and "nested" layouts on the given `view`.
+Recursively renders layouts and "nested" layouts on the given `file`.
 
 **Params**
 
-* `view` **{object}**
-* `options` **{object}**: Optionally pass an object of `layouts`. Or views from any collections with type "layout" will be used.
+* `file` **{Object}**
+* `options` **{Object}**: Optionally pass an object of `layouts`. Or files from any collections with type "layout" will be used.
 
 **Example**
 
 ```js
-app.renderLayout(view);
+app.renderLayout(file);
 ```
 
-### [.compile](lib/common.js#L241)
+### [.compile](lib/common.js#L322)
 
-Compile `view` with the given `options`.
+Compile `file` with the given `options`.
 
 **Params**
 
-* `view` **{Object|String}**: View object.
+* `file` **{Object|String}**: File object.
 * `options` **{Object}**
-* `returns` **{Object}**: Returns a promise with the view.
+* `returns` **{Object}**: Returns a promise with the file.
 
 **Example**
 
 ```js
-const view = app.view({ path: 'some-view.hbs', contents: Buffer.from('...') });
-app.compile(view)
-  .then(view => console.log(view.fn)) //=> [function]
+const file = app.file({ path: 'some-file.hbs', contents: Buffer.from('...') });
+app.compile(file)
+  .then(file => console.log(file.fn)) //=> [function]
 
 // you can call the compiled function more than once
-// to render the view with different data
-view.fn({title: 'Foo'});
-view.fn({title: 'Bar'});
-view.fn({title: 'Baz'});
+// to render the file with different data
+file.fn({title: 'Foo'});
+file.fn({title: 'Bar'});
+file.fn({title: 'Baz'});
 ```
 
-Render a view.
+Prepare a file to be rendered. Gets the file, if `file.path` is defined,
+creates options and context for the file, and detects the engine to use.
+The options object will include any layouts, partials, or helpers to
+pass to the engine.
 
 **Params**
 
-* `view` **{object|string}**: View path or object.
-* `locals` **{object}**: Data to use for rendering the view.
+* **{object|string}**: val File or file.path.
+* **{object}**: locals
 * **{object}**: options
-* `returns` **{object}**
+* `returns` **{object}**: Returns an object with `{ file, opts, context, engine }`
 
-### [.handlers](lib/common.js#L320)
-
-Add one or more middleware handler methods. Handler methods may also be added by passing an array of handler names to the constructor on the `handlers` option.
+Render a file.
 
 **Params**
 
-* `methods` **{string|array}**: Method names
-* `options` **{object}**
-* `returns` **{object}**: Returns the instance for chaining.
+* `file` **{Object|string}**: File path or object.
+* `locals` **{Object}**: Data to use for rendering the file.
+* **{Object}**: options
+* `returns` **{Object}**
+
+### [.handlers](lib/common.js#L497)
+
+Add one or more middleware handler methods. Handler methods may also be added by passing an array of handler names to the constructor on the `handlers` option. This method is also aliased as `.handler()`.
+
+**Params**
+
+* `methods` **{String|array}**: Method names
+* `options` **{Object}**
+* `returns` **{Object}**: Returns the instance for chaining.
 
 **Example**
 
@@ -248,42 +294,53 @@ Add one or more middleware handler methods. Handler methods may also be added by
 app.handlers(['onLoad', 'preRender']);
 ```
 
-### [.handle](lib/common.js#L349)
+### [.handle](lib/common.js#L529)
 
-Run a middleware methods on the given `view`.
+Run middleware `method` on the given `file`.
 
 **Params**
 
-* `method` **{string}**: Middleware method to run.
-* `view` **{object}**
+* `method` **{String}**: Middleware method to run.
+* `file` **{Object}**
 
 **Example**
 
 ```js
 // run a specific method
-app.handle('onLoad', view)
-  .then(view => console.log('File:', view))
+app.handle('onLoad', file)
+  .then(file => console.log('File:', file))
   .catch(console.error);
 
 // run multiple methods
-app.handle('onLoad', view)
-  .then(view => router.handle('preRender', view))
+app.handle('onLoad', file)
+  .then(file => app.handle('preRender', file))
   .catch(console.error);
 
 // run all methods
-app.handle(view)
-  .then(view => console.log('File:', view))
+app.handle(file)
+  .then(file => console.log('File:', file))
   .catch(console.error);
 ```
 
-Create the "key" to use for caching a view.
+Create the "key" to use for caching a file.
 
 **Params**
 
-* `view` **{object}**
-* `returns` **{string}**: Returns the key.
+* `file` **{Object}**
+* `returns` **{String}**: Returns the key.
 
-### [Collection](lib/collection.js#L18)
+Returns true if the given value is an instance of `File`.
+
+**Params**
+
+* `val` **{Object}**
+* `returns` **{Boolean}**
+
+Get the `File` class to use for creating new files on the collection.
+
+* `returns` **{Class}** `File`: Returns the File class.
+
+### [Collection](lib/collection.js#L21)
 
 Create a new `Collection` with the given `options`.
 
@@ -298,15 +355,15 @@ Create a new `Collection` with the given `options`.
 const collection = new Collection();
 ```
 
-### [.set](lib/collection.js#L46)
+### [.set](lib/collection.js#L68)
 
-Add a view to `collection.views`.
+Add a file to `collection.files`.
 
 **Params**
 
-* `key` **{string|object}**
-* `val` **{object|undefined}**
-* `returns` **{Object}**: Returns the view.
+* `key` **{String|object}**
+* `val` **{Object|undefined}**
+* `returns` **{Object}**: Returns the file.
 
 **Example**
 
@@ -315,14 +372,14 @@ collection.set('foo/bar.html', { contents: Buffer.from('...') });
 collection.set({ path: 'foo/bar.html', contents: Buffer.from('...') });
 ```
 
-### [.get](lib/collection.js#L69)
+### [.get](lib/collection.js#L105)
 
-Get a view from `collection.views`.
+Get a file from `collection.files`.
 
 **Params**
 
 * `key` **{String|RegExp|Function}**
-* `returns` **{Object}**: Returns the view if found.
+* `returns` **{Object}**: Returns the file if found.
 
 **Example**
 
@@ -332,53 +389,68 @@ collection.get('foo.html');
 collection.get('foo');
 ```
 
-### [.find](lib/collection.js#L87)
+### [.find](lib/collection.js#L123)
 
-Find a view on `collection.views` with the given `fn`.
+Find a file on `collection.files` with the given `fn`.
 
 **Params**
 
-* `view` **{Object}**
-* `returns` **{Object}**: Returns the view, if found.
+* `file` **{Object}**
+* `returns` **{Object}**: Returns the file, if found.
 
 **Example**
 
 ```js
-const view = collection.find(view => view.basename === 'foo.hbs');
+const file = collection.find(file => file.basename === 'foo.hbs');
 ```
 
-### [.delete](lib/collection.js#L109)
+### [.delete](lib/collection.js#L144)
 
-Remove `view` from `collection.views`.
+Remove `file` from `collection.files`.
 
 **Params**
 
-* `view` **{object|string}**
-* `returns` **{Object}**: Returns the removed view.
+* `file` **{Object|string}**
+* `returns` **{Object}**: Returns the removed file.
 
 **Example**
 
 ```js
-collection.delete(view);
+collection.delete(file);
 collection.delete('/foo/bar.hbs');
+```
+
+**Params**
+
+* `prop` **{String|Function}**: Object path or function that returns the value to group by.
+* `options` **{Object}**
+* `returns` **{Object}**
+
+**Example**
+
+```js
+console.log(posts.groupBy('data.tags'));
+console.log(posts.groupBy('extname'));
+console.log(posts.groupBy('stem'));
+console.log(posts.groupBy(file => file.data.tags));
 ```
 
 Static method that returns true if the given value is a collection instance.
 
 **Params**
 
-* `val` **{any}**
+* `val` **{Any}**
 * `returns` **{Boolean}**
 
-### [.option](lib/common.js#L55)
+### [.option](lib/common.js#L88)
 
 Get or set options on `app.options`.
 
 **Params**
 
-* `key` **{string|object}**
-* `val` **{object}**
-* `returns` **{object}**: Returns the instance when setting, or the value when getting.
+* `key` **{String|object}**
+* `val` **{Object}**
+* `returns` **{Object}**: Returns the instance when setting, or the value when getting.
 
 **Example**
 
@@ -390,15 +462,15 @@ collection.option({ foo: 'bar' });
 console.log(collection.option('foo')); //=> 'bar'
 ```
 
-### [.data](lib/common.js#L90)
+### [.data](lib/common.js#L127)
 
 Get or set data on `app.cache.data`.
 
 **Params**
 
-* `key` **{string|object}**
-* `val` **{object}**
-* `returns` **{object}**: Returns the instance when setting, or the value when getting.
+* `key` **{String|object}**
+* `val` **{Object}**
+* `returns` **{Object}**: Returns the instance when setting, or the value when getting.
 
 **Example**
 
@@ -410,32 +482,33 @@ collection.data({ foo: 'bar' });
 console.log(collection.data('foo')); //=> 'bar'
 ```
 
-### [.view](lib/common.js#L122)
+### [.file](lib/common.js#L159)
 
-Create a new view.
+Create a new file.
 
 **Params**
 
-* `key` **{string|object}**: The view path, or object.
-* `val` **{object}**: View object, when `key` is a path string.
-* `returns` **{object}**: Returns the view.
+* `key` **{String|object}**: The file path, or object.
+* `val` **{Object}**: File object, when `key` is a path string.
+* `returns` **{Object}**: Returns the file.
 
 **Example**
 
 ```js
-collection.view('/some/template.hbs', {});
-collection.view({ path: '/some/template.hbs', contents: Buffer.from('...') });
+collection.file('/some/template.hbs', {});
+collection.file({ path: '/some/template.hbs', contents: Buffer.from('...') });
 ```
 
-### [.engine](lib/common.js#L154)
+### [.engine](lib/common.js#L196)
 
-Register a view engine callback `fn` as `name`.
+Register a file engine callback `fn` as `name`.
 
 **Params**
 
-* `exts` **{String|Array}**: String or array of file extensions.
-* `fn` **{Function|Object}**: or `settings`
+* `exts` **{String|array}**: String or array of file extensions.
+* `engine` **{Object|function}**: Engine object or function.
 * `settings` **{Object}**: Optionally pass engine options as the last argument.
+* `returns` **{Object}**: Returns the given or cached engine.
 
 **Example**
 
@@ -443,78 +516,91 @@ Register a view engine callback `fn` as `name`.
 collection.engine('hbs', require('engine-handlebars'));
 ```
 
-### [.helper](lib/common.js#L179)
+### [.helper](lib/common.js#L241)
 
-Register a helper function as `name`.
+Register a helper function as `name`, or get helper `name` if only one argument is passed.
 
 **Params**
 
-* `name` **{string|object}**: Helper name or object of helpers.
-* `helper` **{function}**: helper function, if name is not an object
+* `name` **{String|object}**: Helper name or object of helpers.
+* `helper` **{Function}**: helper function, if name is not an object
 
 **Example**
 
 ```js
 collection.helper('lowercase', str => str.toLowerCase());
+console.log(collection.helper('lowercase')) //=> [function lowercase]
 ```
 
-### [.renderLayout](lib/common.js#L205)
+### [.renderLayout](lib/common.js#L278)
 
-Recursively renders layouts and "nested" layouts on the given `view`.
+Recursively renders layouts and "nested" layouts on the given `file`.
 
 **Params**
 
-* `view` **{object}**
-* `options` **{object}**: Optionally pass an object of `layouts`.
+* `file` **{Object}**
+* `options` **{Object}**: Optionally pass an object of `layouts`.
 
 **Example**
 
 ```js
-collection.renderLayout(view);
+collection.renderLayout(file);
 ```
 
-### [.compile](lib/common.js#L241)
+### [.compile](lib/common.js#L322)
 
-Compile `view` with the given `options`.
+Compile `file` with the given `options`.
 
 **Params**
 
-* `view` **{Object|String}**: View object.
+* `file` **{Object|String}**: File object.
 * `options` **{Object}**
-* `returns` **{Object}**: Returns a promise with the view.
+* `returns` **{Object}**: Returns a promise with the file.
 
 **Example**
 
 ```js
-const view = collection.view({ path: 'some-view.hbs', contents: Buffer.from('...') });
-collection.compile(view)
-  .then(view => console.log(view.fn)) //=> [function]
+const file = collection.file({ path: 'some-file.hbs', contents: Buffer.from('...') });
+collection.compile(file)
+  .then(file => console.log(file.fn)) //=> [function]
 
 // you can call the compiled function more than once
-// to render the view with different data
-view.fn({title: 'Foo'});
-view.fn({title: 'Bar'});
-view.fn({title: 'Baz'});
+// to render the file with different data
+file.fn({title: 'Foo'});
+file.fn({title: 'Bar'});
+file.fn({title: 'Baz'});
 ```
 
-Render a view.
+Prepare a file to be rendered. Gets the file, if `file.path` is defined,
+creates options and context for the file, and detects the engine to use.
+The options object will include any layouts, partials, or helpers to
+pass to the engine.
 
 **Params**
 
-* `view` **{object|string}**: View path or object.
-* `locals` **{object}**: Data to use for rendering the view.
+* **{object|string}**: val File or file.path.
+* **{object}**: locals
 * **{object}**: options
-* `returns` **{object}**
+* `returns` **{object}**: Returns an object with `{ file, opts, context, engine }`
 
-### [.handlers](lib/common.js#L320)
-
-Add one or more middleware handler methods. Handler methods may also be added by passing an array of handler names to the constructor on the `handlers` option.
+Render a file.
 
 **Params**
 
-* `methods` **{string|array}**: Method names
-* `options` **{object}**
-* `returns` **{object}**: Returns the instance for chaining.
+* `file` **{Object|string}**: File path or object.
+* `locals` **{Object}**: Data to use for rendering the file.
+* **{Object}**: options
+* `returns` **{Object}**
+
+### [.handlers](lib/common.js#L497)
+
+Add one or more middleware handler methods. Handler methods may also be added by passing an array of handler names to the constructor on the `handlers` option. This method is also aliased as `.handler()`.
+
+**Params**
+
+* `methods` **{String|array}**: Method names
+* `options` **{Object}**
+* `returns` **{Object}**: Returns the instance for chaining.
 
 **Example**
 
@@ -522,40 +608,51 @@ Add one or more middleware handler methods. Handler methods may also be added by
 collection.handlers(['onLoad', 'preRender']);
 ```
 
-### [.handle](lib/common.js#L349)
+### [.handle](lib/common.js#L529)
 
-Run a middleware methods on the given `view`.
+Run middleware `method` on the given `file`.
 
 **Params**
 
-* `method` **{string}**: Middleware method to run.
-* `view` **{object}**
+* `method` **{String}**: Middleware method to run.
+* `file` **{Object}**
 
 **Example**
 
 ```js
 // run a specific method
-collection.handle('onLoad', view)
-  .then(view => console.log('File:', view))
+collection.handle('onLoad', file)
+  .then(file => console.log('File:', file))
   .catch(console.error);
 
 // run multiple methods
-collection.handle('onLoad', view)
-  .then(view => router.handle('preRender', view))
+collection.handle('onLoad', file)
+  .then(file => app.handle('preRender', file))
   .catch(console.error);
 
 // run all methods
-collection.handle(view)
-  .then(view => console.log('File:', view))
+collection.handle(file)
+  .then(file => console.log('File:', file))
   .catch(console.error);
 ```
 
-Create the "key" to use for caching a view.
+Create the "key" to use for caching a file.
 
 **Params**
 
-* `view` **{object}**
-* `returns` **{string}**: Returns the key.
+* `file` **{Object}**
+* `returns` **{String}**: Returns the key.
+
+Returns true if the given value is an instance of `File`.
+
+**Params**
+
+* `val` **{Object}**
+* `returns` **{Boolean}**
+
+Get the `File` class to use for creating new files on the collection.
+
+* `returns` **{Class}** `File`: Returns the File class.
 
 ## About
 
@@ -608,15 +705,15 @@ You might also be interested in these projects:
 | --- | --- |
 | 753 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 109 | [doowb](https://github.com/doowb) |
-| 1 | [chronzerg](https://github.com/chronzerg) |
+| 1 | [janderland](https://github.com/janderland) |
 
 ### Author
 
 **Jon Schlinkert**
 
-* [LinkedIn Profile](https://linkedin.com/in/jonschlinkert)
 * [GitHub Profile](https://github.com/jonschlinkert)
 * [Twitter Profile](https://twitter.com/jonschlinkert)
+* [LinkedIn Profile](https://linkedin.com/in/jonschlinkert)
 
 ### License
 
@@ -625,4 +722,4 @@ Released under the [MIT License](LICENSE).
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on March 31, 2018._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on August 28, 2018._
