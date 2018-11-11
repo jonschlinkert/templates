@@ -7,7 +7,7 @@ const util = require('util');
 const assert = require('assert');
 const { concat, pipe, from } = require('mississippi');
 const Cloneable = require('../lib/streams/cloneable');
-const File = require('../lib/vinyl');
+const File = require('../lib/vinyl-lite');
 const inspect = file => file[util.inspect.custom]();
 
 describe('File', function() {

@@ -283,7 +283,7 @@ describe('File', () => {
         path: '/test/test.coffee',
         contents: new Stream.PassThrough()
       });
-      assert.equal(file[util.inspect.custom](), '<File "/test/test.coffee" <CloneableStream>>');
+      assert.equal(file[util.inspect.custom](), '<File "/test/test.coffee" <PassThroughStream>>');
     });
 
     it('should return correct format when null and relative path', () => {

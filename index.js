@@ -35,10 +35,11 @@ class Templates extends Common {
   }
 
   use(plugin) {
-    const fn = this.invokeOnce(plugin).call(this, this);
+    if (!plugin) return this;
+    let fn = this.invokeOnce(plugin).call(this, this);
     if (typeof fn === 'function') {
       fn.memo = fn.memo || new Set();
-      for (const [key, collection] of this.collections) {
+      for (let [key, collection] of this.collections) {
         if (fn.memo.has(collection)) continue;
         fn.memo.add(collection);
         collection.use(fn);
@@ -49,7 +50,7 @@ class Templates extends Common {
   }
 
   run(obj, options) {
-    for (const fn of this.fns) {
+    for (let fn of this.fns) {
       if (obj.use) {
         obj.use(fn, options); // collection
       } else {
@@ -191,6 +192,8 @@ class Templates extends Common {
    */
 
   create(name, options) {
+    assert(!(name in this), `Collection name "${name}" is cannot be used as it conflicts with an instance name. Please choose another name.`);
+
     const opts = { ...this.options, ...options };
     const collection = this.collection(name, opts);
 

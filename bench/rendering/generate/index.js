@@ -12,15 +12,15 @@ const defaults = {
   dest: 'blog',
   count: 1600,
   units: 'words',
-  pages: 10
+  pages: 1000
 };
 
 async function generate(options = {}) {
-  const opts = Object.assign({}, defaults, options);
-  const contents = loremipsum(opts);
-  const date = formatDate(opts.startDate);
-  const dest = (...args) => path.join(__dirname, opts.dest, ...args);
-  const time = `${opts.pages} pages`;
+  let opts = Object.assign({}, defaults, options);
+  let contents = loremipsum(opts);
+  let date = formatDate(opts.startDate);
+  let dest = (...args) => path.join(__dirname, opts.dest, ...args);
+  let time = `${opts.pages} pages`;
   console.time(time);
 
   rimraf.sync(dest());
@@ -97,6 +97,7 @@ function datestamp(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
+// super-simple mock randomness
 function tags() {
   const arr = [];
   switch (Math.floor(Math.random() * 50)) {
