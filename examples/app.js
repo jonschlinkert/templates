@@ -1,9 +1,8 @@
 'use strict';
-(async function() {
 
-const Engine = require('engine');
-const engines = require('../test/support/engines');
 const path = require('path');
+const Engine = require('engine');
+const engine = require('engine-base')(new Engine());
 const App = require('..');
 const app = new App();
 
@@ -17,9 +16,8 @@ app.on('error', console.log);
  * Engine
  */
 
-const base = new Engine();
-app.engine('*', engines.base(base));
-app.engine('html', engines.base(base));
+app.engine('*', engine);
+app.engine('html', engine);
 app.option('engine', '*');
 
 /**
@@ -28,27 +26,33 @@ app.option('engine', '*');
 
 app.data({ title: 'Home' });
 
-app.create('pages')
+(async () => {
+
+const pages = app.create('pages')
   .data('title', 'HOOMMMME!')
-  .set('home', 'The <%= title %> page')
+
+await pages.set('home', 'The <%= title %> page')
   .then(view => app.render(view))
   .then(view => console.log(view.contents.toString()));
 
-app.create('articles')
-  .set('one.html', 'The <%= title %> page')
+const articles = app.create('articles');
+
+await articles.set('one.html', 'The <%= title %> page')
   .then(view => app.render(view))
   .then(view => console.log(view.contents.toString()));
 
 
 const posts = app.create('posts')
-  .engine('*', engines.base(base))
+  .engine('*', engine)
   .data('title', 'HOOMMMME!');
+
+posts.option('engine', '*');
 
 await posts.set('home', 'The <%= title %> page');
 await posts.set('about', 'The <%= title %> page');
 await posts.set('other', 'The <%= title %> page');
 
-posts.render(posts.get('home'))
-  .then(view => console.log(view.contents.toString()));
+const view = await posts.render(posts.get('home'));
+console.log(view.contents.toString());
 
 })();

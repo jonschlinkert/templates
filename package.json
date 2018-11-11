@@ -28,19 +28,23 @@
     "ci": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "dependencies": {
-    "en-route": "^3.1.0",
-    "file-type": "^8.0.0",
-    "readable-stream": "^2.3.6"
+    "en-route": "^3.2.0",
+    "file-type": "^10.4.0",
+    "readable-stream": "^3.0.6",
+    "use": "^3.1.1"
   },
   "devDependencies": {
     "engine": "^0.1.12",
+    "engine-base": "^1.0.0",
+    "engine-handlebars": "^1.0.0",
     "gulp-format-md": "^1.0.0",
-    "handlebars": "^4.0.11",
+    "handlebars": "^4.0.12",
     "helper-changelog": "^0.3.0",
     "istanbul": "^0.4.5",
     "mississippi": "^3.0.0",
     "mocha": "^5.2.0",
-    "nyc": "^12.0.2",
+    "nyc": "^13.1.0",
+    "time-require": "github:jonschlinkert/time-require",
     "vinyl-fs": "^3.0.3"
   },
   "keywords": [

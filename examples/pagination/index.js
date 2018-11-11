@@ -1,5 +1,5 @@
 const Collection = require('../lib/collection');
-const View = require('../lib/view');
+const File = require('../lib/file');
 const posts = new Collection();
 // posts.use(require('./pagination'));
 
@@ -16,31 +16,31 @@ posts.set('jjj.hbs', { data: { tags: ['h', 'b', 'f'] } });
 posts.set('lll.hbs', { data: { tags: ['i', 'b', 'c', 'd'] } });
 posts.set('mmm.hbs');
 
-
 // console.log(posts.groupBy('data.tags'));
 // console.log(posts.groupBy('extname'));
 // console.log(posts.groupBy('stem'));
-// console.log(posts.groupBy(view => view.data.tags));
+// console.log(posts.groupBy(file => file.data.tags));
 
-const tags = posts.collect('data.tags', { singular: 'data.tag' }, page => {
-  page.path = '/blog/' + page.path;
-  return page;
-});
-console.log(tags);
+// const tags = posts.collect('data.tags', { singular: 'data.tag' }, page => {
+//   page.path = '/blog/' + page.path;
+//   return page;
+// });
 
-// const pages1 = posts.paginate({ perPage: 2 }, page => posts.view(page));
+// console.log(tags);
+
+// const pages1 = posts.paginate({ perPage: 2 }, page => posts.file(page));
 // console.log(pages1);
 
-// const pages2 = posts.paginate(page => posts.view(page));
+// const pages2 = posts.paginate(page => posts.file(page));
 // console.log(pages2);
 
 
 // const res = posts.collect('tags', { perPage: 3 }, item => {
-//   // this.push(posts.view(item));
-//   return posts.view(item);
+//   // this.push(posts.file(item));
+//   return posts.file(item);
 // });
 // console.log(res);
 
-// const view = posts.view({ path: 'tags/index.html', data: { links }})
-// console.log(res.links);
+// // const file = posts.file({ path: 'tags/index.html', data: { links }})
+// // console.log(res.links);
 

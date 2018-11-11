@@ -1,6 +1,9 @@
 console.time('use');
 const use = require('../lib/use');
 
+/**
+ * Plugins PoC
+ */
 
 class App {
   constructor() {

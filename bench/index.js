@@ -1,58 +1,57 @@
 'use strict';
 
-const bench = require('./setup/bench');
+const engine = require('engine-handlebars');
 const handlebars = require('handlebars');
-const engine = require('../examples/support/engine');
+const bench = require('./setup/bench');
+
 const Templates = require('..');
-const Collection = Templates.Collection;
-const View = Templates.View;
+const { Collection, File } = Templates;
 
 /**
  * Layouts
  */
 
-// let initialized = false;
+let initialized = false;
+let app = new Templates({ asyncHelpers: false });
+app.engine('hbs', engine(handlebars));
 
-// app = new Templates({ asyncHelpers: false });
-// app.engine('hbs', engine(handlebars));
+app.create('pages');
+app.create('layouts', { kind: 'layout' });
+app.layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
+app.layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
+app.layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
 
-// app.create('pages');
-// app.create('layouts', { kind: 'layout' });
-// app.layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
-// app.layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
-// app.layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
+const file = app.pages.set('foo', {
+  contents: Buffer.from('Name: {{name}}, {{description}}'),
+  data: { name: 'Brian' },
+  layout: 'default'
+});
 
-// const view = app.pages.set('foo', {
-//   contents: Buffer.from('Name: {{name}}, {{description}}'),
-//   data: { name: 'Brian' },
-//   layout: 'default'
-// });
+// console.log(app)
 
-// // console.log(app)
+bench('layouts')
+  .add('collection.renderLayout()', () => {
+    const collection = new Collection('layouts', { kind: 'layout '});
+    collection.set({ path: 'default', contents: 'before {{name}} after' });
+    const file = new File({ path: 'foo/bar', contents: 'before {{name}} after' });
+  })
+  .add('collection.renderLayout()', async() => {
 
-// bench('layouts')
-//   // .add('collection.renderLayout()', () => {
-//   //   const collection = new Collection('layouts', { kind: 'layout '});
-//   //   collection.set({ path: 'default', contents: 'before {{name}} after' });
-//   //   const view = new View({ path: 'foo/bar', contents: 'before {{name}} after' });
-//   // })
-//   .add('collection.renderLayout()', async() => {
+    // await app.render(file, { description: 'This is a page' });
+    // console.log(file.contents.toString())
 
-//     // await app.render(view, { description: 'This is a page' });
-//     // console.log(view.contents.toString())
-
-//   })
-//   .run({ async: true });
+  })
+  .run({ async: true });
 
 // bench('rendering')
 //   .add('app.render()', () => {
-//     let app = new Templates();
-//     const view = new View({ path: 'foo/bar', contents: 'before {{name}} after' });
+//     app = new Templates();
+//     const file = new File({ path: 'foo/bar', contents: 'before {{name}} after' });
 
 //   })
 //   .run();
 
-// const app = new App({
+// const app = new Templates({
 //   handlers: [
 //     'onLoad',
 //     'preCompile',
@@ -69,4 +68,4 @@ const View = Templates.View;
 // layouts.set({ path: 'default.hbs', contents: Buffer.from('before {% body %} after') });
 
 // app.engine('hbs', engine(handlebars));
-
+// console.log(app);

@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const Collection = require('../lib/collection');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 let posts, other;
 
 const template = `
@@ -17,8 +17,8 @@ describe('collection.paginate', () => {
   beforeEach(() => {
     posts = new Collection('posts', { sync: true });
     other = new Collection('other', { sync: true });
-    posts.engine('hbs', engines(require('handlebars')));
-    other.engine('hbs', engines(require('handlebars')));
+    posts.engine('hbs', engine(require('handlebars')));
+    other.engine('hbs', engine(require('handlebars')));
     posts.handler('onPaginate');
     posts.handler('onPager');
   });

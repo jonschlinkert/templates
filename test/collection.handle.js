@@ -2,14 +2,14 @@
 
 const assert = require('assert');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 const Collection = require('../lib/collection');
 let pages, layouts;
 
 describe('collection.handle', () => {
   beforeEach(function() {
     pages = new Collection('pages', { handlers: ['before', 'after', 'onLoad'] });
-    pages.engine('hbs', engines(handlebars.create()));
+    pages.engine('hbs', engine(handlebars.create()));
   });
 
   it('should handle the specified middleware method', async() => {

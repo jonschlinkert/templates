@@ -2,7 +2,7 @@
 
 require('mocha');
 const assert = require('assert');
-const engine = require('../lib/engines');
+const engine = require('engine-handlebars');
 const Collection = require('../lib/collection');
 let pages, other;
 

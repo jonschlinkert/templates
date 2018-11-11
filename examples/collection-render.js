@@ -1,7 +1,8 @@
+const handlebars = require('handlebars/dist/handlebars.js');
 const Collection = require('../lib/collection');
-const engine = require('./support/engine');
+const engine = require('engine-handlebars');
 
-(async function() {
+(async () => {
 
 const pages = new Collection('pages', {
   handlers: [
@@ -16,32 +17,32 @@ const pages = new Collection('pages', {
 });
 
 pages.options.layouts = {
-  default: pages.view({ path: 'default.hbs', contents: Buffer.from('before {% body %} after') })
+  default: pages.file({ path: 'default.hbs', contents: Buffer.from('before {% body %} after') })
 };
 
-pages.engine('hbs', engine);
+pages.engine('hbs', engine(handlebars));
 
-pages.preLayout(/\.hbs$/, view => {
+pages.preLayout(/\.hbs$/, file => {
   return new Promise(resolve => {
     setTimeout(function() {
-      view.layout = 'default';
-      resolve(view);
+      file.layout = 'default';
+      resolve(file);
     }, 250)
   });
 });
 
-pages.preRender(/\.hbs$/, view => {
-  view.data.name = view.stem.toUpperCase();
+pages.preRender(/\.hbs$/, file => {
+  file.data.name = file.stem.toUpperCase();
 });
 
-pages.set('templates/foo.hbs', { contents: Buffer.from('{{name}}') });
-pages.set('templates/bar.hbs', { contents: Buffer.from('{{name}}') });
-pages.set('templates/baz.hbs', { contents: Buffer.from('{{name}}') });
+await pages.set('templates/foo.hbs', { contents: Buffer.from('{{name}}') });
+await pages.set('templates/bar.hbs', { contents: Buffer.from('{{name}}') });
+await pages.set('templates/baz.hbs', { contents: Buffer.from('{{name}}') });
 
-for (const key of Object.keys(pages.views)) {
-  const view = pages.views[key];
-  const res = await pages.render(view);
+for (let key of [...pages.files.keys()]) {
+  let file = pages.files.get(key);
+  let res = await pages.render(file);
   console.log(res.contents.toString());
 }
 
-})();
+})().catch(console.log);

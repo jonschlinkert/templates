@@ -4,13 +4,13 @@ require('mocha');
 const assert = require('assert');
 const Templates = require('..');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 let app, render, other, hbs, locals;
 
 describe('app helpers - sync', () => {
   beforeEach(() => {
     app = new Templates({ sync: true });
-    app.engine('hbs', engines(handlebars.create()));
+    app.engine('hbs', engine(handlebars.create()));
 
     const pages = app.create('pages');
     const partials = app.create('partials', { kind: 'partial' });

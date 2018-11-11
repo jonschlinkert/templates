@@ -4,7 +4,7 @@ require('mocha');
 const util = require('util');
 const assert = require('assert');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engines = require('engine-handlebars');
 const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
 let pages, render, other, hbs, locals;

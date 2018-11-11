@@ -3,13 +3,13 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const mkdir = require('@folder/mkdir');
+const mkdir = require('mkdirp');
 const rimraf = require('rimraf');
 const write = util.promisify(fs.writeFile);
 const loremipsum = require('lorem-ipsum');
 const defaults = {
   startDate: 'December 17, 2010',
-  dest: 'blog',
+  dest: 'content',
   count: 1600,
   units: 'words',
   pages: 1000
@@ -35,8 +35,7 @@ async function generate(options = {}) {
 {{#each (filter site.tags.tags tags) as |tag|}}
 <a href="{{path}}">{{items.length}}</a>
 {{/each}}
-`
-+ contents + `
+${contents}
 <h2>Pages</h2>
 <a href="{{pagerFirst pager "path"}}">First</a>
 <a href="{{pagerPrev pager "path"}}">Prev</a>

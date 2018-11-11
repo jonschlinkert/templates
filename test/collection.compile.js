@@ -3,14 +3,14 @@
 const assert = require('assert');
 const handlebars = require('handlebars');
 const Collection = require('../lib/collection');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 let pages, layouts;
 
 describe('collection.render', () => {
   beforeEach(function() {
     layouts = new Collection('layouts');
     pages = new Collection('pages');
-    pages.engine('hbs', engines(handlebars.create()));
+    pages.engine('hbs', engine(handlebars.create()));
   });
 
   it('should throw an error when file is not an object', () => {

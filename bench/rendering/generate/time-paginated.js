@@ -10,8 +10,9 @@ const rimraf = require('rimraf');
 const pretty = require('pretty-time');
 const colors = require('ansi-colors');
 const write = require('write');
-const Collection = require('templatestemplateslib/collection');
-const engines = require('templatestemplateslib/engines');
+const hbs = require('handlebars');
+const engine = require('engine-handlebars');
+const Collection = require('../../../lib/collection');
 const cwd = path.join.bind(path, __dirname, 'content');
 const destBase = path.join.bind(path, __dirname, 'blog');
 const dirs = new Set();
@@ -58,10 +59,9 @@ function render(destDir) {
 
   // collection
   starting('assemble - create collection');
-  const collection = new Collection('pages');
-  const hbs = require('handlebars');
+  const collection = new Collection('pages', { sync: true });
 
-  collection.engine('hbs', engines(hbs));
+  collection.engine('hbs', engine(hbs));
   collection.option('engine', 'hbs');
 
   collection.helper('array', function(arr, i) {
@@ -142,21 +142,21 @@ function render(destDir) {
 
   finished('assemble - create collection', diff());
 
-  // parse front matter and add views
-  starting('assemble - add views and parse front-matter', diff());
+  // parse front matter and add files
+  starting('assemble - add files and parse front-matter', diff());
   for (const filename of files) {
     if (/\.md$/.test(filename)) {
-      const view = collection.set(parse({ path: cwd(filename), cwd: cwd() }));
-      view[symbol] = {};
-      rename(view);
+      const file = collection.set(parse({ path: cwd(filename), cwd: cwd() }));
+      file[symbol] = {};
+      rename(file);
     }
   }
-  finished('assemble - add views and parse front-matter', diff());
+  finished('assemble - add files and parse front-matter', diff());
 
   const tags = collection.collect('tags', { singular: 'tag' });
 
-  // paginate views
-  starting('assemble - paginate views');
+  // paginate files
+  starting('assemble - paginate files');
   collection.pager({
     sort(items) {
       return items.sort((a, b) => a.path.localeCompare(b.path));
@@ -164,11 +164,11 @@ function render(destDir) {
   });
 
   collection.paginate(page => {
-    const view = collection.set(page);
-    view.path = cwd(view.relative);
-    view.base = cwd();
-    view.cwd = cwd();
-    view.contents = Buffer.from(`
+    const file = collection.set(page);
+    file.path = cwd(file.relative);
+    file.base = cwd();
+    file.cwd = cwd();
+    file.contents = Buffer.from(`
 <h1>Posts</h1>
 <ul>
   {{#each pagination.items}}
@@ -182,10 +182,10 @@ function render(destDir) {
   <a href="{{pagerNext pager "path"}}">Next</a>
   <a href="{{pagerLast pager "path"}}">Last</a>
   `);
-    rename(view);
-    return view;
+    rename(file);
+    return file;
   });
-  finished('assemble - paginate views', diff());
+  finished('assemble - paginate files', diff());
   tags.items.forEach(item => {
     item.key = item.path;
     collection.set(item);
@@ -214,30 +214,30 @@ function render(destDir) {
     tags.paths[key] = destBase(tags.paths[key]);
   }
 
-  // render views
-  starting('assemble - render views');
-  for (const [key, view] of collection.views) {
-    collection.render(view, { site: { paths: { root: destBase() }, tags }});
+  // render files
+  starting('assemble - render files');
+  for (const [key, file] of collection.files) {
+    collection.render(file, { site: { paths: { root: destBase() }, tags }});
   }
-  finished('assemble - render views', diff());
+  finished('assemble - render files', diff());
 
   // write files
-  starting('assemble - write rendered views to fs');
+  starting('assemble - write rendered files to fs');
   let i = 0;
-  for (const [key, view] of collection.views) {
-    if (!dirs.has(view.dirname)) {
-      dirs.add(view.dirname);
-      mkdir(view.dirname);
+  for (const [key, file] of collection.files) {
+    if (!dirs.has(file.dirname)) {
+      dirs.add(file.dirname);
+      mkdir(file.dirname);
     }
-    rename(view);
-    write.sync(view.path, view.contents);
+    rename(file);
+    write.sync(file.path, file.contents);
     i++;
   }
 
-  finished('assemble - write rendered views to fs', diff());
+  finished('assemble - write rendered files to fs', diff());
   finished('assemble - build', assembled());
   finished(`total build (generated ${i} pages)`, total());
-  console.log('per view:', colors.green(pretty(ns(process.hrtime(grand)) / i, 2)));
+  console.log('per file:', colors.green(pretty(ns(process.hrtime(grand)) / i, 2)));
 }
 
 function parse(file) {

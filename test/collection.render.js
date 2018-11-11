@@ -2,14 +2,14 @@
 
 const assert = require('assert');
 const Collection = require('../lib/collection');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 let pages, layouts;
 
 describe('collection.render', () => {
   beforeEach(function() {
     layouts = new Collection('layouts');
     pages = new Collection('pages', { asyncHelpers: true });
-    pages.engine('hbs', engines(require('handlebars')));
+    pages.engine('hbs', engine(require('handlebars')));
   });
 
   describe('rendering', () => {

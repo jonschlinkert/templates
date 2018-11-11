@@ -2,9 +2,8 @@
   "name": "benchmarks",
   "private": true,
   "dependencies": {
-    "ansi": "^0.3.1",
     "ansi-colors": "^2.0.1",
-    "benchmark": "^2.1.4",
+    "engine-handlebars": "^1.0.0",
     "get-value": "^3.0.1",
     "handlebars": "^4.0.11",
     "lorem-ipsum": "^1.0.4",
@@ -16,14 +15,11 @@
     "templates": "file:..",
     "write": "^1.0.3"
   },
-  "devDependencies": {
-    "time-require": "github:jonschlinkert/time-require"
-  },
   "lintDeps": {
     "dependencies": {
       "files": {
         "patterns": [
-          "generate/*.js",
+          "rendering/**/*.js",
           "*.js"
         ]
       }

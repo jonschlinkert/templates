@@ -15,16 +15,4 @@ describe('collection.set', () => {
     const page = await pages.set('foo.hbs', 'bar');
     assert.equal(page.contents.toString(), 'bar');
   });
-
-  it('should run plugins on files', async () => {
-    const pages = new Collection('pages');
-    pages.use(function fn() {
-      this.foo = 'bar';
-      return fn;
-    });
-
-    const page = await pages.set('foo.hbs', 'bar');
-    assert.equal(pages.foo, 'bar');
-    assert.equal(page.foo, 'bar');
-  });
 });

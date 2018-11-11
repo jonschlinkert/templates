@@ -3,7 +3,7 @@
 require('mocha');
 const util = require('util');
 const assert = require('assert');
-const engines = require('../lib/engines');
+const engines = require('engine-handlebars');
 const Collection = require('../lib/collection');
 const handlebars = require('handlebars');
 const helpers = require('./support/helpers');

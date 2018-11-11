@@ -1,15 +1,21 @@
 const runner = require('setup/runner');
-const engine = require('templates/lib/engines');
+const engine = require('engine-handlebars');
 const Templates = require('templates');
-const app = new Templates({ sync: true });
 
+const app = new Templates({ sync: true });
 app.engine('hbs', engine(require('handlebars')));
+
 const layouts = app.create('layouts', { kind: 'layout' });
 const pages = app.create('pages');
 
-const view = pages.set('some/random/page.hbs', {
-  // contents: Buffer.from('This is some content without any templates.'),
+const file = pages.set('some/random/page.hbs', {
   contents: Buffer.from('Name: {{name}}, {{description}}'),
+  data: { name: 'Brian' },
+  layout: 'default'
+});
+
+const file2 = pages.set('some/random/page.hbs', {
+  contents: Buffer.from('This is some content without any templates.'),
   data: { name: 'Brian' },
   layout: 'default'
 });
@@ -43,7 +49,7 @@ app.layouts.set({
   contents: Buffer.from('before\n{% body %}\nafter')
 });
 
-const run = runner.sync(app, view, app.layouts);
+const run = runner.sync(app, file, app.layouts);
 
 run(1);
 run(10);

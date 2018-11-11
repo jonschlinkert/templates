@@ -3,7 +3,7 @@
 require('mocha');
 const assert = require('assert');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
 const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
@@ -14,7 +14,7 @@ describe('helpers - async', () => {
   beforeEach(function() {
     pages = new Collection('pages', { asyncHelpers: true });
     other = new Collection('other', { asyncHelpers: true });
-    const hbs = engines(handlebars.create());
+    const hbs = engine(handlebars.create());
 
     // engines
     pages.engine('hbs', hbs);

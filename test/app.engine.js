@@ -17,7 +17,7 @@ describe('app.engine', () => {
     assert.equal(typeof app.engine().instance, 'object');
     assert.equal(typeof app.engine().compile, 'function');
     assert.equal(typeof app.engine().render, 'function');
-    // assert.equal(typeof app.engine().compileSync, 'function');
+    assert.equal(typeof app.engine().compileSync, 'function');
     assert.equal(typeof app.engine().renderSync, 'function');
   });
 

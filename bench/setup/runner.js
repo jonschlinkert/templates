@@ -5,7 +5,6 @@ const opts = { alias: { reset: 'r', verbose: 'v' }, boolean: ['r'], default: { r
 const argv = require('minimist')(process.argv.slice(2), opts);
 const timer = require('./timer');
 const { cyan, increment, ns, size } = timer;
-console.log(argv)
 
 module.exports = (app, view, layouts) => {
   return async(num, step) => {
@@ -28,12 +27,13 @@ module.exports = (app, view, layouts) => {
 
     console.log();
 
-    const total = time();
-    const len = size(layouts);
-    const actual = num * len; // size of the layout stack
+    let total = time();
+    let len = size(layouts.files || layouts);
+    let actual = num * len; // size of the layout stack
 
     process.stdout.write('\r');
     console.log('processed %s pages with %s layouts each:', num.toLocaleString(), len.toLocaleString());
+
     console.log(' ~%s first render', cyan(init));
     console.log(' ~%s per layout', cyan(ns(total) / actual));
     console.log(' ~%s per page', cyan(ns(total) / num));
@@ -42,7 +42,7 @@ module.exports = (app, view, layouts) => {
   };
 };
 
-module.exports.sync = (app, view, layouts) => {
+module.exports.sync = (app, view, layouts, state) => {
   return (num, step) => {
     const count = increment(num, step);
     let time = timer();
@@ -62,10 +62,12 @@ module.exports.sync = (app, view, layouts) => {
     }
 
     const total = time();
-    const len = size(layouts);
+    const len = size(layouts.files || layouts);
     const actual = num * len; // size of the layout stack
 
     process.stdout.write('\r');
+    console.log(state);
+    console.log();
     console.log('processed %s pages with %s layouts each:', num.toLocaleString(), len.toLocaleString());
     console.log(' ~%s first render', cyan(init));
     console.log(' ~%s per layout', cyan(ns(total) / actual));

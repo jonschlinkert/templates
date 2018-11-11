@@ -25,7 +25,7 @@ pages.onFoo(/\.hbs$/, function(view) {
   });
 });
 
-const page = await pages.set('templates/bar.hbs', { contents: new Buffer('foo') })
+const page = await pages.set('templates/bar.hbs', { contents: Buffer.from('foo') })
 await app.handle('onFoo', page);
-console.log(page.winner);
-})();
+console.log('The winner is!', page.winner);
+})().catch(console.log);

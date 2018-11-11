@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 const App = require('..');
 let app;
 
@@ -11,7 +11,7 @@ describe('app.renderLayout', () => {
     app = new App();
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
-    app.engine('hbs', engines(handlebars.create()));
+    app.engine('hbs', engine(handlebars.create()));
   });
 
   it('should throw an error when a layout cannot be found', async() => {

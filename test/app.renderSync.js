@@ -2,14 +2,14 @@
 
 const assert = require('assert');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 const App = require('..');
 let app;
 
 describe('app.renderSync', () => {
   beforeEach(function() {
     app = new App({ sync: true });
-    app.engine('hbs', engines(handlebars.create()));
+    app.engine('hbs', engine(handlebars.create()));
     app.create('layouts', { kind: 'layout' });
     app.create('pages');
   });

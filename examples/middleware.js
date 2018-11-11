@@ -2,32 +2,33 @@ const App = require('../');
 const app = new App({ handlers: ['onLoad'] });
 const pages = app.create('pages');
 
-app.onLoad(/\.hbs$/, function(view) {
+app.onLoad(/\.hbs$/, function(file) {
   return new Promise(function(resolve) {
     setTimeout(function() {
-      console.log(view);
-      view.winner = 'app';
+      console.log(file);
+      file.winner = 'app';
       resolve();
     }, 20)
   });
 });
 
-pages.onLoad(/\.hbs$/, function(view) {
+pages.onLoad(/\.hbs$/, function(file) {
   return new Promise(function(resolve) {
     setTimeout(function() {
-      console.log(view);
-      view.winner = 'collection';
+      console.log(file);
+      file.winner = 'collection';
       resolve();
     }, 10)
   });
 });
 
-pages.set('templates/foo.hbs', { contents: new Buffer('foo') });
-pages.set('templates/bar.hbs', { contents: new Buffer('foo') })
-  .then(() => {
-    for (const key of Object.keys(pages.views)) {
-      console.log(pages.views[key].winner)
-    }
-  });
+(async () => {
 
-// console.log('ONE:', pages);
+await pages.set('templates/foo.hbs', { contents: Buffer.from('foo') });
+await pages.set('templates/bar.hbs', { contents: Buffer.from('foo') });
+
+for (const [key, file] of pages.files) {
+  console.log(file.winner);
+}
+
+})().catch(console.log);

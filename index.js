@@ -27,35 +27,9 @@ class Templates extends Common {
     this.cache.partials = {};
     this.lists = {};
     this.kinds = {};
-    this.fns = new Set();
 
     if (this.options.streams === true) {
       this.use(streams(options));
-    }
-  }
-
-  use(plugin) {
-    if (!plugin) return this;
-    let fn = this.invokeOnce(plugin).call(this, this);
-    if (typeof fn === 'function') {
-      fn.memo = fn.memo || new Set();
-      for (let [key, collection] of this.collections) {
-        if (fn.memo.has(collection)) continue;
-        fn.memo.add(collection);
-        collection.use(fn);
-      }
-      this.fns.add(fn);
-    }
-    return this;
-  }
-
-  run(obj, options) {
-    for (let fn of this.fns) {
-      if (obj.use) {
-        obj.use(fn, options); // collection
-      } else {
-        fn.call(obj, obj, options); // file
-      }
     }
   }
 
@@ -65,7 +39,7 @@ class Templates extends Common {
    */
 
   set(collectionName, file) {
-    const kind = this.kind(file.kind);
+    let kind = this.kind(file.kind);
     kind[file.key] = file;
 
     this.files.get(collectionName).set(file.key, file);
@@ -73,7 +47,7 @@ class Templates extends Common {
     this.emit('file', file);
 
     if (file.kind === 'partial') {
-      const partials = this.cache.partials;
+      let partials = this.cache.partials;
       if (this.options.enforceUniqueNames === true) {
         assert(!partials[file.key], new Error(`partial "${file.key}" already exists`));
       }
@@ -175,7 +149,7 @@ class Templates extends Common {
    */
 
   collection(name, options) {
-    const collection = new this.Collection(name, options);
+    let collection = new this.Collection(name, options);
     this.emit('collection', collection);
     this.run(collection);
     return collection;
@@ -194,8 +168,8 @@ class Templates extends Common {
   create(name, options) {
     assert(!(name in this), `Collection name "${name}" is cannot be used as it conflicts with an instance name. Please choose another name.`);
 
-    const opts = { ...this.options, ...options };
-    const collection = this.collection(name, opts);
+    let opts = { ...this.options, ...options };
+    let collection = this.collection(name, opts);
 
     this.collections.set(name, collection);
     this.files.set(name, new Map());
@@ -204,7 +178,7 @@ class Templates extends Common {
     collection.on('delete', file => this.delete(name, file));
     collection.on('file', file => this.set(name, file));
 
-    const handle = collection.handle.bind(collection);
+    let handle = collection.handle.bind(collection);
     collection.handle = (method, file) => {
       if (this.options.sync === true) {
         super.handle(method, file);
@@ -224,20 +198,8 @@ class Templates extends Common {
   }
 
   /**
-   *  Create a new `File`. Ensures `file` is emitted and plugins
-   *  are run on the file.
-   */
-
-  file(...args) {
-    const file = super.file(...args);
-    this.run(file);
-    this.emit('file', file);
-    return file;
-  }
-
-  /**
-   * Get a "kind" of template. If the _kind_ doesn't already exist, it
-   * will be created and an empty object will be returned.
+   * Get templates of the given `kind`. If the _kind_ doesn't
+   * already exist, it will be created and an empty object will be returned.
    *
    * @name .kind
    * @param {string} `name`

@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const Collection = require('../lib/collection');
-const engines = require('../lib/engines');
+const engine = require('engine-handlebars');
 let posts, other;
 
 describe('collection.pager', () => {
@@ -10,8 +10,8 @@ describe('collection.pager', () => {
     posts = new Collection('posts');
     other = new Collection('other');
 
-    posts.engine('hbs', engines(require('handlebars')));
-    other.engine('hbs', engines(require('handlebars')));
+    posts.engine('hbs', engine(require('handlebars')));
+    other.engine('hbs', engine(require('handlebars')));
     posts.option('engine', 'hbs');
   });
 

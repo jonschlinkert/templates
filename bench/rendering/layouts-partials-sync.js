@@ -1,12 +1,11 @@
 const argv = require('minimist')(process.argv.slice(2));
 const handlebars = require('handlebars');
-const engine = require('templates/lib/engines');
-const timer = require('./timer');
+const engine = require('engine-handlebars');
 const Templates = require('templates');
-const app = new Templates({
-  handlers: ['onLoad', 'preRender', 'postRender'],
-  sync: true
-});
+
+const runner = require('setup/runner');
+const app = new Templates({ handlers: ['onLoad', 'preRender', 'postRender'], sync: true });
+let state = { vars: 0, helpers: 0, partials: 0, inline: 0 };
 
 app.options.transform = (str, file, layout) => {
   file.data = { ...layout.data, ...file.data };
@@ -20,30 +19,41 @@ const layouts = app.create('layouts', { kind: 'layout' });
 const orig = Symbol('contents');
 
 app.engine('hbs', hbs);
-// app.partials.onLoad(/./, view => {
-//   // app.options.registerPartials = false;
-//   // hbs.compile(view);
-//   // hbs.instance.registerPartial(view.stem, view.fn);
-//   // app.compile(view);
+
+let matched = new Set();
+
+app.onLoad(/./, file => {
+  if (!matched.has(file)) {
+    matched.add(file);
+    detect(file.contents.toString());
+  }
+});
+
+app.partials.onLoad(/./, file => {
+  file.engine = '.hbs';
+  app.options.registerPartials = false;
+  return app.compile(file);
+});
+
+app.helper('upper', str => str ? str.toUpperCase() : '');
+
+// app.preRender(/./, file => {
+//   if (file.kind === 'renderable') {
+//     file[orig] = file[orig] || file.contents;
+//     file.contents = file[orig];
+//   }
+//   file.count = file.count ? file.count + 1 : 1;
 // });
 
-app.helper('upper', function(str, options) {
-  return str ? str.toUpperCase() : '';
-});
+// app.postRender(/./, (file, params) => {
+//   if (argv.v) console.log(file.contents.toString());
+//   // file.contents = file[orig];
+// });
 
-app.preRender(/./, file => {
-  file[orig] = file[orig] || file.contents;
-  file.count = file.count ? file.count + 1 : 1;
-});
-
-app.postRender(/./, (file, params) => {
-  // if (argv.v) console.log(file.contents.toString());
-  file.contents = file[orig];
-});
-
-const view = pages.set('templates/foo.hbs', {
+const file = pages.set('templates/foo.hbs', {
   contents: Buffer.from('{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n'),
-  // contents: Buffer.from(`{{#*inline "above"}}INLINE ABOVE - Title: {{title}}{{/inline}}Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n`),
+  // contents: Buffer.from('Name: {{upper name}}, {{upper description}}\n{{> button text="Click me!" }}\n{{> nav id="navigation" }}\n{{> section text="Blog Posts" }}\n'),
+  // contents: Buffer.from('Name: {{upper name}}, {{upper description}}\n'),
   data: { name: 'Brian' },
   layout: 'default'
 });
@@ -73,24 +83,43 @@ layouts.set({
       </body>
     </html>`)
 });
+
 layouts.set({
   path: 'base',
   layout: 'body',
-  contents: Buffer.from('before\n{% body %}\nafter')
+  contents: Buffer.from('BEFORE\n{% body %}\nAFTER')
 });
+
 layouts.set({
   path: 'default',
   layout: 'base',
-  contents: Buffer.from('before\n{% body %}\nafter')
+  contents: Buffer.from('BEFORE\n{% body %}\nAFTER')
 });
 
-const run = timer.sync(app, view, layouts);
+const run = runner.sync(app, file, layouts, state);
 
 run(1);
 run(10);
 run(100);
 run(1e3); // 1k
-run(1e4); // 10k
-run(1e5); // 100k
-run(1e6); // 1m
+// run(1e4); // 10k
+// run(1e5); // 100k
+// run(1e6); // 1m
 
+function detect(str) {
+  let matches = str.match(/{{[^>\/#*}]+?}}/g);
+  if (matches) {
+    let helpers = matches.filter(v => v.includes(' '));
+    let vars = matches.filter(v => !helpers.includes(v));
+    state.helpers += helpers.length;
+    state.vars += vars.length;
+  }
+
+  let partials = str.match(/{{[>#*]+.*?}}/g);
+  if (partials) {
+    let inline = partials.filter(v => v.includes('*'));
+    let rest = partials.filter(v => !inline.includes(v));
+    state.partials += rest.length;
+    state.inline += inline.length;
+  }
+}

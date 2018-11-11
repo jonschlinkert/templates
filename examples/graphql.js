@@ -13,9 +13,6 @@ const pages = new Collection('pages', {
   `
 });
 
-await pages.set({
-  path: 'home',
-  contents: Buffer.from('this is the home page')
-});
+await pages.set({ path: 'home', contents: Buffer.from('this is the home page') });
 
 })();

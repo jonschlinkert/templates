@@ -48,7 +48,7 @@ const runner = require('setup/runner');
   await run(100);
   await run(1000);
   await run(10000);
-  // await run(100000);
+  await run(100000);
   // await run(1000000); // 1m
 })();
 

@@ -1,5 +1,9 @@
 {
   "name": "setup",
   "private": true,
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "minimist": "^1.2.0"
+  }
 }

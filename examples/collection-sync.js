@@ -1,13 +1,16 @@
 const Collection = require('../lib/collection');
-const pages = new Collection('pages', { handlers: ['onLoad'] });
+const engine = require('engine-handlebars');
+const pages = new Collection('pages', { handlers: ['onLoad'], sync: true });
 
+pages.engine('hbs', engine(require('handlebars')));
 pages.onLoad(/\.hbs$/, function(view) {
   console.log('Page:', view);
   view.foo = 'bar';
 });
 
-pages.set('templates/foo.hbs', { contents: Buffer.from('foo') });
-pages.set('templates/bar.hbs', { contents: Buffer.from('bar') });
-pages.set('templates/baz.hbs', { contents: Buffer.from('baz') });
+pages.set('templates/foo.hbs', { contents: Buffer.from('{{ file.path }}') });
+pages.set('templates/bar.hbs', { contents: Buffer.from('{{ file.path }}') });
+pages.set('templates/baz.hbs', { contents: Buffer.from('{{ file.path }}') });
 
-console.log(pages);
+const file = pages.render('foo.hbs');
+console.log(file.contents.toString());

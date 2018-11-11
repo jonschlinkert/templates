@@ -5,7 +5,7 @@ const util = require('util');
 const assert = require('assert');
 const Templates = require('..');
 const handlebars = require('handlebars');
-const engines = require('../lib/engines');
+const engines = require('engine-handlebars');
 const helpers = require('./support/helpers');
 let app, render, other, hbs, locals;
 

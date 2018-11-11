@@ -1,14 +1,15 @@
 const App = require('../');
 const app = new App({ handlers: ['onLoad' ] });
-const pages = app.create('pages');
 
-pages.onLoad(/\.hbs$/, function(view) {
-  console.log(view);
-});
+(async () => {
+  const pages = app.create('pages');
+  pages.onLoad(/\.hbs$/, file => console.log(file));
 
-pages.set('templates/foo.hbs', { contents: new Buffer('foo') });
-pages.set('templates/bar.hbs', { contents: new Buffer('foo') })
-  .then(view => {
-    console.log(pages)
-  });
+  await pages.set('templates/foo.hbs', { contents: Buffer.from('foo') });
+  await pages.set('templates/bar.hbs', { contents: Buffer.from('foo') })
+
+  console.log(pages);
+
+})().catch(console.log);
+
 
