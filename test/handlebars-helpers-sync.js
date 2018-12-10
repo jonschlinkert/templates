@@ -17,7 +17,7 @@ describe('handlebars helpers - sync', () => {
     hbs.registerPartial('custom', 'a partial');
     hbs.registerPartial('baz', 'partial baz');
 
-    pages = new Collection('pages', { sync: true });
+    pages = new Collection('pages', { sync: true, type: 'renderable' });
     pages.engine('hbs', engine);
 
     pages.helper(helpers.common);

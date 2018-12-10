@@ -8,14 +8,14 @@ describe('collection', () => {
     assert.doesNotThrow(() => new Collection(), /expected/);
   });
 
-  it('should set the collection.kind to renderable by default', () => {
+  it('should set the collection.type to asset by default', () => {
     const pages = new Collection('pages');
-    assert.equal(pages.kind, 'renderable');
+    assert.equal(pages.type, 'asset');
   });
 
-  it('should allow collection.kind to be set', () => {
+  it('should allow collection.type to be set', () => {
     const pages = new Collection('pages');
-    pages.kind = 'layout';
-    assert.equal(pages.kind, 'layout');
+    pages.type = 'layout';
+    assert.equal(pages.type, 'layout');
   });
 });

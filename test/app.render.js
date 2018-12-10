@@ -8,8 +8,8 @@ let app;
 
 describe('app.render', () => {
   beforeEach(function() {
-    app = new App({ asyncHelpers: true });
-    app.create('layouts', { kind: 'layout' });
+    app = new App({ asyncHelpers: true, type: 'renderable' });
+    app.create('layouts', { type: 'layout' });
     app.create('pages');
     app.engine('hbs', engine(handlebars.create()));
   });

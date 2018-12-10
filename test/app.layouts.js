@@ -9,8 +9,8 @@ let app;
 describe('app.layouts', () => {
   beforeEach(function() {
     app = new App();
-    app.create('layouts', { kind: 'layout' });
-    app.create('pages');
+    app.create('layouts', { type: 'layout' });
+    app.create('pages', { type: 'renderable' });
     app.engine('hbs', engine(handlebars.create()));
   });
 
@@ -40,7 +40,7 @@ describe('app.layouts', () => {
       assert.equal(file.contents.toString(), 'before This is content after');
     });
 
-    it('should get layouts from app.kinds.layouts', async() => {
+    it('should get layouts from app.types.layouts', async() => {
       app.layouts.set('bar.hbs', { contents: Buffer.from('before {% body %} after') });
       app.layouts.set('baz.hbs', { contents: Buffer.from('before {% body %} after') });
       app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
@@ -50,7 +50,7 @@ describe('app.layouts', () => {
       assert.equal(file.contents.toString(), 'before This is content after');
     });
 
-    it('should throw an error when a layout cannot be found on app.kinds.layout', async() => {
+    it('should throw an error when a layout cannot be found on app.types.layout', async() => {
       app.layouts.set('fsjfsjslkjf.hbs', { contents: Buffer.from('before {% body %} after') });
 
       const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });

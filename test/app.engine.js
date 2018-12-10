@@ -37,4 +37,29 @@ describe('app.engine', () => {
     assert.equal(typeof app.engine().render, 'function');
     assert.equal(typeof app.engine().renderSync, 'function');
   });
+
+  it('should allow noop engine to be defined on options', async () => {
+    app.option('engine', 'noop');
+    let file = app.file('foo', { contents: 'This is contents' });
+    return app.render(file)
+      .then(file => {
+        assert.equal(file.contents.toString(), 'This is contents');
+      });
+  });
+
+  it('should allow noop engine to be defined on options when sync is true', () => {
+    app = new App({ sync: true });
+    app.option('engine', 'noop');
+    let file = app.file('foo', { contents: 'This is contents' });
+    app.render(file);
+    assert.equal(file.contents.toString(), 'This is contents');
+  });
+
+  it('should support compileSync on noop engine', () => {
+    app = new App({ sync: true });
+    app.option('engine', 'noop');
+    let file = app.file('foo', { contents: 'This is contents' });
+    app.compile(file);
+    assert.equal(file.fn(), 'This is contents');
+  });
 });

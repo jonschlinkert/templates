@@ -13,7 +13,7 @@ let pages, render, other, tmpl, locals;
 describe('engine helpers - async', () => {
   beforeEach(async function() {
     const base = engines.base(new Engine());
-    pages = new Collection('pages', { asyncHelpers: true });
+    pages = new Collection('pages', { asyncHelpers: true, type: 'renderable' });
     pages.engine('tmpl', base);
 
     pages.helper(helpers.common);

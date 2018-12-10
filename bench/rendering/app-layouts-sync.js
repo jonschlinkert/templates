@@ -1,5 +1,5 @@
 const handlebars = require('handlebars');
-const engine = require('templates/lib/engines');
+const engine = require('engine-handlebars');
 const runner = require('setup/runner');
 const Templates = require('templates');
 const app = new Templates({ sync: true });
@@ -19,8 +19,8 @@ app.option('engine', 'hbs');
  */
 
 app.create('pages');
-app.create('layouts', { kind: 'layout' });
-app.create('partials', { kind: 'partial' });
+app.create('layouts', { type: 'layout' });
+app.create('partials', { type: 'partial' });
 
 /**
  * Layouts

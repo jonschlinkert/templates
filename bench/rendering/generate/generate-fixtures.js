@@ -12,10 +12,10 @@ const defaults = {
   dest: 'content',
   count: 1600,
   units: 'words',
-  pages: 1000
+  pages: 50
 };
 
-async function generate(options = {}) {
+const generate = async(options = {}) => {
   let opts = Object.assign({}, defaults, options);
   let contents = loremipsum(opts);
   let date = formatDate(opts.startDate);
@@ -49,23 +49,23 @@ ${contents}
 `;
 
   for (let i = 0; i < opts.pages; i++) {
-    const file1 = page(date(i), contents, i, 1);
-    const file2 = page(date(i), contents, i, 2);
+    let file1 = page(date(i), contents, i, 1);
+    let file2 = page(date(i), contents, i, 2);
     await write(dest(file1.path), file1.contents);
     await write(dest(file2.path), file2.contents);
   }
 
   console.timeEnd(time);
-}
+};
 
 function page(date, contents, i, n) {
-  const file = {
+  let file = {
     data: {
-      title: 'Blog post - ' + i,
+      title: `Blog post - ${i}`,
       description: 'This is a description',
       tags: tags(),
       date: date,
-      slug: 'foo-bar-baz-' + n
+      slug: `foo-bar-baz-${n}`
     }
   };
 
@@ -80,25 +80,25 @@ function stringify(data) {
 }
 
 function formatDate(startDate) {
-  const start = new Date(startDate);
-  const dayOne = start.getDate();
+  let start = new Date(startDate);
+  let dayOne = start.getDate();
   return i => {
-    const day = new Date(start);
+    let day = new Date(start);
     day.setDate(dayOne + i);
     return datestamp(day);
   };
 }
 
 function datestamp(date = new Date()) {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth() + 1;
-  const day = date.getUTCDate();
+  let year = date.getUTCFullYear();
+  let month = date.getUTCMonth() + 1;
+  let day = date.getUTCDate();
   return `${year}-${month}-${day}`;
 }
 
 // super-simple mock randomness
 function tags() {
-  const arr = [];
+  let arr = [];
   switch (Math.floor(Math.random() * 50)) {
     case 3:
     case 9:

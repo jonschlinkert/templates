@@ -7,8 +7,8 @@ let posts, other;
 
 describe('collection.pager', () => {
   beforeEach(function() {
-    posts = new Collection('posts');
-    other = new Collection('other');
+    posts = new Collection('posts', { type: 'renderable' });
+    other = new Collection('other', { type: 'renderable' });
 
     posts.engine('hbs', engine(require('handlebars')));
     other.engine('hbs', engine(require('handlebars')));

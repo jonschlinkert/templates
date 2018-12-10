@@ -1,6 +1,6 @@
 const argv = require('minimist')(process.argv.slice(2));
-const handlebars = require('handlebars');
 const engine = require('engine-handlebars');
+const handlebars = require('handlebars');
 const Templates = require('templates');
 
 const runner = require('setup/runner');
@@ -14,8 +14,8 @@ app.options.transform = (str, file, layout) => {
 
 const hbs = engine(handlebars);
 const pages = app.create('pages');
-const partials = app.create('partials', { kind: 'partial' });
-const layouts = app.create('layouts', { kind: 'layout' });
+const partials = app.create('partials', { type: 'partial' });
+const layouts = app.create('layouts', { type: 'layout' });
 const orig = Symbol('contents');
 
 app.engine('hbs', hbs);
@@ -38,7 +38,7 @@ app.partials.onLoad(/./, file => {
 app.helper('upper', str => str ? str.toUpperCase() : '');
 
 // app.preRender(/./, file => {
-//   if (file.kind === 'renderable') {
+//   if (file.type === 'renderable') {
 //     file[orig] = file[orig] || file.contents;
 //     file.contents = file[orig];
 //   }
@@ -102,9 +102,9 @@ run(1);
 run(10);
 run(100);
 run(1e3); // 1k
-// run(1e4); // 10k
-// run(1e5); // 100k
-// run(1e6); // 1m
+run(1e4); // 10k
+run(1e5); // 100k
+run(1e6); // 1m
 
 function detect(str) {
   let matches = str.match(/{{[^>\/#*}]+?}}/g);
@@ -122,4 +122,6 @@ function detect(str) {
     state.partials += rest.length;
     state.inline += inline.length;
   }
+
+  console.log(state);
 }

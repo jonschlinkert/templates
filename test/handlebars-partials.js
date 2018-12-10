@@ -23,8 +23,8 @@ describe('handlebars - partials', () => {
     app = new Templates({ sync: true, handlers: ['onLoad'] });
     app.engine('hbs', engine);
 
-    app.create('pages');
-    app.create('partials', { kind: 'partial' });
+    app.create('pages', { type: 'renderable' });
+    app.create('partials', { type: 'partial' });
     app.partials.set('button.hbs', { contents: Buffer.from('<button>Click me!</button>') });
 
     render = (str, locals) => {

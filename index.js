@@ -26,10 +26,10 @@ class Templates extends Common {
     this.fileCache = new Map();
     this.cache.partials = {};
     this.lists = {};
-    this.kinds = {};
+    this.types = {};
 
     if (this.options.streams === true) {
-      this.use(streams(options));
+      this.use(streams(this.options));
     }
   }
 
@@ -39,14 +39,14 @@ class Templates extends Common {
    */
 
   set(collectionName, file) {
-    let kind = this.kind(file.kind);
-    kind[file.key] = file;
+    let type = this.type(file.type);
+    type[file.key] = file;
 
     this.files.get(collectionName).set(file.key, file);
     this.fileCache.set(file.path, file);
     this.emit('file', file);
 
-    if (file.kind === 'partial') {
+    if (file.type === 'partial') {
       let partials = this.cache.partials;
       if (this.options.enforceUniqueNames === true) {
         assert(!partials[file.key], new Error(`partial "${file.key}" already exists`));
@@ -54,7 +54,7 @@ class Templates extends Common {
       define(partials, file.key, file);
     }
 
-    if (file.kind === 'renderable') {
+    if (file.type === 'renderable') {
       this.lists[collectionName] = this.lists[collectionName] || [];
       this.lists[collectionName].push(file);
     }
@@ -90,8 +90,8 @@ class Templates extends Common {
    */
 
   delete(collectionName, file) {
-    const kind = this.kind(file.kind);
-    delete kind[file.key];
+    const type = this.type(file.type);
+    delete type[file.key];
     this.files.get(collectionName).delete(file.key);
     this.fileCache.delete(file.path);
     this.lists[collectionName] = this.lists[collectionName].filter(v => v !== file);
@@ -166,7 +166,8 @@ class Templates extends Common {
    */
 
   create(name, options) {
-    assert(!(name in this), `Collection name "${name}" is cannot be used as it conflicts with an instance name. Please choose another name.`);
+    let ctorName = this.constructor.name;
+    assert(!(name in this), `Collection name "${name}" is cannot be used as it conflicts with an existing property on the ${ctorName} instance. Please choose another name.`);
 
     let opts = { ...this.options, ...options };
     let collection = this.collection(name, opts);
@@ -179,13 +180,18 @@ class Templates extends Common {
     collection.on('file', file => this.set(name, file));
 
     let handle = collection.handle.bind(collection);
+
+    collection.helpers = this.helpers;
+    collection.engine = this.engine.bind(this);
+    collection.helper = this.helper.bind(this);
+
     collection.handle = (method, file) => {
       if (this.options.sync === true) {
         super.handle(method, file);
         handle(method, file);
         return file;
       }
-      return super.handle(method, file)
+      return Promise.resolve(super.handle(method, file))
         .then(() => handle(method, file))
         .then(() => file);
     };
@@ -198,17 +204,17 @@ class Templates extends Common {
   }
 
   /**
-   * Get templates of the given `kind`. If the _kind_ doesn't
+   * Get templates of the given `type`. If the _type_ doesn't
    * already exist, it will be created and an empty object will be returned.
    *
-   * @name .kind
+   * @name .type
    * @param {string} `name`
    * @return {object}
    * @api public
    */
 
-  kind(name) {
-    return this.kinds[name] || (this.kinds[name] = {});
+  type(name) {
+    return this.types[name] || (this.types[name] = {});
   }
 
   /**

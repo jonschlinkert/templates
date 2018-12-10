@@ -10,7 +10,7 @@ describe('app.renderSync', () => {
   beforeEach(function() {
     app = new App({ sync: true });
     app.engine('hbs', engine(handlebars.create()));
-    app.create('layouts', { kind: 'layout' });
+    app.create('layouts', { type: 'layout' });
     app.create('pages');
   });
 
@@ -112,7 +112,7 @@ describe('app.renderSync', () => {
   //     assert.equal(file.contents.toString(), 'before This is content after');
   //   });
 
-  //   it('should get layouts from app.kinds.layouts', async() => {
+  //   it('should get layouts from app.types.layouts', async() => {
   //     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
   //     const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });
 
@@ -120,7 +120,7 @@ describe('app.renderSync', () => {
   //     assert.equal(file.contents.toString(), 'before This is content after');
   //   });
 
-  //   it('should throw an error when a layout cannot be found on app.kinds.layout', async() => {
+  //   it('should throw an error when a layout cannot be found on app.types.layout', async() => {
   //     app.layouts.set('fsjfsjslkjf.hbs', { contents: Buffer.from('before {% body %} after') });
 
   //     const file = await app.pages.set('a.hbs', { contents: Buffer.from('This is content'), layout: 'default' });

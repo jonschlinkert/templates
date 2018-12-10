@@ -15,8 +15,8 @@ const template = `
 
 describe('collection.paginate', () => {
   beforeEach(() => {
-    posts = new Collection('posts', { sync: true });
-    other = new Collection('other', { sync: true });
+    posts = new Collection('posts', { sync: true, type: 'renderable' });
+    other = new Collection('other', { sync: true, type: 'renderable' });
     posts.engine('hbs', engine(require('handlebars')));
     other.engine('hbs', engine(require('handlebars')));
     posts.handler('onPaginate');

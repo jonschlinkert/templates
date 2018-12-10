@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const util = require('util');
 const assert = require('assert');
@@ -33,9 +34,19 @@ describe('File', () => {
     });
   });
 
+  describe('file.clone()', () => {
+    it('should clone custom properties', () => {
+      let file = new File({ foo: ['a', 'b', 'c'], bar: null });
+      let cloned = file.clone();
+      assert(Array.isArray(cloned.foo) && cloned.foo.length === 3);
+      assert(file.foo !== cloned.foo);
+      assert.equal(cloned.bar, null);
+    });
+  });
+
   describe('file.isFile()', () => {
     it('should return true on a vinyl object', () => {
-      const file = new File();
+      let file = new File();
       assert.equal(File.isFile(file), true);
     });
     it('should return false on a normal object', () => {
@@ -52,89 +63,154 @@ describe('File', () => {
     });
 
     it('should default cwd to process.cwd', () => {
-      const file = new File();
+      let file = new File();
       assert.equal(file.cwd, process.cwd());
     });
 
     it('should default base to cwd', () => {
       const cwd = '/';
-      const file = new File({ cwd: cwd });
+      let file = new File({ cwd: cwd });
       assert.equal(file.base, cwd);
     });
 
     it('should default base to cwd even when none is given', () => {
-      const file = new File();
+      let file = new File();
       assert.equal(file.base, process.cwd());
     });
 
     it('should default path to null', () => {
-      const file = new File();
+      let file = new File();
       assert(!file.path);
     });
 
     it('should default history to []', () => {
-      const file = new File();
+      let file = new File();
       assert.deepEqual(file.history, []);
     });
 
     it('should default stat to null', () => {
-      const file = new File();
+      let file = new File();
       assert(!file.stat);
     });
 
     it('should default contents to null', () => {
-      const file = new File();
+      let file = new File();
       assert(!file.contents);
     });
 
-    it('should set base to given value', () => {
-      const val = '/';
-      const file = new File({ base: val });
-      assert.equal(file.base, val);
-    });
-
     it('should set cwd to given value', () => {
-      const val = '/';
-      const file = new File({ cwd: val });
+      let val = '/';
+      let file = new File({ cwd: val });
       assert.equal(file.cwd, val);
     });
 
     it('should set path to given value', () => {
-      const val = '/test.coffee';
-      const file = new File({ path: val });
+      let val = '/test.coffee';
+      let file = new File({ path: val });
       assert.equal(file.path, val);
       assert.deepEqual(file.history, [val]);
     });
 
     it('should set given value to history', () => {
-      const val = '/test.coffee';
-      const file = new File({ path: val });
+      let val = '/test.coffee';
+      let file = new File({ path: val });
       assert.equal(file.path, val);
       assert.deepEqual(file.history, [val]);
     });
 
     it('should set contents to given value', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val });
       assert.equal(file.contents, val);
+    });
+
+    it('should set base to given value', () => {
+      let val = '/';
+      let file = new File({ base: val });
+      assert.equal(file.base, val);
+    });
+  });
+
+  describe('File.resolve', () => {
+    it('should return an absolute file path', () => {
+      assert.equal(File.resolve('foo'), path.resolve('foo'));
+    });
+  });
+
+  describe('File.normalize', () => {
+    it('should normalize a file path', () => {
+      assert.equal(File.normalize(), '');
+      assert.equal(File.normalize('foo\\bar'), 'foo/bar');
+      assert.equal(File.normalize('foo\\bar\\'), 'foo/bar');
+      assert.equal(File.normalize('foo/bar/'), 'foo/bar');
+    });
+  });
+
+  describe('file.folder', () => {
+    it('should get the correct file.folder for non-existant files', () => {
+      assert.equal(new File({ path: 'foo' }).folder, '');
+      assert.equal(new File({ path: path.resolve('bar/foo') }).folder, 'bar');
+      assert.equal(new File({ path: 'bar/foo' }).folder, 'bar');
+      assert.equal(new File({ path: 'bar/foo/baz.js' }).folder, 'foo');
+    });
+
+    it('should get the file.folder for files that exist', () => {
+      let resolve = name => path.resolve(__dirname, name);
+      assert.equal(new File({ path: __filename }).folder, 'test');
+      assert.equal(new File({ path: resolve('fixtures/a.txt') }).folder, 'fixtures');
+      assert.equal(new File({ path: resolve('../index.js') }).folder, '');
+    });
+
+    it('should get the file.folder when file is a directory', () => {
+      let resolve = name => path.resolve(__dirname, name);
+      let file1 = new File({ path: __dirname });
+      file1.stat = fs.statSync(file1.path);
+
+      let file2 = new File({ path: resolve('fixtures') });
+      file2.stat = fs.statSync(file2.path);
+
+      assert.equal(file1.folder, 'test');
+      assert.equal(file2.folder, 'fixtures');
+    });
+  });
+
+  describe('file.size', () => {
+    it('should get the file.size', () => {
+      assert.equal(new File({ contents: 'foo' }).size, 3);
+      assert.equal(new File({ contents: Buffer.from('foobar') }).size, 6);
+      let fp = fixture('octocat.png');
+      let file = new File({ path: fp, contents: fs.readFileSync(fp) });
+      file.stat = fs.statSync(file.path);
+      assert.equal(file.size, 4936);
+    });
+
+    it('should be zero when contents is null', () => {
+      assert.equal(new File({ contents: null }).size, 0);
+    });
+
+    it('should throw an error if file.size is set', () => {
+      let file = new File({ contents: null });
+      assert.throws(() => {
+        file.size = 10;
+      }, /may not be defined/);
     });
   });
 
   describe('file.isBinary()', () => {
     it('should return false when the contents are a utf8 Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val });
       assert.equal(file.isBinary(), false);
     });
 
     it('should return false when the contents are a Stream', () => {
-      const val = new Stream.PassThrough();
-      const file = new File({ contents: val });
+      let val = new Stream.PassThrough();
+      let file = new File({ contents: val });
       assert(!file.isBinary());
     });
 
     it('should return false when file.contents are null', () => {
-      const file = new File({ contents: null });
+      let file = new File({ contents: null });
       assert(!file.isBinary());
     });
 
@@ -145,118 +221,120 @@ describe('File', () => {
     });
 
     it('should return true when file.contents is binary', () => {
-      const file = new File({ contents: null });
+      let file = new File({ contents: null });
       assert(!file.isBinary());
     });
 
     it('should return true when file.contents is binary', () => {
-      new File({ contents: fs.readFileSync(fixture('octdrey-catburn.jpg')) });
-      new File({ contents: fs.readFileSync(fixture('octocat.png')) });
+      let file1 = new File({ contents: fs.readFileSync(fixture('octdrey-catburn.jpg')) });
+      let file2 = new File({ contents: fs.readFileSync(fixture('octocat.png')) });
+      assert(file1.isBinary());
+      assert(file2.isBinary());
     });
   });
 
   describe('file.isBuffer()', () => {
     it('should return true when the contents are a Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val });
       assert.equal(file.isBuffer(), true);
     });
 
     it('should return false when the contents are a Stream', () => {
-      const val = new Stream.PassThrough();
-      const file = new File({ contents: val });
+      let val = new Stream.PassThrough();
+      let file = new File({ contents: val });
       assert(!file.isBuffer());
     });
 
     it('should return false when the contents are null', () => {
-      const file = new File({ contents: null });
+      let file = new File({ contents: null });
       assert(!file.isBuffer());
     });
   });
 
   describe('isStream()', () => {
     it('should return false when the contents are a Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val });
       assert(!file.isStream());
     });
 
     it('should return true when the contents are a Stream', () => {
-      const val = new Stream.PassThrough();
-      const file = new File({ contents: val });
+      let val = new Stream.PassThrough();
+      let file = new File({ contents: val });
       assert.equal(file.isStream(), true);
     });
 
     it('should return false when the contents are null', () => {
-      const file = new File({ contents: null });
+      let file = new File({ contents: null });
       assert(!file.isStream());
     });
   });
 
   describe('isNull()', () => {
     it('should return false when the contents are a Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val });
       assert(!file.isNull());
     });
 
     it('should return false when the contents are a Stream', () => {
-      const val = new Stream.PassThrough();
-      const file = new File({ contents: val });
+      let val = new Stream.PassThrough();
+      let file = new File({ contents: val });
       assert(!file.isNull());
     });
 
     it('should return true when the contents are null', () => {
-      const file = new File({ contents: null });
+      let file = new File({ contents: null });
       assert.equal(file.isNull(), true);
     });
   });
 
   describe('isDirectory()', () => {
     const fakeStat = {
-      isDirectory: function() {
+      isDirectory: () => {
         return true;
       }
     };
 
     it('should return false when the contents are a Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val, stat: fakeStat });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val, stat: fakeStat });
       assert(!file.isDirectory());
     });
 
     it('should return false when file.stat does not exist', () => {
-      const file = new File({ path: 'fofofofofo', stat: null });
+      let file = new File({ path: 'fofofofofo', stat: null });
       assert(!file.isDirectory());
     });
 
     it('should return false when the contents are a Stream', () => {
-      const val = new Stream.PassThrough();
-      const file = new File({ contents: val, stat: fakeStat });
+      let val = new Stream.PassThrough();
+      let file = new File({ contents: val, stat: fakeStat });
       assert(!file.isDirectory());
     });
 
     it('should return true when the contents are null', () => {
-      const file = new File({ contents: null, stat: fakeStat });
+      let file = new File({ contents: null, stat: fakeStat });
       assert.equal(file.isDirectory(), true);
     });
   });
 
   describe('inspect()', () => {
     it('should return correct format when no contents and no path', () => {
-      const file = new File();
+      let file = new File();
       assert.equal(file[util.inspect.custom](), '<File >');
     });
 
     it('should return correct format when Buffer and no path', () => {
-      const val = Buffer.from('test');
-      const file = new File({ contents: val });
+      let val = Buffer.from('test');
+      let file = new File({ contents: val });
       assert.equal(file[util.inspect.custom](), '<File <Buffer 74 65 73 74>>');
     });
 
     it('should return correct format when Buffer and relative path', () => {
-      const val = Buffer.from('test');
-      const file = new File({
+      let val = Buffer.from('test');
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
@@ -266,8 +344,8 @@ describe('File', () => {
     });
 
     it('should return correct format when Buffer and only path and no base', () => {
-      const val = Buffer.from('test');
-      const file = new File({
+      let val = Buffer.from('test');
+      let file = new File({
         cwd: '/',
         path: '/test/test.coffee',
         contents: val
@@ -277,7 +355,7 @@ describe('File', () => {
     });
 
     it('should return correct format when Stream and relative path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
@@ -287,7 +365,7 @@ describe('File', () => {
     });
 
     it('should return correct format when null and relative path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee',
@@ -299,28 +377,27 @@ describe('File', () => {
 
   describe('file.contents get/set', () => {
     it('should work with Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File();
+      let val = Buffer.from('test');
+      let file = new File();
       file.contents = val;
       assert.equal(file.contents, val);
     });
 
-    it.skip('should work with Stream', () => {
-      const val = new Stream.PassThrough();
-      const file = new File();
-      file.contents = val;
+    it('should work with Stream', () => {
+      let val = new Stream();
+      let file = new File({ contents: val });
       assert.equal(file.contents, val);
     });
 
     it('should work with null', () => {
-      const val = null;
-      const file = new File();
+      let val = null;
+      let file = new File();
       file.contents = val;
       assert.equal(file.contents, null);
     });
 
     it('should not throw when user attempts to set a string on contents', () => {
-      const file = new File();
+      let file = new File();
       assert.doesNotThrow(() => {
         file.contents = 'test';
       });
@@ -329,8 +406,8 @@ describe('File', () => {
 
   describe('file.size', () => {
     it('should work with Buffer', () => {
-      const val = Buffer.from('test');
-      const file = new File();
+      let val = Buffer.from('test');
+      let file = new File();
       file.contents = val;
       assert.equal(file.contents, val);
     });
@@ -342,8 +419,8 @@ describe('File', () => {
       assert.equal(file.layout, 'default');
     });
 
-    it('should make file.layout undefined when file.kind is partial', () => {
-      file = new File({ path: 'test/fixture', layout: 'default', kind: 'partial' });
+    it('should make file.layout undefined when file.type is partial', () => {
+      file = new File({ path: 'test/fixture', layout: 'default', type: 'partial' });
       assert.equal(file.layout, undefined);
     });
   });
@@ -402,39 +479,39 @@ describe('File', () => {
 
   describe('file.absolute get/set', () => {
     it('should throw an error when user attempts to set on file.absolute', () => {
-      const file = new File();
+      let file = new File();
       assert.throws(() => {
         file.absolute = 'test';
       });
     });
 
     it('should get absolute path', () => {
-      const file = new File({ path: 'test' });
+      let file = new File({ path: 'test' });
       assert.equal(file.absolute, path.resolve('test'));
     });
   });
 
   describe('file.relative get/set', () => {
     it('should throw an error when user attempts to set on file.relative', () => {
-      const file = new File();
+      let file = new File();
       assert.throws(() => {
         file.relative = 'test';
       });
     });
 
     it('should error on get when no base', () => {
-      const file = new File();
+      let file = new File();
       delete file.base;
       assert.throws(() => file.relative);
     });
 
     it('should error on get when no path', () => {
-      const file = new File();
+      let file = new File();
       assert.throws(() => file.relative);
     });
 
     it('should return a relative path from base', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
@@ -443,7 +520,7 @@ describe('File', () => {
     });
 
     it('should return a relative path from cwd', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         path: '/test/test.coffee'
       });
@@ -453,12 +530,12 @@ describe('File', () => {
 
   describe('file.dirname get/set', () => {
     it('should error on get when no path', () => {
-      const file = new File();
+      let file = new File();
       assert.throws(() => file.dirname);
     });
 
     it('should return the dirname of the path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
@@ -467,7 +544,7 @@ describe('File', () => {
     });
 
     it('should error on set when no path', () => {
-      const file = new File();
+      let file = new File();
       try {
         file.dirname = '/test';
       } catch (err) {
@@ -476,7 +553,7 @@ describe('File', () => {
     });
 
     it('should set the dirname of the path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
@@ -488,12 +565,12 @@ describe('File', () => {
 
   describe('file.stem get/set', () => {
     it('should get file.stem', () => {
-      const file = new File({ path: path.resolve('test.js') });
+      let file = new File({ path: path.resolve('test.js') });
       assert.equal(file.stem, 'test');
     });
 
     it('should set file.stem', () => {
-      const file = new File({ path: path.resolve('test.js') });
+      let file = new File({ path: path.resolve('test.js') });
       file.stem = 'foo';
       assert.equal(file.basename, 'foo.js');
     });
@@ -501,7 +578,7 @@ describe('File', () => {
 
   describe('file.basename get/set', () => {
     it('should error on get when no path', () => {
-      const file = new File();
+      let file = new File();
       try {
         file.basename;
       } catch (err) {
@@ -510,7 +587,7 @@ describe('File', () => {
     });
 
     it('should return the basename of the path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
@@ -519,7 +596,7 @@ describe('File', () => {
     });
 
     it('should error on set when no path', () => {
-      const file = new File();
+      let file = new File();
       try {
         file.basename = 'test.coffee';
       } catch (err) {
@@ -528,7 +605,7 @@ describe('File', () => {
     });
 
     it('should set the basename of the path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
@@ -540,17 +617,17 @@ describe('File', () => {
 
   describe('file.extname get/set', () => {
     it('should error on get when no path', () => {
-      const file = new File();
+      let file = new File();
       assert.throws(() => file.extname);
     });
 
     it('should return the extname of the path', () => {
-      const file = new File({ cwd: '/', base: '/test/', path: '/test/test.coffee' });
+      let file = new File({ cwd: '/', base: '/test/', path: '/test/test.coffee' });
       assert.equal(file.extname, '.coffee');
     });
 
     it('should error on set when no path', () => {
-      const file = new File();
+      let file = new File();
       try {
         file.extname = '.coffee';
       } catch (err) {
@@ -559,7 +636,7 @@ describe('File', () => {
     });
 
     it('should set the extname of the path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         base: '/test/',
         path: '/test/test.coffee'
@@ -571,7 +648,7 @@ describe('File', () => {
 
   describe('file.path get/set', () => {
     it('should record history when instantiation', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         path: '/test/test.coffee'
       });
@@ -581,7 +658,7 @@ describe('File', () => {
     });
 
     it('should record history when path change', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         path: '/test/test.coffee'
       });
@@ -596,7 +673,7 @@ describe('File', () => {
     });
 
     it('should not record history when set the same path', () => {
-      const file = new File({
+      let file = new File({
         cwd: '/',
         path: '/test/test.coffee'
       });

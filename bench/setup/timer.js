@@ -16,7 +16,7 @@ const ms = n => µs(n) / 1e3;
 const sec = n => ms(n) / 1e3;
 
 timer.size = obj => {
-  if (obj.views) obj = obj.views;
+  if (obj.files) obj = obj.files;
   return obj instanceof Map ? obj.size : Object.keys(obj).length;
 };
 

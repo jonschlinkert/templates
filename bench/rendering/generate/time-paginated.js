@@ -3,7 +3,6 @@
 const symbol = Symbol('bench');
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
 const get = require('get-value');
 const mkdir = require('mkdirp');
 const rimraf = require('rimraf');
@@ -16,6 +15,7 @@ const Collection = require('../../../lib/collection');
 const cwd = path.join.bind(path, __dirname, 'content');
 const destBase = path.join.bind(path, __dirname, 'blog');
 const dirs = new Set();
+let start;
 
 const time = function() {
   let start = process.hrtime();
@@ -24,7 +24,7 @@ const time = function() {
     start = process.hrtime();
     return colors.magenta(pretty(diff, 'μs'));
   };
-}
+};
 
 function ns(n) {
   return n[0] * 1e9 + n[1];
@@ -46,25 +46,26 @@ function render(destDir) {
   let grand = process.hrtime();
   let total = time();
   let diff = time();
+  start = Date.now();
   starting('total build');
 
   // read posts
   starting('read blog posts');
-  const files = fs.readdirSync(cwd());
+  let files = fs.readdirSync(cwd());
   finished('read blog posts', diff());
 
   // start build
   starting('assemble - build');
   let assembled = time();
 
-  // collection
-  starting('assemble - create collection');
-  const collection = new Collection('pages', { sync: true });
+  // pages
+  starting('assemble - create pages');
+  let pages = new Collection('pages', { type: 'renderable', sync: true });
 
-  collection.engine('hbs', engine(hbs));
-  collection.option('engine', 'hbs');
+  pages.engine(['hbs', 'md', 'html'], engine(hbs));
+  pages.option('engine', 'hbs');
 
-  collection.helper('array', function(arr, i) {
+  pages.helper('array', function(arr, i) {
     if (/^[0-9]+$/.test(i)) {
       return arr[i];
     }
@@ -76,7 +77,7 @@ function render(destDir) {
     }
   });
 
-  collection.helper('pagerFirst', function(pager, prop) {
+  pages.helper('pagerFirst', (pager, prop) => {
     let item = pager ? pager.items[0] : null;
     if (item) {
       return prop ? get(item, prop) : item;
@@ -84,7 +85,7 @@ function render(destDir) {
     return '';
   });
 
-  collection.helper('pagerLast', function(pager, prop) {
+  pages.helper('pagerLast', (pager, prop) => {
     let item = pager ? pager.items[pager.items.length - 1] : null;
     if (item) {
       return prop ? get(item, prop) : item;
@@ -92,7 +93,7 @@ function render(destDir) {
     return '';
   });
 
-  collection.helper('pagerPrev', function(pager, prop) {
+  pages.helper('pagerPrev', (pager, prop) => {
     if (!pager) return '';
     let item = pager.items[pager.prev.index];
     if (item) {
@@ -100,7 +101,7 @@ function render(destDir) {
     }
   });
 
-  collection.helper('pagerCurrent', function(pager, prop) {
+  pages.helper('pagerCurrent', (pager, prop) => {
     if (!pager) return '';
     let item = pager.items[pager.index];
     if (item) {
@@ -108,7 +109,7 @@ function render(destDir) {
     }
   });
 
-  collection.helper('pagerNext', function(pager, prop) {
+  pages.helper('pagerNext', (pager, prop) => {
     if (!pager) return '';
     let item = pager.items[pager.next.index];
     if (item) {
@@ -116,23 +117,23 @@ function render(destDir) {
     }
   });
 
-  collection.helper('prevPath', function(pager) {
+  pages.helper('prevPath', pager => {
     let prev = pager.items[pager.prev.index];
     if (prev) {
       return prev.path;
     }
   });
 
-  collection.helper('nextPath', function(pager) {
+  pages.helper('nextPath', pager => {
     let next = pager.items[pager.next.index];
     if (next) {
       return next.path;
     }
   });
 
-  collection.helper('filter', function(obj = {}, arr = []) {
-    const res = {};
-    for (const key of Object.keys(obj)) {
+  pages.helper('filter', (obj = {}, arr = []) => {
+    let res = {};
+    for (let key of Object.keys(obj)) {
       if (arr.includes(key)) {
         res[key] = obj[key];
       }
@@ -140,31 +141,31 @@ function render(destDir) {
     return res;
   });
 
-  finished('assemble - create collection', diff());
+  finished('assemble - create pages', diff());
 
   // parse front matter and add files
-  starting('assemble - add files and parse front-matter', diff());
-  for (const filename of files) {
+  starting('assemble - add files and parse front-matter');
+  for (let filename of files) {
     if (/\.md$/.test(filename)) {
-      const file = collection.set(parse({ path: cwd(filename), cwd: cwd() }));
+      let file = pages.set(parse({ path: cwd(filename), cwd: cwd() }));
       file[symbol] = {};
       rename(file);
     }
   }
   finished('assemble - add files and parse front-matter', diff());
 
-  const tags = collection.collect('tags', { singular: 'tag' });
+  let tags = pages.collect('tags', { singular: 'tag' });
 
   // paginate files
   starting('assemble - paginate files');
-  collection.pager({
+  pages.pager({
     sort(items) {
       return items.sort((a, b) => a.path.localeCompare(b.path));
     }
   });
 
-  collection.paginate(page => {
-    const file = collection.set(page);
+  pages.paginate(page => {
+    let file = pages.set(page);
     file.path = cwd(file.relative);
     file.base = cwd();
     file.cwd = cwd();
@@ -185,10 +186,12 @@ function render(destDir) {
     rename(file);
     return file;
   });
+
   finished('assemble - paginate files', diff());
+
   tags.items.forEach(item => {
     item.key = item.path;
-    collection.set(item);
+    pages.set(item);
     item.contents = Buffer.from(`
   <h1>Posts with the tag: {{tag}}</h1>
   <ul>
@@ -206,25 +209,26 @@ function render(destDir) {
     item.path = cwd(item.relative);
     item.base = cwd();
     item.cwd = cwd();
-    // console.log(item.data)
     rename(item);
   });
 
-  for (const key of Object.keys(tags.paths)) {
+  for (let key of Object.keys(tags.paths)) {
     tags.paths[key] = destBase(tags.paths[key]);
   }
 
   // render files
   starting('assemble - render files');
-  for (const [key, file] of collection.files) {
-    collection.render(file, { site: { paths: { root: destBase() }, tags }});
+  for (let [, file] of pages.files) {
+    pages.render(file, { site: { paths: { root: destBase() }, tags }});
   }
+
   finished('assemble - render files', diff());
 
   // write files
   starting('assemble - write rendered files to fs');
+
   let i = 0;
-  for (const [key, file] of collection.files) {
+  for (let [, file] of pages.files) {
     if (!dirs.has(file.dirname)) {
       dirs.add(file.dirname);
       mkdir(file.dirname);
@@ -241,10 +245,10 @@ function render(destDir) {
 }
 
 function parse(file) {
-  const str = fs.readFileSync(file.path, 'utf8');
-  const idx = str.indexOf('---', 4);
+  let str = fs.readFileSync(file.path, 'utf8');
+  let idx = str.indexOf('---', 4);
   if (str.slice(0, 3) === '---' && idx !== -1) {
-    const matter = str.slice(3, idx);
+    let matter = str.slice(3, idx);
     file.matter = Buffer.from(matter);
     file.data = JSON.parse(matter);
     file.contents = Buffer.from(str.slice(idx + 4));
@@ -264,16 +268,12 @@ function rename(file) {
 }
 
 function dest(file, options = {}) {
-  const pad = str => str.padStart(2, '0');
-  const regex = /^(\d{4})-(\d{1,2})-(\d{1,2})-(.*?)\.(md|html)/;
-  const match = regex.exec(file.basename);
+  let pad = str => str.padStart(2, '0');
+  let regex = /^(\d{4})-(\d{1,2})-(\d{1,2})-(.*?)\.(md|html)/;
+  let match = regex.exec(file.basename);
   if (!match) return file.relative;
-  const [ year, month, day, slug, ext ] = match.slice(1);
+  let [ year, month, day, slug ] = match.slice(1);
   return `${year}/${pad(month)}/${pad(day)}/${slug}.html`;
-}
-
-function setSymbol(file) {
-  file[symbol] = file[symbol] || {};
 }
 
 render();

@@ -28,10 +28,10 @@ module.exports = (app, view, layouts) => {
     console.log();
 
     let total = time();
-    let len = size(layouts.files || layouts);
+    let len = size(layouts);
     let actual = num * len; // size of the layout stack
 
-    process.stdout.write('\r');
+    process.stdout.write('\r\n');
     console.log('processed %s pages with %s layouts each:', num.toLocaleString(), len.toLocaleString());
 
     console.log(' ~%s first render', cyan(init));
@@ -44,7 +44,7 @@ module.exports = (app, view, layouts) => {
 
 module.exports.sync = (app, view, layouts, state) => {
   return (num, step) => {
-    const count = increment(num, step);
+    let count = increment(num, step);
     let time = timer();
     let init = time();
 
@@ -61,9 +61,9 @@ module.exports.sync = (app, view, layouts, state) => {
       count(i);
     }
 
-    const total = time();
-    const len = size(layouts.files || layouts);
-    const actual = num * len; // size of the layout stack
+    let total = time();
+    let len = size(layouts);
+    let actual = num * len; // size of the layout stack
 
     process.stdout.write('\r');
     console.log(state);

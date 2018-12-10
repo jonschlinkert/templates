@@ -20,7 +20,7 @@ const app = new App({
 });
 
 const pages = app.create('pages');
-const layouts = app.create('layouts', { kind: 'layout' });
+const layouts = app.create('layouts', { type: 'layout' });
 await layouts.set({ path: 'default.hbs', contents: Buffer.from('before {% body %} after') });
 
 app.engine('hbs', engine(handlebars.create()));

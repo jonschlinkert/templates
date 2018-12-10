@@ -13,10 +13,10 @@ bench('app-create', true)
     app.create('pages');
   })
   .add('app.create() with options', () => {
-    app.create('layouts', { kind: 'layout' });
+    app.create('layouts', { type: 'layout' });
   })
   .add('view from app.create() collection', () => {
-    app.create('layouts', { kind: 'layout' });
+    app.create('layouts', { type: 'layout' });
     app.layouts.set('foo', { path: 'foo/bar' });
   })
   .run();

@@ -8,8 +8,8 @@ let pages, other;
 
 describe('helpers - sync', () => {
   beforeEach(function() {
-    pages = new Collection('pages', { sync: true });
-    other = new Collection('other', { sync: true });
+    pages = new Collection('pages', { sync: true, type: 'renderable' });
+    other = new Collection('other', { sync: true, type: 'renderable' });
     const hbs = engine(require('handlebars'));
 
     // engines

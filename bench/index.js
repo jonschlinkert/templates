@@ -16,7 +16,7 @@ let app = new Templates({ asyncHelpers: false });
 app.engine('hbs', engine(handlebars));
 
 app.create('pages');
-app.create('layouts', { kind: 'layout' });
+app.create('layouts', { type: 'layout' });
 app.layouts.set({ path: 'foo', contents: Buffer.from('before {% body %} after') });
 app.layouts.set({ path: 'base', contents: Buffer.from('before {% body %} after'), layout: 'foo' });
 app.layouts.set({ path: 'default', contents: Buffer.from('before {% body %} after'), layout: 'base' });
@@ -31,7 +31,7 @@ const file = app.pages.set('foo', {
 
 bench('layouts')
   .add('collection.renderLayout()', () => {
-    const collection = new Collection('layouts', { kind: 'layout '});
+    const collection = new Collection('layouts', { type: 'layout '});
     collection.set({ path: 'default', contents: 'before {{name}} after' });
     const file = new File({ path: 'foo/bar', contents: 'before {{name}} after' });
   })
@@ -64,7 +64,7 @@ bench('layouts')
 // });
 
 // const pages = app.create('pages');
-// const layouts = app.create('layouts', { kind: 'layout' });
+// const layouts = app.create('layouts', { type: 'layout' });
 // layouts.set({ path: 'default.hbs', contents: Buffer.from('before {% body %} after') });
 
 // app.engine('hbs', engine(handlebars));

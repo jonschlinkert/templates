@@ -1,7 +1,7 @@
 const pretty = require('pretty-time');
 const colors = require('ansi-colors');
 const handlebars = require('handlebars');
-const engine = require('templates/lib/engines');
+const engine = require('engine-handlebars');
 const Templates = require('templates');
 const app = new Templates({ sync: true, handlers: ['onLoad'] });
 const hbs = engine(handlebars);
@@ -9,8 +9,8 @@ const cyan = (...args) => colors.cyan(pretty(...args.concat(2)));
 
 app.engine('hbs', hbs);
 app.create('pages');
-app.create('layouts', { kind: 'layout' });
-app.create('partials', { kind: 'partial' });
+app.create('layouts', { type: 'layout' });
+app.create('partials', { type: 'partial' });
 // app.onLoad(/\.hbs$/, hbs.compile.bind(hbs));
 
 /**
@@ -59,11 +59,11 @@ const increment = (num = 1000, step = 5) => {
 };
 
 console.time('total');
-let n = 1e4;
+let n = 1e5;
 let i = 0;
 
-const time = timer();
-const count = increment(n, 5);
+let time = timer();
+let count = increment(n, 5);
 
 while (i++ < n) {
   try {
@@ -77,6 +77,6 @@ while (i++ < n) {
   }
 }
 
-const total = time();
+let total = time();
 console.log('rendered:', colors.cyan(n.toLocaleString()), 'pages at', cyan(ns(total) / n), 'each');
 console.timeEnd('total');

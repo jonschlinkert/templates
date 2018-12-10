@@ -12,8 +12,8 @@ describe('app helpers - sync', () => {
     app = new Templates({ sync: true });
     app.engine('hbs', engine(handlebars.create()));
 
-    const pages = app.create('pages');
-    const partials = app.create('partials', { kind: 'partial' });
+    const pages = app.create('pages', { type: 'renderable' });
+    const partials = app.create('partials', { type: 'partial' });
 
     partials.set('button.hbs', { contents: Buffer.from('<button>{{text}}</button>') });
     partials.set('button2.hbs', { contents: Buffer.from('<button>Click me!</button>') });

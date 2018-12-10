@@ -12,6 +12,6 @@ bench('new-collection', true)
     new Collection('pages');
   })
   .add('new Collection() with options', () => {
-    new Collection('layouts', { kind: 'layout' });
+    new Collection('layouts', { type: 'layout' });
   })
   .run();

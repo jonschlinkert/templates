@@ -18,7 +18,7 @@ describe('handlebars helpers - async', () => {
     hbs.registerPartial('custom', 'a partial');
     hbs.registerPartial('baz', 'partial baz');
 
-    pages = new Collection('pages', { asyncHelpers: true });
+    pages = new Collection('pages', { asyncHelpers: true, type: 'renderable' });
     pages.engine('hbs', engine);
 
     pages.helper(hbs.helpers);

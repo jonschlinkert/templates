@@ -12,8 +12,8 @@ let other;
 
 describe('helpers - async', () => {
   beforeEach(function() {
-    pages = new Collection('pages', { asyncHelpers: true });
-    other = new Collection('other', { asyncHelpers: true });
+    pages = new Collection('pages', { asyncHelpers: true, type: 'renderable' });
+    other = new Collection('other', { asyncHelpers: true, type: 'renderable' });
     const hbs = engine(handlebars.create());
 
     // engines

@@ -1,5 +1,5 @@
-const Collection = require('../lib/collection');
-const File = require('../lib/file');
+const Collection = require('../../lib/collection');
+const File = require('../../lib/file');
 const posts = new Collection();
 // posts.use(require('./pagination'));
 
@@ -21,12 +21,12 @@ posts.set('mmm.hbs');
 // console.log(posts.groupBy('stem'));
 // console.log(posts.groupBy(file => file.data.tags));
 
-// const tags = posts.collect('data.tags', { singular: 'data.tag' }, page => {
-//   page.path = '/blog/' + page.path;
-//   return page;
-// });
+const tags = posts.collect('data.tags', { singular: 'data.tag' }, page => {
+  page.path = `/blog/${page.path}`;
+  return page;
+});
 
-// console.log(tags);
+console.log(tags);
 
 // const pages1 = posts.paginate({ perPage: 2 }, page => posts.file(page));
 // console.log(pages1);

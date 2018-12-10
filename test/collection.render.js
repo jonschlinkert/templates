@@ -7,8 +7,8 @@ let pages, layouts;
 
 describe('collection.render', () => {
   beforeEach(function() {
-    layouts = new Collection('layouts');
-    pages = new Collection('pages', { asyncHelpers: true });
+    layouts = new Collection('layouts', { type: 'layout' });
+    pages = new Collection('pages', { asyncHelpers: true, type: 'renderable' });
     pages.engine('hbs', engine(require('handlebars')));
   });
 

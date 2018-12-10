@@ -7,8 +7,8 @@ const app = new Templates();
 app.engine('hbs', engine(handlebars));
 
 const pages = app.create('pages');
-const partials = app.create('partials', { kind: 'partial' });
-const layouts = app.create('layouts', { kind: 'layout' });
+const partials = app.create('partials', { type: 'partial' });
+const layouts = app.create('layouts', { type: 'layout' });
 
 const file = await pages.set('templates/foo.hbs', {
   contents: Buffer.from('This is page: {{num}}'),

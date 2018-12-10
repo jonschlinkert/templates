@@ -5,7 +5,7 @@ const Templates = require('templates');
 const app = new Templates({ sync: true });
 app.engine('hbs', engine(require('handlebars')));
 
-const layouts = app.create('layouts', { kind: 'layout' });
+const layouts = app.create('layouts', { type: 'layout' });
 const pages = app.create('pages');
 
 const file = pages.set('some/random/page.hbs', {

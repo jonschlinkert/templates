@@ -14,7 +14,8 @@ Starting with v0.25.0, changelog entries will be categorized using the following
 
 - Converted to es6 class, you must now always call `new` to instantiate. 
 - Removed `bower.json` file, as it's really not used or necessary with this library.
-- Renamed `type` to `kind`
+- Renamed collection `type` to `kind`. Ex: `app.create('includes', { kind: 'partial' })`.
+- Collection names are no longer set on the app instance as loader methods. Ex. use `app.pages.set()` instead of `app.pages()`. 
 
 ### [1.1.0]
 

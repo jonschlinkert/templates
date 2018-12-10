@@ -1,7 +1,7 @@
 'use strict';
 
 const handlebars = require('handlebars');
-const engine = require('templates/lib/engines');
+const engine = require('engine-handlebars');
 const runner = require('setup/runner');
 
 (async function() {
@@ -9,8 +9,8 @@ const runner = require('setup/runner');
   const app = new Templates();
 
   const pages = app.create('pages');
-  const partials = app.create('partials', { kind: 'partial' });
-  const layouts = app.create('layouts', { kind: 'layout' });
+  const partials = app.create('partials', { type: 'partial' });
+  const layouts = app.create('layouts', { type: 'layout' });
 
   app.data({ site: { title: 'Blog' }});
   app.engine('hbs', engine(handlebars.create()));

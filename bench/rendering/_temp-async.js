@@ -11,8 +11,8 @@ const runner = require('setup/runner');
   });
 
   const pages = app.create('pages');
-  const partials = app.create('partials', { kind: 'partial' });
-  const layouts = app.create('layouts', { kind: 'layout' });
+  const partials = app.create('partials', { type: 'partial' });
+  const layouts = app.create('layouts', { type: 'layout' });
   const wait = (fn, n = 0) => new Promise(resolve => setTimeout(() => resolve(fn()), n));
 
   // app.options.transform = (str, file, layout) => {
