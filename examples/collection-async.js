@@ -5,7 +5,7 @@ const pages = new Collection('pages', { handlers: ['onLoad'] });
 pages.onLoad(/\.hbs$/, function(file) {
   return new Promise(res => {
     setTimeout(() => {
-      console.log('Page:', file);
+      console.log('Page:', file.path);
       file.extname = '.html';
       res(file);
     }, 100);
@@ -15,7 +15,7 @@ pages.onLoad(/\.hbs$/, function(file) {
 pages.onLoad(/\.html$/, function(file) {
   return new Promise(res => {
     setTimeout(() => {
-      console.log('Page:', file);
+      console.log('Page:', file.path);
       res(file);
     }, 500);
   });

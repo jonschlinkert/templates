@@ -1,5 +1,5 @@
 console.time('use');
-const use = require('../lib/use');
+// const use = require('use');
 
 /**
  * Plugins PoC

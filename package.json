@@ -29,21 +29,19 @@
   },
   "dependencies": {
     "en-route": "^3.2.0",
-    "file-type": "^10.4.0",
-    "readable-stream": "^3.0.6",
+    "file-type": "^10.8.0",
+    "readable-stream": "^3.2.0",
     "use": "^3.1.1"
   },
   "devDependencies": {
-    "engine": "^0.1.12",
-    "engine-base": "^1.0.0",
+    "engine": "^1.0.0",
     "engine-handlebars": "^1.0.0",
-    "gulp-format-md": "^1.0.0",
-    "handlebars": "^4.0.12",
-    "helper-changelog": "^0.3.0",
+    "gulp-format-md": "^2.0.0",
+    "handlebars": "^4.1.0",
     "istanbul": "^0.4.5",
     "mississippi": "^3.0.0",
-    "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
+    "mocha": "^6.0.2",
+    "nyc": "^13.3.0",
     "time-require": "github:jonschlinkert/time-require",
     "vinyl-fs": "^3.0.3"
   },
@@ -69,6 +67,7 @@
   "verb": {
     "toc": true,
     "layout": "default",
+    "tidelift": true,
     "tasks": [
       "readme"
     ],
@@ -76,10 +75,10 @@
       "gulp-format-md"
     ],
     "asyncHelpers": [
-      "./docs/support/helpers.js"
+      "./docs/support/async-helpers.js"
     ],
     "helpers": [
-      "helper-changelog"
+      "./docs/support/helpers.js"
     ],
     "related": {
       "list": [

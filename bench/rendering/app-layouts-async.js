@@ -8,12 +8,13 @@ const runner = require('setup/runner');
   const Templates = require('templates');
   const app = new Templates();
 
-  const pages = app.create('pages');
+  const pages = app.create('pages', { type: 'renderable' });
   const partials = app.create('partials', { type: 'partial' });
   const layouts = app.create('layouts', { type: 'layout' });
 
   app.data({ site: { title: 'Blog' }});
   app.engine('hbs', engine(handlebars.create()));
+  app.option('engine', 'hbs');
 
   const view = await pages.set('templates/foo.hbs', {
     contents: Buffer.from('Name: {{name}}, {{description}}'),
@@ -48,7 +49,7 @@ const runner = require('setup/runner');
   await run(100);
   await run(1000);
   await run(10000);
-  await run(100000);
+  // await run(100000);
   // await run(1000000); // 1m
 })();
 

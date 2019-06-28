@@ -24,6 +24,6 @@ pages
 pages.handle('onLoad', file)
   .then(file => pages.handle('preRender', file))
   .then(file => pages.handle('postRender', file))
-  .then(() => console.log('Count:', file.count))
+  .then(() => console.log('Files:', file.count))
   .then(() => console.timeEnd('total'))
   .catch(console.error);

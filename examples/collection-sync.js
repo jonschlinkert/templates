@@ -1,6 +1,6 @@
 const Collection = require('../lib/collection');
 const engine = require('engine-handlebars');
-const pages = new Collection('pages', { handlers: ['onLoad'], sync: true });
+const pages = new Collection('pages', { handlers: ['onLoad'], sync: true, type: 'renderable' });
 
 pages.engine('hbs', engine(require('handlebars')));
 pages.onLoad(/\.hbs$/, function(view) {

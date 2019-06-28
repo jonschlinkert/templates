@@ -1,9 +1,9 @@
+console.time('total');
 const App = require('..');
 console.time('hbs only');
 const handlebars = require('handlebars/dist/handlebars.js');
 const engine = require('engine-handlebars');
 console.timeEnd('hbs only');
-console.time('total');
 
 (async () => {
 
@@ -19,11 +19,12 @@ const app = new App({
   ],
 });
 
-const pages = app.create('pages');
+app.engine('hbs', engine(handlebars.create()));
+app.option('engine', 'hbs');
+
+const pages = app.create('pages', { type: 'renderable' });
 const layouts = app.create('layouts', { type: 'layout' });
 await layouts.set({ path: 'default.hbs', contents: Buffer.from('before {% body %} after') });
-
-app.engine('hbs', engine(handlebars.create()));
 
 pages.preLayout(/\.hbs$/, view => {
   return new Promise(resolve => {
@@ -53,11 +54,10 @@ await pages.set('templates/foo.hbs', { contents: Buffer.from('{{name}}') });
 await pages.set('templates/bar.hbs', { contents: Buffer.from('{{name}}') });
 await pages.set('templates/baz.hbs', { contents: Buffer.from('{{name}}') });
 await pages.set('templates/qux.hbs', { contents: Buffer.from('{{arr.length}}') });
-// console.log(pages);
 
 for (let view of app.collections.get('pages').list) {
-  let res = await app.render(view, { arr: ['a', 'b', 'c'] });
-  console.log(res.contents.toString());
+  await app.render(view, { arr: ['a', 'b', 'c'] });
+  console.log(view.contents.toString());
 }
 
 console.timeEnd('total');

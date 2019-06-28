@@ -1,24 +1,27 @@
+'use strict';
+
+console.time('total');
+process.on('exit', () => console.timeEnd('total'));
+
 const App = require('../');
-const app = new App({ handlers: ['onLoad'] });
+const app = new App({ handlers: ['onLoad'], parallel: true, sync: false });
 const pages = app.create('pages');
 
-app.onLoad(/\.hbs$/, function(file) {
-  return new Promise(function(resolve) {
-    setTimeout(function() {
-      console.log(file);
-      file.winner = 'app';
+app.onLoad(/\.hbs$/, file => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log('App', file);
       resolve();
-    }, 20)
+    }, 200)
   });
 });
 
-pages.onLoad(/\.hbs$/, function(file) {
-  return new Promise(function(resolve) {
-    setTimeout(function() {
-      console.log(file);
-      file.winner = 'collection';
+pages.onLoad(/\.hbs$/, file => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log('Pages', file);
       resolve();
-    }, 10)
+    }, 200)
   });
 });
 
@@ -26,9 +29,5 @@ pages.onLoad(/\.hbs$/, function(file) {
 
 await pages.set('templates/foo.hbs', { contents: Buffer.from('foo') });
 await pages.set('templates/bar.hbs', { contents: Buffer.from('foo') });
-
-for (const [key, file] of pages.files) {
-  console.log(file.winner);
-}
 
 })().catch(console.log);

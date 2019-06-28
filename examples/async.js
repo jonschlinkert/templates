@@ -1,5 +1,5 @@
 const App = require('../');
-const app = new App({ handlers: ['onLoad' ] });
+const app = new App({ handlers: ['onLoad'] });
 
 (async () => {
   const pages = app.create('pages');

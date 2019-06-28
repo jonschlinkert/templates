@@ -11,6 +11,7 @@ module.exports = (app, view, layouts) => {
     let count = increment(num, step);
     let time = timer();
     let init = time();
+    let pending = [];
     let i = 0;
 
     app.once('postRender', () => {
@@ -25,6 +26,7 @@ module.exports = (app, view, layouts) => {
       count(i);
     }
 
+    await Promise.all(pending);
     console.log();
 
     let total = time();

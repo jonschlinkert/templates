@@ -93,7 +93,7 @@ function render(destDir) {
     return '';
   });
 
-  pages.helper('pagerPrev', (pager, prop) => {
+  pages.helper('pagerPrev', function(pager, prop) {
     if (!pager) return '';
     let item = pager.items[pager.prev.index];
     if (item) {
@@ -152,8 +152,8 @@ function render(destDir) {
       rename(file);
     }
   }
-  finished('assemble - add files and parse front-matter', diff());
 
+  finished('assemble - add files and parse front-matter', diff());
   let tags = pages.collect('tags', { singular: 'tag' });
 
   // paginate files

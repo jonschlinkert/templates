@@ -1,10 +1,9 @@
 'use strict';
 
 const assert = require('assert');
+const Base = require('./lib/base');
 const streams = require('./lib/streams');
-const Collection = require('./lib/collection');
-const Common = require('./lib/common');
-const File = require('./lib/file');
+const utils = require('./lib/utils');
 
 /**
  * Create an instance of `Templates` with the given [options](#options).
@@ -13,24 +12,26 @@ const File = require('./lib/file');
  * const app = new Templates(options);
  * ```
  * @name Templates
- * @extends {Class} Common
+ * @extends {Class} Base
  * @param {Object} `options`
  * @api public
  */
 
-class Templates extends Common {
+class Templates extends Base {
   constructor(options) {
     super(options);
+    let Collection = this.constructor.Collection;
     this.Collection = this.options.Collection || Collection;
+    this.cache.partials = {};
     this.collections = new Map();
     this.fileCache = new Map();
-    this.cache.partials = {};
+    this.type = this.options.defaultCollectionType || 'renderable';
     this.lists = {};
     this.types = {};
+  }
 
-    if (this.options.streams === true) {
-      this.use(streams(this.options));
-    }
+  toStream(...args) {
+    return streams.app(this, ...args);
   }
 
   /**
@@ -39,7 +40,7 @@ class Templates extends Common {
    */
 
   set(collectionName, file) {
-    let type = this.type(file.type);
+    let type = this.getType(file.type);
     type[file.key] = file;
 
     this.files.get(collectionName).set(file.key, file);
@@ -48,7 +49,7 @@ class Templates extends Common {
 
     if (file.type === 'partial') {
       let partials = this.cache.partials;
-      if (this.options.enforceUniqueNames === true) {
+      if (this.options.enforceUniquePartialNames === true) {
         assert(!partials[file.key], new Error(`partial "${file.key}" already exists`));
       }
       define(partials, file.key, file);
@@ -79,7 +80,7 @@ class Templates extends Common {
    */
 
   get(key, collectionName) {
-    if (File.isFile(key)) return key;
+    if (this.constructor.File.isFile(key)) return key;
     if (collectionName) return this[collectionName].get(key);
     if (this.fileCache.has(key)) return this.fileCache.get(key);
     return this.find(file => file.hasPath(key));
@@ -90,7 +91,7 @@ class Templates extends Common {
    */
 
   delete(collectionName, file) {
-    const type = this.type(file.type);
+    let type = this.getType(file.type);
     delete type[file.key];
     this.files.get(collectionName).delete(file.key);
     this.fileCache.delete(file.path);
@@ -112,12 +113,13 @@ class Templates extends Common {
    * ```
    * @name .get
    * @param {String|RegExp|Function} `key`
+   * @param {String} `collectionName` Optionally provide a collection name.
    * @return {Object} Returns the file if found.
    * @api public
    */
 
   has(key, collectionName) {
-    return !!this.get(key, collectionName);
+    return this.get(key, collectionName) !== void 0;
   }
 
   /**
@@ -141,7 +143,7 @@ class Templates extends Common {
   }
 
   /**
-   * Create an un-cached collection.
+   * Creates and returns an un-cached collection.
    * @param {String} `name` (required) Collection name
    * @param {Object} `options`
    * @return {Object} Returns the collection.
@@ -156,7 +158,7 @@ class Templates extends Common {
   }
 
   /**
-   * Create a cached file collection. When the collection emits a `file`, the file
+   * Create a file collection. When the collection emits a `file`, the file
    * is also cached on `app` to make lookups more performant.
    *
    * @param {String} `name` (required) Collection name
@@ -167,23 +169,28 @@ class Templates extends Common {
 
   create(name, options) {
     let ctorName = this.constructor.name;
-    assert(!(name in this), `Collection name "${name}" is cannot be used as it conflicts with an existing property on the ${ctorName} instance. Please choose another name.`);
+    assert(!(name in this), `Collection name "${name}" cannot be used as it conflicts with an existing property on the ${ctorName} instance. Please choose another collection name.`);
 
     let opts = { ...this.options, ...options };
     let collection = this.collection(name, opts);
 
+    // add the collection to app.collections
     this.collections.set(name, collection);
+
+    // initialize a Map for caching collection.files
     this.files.set(name, new Map());
 
+    // listen for events on the collection
     collection.once('error', err => this.emit('error', err));
     collection.on('delete', file => this.delete(name, file));
     collection.on('file', file => this.set(name, file));
 
-    let handle = collection.handle.bind(collection);
-
+    // override collection properties for engines and helpers
     collection.helpers = this.helpers;
     collection.engine = this.engine.bind(this);
     collection.helper = this.helper.bind(this);
+
+    const handle = collection.handle.bind(collection);
 
     collection.handle = (method, file) => {
       if (this.options.sync === true) {
@@ -191,12 +198,17 @@ class Templates extends Common {
         handle(method, file);
         return file;
       }
+
       return Promise.resolve(super.handle(method, file))
         .then(() => handle(method, file))
         .then(() => file);
     };
 
     if (opts.collectionMethod !== false) {
+      let method = collection.set.bind(collection);
+      Object.setPrototypeOf(method, collection);
+      Reflect.defineProperty(this, name, { value: method });
+    } else {
       this[name] = collection;
     }
 
@@ -204,21 +216,21 @@ class Templates extends Common {
   }
 
   /**
-   * Get templates of the given `type`. If the _type_ doesn't
+   * Get collection of the given `type`. If the _type_ doesn't
    * already exist, it will be created and an empty object will be returned.
    *
-   * @name .type
+   * @name .getType
    * @param {string} `name`
    * @return {object}
    * @api public
    */
 
-  type(name) {
+  getType(name) {
     return this.types[name] || (this.types[name] = {});
   }
 
   /**
-   * Handle middleware. This method is documented in the "Common" class.
+   * Handle middleware. This method is documented in the "Base" class.
    */
 
   handle(method, file) {
@@ -229,14 +241,20 @@ class Templates extends Common {
   }
 
   /**
-   * Expose constructors as static properties
+   * Expose constructors and convenience methods as static properties
    */
 
+  static get Cloneable() {
+    return require('./lib/streams/cloneable');
+  }
   static get Collection() {
-    return Collection;
+    return require('./lib/collection');
   }
   static get File() {
-    return File;
+    return require('./lib/file');
+  }
+  static get resolve() {
+    return require('./lib/resolve');
   }
 }
 

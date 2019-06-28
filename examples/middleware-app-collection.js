@@ -1,14 +1,33 @@
+'use strict';
+
+console.time('total');
+process.on('exit', () => console.timeEnd('total'));
+
 const App = require('../');
 const app = new App({ handlers: ['onLoad', 'onFoo'] });
-const pages = app.create('pages');
+const pages = app.create('pages', { type: 'renderable' });
 
 (async function() {
 
 app.onFoo(/\.hbs$/, function(view) {
   return new Promise(function(resolve) {
     setTimeout(function() {
-      console.log(view);
-      view.winner = 'app';
+      resolve();
+    }, 20)
+  });
+});
+
+app.onFoo(/\.hbs$/, function(view) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
+      resolve();
+    }, 20)
+  });
+});
+
+app.onFoo(/\.hbs$/, function(view) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
       resolve();
     }, 20)
   });
@@ -17,8 +36,6 @@ app.onFoo(/\.hbs$/, function(view) {
 pages.onFoo(/\.hbs$/, function(view) {
   return new Promise(function(resolve) {
     setTimeout(function() {
-      console.log(view);
-      view.winner = 'collection';
       view.extname = '.html';
       resolve();
     }, 10);
@@ -27,5 +44,5 @@ pages.onFoo(/\.hbs$/, function(view) {
 
 const page = await pages.set('templates/bar.hbs', { contents: Buffer.from('foo') })
 await app.handle('onFoo', page);
-console.log('The winner is!', page.winner);
+
 })().catch(console.log);
