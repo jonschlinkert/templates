@@ -1,0 +1,16 @@
+const path = require('path');
+const App = require('../');
+const app = new App({ handlers: ['onLoad'] });
+const pages = app.create('pages');
+
+app.onLoad('(.*/?)templates/(.*)', function(file, params) {
+  file.path = path.join('dest', params[0], params[1]);
+});
+
+pages.set('a/b/c/templates/whatever/foo.hbs', { contents: Buffer.from('foo') })
+  .then(() => {
+    for (const [key, file] of pages.files) {
+      console.log('RENAMED:', file.path);
+    }
+  })
+  .catch(console.error);

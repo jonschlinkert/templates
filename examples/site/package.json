@@ -1,0 +1,27 @@
+{
+  "name": "example-site",
+  "private": true,
+  "devDependencies": {
+    "engine": "^1.0.0",
+    "engine-base": "^1.0.0",
+    "engine-handlebars": "^1.0.0",
+    "get-value": "^3.0.1",
+    "handlebars": "^4.0.12",
+    "lorem-ipsum": "^1.0.6",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2",
+    "templates": "file:../..",
+    "write": "^1.0.3"
+  },
+  "lintDeps": {
+    "devDependencies": {
+      "files": {
+        "patterns": [
+          "site.js",
+          "generate-fixtures.js",
+          "*.js"
+        ]
+      }
+    }
+  }
+}

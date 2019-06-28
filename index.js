@@ -1,390 +1,275 @@
-/*!
- * templates <https://github.com/jonschlinkert/templates>
- *
- * Copyright (c) 2015-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
 'use strict';
 
-var Base = require('base');
-var debug = require('debug')('base:templates');
-var helpers = require('./lib/helpers/');
-var plugin = require('./lib/plugins/');
-var utils = require('./lib/utils');
-var lib = require('./lib/');
+const assert = require('assert');
+const Base = require('./lib/base');
+const streams = require('./lib/streams');
+const utils = require('./lib/utils');
+
+/**
+ * Create an instance of `Templates` with the given [options](#options).
+ *
+ * ```js
+ * const app = new Templates(options);
+ * ```
+ * @name Templates
+ * @extends {Class} Base
+ * @param {Object} `options`
+ * @api public
+ */
+
+class Templates extends Base {
+  constructor(options) {
+    super(options);
+    let Collection = this.constructor.Collection;
+    this.Collection = this.options.Collection || Collection;
+    this.cache.partials = {};
+    this.collections = new Map();
+    this.fileCache = new Map();
+    this.type = this.options.defaultCollectionType || 'renderable';
+    this.lists = {};
+    this.types = {};
+  }
+
+  toStream(...args) {
+    return streams.app(this, ...args);
+  }
+
+  /**
+   *  Cache files when created by a collection. This makes lookups
+   *  much faster, and allows us avoid costly merging at render time.
+   */
+
+  set(collectionName, file) {
+    let type = this.getType(file.type);
+    type[file.key] = file;
+
+    this.files.get(collectionName).set(file.key, file);
+    this.fileCache.set(file.path, file);
+    this.emit('file', file);
+
+    if (file.type === 'partial') {
+      let partials = this.cache.partials;
+      if (this.options.enforceUniquePartialNames === true) {
+        assert(!partials[file.key], new Error(`partial "${file.key}" already exists`));
+      }
+      define(partials, file.key, file);
+    }
+
+    if (file.type === 'renderable') {
+      this.lists[collectionName] = this.lists[collectionName] || [];
+      this.lists[collectionName].push(file);
+    }
+  }
+
+  /**
+   * Get a cached file.
+   *
+   * ```js
+   * // get a file from the collection passed as the last argument
+   * console.log(app.get('foo/bar.html', 'pages'));
+   * console.log(app.get('foo.html', 'pages'));
+   *
+   * // or get the first matching file from any registered collection
+   * console.log(app.get('foo/bar.html'));
+   * console.log(app.get('foo.html'));
+   * ```
+   * @name .get
+   * @param {String|RegExp|Function} `key`
+   * @return {Object} Returns the file if found.
+   * @api public
+   */
+
+  get(key, collectionName) {
+    if (this.constructor.File.isFile(key)) return key;
+    if (collectionName) return this[collectionName].get(key);
+    if (this.fileCache.has(key)) return this.fileCache.get(key);
+    return this.find(file => file.hasPath(key));
+  }
+
+  /**
+   *  Delete a file from collection `name`.
+   */
+
+  delete(collectionName, file) {
+    let type = this.getType(file.type);
+    delete type[file.key];
+    this.files.get(collectionName).delete(file.key);
+    this.fileCache.delete(file.path);
+    this.lists[collectionName] = this.lists[collectionName].filter(v => v !== file);
+    this.emit('delete', file);
+  }
+
+  /**
+   * Get a cached file.
+   *
+   * ```js
+   * // iterates over all collections
+   * app.get('foo/bar.html');
+   * app.get('foo.html');
+   *
+   * // or specify the collection name
+   * app.get('foo/bar.html', 'pages');
+   * app.get('foo.html', 'pages');
+   * ```
+   * @name .get
+   * @param {String|RegExp|Function} `key`
+   * @param {String} `collectionName` Optionally provide a collection name.
+   * @return {Object} Returns the file if found.
+   * @api public
+   */
+
+  has(key, collectionName) {
+    return this.get(key, collectionName) !== void 0;
+  }
+
+  /**
+   * Find a cached file with the given `fn`.
+   *
+   * ```js
+   * const file = app.find(file => file.basename === 'foo.hbs');
+   * ```
+   * @name .find
+   * @param {Object} `file`
+   * @return {Object} Returns the file, if found.
+   * @api public
+   */
+
+  find(fn) {
+    for (const [key, file] of this.fileCache) {
+      if (fn(file, key) === true) {
+        return file;
+      }
+    }
+  }
+
+  /**
+   * Creates and returns an un-cached collection.
+   * @param {String} `name` (required) Collection name
+   * @param {Object} `options`
+   * @return {Object} Returns the collection.
+   * @api public
+   */
+
+  collection(name, options) {
+    let collection = new this.Collection(name, options);
+    this.emit('collection', collection);
+    this.run(collection);
+    return collection;
+  }
+
+  /**
+   * Create a file collection. When the collection emits a `file`, the file
+   * is also cached on `app` to make lookups more performant.
+   *
+   * @param {String} `name` (required) Collection name
+   * @param {Object} `options`
+   * @return {Object} Returns the collection.
+   * @api public
+   */
+
+  create(name, options) {
+    let ctorName = this.constructor.name;
+    assert(!(name in this), `Collection name "${name}" cannot be used as it conflicts with an existing property on the ${ctorName} instance. Please choose another collection name.`);
+
+    let opts = { ...this.options, ...options };
+    let collection = this.collection(name, opts);
+
+    // add the collection to app.collections
+    this.collections.set(name, collection);
+
+    // initialize a Map for caching collection.files
+    this.files.set(name, new Map());
+
+    // listen for events on the collection
+    collection.once('error', err => this.emit('error', err));
+    collection.on('delete', file => this.delete(name, file));
+    collection.on('file', file => this.set(name, file));
+
+    // override collection properties for engines and helpers
+    collection.helpers = this.helpers;
+    collection.engine = this.engine.bind(this);
+    collection.helper = this.helper.bind(this);
+
+    const handle = collection.handle.bind(collection);
+
+    collection.handle = (method, file) => {
+      if (this.options.sync === true) {
+        super.handle(method, file);
+        handle(method, file);
+        return file;
+      }
+
+      return Promise.resolve(super.handle(method, file))
+        .then(() => handle(method, file))
+        .then(() => file);
+    };
+
+    if (opts.collectionMethod !== false) {
+      let method = collection.set.bind(collection);
+      Object.setPrototypeOf(method, collection);
+      Reflect.defineProperty(this, name, { value: method });
+    } else {
+      this[name] = collection;
+    }
+
+    return collection;
+  }
+
+  /**
+   * Get collection of the given `type`. If the _type_ doesn't
+   * already exist, it will be created and an empty object will be returned.
+   *
+   * @name .getType
+   * @param {string} `name`
+   * @return {object}
+   * @api public
+   */
+
+  getType(name) {
+    return this.types[name] || (this.types[name] = {});
+  }
+
+  /**
+   * Handle middleware. This method is documented in the "Base" class.
+   */
+
+  handle(method, file) {
+    if (file.collection) {
+      return file.collection.handle(method, file);
+    }
+    return super.handle(method, file);
+  }
+
+  /**
+   * Expose constructors and convenience methods as static properties
+   */
+
+  static get Cloneable() {
+    return require('./lib/streams/cloneable');
+  }
+  static get Collection() {
+    return require('./lib/collection');
+  }
+  static get File() {
+    return require('./lib/file');
+  }
+  static get resolve() {
+    return require('./lib/resolve');
+  }
+}
+
+function define(cache, key, file) {
+  Reflect.defineProperty(cache, key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      return file.fn || file.contents.toString();
+    }
+  });
+}
 
 /**
  * Expose `Templates`
  */
 
-module.exports = exports = Templates;
-
-/**
- * This function is the main export of the templates module.
- * Initialize an instance of `templates` to create your
- * application.
- *
- * ```js
- * var templates = require('templates');
- * var app = templates();
- * ```
- * @param {Object} `options`
- * @api public
- */
-
-function Templates(options) {
-  if (!(this instanceof Templates)) {
-    return new Templates(options);
-  }
-
-  Base.call(this, null, options);
-  this.is('templates');
-  this.define('isApp', true);
-  this.use(utils.option());
-  this.use(utils.plugin());
-  this.initTemplates();
-}
-
-/**
- * Inherit `Base` and load static plugins
- */
-
-plugin.static(Base, Templates, 'Templates');
-
-/**
- * Initialize Templates
- */
-
-Templates.prototype.initTemplates = function() {
-  debug('initializing <%s>, called from <%s>', __filename, module.parent.id);
-  Templates.emit('templates.preInit', this);
-
-  this.items = {};
-  this.views = {};
-  this.inflections = {};
-
-  // listen for options events
-  this.listen(this);
-
-  this.define('utils', utils);
-  this.use(plugin.init);
-  this.use(plugin.renameKey());
-  this.use(plugin.context);
-  this.use(plugin.lookup);
-  this.use(utils.engines());
-  this.use(utils.helpers());
-  this.use(utils.routes());
-
-  this.use(plugin.item('item', 'Item'));
-  this.use(plugin.item('view', 'View'));
-
-  for (var key in this.options.mixins) {
-    this.mixin(key, this.options.mixins[key]);
-  }
-
-  // create an async `view` helper
-  helpers.view(this);
-
-  // expose constructors on the instance
-  this.expose('Item');
-  this.expose('View');
-  this.expose('List');
-  this.expose('Collection');
-  this.expose('Group');
-  this.expose('Views');
-
-  Templates.setup(this, 'Templates');
-  Templates.emit('templates.postInit', this);
-};
-
-/**
- * Expose constructors on app instance, allowing them to be
- * overridden by the user after Templates is instantiated.
- */
-
-Templates.prototype.expose = function(name) {
-  this.define(name, {
-    configurable: true,
-    enumerable: true,
-    get: function() {
-      return this.options[name] || Templates[name];
-    }
-  });
-};
-
-/**
- * Listen for events
- */
-
-Templates.prototype.listen = function(app) {
-  this.on('option', function(key, value) {
-    utils.updateOptions(app, key, value);
-  });
-
-  // ensure that plugins are loaded onto collections
-  // created after the plugins are registered
-  this.on('use', function(fn, app) {
-    if (!fn) return;
-    for (var key in app.views) {
-      if (app.views.hasOwnProperty(key)) {
-        app[key].__proto__.use(fn);
-      }
-    }
-  });
-};
-
-/**
- * Create a new list. See the [list docs](docs/lists.md) for more
- * information about lists.
- *
- * ```js
- * var list = app.list();
- * list.addItem('abc', {content: '...'});
- *
- * // or, create list from a collection
- * app.create('pages');
- * var list = app.list(app.pages);
- * ```
- * @param  {Object} `opts` List options
- * @return {Object} Returns the `list` instance for chaining.
- * @api public
- */
-
-Templates.prototype.list = function(options) {
-  options = options || {};
-  var opts = {};
-
-  if (options.isList || options.isViews) {
-    opts = utils.merge({}, this.options, options.options);
-  } else {
-    opts = utils.merge({}, this.options, options);
-  }
-
-  var List = opts.List || this.get('List');
-  var list = {};
-
-  if (!options.isList) {
-    opts.Item = opts.Item || this.get('Item');
-    list = new List(opts);
-
-    if (options.isViews) {
-      list.addItems(options.views);
-    }
-  } else {
-    list = options;
-  }
-
-  // customize list items
-  this.extendList(list, opts);
-
-  // emit the list
-  this.emit('list', list, opts);
-  return list;
-};
-
-/**
- * Create a new collection. Collections are decorated with
- * special methods for getting and setting items from the
- * collection. Note that, unlike the [create](#create) method,
- * collections created with `.collection()` are not cached.
- *
- * See the [collection docs](docs/collections.md) for more
- * information about collections.
- *
- * @param  {Object} `opts` Collection options
- * @return {Object} Returns the `collection` instance for chaining.
- * @api public
- */
-
-Templates.prototype.collection = function(options, created) {
-  options = options || {};
-  var opts = {};
-
-  if (options.isList || options.isCollection) {
-    opts = utils.merge({}, this.options, options.options);
-  } else {
-    opts = utils.merge({}, this.options, options);
-  }
-
-  var Collection = opts.Collection || opts.Views || this.get('Views');
-  var collection = {};
-
-  if (options.isCollection) {
-    collection = options;
-
-  } else {
-    opts.Item = opts.Item || this.get('Item');
-    collection = new Collection(opts);
-  }
-
-  if (!options.isCollection) {
-    this.extendViews(collection, opts);
-  }
-
-  this.emit('collection', collection, opts);
-  return collection;
-};
-
-/**
- * Create a new view collection to be stored on the `app.views` object. See
- * the [create docs](docs/collections.md#create) for more details.
- *
- * @param  {String} `name` The name of the collection to create. Plural or singular form may be used, as the inflections are automatically resolved when the collection
- * is created.
- * @param  {Object} `opts` Collection options
- * @return {Object} Returns the `collection` instance for chaining.
- * @api public
- */
-
-Templates.prototype.create = function(name, options) {
-  debug('creating view collection: "%s"', name);
-  options = options || {};
-
-  // emit the collection name and options
-  this.emit('create', name, options);
-
-  // create the actual collection
-  var collection = this.collection(options, true);
-  utils.setInstanceNames(collection, name);
-
-  // get the collection inflections, e.g. page/pages
-  var single = utils.single(name);
-  var plural = utils.plural(name);
-
-  // map the inflections for lookups
-  this.inflections[single] = plural;
-
-  // add inflections to collection options
-  collection.option('inflection', single);
-  collection.option('plural', plural);
-
-  // prime the viewType(s) for the collection
-  this.viewType(plural, collection.viewType());
-
-  // add a reference the collection's views on `app.views[plural]`
-  this.views[plural] = collection.views;
-
-  // create loader functions for adding views to the collection
-  var parent = Object.create(collection);
-  this.define(plural, function() {
-    return parent.addViews.apply(parent, arguments);
-  });
-  this.define(single, function() {
-    return parent.addView.apply(parent, arguments);
-  });
-
-  Object.setPrototypeOf(this[plural], parent);
-  Object.setPrototypeOf(this[single], parent);
-
-  // create references to the app methods on the collection
-  // itself, so that chaining will work seamlessly
-  collection.define(plural, this[plural]);
-  collection.define(single, this[single]);
-
-  // decorate collection and views in collection
-  // (this is a prototype method to allow overriding behavior)
-  this.extendViews(collection, options);
-
-  // run collection plugins
-  this.run(collection);
-
-  // add collection and view helpers
-  helpers.singular(this, collection);
-  helpers.plural(this, collection);
-
-  // emit create
-  this.emit('postCreate', collection, options);
-  return collection;
-};
-
-/**
- * Decorate or override methods on a view created by a collection.
- */
-
-Templates.prototype.extendView = function(view, options) {
-  plugin.view(this, view, options);
-  return this;
-};
-
-/**
- * Decorate or override methods on a view collection instance.
- */
-
-Templates.prototype.extendViews = function(views, options) {
-  plugin.views(this, views, options);
-  return this;
-};
-
-/**
- * Decorate or override methods on a view collection instance.
- */
-
-Templates.prototype.extendList = function(views, options) {
-  plugin.list(this, views, options);
-  return this;
-};
-
-/**
- * Resolve the name of the layout to use for `view`
- */
-
-Templates.prototype.resolveLayout = function(view, options) {
-  debug('resolving layout for "%s"', view.key);
-  var opts = Object.assign({}, options);
-
-  if (!utils.isPartial(view) && typeof view.layout === 'undefined') {
-    if (view.options && view.options.collection) {
-      var collection = this[view.options.collection];
-      var layout = collection.resolveLayout(view);
-      if (typeof layout === 'undefined') {
-        layout = opts.layout || this.option('layout');
-      }
-      return layout;
-    }
-  }
-  return view.layout;
-};
-
-/**
- * Expose static `setup` method for providing access to an
- * instance before any other code is run.
- *
- * ```js
- * function App(options) {
- *   Templates.call(this, options);
- *   Templates.setup(this);
- * }
- * Templates.extend(App);
- * ```
- * @param {Object} `app` Application instance
- * @param {String} `name` Optionally pass the constructor name to use.
- * @return {undefined}
- * @api public
- */
-
-Templates.setup = function(app, name) {
-  var setup = app.options['init' + name || app.constructor.name];
-  if (typeof setup === 'function') {
-    setup.call(app, app, app.options);
-  }
-};
-
-/**
- * Expose constructors as static methods.
- */
-
-Templates.Base = Base;
-Templates.Collection = lib.collection;
-Templates.List = lib.list;
-Templates.Group = lib.group;
-Templates.Views = lib.views;
-Templates.Item = lib.item;
-Templates.View = lib.view;
-
-/**
- * Expose properties for unit tests
- */
-
-utils.define(Templates, 'utils', utils);
-utils.define(Templates, '_', { lib: lib, plugin: plugin });
+module.exports = Templates;

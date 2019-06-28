@@ -1,0 +1,17 @@
+{{#with pagination.pages}}
+  <a href="{{first}}">First</a>
+  <a href="{{lookup (lookup this ../pager.prev) "path"}}">Prev</a>
+  <span>{{lookup (this ../pager.index) "path"}}</span>
+  <a href="{{lookup (lookup this ../pager.next) "path"}}">Next</a>
+  <a href="{{last}}">Last</a>
+{{/with}}
+
+<!-- pages of posts -->
+<ul>
+{{#each posts as |post|}}
+  <li><a href="{{@post.path}}">{{@post.stem}}</a></li>
+{{/each}}
+</ul>
+
+
+<!-- given 25 posts, and a limit of 5 posts per page, this means we will have 5 pages -->

@@ -1,12 +1,29 @@
-### key
+## Changelog
 
-Starting with v0.25.0, changelog entries will be categorized using the following labels from [keep-a-changelog][]_:
+Changelog entries are categorized using the following labels from [keep-a-changelog][]_:
 
 - `added`: for new features
 - `changed`: for changes in existing functionality
 - `deprecated`: for once-stable features removed in upcoming releases
 - `removed`: for deprecated features removed in this release
 - `fixed`: for any bug fixes
+
+### [2.0.0]
+
+**MAJOR BREAKING CHANGES**
+
+A number of breaking changes were introduced in v2.0.0:
+
+- Converted to es6 class, you must now always call `new` to instantiate. 
+- Removed `bower.json` file, as it's really not used or necessary with this library.
+- Everywhere, the word `view` was changed to `file`. 
+- Renamed collection `viewType` to `type`. Ex: `app.create('includes', { type: 'partial' })`.
+- Collection names are no longer decorated onto the `app` instance by default. For example, when creating a collection, like `app.create('pages')`, Templates no longer decorates the `app.pages()` method onto the instance. You can enable this functionality by setting `collectionMethod` to true on the options: `app.create('pages', { collectionMethod: true })`.
+- Collections themselves are now decorated onto `app`. So `app.create('pages')` decorates the pages collection onto `app.pages`. To add files to the `pages` collection, you now need to do `app.pages.set(...args)`.
+- Collections are also set on the `app.collections` Map. Thus, the `pages` collection would be found on `app.collections.pages`, and a "page" can be retrieved using `app.collections.pages.get('foo')`, or the short-hand `app.pages.get('foo')`. 
+- The "singular" and "plural" forms of collection names are no longer handled. Whatever name you set is what you get. 
+- A new collection type, `asset`, was added. This allows collections to be created for files that should not be processed through a render cycle. 
+- Collections now default to the `asset` type, instead of the `renderable` type. 
 
 ### [1.1.0]
 
