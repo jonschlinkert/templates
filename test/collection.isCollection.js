@@ -1,7 +1,8 @@
 'use strict';
 
-const assert = require('assert');
-const Collection = require('../lib/collection');
+const assert = require('assert').strict;
+const App = require('..');
+const { Collection } = App;
 
 describe('collection.isCollection', () => {
   it('should be true if the value is a collection instance', () => {

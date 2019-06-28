@@ -4,9 +4,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const util = require('util');
-const assert = require('assert');
+const assert = require('assert').strict;
 const Stream = require('stream');
-const File = require('../lib/file');
+const App = require('..');
+const { File } = App;
 const fixture = name => path.join(__dirname, 'fixtures', name);
 let file;
 

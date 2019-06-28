@@ -2,11 +2,11 @@
 
 require('mocha');
 const util = require('util');
-const assert = require('assert');
-const Templates = require('..');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
 const engines = require('engine-handlebars');
 const helpers = require('./support/helpers');
+const App = require('..');
 let app, render, other, hbs, locals;
 
 describe('handlebars - partials', () => {
@@ -20,15 +20,16 @@ describe('handlebars - partials', () => {
       return options && options.hash.name ? options.hash.name : this.customName;
     });
 
-    app = new Templates({ sync: true, handlers: ['onLoad'] });
+    app = new App({ sync: true, handlers: ['onLoad'] });
     app.engine('hbs', engine);
 
-    app.create('pages', { type: 'renderable' });
-    app.create('partials', { type: 'partial' });
-    app.partials.set('button.hbs', { contents: Buffer.from('<button>Click me!</button>') });
+    let pages = app.create('pages', { type: 'renderable' });
+    let partials = app.create('partials', { type: 'partial' });
+
+    partials.set('button.hbs', { contents: Buffer.from('<button>Click me!</button>') });
 
     render = (str, locals) => {
-      const file = app.pages.set('fixture.hbs', { contents: Buffer.from(str) });
+      const file = pages.set('fixture.hbs', { contents: Buffer.from(str) });
       app.render(file, locals);
       return file.contents.toString();
     };

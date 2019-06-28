@@ -1,9 +1,10 @@
 'use strict';
 
 require('mocha');
-const assert = require('assert');
+const assert = require('assert').strict;
 const engine = require('engine-handlebars');
-const Collection = require('../lib/collection');
+const App = require('..');
+const { Collection } = App;
 let pages, other;
 
 describe('helpers - sync', () => {

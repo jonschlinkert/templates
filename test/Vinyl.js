@@ -4,41 +4,41 @@ require('mocha');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const assert = require('assert');
+const assert = require('assert').strict;
 const { concat, pipe, from } = require('mississippi');
 const Cloneable = require('../lib/streams/cloneable');
-const File = require('../lib/vinyl-lite');
+const File = require('../lib/file');
 const inspect = file => file[util.inspect.custom]();
 
 describe('File', function() {
-  describe('isFile()', function() {
+  describe('isVinyl()', function() {
     it('returns true for a Vinyl object', function() {
       let file = new File();
-      assert(File.isFile(file));
+      assert(File.isVinyl(file));
     });
 
     it('returns false for a normal object', function() {
-      const result = File.isFile({});
+      const result = File.isVinyl({});
       assert.equal(result, false);
     });
 
     it('returns false for null', function() {
-      const result = File.isFile(null);
+      const result = File.isVinyl(null);
       assert.equal(result, false);
     });
 
     it('returns false for a string', function() {
-      const result = File.isFile('foobar');
+      const result = File.isVinyl('foobar');
       assert.equal(result, false);
     });
 
     it('returns false for a plain object', function() {
-      const result = File.isFile({});
+      const result = File.isVinyl({});
       assert.equal(result, false);
     });
 
     it('returns false for a number', function() {
-      const result = File.isFile(1);
+      const result = File.isVinyl(1);
       assert.equal(result, false);
     });
 
@@ -46,7 +46,7 @@ describe('File', function() {
     // A test was added to document and make aware during internal changes
     // TODO: decide if this should be leak-able
     it('returns true for a mocked object', function() {
-      const result = File.isFile({ _isFile: true });
+      const result = File.isVinyl({ _isVinyl: true });
       assert(result);
     });
   });
@@ -714,7 +714,7 @@ describe('File', function() {
         path: '/test/test.coffee',
         contents: val
       });
-      assert.equal(inspect(file), '<File "test.coffee" <Buffer 74 65 73 74>>');
+      assert.equal(inspect(file), '<File "/test/test.coffee" <Buffer 74 65 73 74>>');
     });
 
     it('returns correct format when Stream contents and relative path', function() {
@@ -724,7 +724,7 @@ describe('File', function() {
         path: '/test/test.coffee',
         contents: from([])
       });
-      assert.equal(inspect(file), '<File "test.coffee" <ClassStream>>');
+      assert.equal(inspect(file), '<File "/test/test.coffee" <ClassStream>>');
     });
 
     it('returns correct format when null contents and relative path', function() {
@@ -734,7 +734,7 @@ describe('File', function() {
         path: '/test/test.coffee',
         contents: null
       });
-      assert.equal(inspect(file), '<File "test.coffee">');
+      assert.equal(inspect(file), '<File "/test/test.coffee">');
     });
   });
 
@@ -782,9 +782,11 @@ describe('File', function() {
       assert.equal(file.contents, null);
     });
 
-    it('does not set a string', function() {
+    it('should set a string', function() {
       let file = new File();
-      assert.throws(() => (file.contents = 'val'), /expected/);
+      file.contents = 'val';
+      assert(Buffer.isBuffer(file.contents));
+      assert.equal(file.contents.toString(), 'val');
     });
   });
 

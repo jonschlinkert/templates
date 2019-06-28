@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
 const engine = require('engine-handlebars');
 const App = require('..');
@@ -8,9 +8,9 @@ let app;
 
 describe('app.render', () => {
   beforeEach(function() {
-    app = new App({ asyncHelpers: true, type: 'renderable' });
+    app = new App({ asyncHelpers: true });
     app.create('layouts', { type: 'layout' });
-    app.create('pages');
+    app.create('pages', { type: 'renderable' });
     app.engine('hbs', engine(handlebars.create()));
   });
 

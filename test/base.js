@@ -1,16 +1,16 @@
 'use strict';
 
-const assert = require('assert');
-const Common = require('../lib/common');
+const assert = require('assert').strict;
+const Base = require('../lib/base');
 let app;
 
-describe('Common', () => {
+describe('Base class', () => {
   beforeEach(function() {
-    app = new Common();
+    app = new Base();
   });
 
-  it('should create an instance of the Common class', () => {
-    assert(app instanceof Common);
+  it('should create an instance of the Base class', () => {
+    assert(app instanceof Base);
   });
 
   it('should decorate a .use method', () => {

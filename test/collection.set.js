@@ -1,7 +1,8 @@
 'use strict';
 
-const assert = require('assert');
-const Collection = require('../lib/collection');
+const assert = require('assert').strict;
+const App = require('..');
+const { Collection } = App;
 
 describe('collection.set', () => {
   it('should set a file on collection.files', () => {

@@ -3,12 +3,12 @@
 require('mocha');
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
+const assert = require('assert').strict;
 const utils = require('../lib/utils');
 const File = require('../lib/file');
-const fixture = name => path.join(__dirname, 'fixtures', name);
 const through = require('../lib/streams/through');
-const Templates = require('..');
+const App = require('..');
+const fixture = name => path.join(__dirname, 'fixtures', name);
 let app;
 
 describe('utils', () => {
@@ -131,7 +131,7 @@ describe('utils', () => {
 
   describe('.through', () => {
     beforeEach(() => {
-      app = new Templates({ streams: true });
+      app = new App({ streams: true });
       app.create('pages');
       app.pages.set('a.html', { contents: Buffer.from('...') });
     });

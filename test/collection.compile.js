@@ -1,9 +1,10 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
-const Collection = require('../lib/collection');
 const engine = require('engine-handlebars');
+const App = require('..');
+const { Collection } = App;
 let pages, layouts;
 
 describe('collection.render', () => {

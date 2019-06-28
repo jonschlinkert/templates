@@ -1,8 +1,9 @@
 'use strict';
 
-const assert = require('assert');
-const Collection = require('../lib/collection');
+const assert = require('assert').strict;
 const engine = require('engine-handlebars');
+const App = require('..');
+const { Collection } = App;
 let posts, other;
 
 describe('collection.pager', () => {

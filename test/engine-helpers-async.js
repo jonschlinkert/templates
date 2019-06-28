@@ -2,11 +2,12 @@
 
 require('mocha');
 const util = require('util');
-const assert = require('assert');
+const assert = require('assert').strict;
 const Engine = require('engine');
-const Collection = require('../lib/collection');
 const engines = require('./support/engines');
 const helpers = require('./support/helpers');
+const App = require('..');
+const { Collection } = App;
 const wait = (fn, n) => new Promise(resolve => setTimeout(() => resolve(fn()), n || 10));
 let pages, render, other, tmpl, locals;
 

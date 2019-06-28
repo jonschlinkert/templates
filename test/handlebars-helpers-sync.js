@@ -2,11 +2,12 @@
 
 require('mocha');
 const util = require('util');
-const assert = require('assert');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
 const engines = require('engine-handlebars');
-const Collection = require('../lib/collection');
 const helpers = require('./support/helpers');
+const App = require('..');
+const { Collection } = App;
 let pages, render, other, hbs, locals;
 
 describe('handlebars helpers - sync', () => {

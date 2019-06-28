@@ -1,15 +1,15 @@
 'use strict';
 
 require('mocha');
-const assert = require('assert');
-const Templates = require('..');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
 const engine = require('engine-handlebars');
+const App = require('..');
 let app, render, other, hbs, locals;
 
 describe('app helpers - sync', () => {
   beforeEach(() => {
-    app = new Templates({ sync: true });
+    app = new App({ sync: true });
     app.engine('hbs', engine(handlebars.create()));
 
     const pages = app.create('pages', { type: 'renderable' });

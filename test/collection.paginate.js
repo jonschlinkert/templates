@@ -1,8 +1,9 @@
 'use strict';
 
-const assert = require('assert');
-const Collection = require('../lib/collection');
+const assert = require('assert').strict;
 const engine = require('engine-handlebars');
+const App = require('..');
+const { Collection } = App;
 let posts, other;
 
 const template = `
@@ -34,7 +35,7 @@ describe('collection.paginate', () => {
       assert.equal(pages.length, 3);
     });
 
-    it('should handle onPager middleware', () => {
+    it('should handle onPager middleware', async() => {
       let count = 0;
       posts.onPager(/\.hbs$/, file => {
         file.path = `/site/posts/${file.stem}/index.html`;
@@ -46,7 +47,7 @@ describe('collection.paginate', () => {
       posts.set('bbb.hbs', { contents: Buffer.from('') });
       posts.set('ccc.hbs', { contents: Buffer.from('') });
 
-      const pages = posts.pager();
+      const pages = await posts.pager();
       assert.equal(count, 3);
       assert.equal(pages[0].path, '/site/posts/aaa/index.html');
       assert.equal(pages[1].path, '/site/posts/bbb/index.html');
@@ -100,14 +101,14 @@ describe('collection.paginate', () => {
       }
     });
 
-    it('should render pagination pages', () => {
+    it('should render pagination pages', async() => {
       posts.set('aaa.hbs', { contents: Buffer.from(template) });
       posts.set('bbb.hbs', { contents: Buffer.from(template) });
       posts.set('ccc.hbs', { contents: Buffer.from(template) });
 
-      const index = other.set('index.hbs', { contents: Buffer.from(template) });
+      const index = await other.set('index.hbs', { contents: Buffer.from(template) });
 
-      other.render(index, { pagination: { pages: posts.pager() }});
+      await other.render(index, { pagination: { pages: await posts.pager() }});
       assert(/aaa">First/.test(index.contents.toString()));
       assert(/ccc">Last/.test(index.contents.toString()));
     });

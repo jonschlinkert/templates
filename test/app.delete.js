@@ -1,8 +1,9 @@
 'use strict';
 
 const path = require('path');
-const assert = require('assert');
-const Collection = require('../lib/collection');
+const assert = require('assert').strict;
+const App = require('..');
+const { Collection } = App;
 
 describe('collection.delete', () => {
   it('should delete a file', () => {

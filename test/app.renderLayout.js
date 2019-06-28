@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
 const engine = require('engine-handlebars');
 const App = require('..');
@@ -50,12 +50,11 @@ describe('app.renderLayout', () => {
       });
   });
 
-  it('should not try to add layout to null contents', async() => {
+  it('should add layout to null contents', async() => {
     app.layouts.set('default.hbs', { contents: Buffer.from('before {% body %} after') });
     let file = await app.pages.set('a.hbs', { contents: null, layout: 'default' });
-
     await app.renderLayout(file, { layouts: app.layouts.files });
-    assert.equal(file.contents, null);
+    assert.equal(file.contents.toString(), 'before  after');
   });
 
   it('should not apply layout when name is `null`', async() => {
@@ -63,7 +62,7 @@ describe('app.renderLayout', () => {
     let file = await app.pages.set('a.hbs', { contents: 'Foo', layout: null });
 
     await app.renderLayout(file, { layouts: app.layouts.files });
-    assert.equal(file.contents, 'Foo');
+    assert.equal(file.contents.toString(), 'Foo');
   });
 
   it('should not apply layout when name is string `null`', async() => {
@@ -71,7 +70,7 @@ describe('app.renderLayout', () => {
     let file = await app.pages.set('a.hbs', { contents: 'Foo', layout: 'null' });
 
     await app.renderLayout(file, { layouts: app.layouts.files });
-    assert.equal(file.contents, 'Foo');
+    assert.equal(file.contents.toString(), 'Foo');
   });
 
   it('should not apply layout when name is string `false`', async() => {
@@ -79,7 +78,7 @@ describe('app.renderLayout', () => {
     let file = await app.pages.set('a.hbs', { contents: 'Foo', layout: 'false' });
 
     await app.renderLayout(file, { layouts: app.layouts.files });
-    assert.equal(file.contents, 'Foo');
+    assert.equal(file.contents.toString(), 'Foo');
   });
 
   it('should not apply layout when name is string `false`', async() => {
@@ -87,7 +86,7 @@ describe('app.renderLayout', () => {
     let file = await app.pages.set('a.hbs', { contents: 'Foo', layout: false });
 
     await app.renderLayout(file, { layouts: app.layouts.files });
-    assert.equal(file.contents, 'Foo');
+    assert.equal(file.contents.toString(), 'Foo');
   });
 
   it('should get layouts from renderLayout options', async() => {
@@ -118,9 +117,9 @@ describe('app.renderLayout', () => {
     app.layouts.set('default.hbs', { contents: Buffer.from('A{% body %}B') });
     let file = await app.pages.set('a.hbs', { contents: Buffer.from(' This is content '), layout: 'default' });
 
-    await app.renderLayout(file, { history: [] });
-    await app.renderLayout(file, { history: [] });
-    await app.renderLayout(file, { history: [] });
+    await app.renderLayout(file, { layoutHistory: [] });
+    await app.renderLayout(file, { layoutHistory: [] });
+    await app.renderLayout(file, { layoutHistory: [] });
     assert.equal(file.contents.toString(), 'AAA This is content BBB');
   });
 

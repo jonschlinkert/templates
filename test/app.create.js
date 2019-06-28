@@ -1,8 +1,8 @@
 'use strict';
 
-const assert = require('assert');
-const Collection = require('../lib/collection');
+const assert = require('assert').strict;
 const App = require('..');
+const { Collection } = App;
 let app;
 
 describe('app.create', () => {

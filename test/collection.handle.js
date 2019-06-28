@@ -1,9 +1,10 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('assert').strict;
 const handlebars = require('handlebars');
 const engine = require('engine-handlebars');
-const Collection = require('../lib/collection');
+const App = require('..');
+const { Collection } = App;
 let pages, layouts;
 
 describe('collection.handle', () => {
@@ -32,7 +33,7 @@ describe('collection.handle', () => {
     const actual = [];
     function fn(name, n) {
       return new Promise(resolve => {
-        setTimeout(function() {
+        setTimeout(() => {
           actual.push(name);
           resolve();
         }, n);
