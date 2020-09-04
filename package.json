@@ -74,7 +74,7 @@
     "gulp-unused": "^0.2.1",
     "helper-changelog": "^0.3.0",
     "remarkable": "^1.7.1",
-    "yargs-parser": "^4.2.1"
+    "yargs-parser": "^19.0.4"
   },
   "keywords": [
     "compile",
